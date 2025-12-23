@@ -53,8 +53,12 @@ const Cart = () => {
               </div>
               <div className="bg-card p-6 rounded-lg shadow-soft h-fit">
                 <h3 className="font-semibold text-lg mb-4">Order Summary</h3>
-                <div className="flex justify-between mb-4"><span>Subtotal</span><span className="font-bold">₹{cartTotal.toFixed(2)}</span></div>
-                <Button variant="hero" className="w-full" size="lg">Proceed to Checkout</Button>
+                <div className="flex justify-between mb-2"><span className="text-muted-foreground">Subtotal</span><span>₹{cartTotal.toLocaleString()}</span></div>
+                <div className="flex justify-between mb-4"><span className="text-muted-foreground">Shipping</span><span className="text-green-600">Free</span></div>
+                <div className="flex justify-between mb-6 pt-4 border-t"><span className="font-semibold">Total</span><span className="font-bold text-lg text-primary">₹{cartTotal.toLocaleString()}</span></div>
+                <Link to="/checkout">
+                  <Button variant="hero" className="w-full" size="lg">Proceed to Checkout</Button>
+                </Link>
               </div>
             </div>
           )}

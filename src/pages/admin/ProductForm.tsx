@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Loader2, ArrowLeft, Upload, ImageIcon } from 'lucide-react';
+import { Loader2, ArrowLeft, Upload, ImageIcon, Trash2, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const ProductForm = () => {
@@ -28,9 +28,11 @@ const ProductForm = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [existingImagePath, setExistingImagePath] = useState<string | null>(null);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -85,6 +87,14 @@ const ProductForm = () => {
           image_url: product.image_url || '',
         });
         setImagePreview(product.image_url);
+        
+        // Extract path from URL if it's a storage URL
+        if (product.image_url?.includes('product-images')) {
+          const pathMatch = product.image_url.match(/product-images\/(.+)$/);
+          if (pathMatch) {
+            setExistingImagePath(pathMatch[1]);
+          }
+        }
       }
 
       setLoading(false);
@@ -102,6 +112,10 @@ const ProductForm = () => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Image size must be less than 5MB');
+        return;
+      }
       setImageFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -112,31 +126,71 @@ const ProductForm = () => {
   };
 
   const uploadImage = async (file: File): Promise<string | null> => {
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Date.now()}.${fileExt}`;
-    const filePath = `products/${fileName}`;
+    setUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop()?.toLowerCase();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = `products/${fileName}`;
 
-    const { error: uploadError } = await supabase.storage
-      .from('product-images')
-      .upload(filePath, file);
+      const { error: uploadError } = await supabase.storage
+        .from('product-images')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false,
+        });
 
-    if (uploadError) {
-      console.error('Upload error:', uploadError);
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        throw uploadError;
+      }
+
+      const { data } = supabase.storage
+        .from('product-images')
+        .getPublicUrl(filePath);
+
+      setExistingImagePath(filePath);
+      return data.publicUrl;
+    } catch (error: any) {
+      console.error('Image upload failed:', error);
+      toast.error('Failed to upload image');
       return null;
+    } finally {
+      setUploading(false);
     }
+  };
 
-    const { data } = supabase.storage
-      .from('product-images')
-      .getPublicUrl(filePath);
+  const deleteExistingImage = async () => {
+    if (!existingImagePath) return;
+    
+    try {
+      await supabase.storage
+        .from('product-images')
+        .remove([existingImagePath]);
+    } catch (error) {
+      console.error('Failed to delete old image:', error);
+    }
+  };
 
-    return data.publicUrl;
+  const clearImage = async () => {
+    if (existingImagePath) {
+      await deleteExistingImage();
+    }
+    setImageFile(null);
+    setImagePreview(null);
+    setExistingImagePath(null);
+    setFormData({ ...formData, image_url: '' });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name || !formData.price) {
-      toast.error('Please fill in required fields');
+    if (!formData.name.trim()) {
+      toast.error('Product name is required');
+      return;
+    }
+    
+    if (!formData.price || parseFloat(formData.price) <= 0) {
+      toast.error('Please enter a valid price');
       return;
     }
 
@@ -145,21 +199,25 @@ const ProductForm = () => {
     try {
       let imageUrl = formData.image_url;
 
-      // Upload image if new file selected
+      // Upload new image if selected
       if (imageFile) {
+        // Delete old image if exists
+        if (existingImagePath) {
+          await deleteExistingImage();
+        }
+        
         const uploadedUrl = await uploadImage(imageFile);
         if (uploadedUrl) {
           imageUrl = uploadedUrl;
         } else {
-          toast.error('Failed to upload image');
           setSaving(false);
           return;
         }
       }
 
       const productData = {
-        name: formData.name,
-        description: formData.description || null,
+        name: formData.name.trim(),
+        description: formData.description.trim() || null,
         price: parseFloat(formData.price),
         category_id: formData.category_id || null,
         stock_quantity: parseInt(formData.stock_quantity) || 0,
@@ -215,7 +273,7 @@ const ProductForm = () => {
             </Link>
           </Button>
           <div>
-            <h1 className="text-3xl font-bold">
+            <h1 className="text-2xl md:text-3xl font-bold">
               {isEditing ? 'Edit Product' : 'Add New Product'}
             </h1>
             <p className="text-muted-foreground">
@@ -315,38 +373,57 @@ const ProductForm = () => {
                 <CardContent>
                   <div className="space-y-4">
                     {imagePreview ? (
-                      <div className="relative aspect-square rounded-lg overflow-hidden border">
+                      <div className="relative aspect-square rounded-lg overflow-hidden border bg-muted">
                         <img
                           src={imagePreview}
                           alt="Product preview"
                           className="w-full h-full object-cover"
                         />
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="icon"
+                          className="absolute top-2 right-2 h-8 w-8"
+                          onClick={clearImage}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
                       </div>
                     ) : (
-                      <div className="aspect-square rounded-lg border-2 border-dashed flex items-center justify-center">
+                      <div className="aspect-square rounded-lg border-2 border-dashed flex flex-col items-center justify-center gap-2 bg-muted/50">
                         <ImageIcon className="h-12 w-12 text-muted-foreground" />
+                        <p className="text-sm text-muted-foreground">No image</p>
                       </div>
                     )}
                     <div>
                       <Input
                         id="image"
                         type="file"
-                        accept="image/*"
+                        accept="image/jpeg,image/png,image/webp"
                         onChange={handleImageChange}
                         className="hidden"
+                        disabled={uploading}
                       />
                       <Button
                         type="button"
                         variant="outline"
                         className="w-full"
                         onClick={() => document.getElementById('image')?.click()}
+                        disabled={uploading}
                       >
-                        <Upload className="mr-2 h-4 w-4" />
-                        Upload Image
+                        {uploading ? (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                          <Upload className="mr-2 h-4 w-4" />
+                        )}
+                        {imagePreview ? 'Replace Image' : 'Upload Image'}
                       </Button>
+                      <p className="text-xs text-muted-foreground mt-2 text-center">
+                        Max 5MB. JPG, PNG, or WebP.
+                      </p>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="image_url">Or Image URL</Label>
+                      <Label htmlFor="image_url">Or paste Image URL</Label>
                       <Input
                         id="image_url"
                         name="image_url"
@@ -354,6 +431,7 @@ const ProductForm = () => {
                         onChange={(e) => {
                           setFormData({ ...formData, image_url: e.target.value });
                           setImagePreview(e.target.value);
+                          setImageFile(null);
                         }}
                         placeholder="https://..."
                       />
@@ -372,7 +450,7 @@ const ProductForm = () => {
                     <div>
                       <Label htmlFor="is_active">Active</Label>
                       <p className="text-sm text-muted-foreground">
-                        Product will be visible to customers
+                        Visible to customers
                       </p>
                     </div>
                     <Switch
@@ -394,7 +472,7 @@ const ProductForm = () => {
                 >
                   Cancel
                 </Button>
-                <Button type="submit" className="flex-1" disabled={saving}>
+                <Button type="submit" className="flex-1" disabled={saving || uploading}>
                   {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   {isEditing ? 'Update' : 'Create'}
                 </Button>
