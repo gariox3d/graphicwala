@@ -43,37 +43,56 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       .eq('role', 'admin')
       .maybeSingle();
 
-    setIsAdmin(!error && !!data);
+    const nextIsAdmin = !error && !!data;
+    setIsAdmin(nextIsAdmin);
+    return nextIsAdmin;
   };
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-
-        if (session?.user) {
-          setTimeout(() => {
-            fetchProfile(session.user.id);
-            checkAdminRole(session.user.id);
-          }, 0);
-        } else {
-          setProfile(null);
-          setIsAdmin(false);
-        }
-        setLoading(false);
-      }
-    );
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setLoading(true);
       setSession(session);
       setUser(session?.user ?? null);
+
       if (session?.user) {
-        fetchProfile(session.user.id);
-        checkAdminRole(session.user.id);
+        setTimeout(() => {
+          (async () => {
+            try {
+              await Promise.all([
+                fetchProfile(session.user.id),
+                checkAdminRole(session.user.id),
+              ]);
+            } finally {
+              setLoading(false);
+            }
+          })();
+        }, 0);
+      } else {
+        setProfile(null);
+        setIsAdmin(false);
+        setLoading(false);
       }
-      setLoading(false);
     });
+
+    (async () => {
+      setLoading(true);
+      const { data: { session } } = await supabase.auth.getSession();
+      setSession(session);
+      setUser(session?.user ?? null);
+
+      if (session?.user) {
+        try {
+          await Promise.all([
+            fetchProfile(session.user.id),
+            checkAdminRole(session.user.id),
+          ]);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
+      }
+    })();
 
     return () => subscription.unsubscribe();
   }, []);
