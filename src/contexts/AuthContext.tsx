@@ -2,7 +2,6 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { Profile } from '@/lib/types';
-import { Constants } from '@/integrations/supabase/types';
 
 interface AuthContextType {
   user: User | null;
@@ -41,7 +40,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       .from('user_roles')
       .select('role')
       .eq('user_id', userId)
-      .eq('role', Constants.public.Enums.app_role[0]) // 'admin'
+      .eq('role', 'admin')
       .maybeSingle();
 
     setIsAdmin(!error && !!data);
