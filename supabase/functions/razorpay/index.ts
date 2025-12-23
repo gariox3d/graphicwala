@@ -97,6 +97,27 @@ serve(async (req) => {
         // Update order in database using service role
         const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
         
+        // First, verify that the order exists and the razorpay_order_id matches
+        // This prevents an attacker from applying a valid payment to a different order
+        const { data: existingOrder, error: fetchError } = await supabase
+          .from('orders')
+          .select('id, razorpay_order_id')
+          .eq('id', order_id)
+          .single();
+
+        if (fetchError || !existingOrder) {
+          console.error('Order not found:', order_id);
+          throw new Error('Order not found');
+        }
+
+        if (existingOrder.razorpay_order_id !== razorpay_order_id) {
+          console.error('Order ID mismatch - payment razorpay_order_id does not match order:', {
+            provided: razorpay_order_id,
+            expected: existingOrder.razorpay_order_id,
+          });
+          throw new Error('Payment does not belong to this order');
+        }
+        
         const { error: updateError } = await supabase
           .from('orders')
           .update({
