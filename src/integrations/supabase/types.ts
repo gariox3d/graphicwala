@@ -75,7 +75,11 @@ export type Database = {
       }
       order_items: {
         Row: {
+          admin_preview_url: string | null
+          back_design_url: string | null
           created_at: string
+          design_approval_status: string | null
+          front_design_url: string | null
           id: string
           order_id: string
           product_id: string
@@ -84,7 +88,11 @@ export type Database = {
           quantity: number
         }
         Insert: {
+          admin_preview_url?: string | null
+          back_design_url?: string | null
           created_at?: string
+          design_approval_status?: string | null
+          front_design_url?: string | null
           id?: string
           order_id: string
           product_id: string
@@ -93,7 +101,11 @@ export type Database = {
           quantity: number
         }
         Update: {
+          admin_preview_url?: string | null
+          back_design_url?: string | null
           created_at?: string
+          design_approval_status?: string | null
+          front_design_url?: string | null
           id?: string
           order_id?: string
           product_id?: string
@@ -121,7 +133,11 @@ export type Database = {
       orders: {
         Row: {
           created_at: string
+          customer_name: string | null
+          email: string | null
           id: string
+          landmark: string | null
+          order_notes: string | null
           payment_id: string | null
           payment_status: string | null
           razorpay_order_id: string | null
@@ -139,7 +155,11 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          customer_name?: string | null
+          email?: string | null
           id?: string
+          landmark?: string | null
+          order_notes?: string | null
           payment_id?: string | null
           payment_status?: string | null
           razorpay_order_id?: string | null
@@ -157,7 +177,11 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          customer_name?: string | null
+          email?: string | null
           id?: string
+          landmark?: string | null
+          order_notes?: string | null
           payment_id?: string | null
           payment_status?: string | null
           razorpay_order_id?: string | null
@@ -177,9 +201,12 @@ export type Database = {
       }
       products: {
         Row: {
+          back_upload_enabled: boolean | null
           category_id: string | null
           created_at: string
+          customization_enabled: boolean | null
           description: string | null
+          front_upload_required: boolean | null
           id: string
           image_url: string | null
           is_active: boolean | null
@@ -189,9 +216,12 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          back_upload_enabled?: boolean | null
           category_id?: string | null
           created_at?: string
+          customization_enabled?: boolean | null
           description?: string | null
+          front_upload_required?: boolean | null
           id?: string
           image_url?: string | null
           is_active?: boolean | null
@@ -201,9 +231,12 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          back_upload_enabled?: boolean | null
           category_id?: string | null
           created_at?: string
+          customization_enabled?: boolean | null
           description?: string | null
+          front_upload_required?: boolean | null
           id?: string
           image_url?: string | null
           is_active?: boolean | null

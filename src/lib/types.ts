@@ -19,6 +19,10 @@ export interface Product {
   created_at: string;
   updated_at: string;
   categories?: Category;
+  // Customization fields
+  customization_enabled?: boolean;
+  front_upload_required?: boolean;
+  back_upload_enabled?: boolean;
 }
 
 export interface CartItem {
@@ -28,6 +32,9 @@ export interface CartItem {
   quantity: number;
   created_at: string;
   products?: Product;
+  // Local state for design uploads (not stored in cart_items)
+  front_design_url?: string;
+  back_design_url?: string;
 }
 
 export interface Order {
@@ -48,6 +55,11 @@ export interface Order {
   created_at: string;
   updated_at: string;
   order_items?: OrderItem[];
+  // Enhanced customer details
+  customer_name?: string | null;
+  email?: string | null;
+  landmark?: string | null;
+  order_notes?: string | null;
 }
 
 export interface OrderItem {
@@ -58,6 +70,11 @@ export interface OrderItem {
   product_price: number;
   quantity: number;
   created_at: string;
+  // Design upload fields
+  front_design_url?: string | null;
+  back_design_url?: string | null;
+  design_approval_status?: string;
+  admin_preview_url?: string | null;
 }
 
 export interface Profile {
@@ -73,3 +90,21 @@ export interface Profile {
   created_at: string;
   updated_at: string;
 }
+
+// Constants
+export const WHATSAPP_NUMBER = '+916207142994';
+export const PHONE_NUMBER = '+916207142994';
+export const BUSINESS_NAME = 'Graphic Wala';
+
+// Order status options for admin
+export const ORDER_STATUSES = [
+  'pending',
+  'designing',
+  'approved',
+  'printing',
+  'shipped',
+  'completed',
+  'cancelled',
+] as const;
+
+export type OrderStatus = typeof ORDER_STATUSES[number];
