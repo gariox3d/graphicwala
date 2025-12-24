@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { Category } from '@/lib/types';
+import { Category, UploadField } from '@/lib/types';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Select,
   SelectContent,
@@ -18,7 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Loader2, ArrowLeft, Upload, ImageIcon, Trash2, X } from 'lucide-react';
+import { Loader2, ArrowLeft, Upload, ImageIcon, X, Plus, Trash2, Image } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const ProductForm = () => {
@@ -42,7 +43,10 @@ const ProductForm = () => {
     stock_quantity: '0',
     is_active: true,
     image_url: '',
+    customization_enabled: false,
   });
+
+  const [uploadConfig, setUploadConfig] = useState<UploadField[]>([]);
 
   useEffect(() => {
     if (!authLoading && (!user || !isAdmin)) {
@@ -85,7 +89,27 @@ const ProductForm = () => {
           stock_quantity: product.stock_quantity?.toString() || '0',
           is_active: product.is_active,
           image_url: product.image_url || '',
+          customization_enabled: product.customization_enabled || false,
         });
+        
+        // Parse upload_config
+        const config = product.upload_config as unknown as UploadField[] | null;
+        if (config && Array.isArray(config) && config.length > 0) {
+          setUploadConfig(config);
+        } else if (product.customization_enabled) {
+          // Migrate old format to new format
+          const legacyConfig: UploadField[] = [];
+          if (product.front_upload_required) {
+            legacyConfig.push({ id: 'front', label: 'Front Design', required: true });
+          }
+          if (product.back_upload_enabled) {
+            legacyConfig.push({ id: 'back', label: 'Back Design', required: false });
+          }
+          if (legacyConfig.length > 0) {
+            setUploadConfig(legacyConfig);
+          }
+        }
+        
         setImagePreview(product.image_url);
         
         // Extract path from URL if it's a storage URL
@@ -181,6 +205,24 @@ const ProductForm = () => {
     setFormData({ ...formData, image_url: '' });
   };
 
+  const addUploadField = () => {
+    const newId = `upload_${Date.now()}`;
+    setUploadConfig([
+      ...uploadConfig,
+      { id: newId, label: `Photo ${uploadConfig.length + 1}`, required: false },
+    ]);
+  };
+
+  const updateUploadField = (index: number, field: Partial<UploadField>) => {
+    const updated = [...uploadConfig];
+    updated[index] = { ...updated[index], ...field };
+    setUploadConfig(updated);
+  };
+
+  const removeUploadField = (index: number) => {
+    setUploadConfig(uploadConfig.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -191,6 +233,11 @@ const ProductForm = () => {
     
     if (!formData.price || parseFloat(formData.price) <= 0) {
       toast.error('Please enter a valid price');
+      return;
+    }
+
+    if (formData.customization_enabled && uploadConfig.length === 0) {
+      toast.error('Please add at least one upload field for customizable products');
       return;
     }
 
@@ -223,6 +270,11 @@ const ProductForm = () => {
         stock_quantity: parseInt(formData.stock_quantity) || 0,
         is_active: formData.is_active,
         image_url: imageUrl || null,
+        customization_enabled: formData.customization_enabled,
+        upload_config: formData.customization_enabled ? JSON.parse(JSON.stringify(uploadConfig)) : [],
+        // Keep legacy fields for backwards compatibility
+        front_upload_required: uploadConfig.some(f => f.id === 'front' && f.required),
+        back_upload_enabled: uploadConfig.some(f => f.id === 'back'),
       };
 
       if (isEditing) {
@@ -359,6 +411,111 @@ const ProductForm = () => {
                       </SelectContent>
                     </Select>
                   </div>
+                </CardContent>
+              </Card>
+
+              {/* Customization Settings */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Image className="h-5 w-5 text-primary" />
+                    Photo Upload Settings
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label htmlFor="customization_enabled">Enable Custom Photo Upload</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Allow customers to upload their own photos/designs
+                      </p>
+                    </div>
+                    <Switch
+                      id="customization_enabled"
+                      checked={formData.customization_enabled}
+                      onCheckedChange={(checked) => {
+                        setFormData({ ...formData, customization_enabled: checked });
+                        if (checked && uploadConfig.length === 0) {
+                          setUploadConfig([
+                            { id: 'front', label: 'Front Photo', required: true },
+                          ]);
+                        }
+                      }}
+                    />
+                  </div>
+
+                  {formData.customization_enabled && (
+                    <div className="space-y-4 pt-4 border-t">
+                      <div className="flex items-center justify-between">
+                        <Label>Upload Fields</Label>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={addUploadField}
+                        >
+                          <Plus className="h-4 w-4 mr-1" />
+                          Add Field
+                        </Button>
+                      </div>
+
+                      {uploadConfig.length === 0 && (
+                        <p className="text-sm text-muted-foreground text-center py-4">
+                          No upload fields configured. Add at least one.
+                        </p>
+                      )}
+
+                      {uploadConfig.map((field, index) => (
+                        <div
+                          key={field.id}
+                          className="flex items-center gap-3 p-3 bg-muted rounded-lg"
+                        >
+                          <div className="flex-1">
+                            <Input
+                              value={field.label}
+                              onChange={(e) =>
+                                updateUploadField(index, { label: e.target.value })
+                              }
+                              placeholder="Field label (e.g., Front Photo)"
+                            />
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Checkbox
+                              id={`required-${field.id}`}
+                              checked={field.required}
+                              onCheckedChange={(checked) =>
+                                updateUploadField(index, { required: !!checked })
+                              }
+                            />
+                            <Label
+                              htmlFor={`required-${field.id}`}
+                              className="text-sm whitespace-nowrap"
+                            >
+                              Required
+                            </Label>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="text-destructive hover:text-destructive"
+                            onClick={() => removeUploadField(index)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+
+                      <div className="bg-blue-50 p-3 rounded-lg text-sm text-blue-700">
+                        <strong>Examples:</strong>
+                        <ul className="list-disc list-inside mt-1">
+                          <li>Keychain: Front Photo (required) + Back Photo (required)</li>
+                          <li>Photo Frame: 1 Photo (required)</li>
+                          <li>Visiting Card: Front (required) + Back (optional)</li>
+                        </ul>
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
