@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Printer, CreditCard, Palette, Truck, Shield, Clock } from 'lucide-react';
+import { ArrowRight, Printer, CreditCard, Palette, Truck, Shield, Clock, MessageCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/layout/Header';
@@ -8,7 +8,7 @@ import ProductCard from '@/components/products/ProductCard';
 import DeliveryInfoBanner from '@/components/DeliveryInfoBanner';
 import SupportContact from '@/components/SupportContact';
 import { supabase } from '@/integrations/supabase/client';
-import { Product, Category } from '@/lib/types';
+import { Product, Category, WHATSAPP_NUMBER, BUSINESS_NAME } from '@/lib/types';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
 
 const Index = () => {
@@ -31,6 +31,17 @@ const Index = () => {
 
     fetchData();
   }, []);
+
+  // Get a product image for each category as fallback
+  const getCategoryImage = (categoryName: string, categoryImage: string | null) => {
+    if (categoryImage) return categoryImage;
+    // Find a product from this category to use its image
+    const categoryProduct = products.find(p => {
+      const cat = categories.find(c => c.id === p.category_id);
+      return cat?.name === categoryName;
+    });
+    return categoryProduct?.image_url || null;
+  };
 
   const services = [
     {
@@ -65,6 +76,8 @@ const Index = () => {
     },
   ];
 
+  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hello ${BUSINESS_NAME}, I need help.`)}`;
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -72,25 +85,25 @@ const Index = () => {
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative bg-foreground text-background overflow-hidden">
-          <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0 opacity-20">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,hsl(var(--primary)),transparent_50%)]" />
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,hsl(var(--primary)),transparent_50%)]" />
           </div>
           <div className="container relative py-20 md:py-32">
             <div className="max-w-3xl">
-              <span className="inline-block px-4 py-2 rounded-full bg-primary/20 text-primary text-sm font-semibold mb-6 animate-fade-in">
+              <span className="inline-block px-4 py-2 rounded-full bg-primary/30 text-primary text-sm font-bold mb-6 animate-fade-in">
                 #1 Printing Service in India
               </span>
-              <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6 animate-slide-up">
+              <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6 animate-slide-up text-background drop-shadow-lg">
                 Premium Prints for
-                <span className="text-primary block">Every Occasion</span>
+                <span className="text-primary block drop-shadow-md">Every Occasion</span>
               </h1>
-              <p className="text-lg md:text-xl text-background/70 mb-8 max-w-2xl animate-slide-up" style={{ animationDelay: '0.1s' }}>
+              <p className="text-lg md:text-xl text-background/90 mb-8 max-w-2xl animate-slide-up font-medium" style={{ animationDelay: '0.1s' }}>
                 From photo frames to visiting cards, we bring your ideas to life with exceptional quality and unmatched service.
               </p>
               <div className="flex flex-wrap gap-4 animate-slide-up" style={{ animationDelay: '0.2s' }}>
                 <Link to="/products">
-                  <Button variant="hero" size="xl">
+                  <Button variant="hero" size="xl" className="shadow-lg">
                     Shop Now
                     <ArrowRight className="h-5 w-5" />
                   </Button>
@@ -155,21 +168,36 @@ const Index = () => {
               </Link>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-              {categories.map((category, index) => (
-                <Link
-                  key={category.id}
-                  to={`/products?category=${encodeURIComponent(category.name)}`}
-                  className="group relative aspect-square rounded-xl overflow-hidden bg-gradient-to-br from-foreground to-foreground/80 shadow-soft hover:shadow-brand transition-all duration-300 animate-scale-in"
-                  style={{ animationDelay: `${index * 0.05}s` }}
-                >
-                  <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/20 transition-colors duration-300" />
-                  <div className="absolute inset-0 flex items-center justify-center p-4">
-                    <h3 className="text-background font-semibold text-center text-sm md:text-base group-hover:scale-105 transition-transform duration-300">
-                      {category.name}
-                    </h3>
-                  </div>
-                </Link>
-              ))}
+              {categories.map((category, index) => {
+                const categoryImage = getCategoryImage(category.name, category.image_url);
+                return (
+                  <Link
+                    key={category.id}
+                    to={`/products?category=${encodeURIComponent(category.name)}`}
+                    className="group relative aspect-square rounded-xl overflow-hidden shadow-soft hover:shadow-brand transition-all duration-300 animate-scale-in"
+                    style={{ animationDelay: `${index * 0.05}s` }}
+                  >
+                    {/* Background Image or Gradient */}
+                    {categoryImage ? (
+                      <img
+                        src={categoryImage}
+                        alt={category.name}
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-foreground" />
+                    )}
+                    {/* Dark Overlay for text readability */}
+                    <div className="absolute inset-0 bg-foreground/60 group-hover:bg-foreground/50 transition-colors duration-300" />
+                    {/* Category Name */}
+                    <div className="absolute inset-0 flex items-center justify-center p-4">
+                      <h3 className="text-background font-bold text-center text-sm md:text-base group-hover:scale-105 transition-transform duration-300 drop-shadow-lg">
+                        {category.name}
+                      </h3>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -230,25 +258,27 @@ const Index = () => {
         {/* CTA Section */}
         <section className="py-16 md:py-24 bg-primary text-primary-foreground">
           <div className="container text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Get Started?</h2>
-            <p className="text-primary-foreground/80 max-w-2xl mx-auto mb-8">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 drop-shadow-md">Ready to Get Started?</h2>
+            <p className="text-primary-foreground/90 max-w-2xl mx-auto mb-8 font-medium">
               Join thousands of satisfied customers who trust Graphic Wala for their printing needs.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link to="/products">
-                <Button variant="secondary" size="xl">
+                <Button variant="cta-secondary" size="xl">
                   Browse Products
+                  <ArrowRight className="h-5 w-5" />
                 </Button>
               </Link>
-              <Link to="/contact">
+              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
                 <Button
                   variant="outline"
                   size="xl"
-                  className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary"
+                  className="border-2 border-primary-foreground/80 bg-primary-foreground/10 text-primary-foreground hover:bg-primary-foreground hover:text-primary font-bold backdrop-blur-sm"
                 >
-                  Contact Us
+                  <MessageCircle className="h-5 w-5" />
+                  Chat on WhatsApp
                 </Button>
-              </Link>
+              </a>
             </div>
           </div>
         </section>
