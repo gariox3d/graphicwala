@@ -23,6 +23,7 @@ import AdminCategories from "./pages/admin/AdminCategories";
 import ProductForm from "./pages/admin/ProductForm";
 import NotFound from "./pages/NotFound";
 import ShareRedirect from "./pages/ShareRedirect";
+import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter>
+              <ScrollToTop />
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/products" element={<Products />} />
