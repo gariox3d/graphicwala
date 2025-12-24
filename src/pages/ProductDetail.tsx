@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { ShoppingCart, ArrowLeft, Minus, Plus, Image, Zap, Truck } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
@@ -8,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { supabase } from '@/integrations/supabase/client';
-import { Product, UploadField } from '@/lib/types';
+import { Product, UploadField, BUSINESS_NAME } from '@/lib/types';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import DesignUpload from '@/components/DesignUpload';
@@ -18,6 +19,9 @@ import SupportContact from '@/components/SupportContact';
 import PriceBreakdown from '@/components/PriceBreakdown';
 import { useStoreSettings, getProductDeliveryCharge } from '@/hooks/useStoreSettings';
 import { toast } from 'sonner';
+
+const SITE_URL = 'https://store.graphicwala.com';
+const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.jpg`;
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -154,8 +158,94 @@ const ProductDetail = () => {
     );
   }
 
+  // Generate SEO-friendly meta data
+  const productTitle = `${product.name} | ${BUSINESS_NAME}`;
+  const productDescription = product.description 
+    ? `${product.description.slice(0, 140)}${product.description.length > 140 ? '...' : ''} Delivered across Bihar. Prepaid only.`
+    : `Order ${product.name} from Graphic Wala. Premium quality with home delivery across Bihar. Prepaid orders only.`;
+  const productUrl = `${SITE_URL}/product/${product.id}`;
+  const productImage = product.image_url || DEFAULT_OG_IMAGE;
+  const categoryName = product.categories?.name || 'Custom Products';
+
+  // Generate JSON-LD structured data for the product
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": product.name,
+    "description": product.description || `Custom ${product.name} from Graphic Wala`,
+    "image": productImage,
+    "url": productUrl,
+    "brand": {
+      "@type": "Brand",
+      "name": BUSINESS_NAME
+    },
+    "category": categoryName,
+    "offers": {
+      "@type": "Offer",
+      "price": product.price,
+      "priceCurrency": "INR",
+      "availability": product.stock_quantity > 0 
+        ? "https://schema.org/InStock" 
+        : "https://schema.org/OutOfStock",
+      "seller": {
+        "@type": "Organization",
+        "name": BUSINESS_NAME
+      },
+      "shippingDetails": {
+        "@type": "OfferShippingDetails",
+        "shippingDestination": {
+          "@type": "DefinedRegion",
+          "addressRegion": "Bihar",
+          "addressCountry": "IN"
+        }
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        {/* Primary Meta Tags */}
+        <title>{productTitle}</title>
+        <meta name="title" content={productTitle} />
+        <meta name="description" content={productDescription} />
+        <link rel="canonical" href={productUrl} />
+
+        {/* Open Graph / Facebook / WhatsApp */}
+        <meta property="og:type" content="product" />
+        <meta property="og:url" content={productUrl} />
+        <meta property="og:title" content={productTitle} />
+        <meta property="og:description" content={productDescription} />
+        <meta property="og:image" content={productImage} />
+        <meta property="og:image:secure_url" content={productImage} />
+        <meta property="og:image:width" content="1080" />
+        <meta property="og:image:height" content="1080" />
+        <meta property="og:image:type" content="image/jpeg" />
+        <meta property="og:image:alt" content={`${product.name} - ${BUSINESS_NAME}`} />
+        <meta property="og:site_name" content={BUSINESS_NAME} />
+        <meta property="og:locale" content="en_IN" />
+        
+        {/* Product-specific OG tags */}
+        <meta property="product:price:amount" content={String(product.price)} />
+        <meta property="product:price:currency" content="INR" />
+        <meta property="product:availability" content={product.stock_quantity > 0 ? "in stock" : "out of stock"} />
+        <meta property="product:category" content={categoryName} />
+        <meta property="product:brand" content={BUSINESS_NAME} />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={productUrl} />
+        <meta name="twitter:title" content={productTitle} />
+        <meta name="twitter:description" content={productDescription} />
+        <meta name="twitter:image" content={productImage} />
+        <meta name="twitter:image:alt" content={`${product.name} - ${BUSINESS_NAME}`} />
+
+        {/* JSON-LD Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify(productJsonLd)}
+        </script>
+      </Helmet>
+
       <Header />
       <main className="flex-1 py-8">
         <div className="container">
