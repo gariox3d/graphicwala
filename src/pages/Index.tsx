@@ -7,6 +7,7 @@ import Footer from '@/components/layout/Footer';
 import ProductCard from '@/components/products/ProductCard';
 import DeliveryInfoBanner from '@/components/DeliveryInfoBanner';
 import SupportContact from '@/components/SupportContact';
+import HeroSection from '@/components/HeroSection';
 import { supabase } from '@/integrations/supabase/client';
 import { Product, Category, WHATSAPP_NUMBER, BUSINESS_NAME } from '@/lib/types';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
@@ -84,39 +85,7 @@ const Index = () => {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative bg-foreground text-background overflow-hidden">
-          <div className="absolute inset-0 opacity-20">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,hsl(var(--primary)),transparent_50%)]" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,hsl(var(--primary)),transparent_50%)]" />
-          </div>
-          <div className="container relative py-20 md:py-32">
-            <div className="max-w-3xl">
-              <span className="inline-block px-4 py-2 rounded-full bg-primary/30 text-primary text-sm font-bold mb-6 animate-fade-in">
-                #1 Printing Service in India
-              </span>
-              <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6 animate-slide-up text-background drop-shadow-lg">
-                Premium Prints for
-                <span className="text-primary block drop-shadow-md">Every Occasion</span>
-              </h1>
-              <p className="text-lg md:text-xl text-background/90 mb-8 max-w-2xl animate-slide-up font-medium" style={{ animationDelay: '0.1s' }}>
-                From photo frames to visiting cards, we bring your ideas to life with exceptional quality and unmatched service.
-              </p>
-              <div className="flex flex-wrap gap-4 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-                <Link to="/products">
-                  <Button variant="hero" size="xl" className="shadow-lg">
-                    Shop Now
-                    <ArrowRight className="h-5 w-5" />
-                  </Button>
-                </Link>
-                <Link to="/about">
-                  <Button variant="hero-outline" size="xl">
-                    Learn More
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
+        <HeroSection />
 
         {/* Delivery Info Banner */}
         <section className="py-8 bg-background">
