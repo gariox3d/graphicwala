@@ -5,13 +5,17 @@ import { Button } from '@/components/ui/button';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import ProductCard from '@/components/products/ProductCard';
+import DeliveryInfoBanner from '@/components/DeliveryInfoBanner';
+import SupportContact from '@/components/SupportContact';
 import { supabase } from '@/integrations/supabase/client';
 import { Product, Category } from '@/lib/types';
+import { useStoreSettings } from '@/hooks/useStoreSettings';
 
 const Index = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const { settings } = useStoreSettings();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,8 +50,8 @@ const Index = () => {
     },
     {
       icon: Truck,
-      title: 'Fast Delivery',
-      description: 'Quick turnaround and reliable shipping across India',
+      title: 'Home Delivery',
+      description: 'Custom-made products delivered to your doorstep',
     },
     {
       icon: Shield,
@@ -57,7 +61,7 @@ const Index = () => {
     {
       icon: Clock,
       title: '24/7 Support',
-      description: 'Round-the-clock customer service for your queries',
+      description: 'Call or WhatsApp us anytime for assistance',
     },
   ];
 
@@ -98,6 +102,13 @@ const Index = () => {
                 </Link>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* Delivery Info Banner */}
+        <section className="py-8 bg-background">
+          <div className="container">
+            <DeliveryInfoBanner />
           </div>
         </section>
 
@@ -206,6 +217,13 @@ const Index = () => {
                 </Button>
               </Link>
             </div>
+          </div>
+        </section>
+
+        {/* Support Section */}
+        <section className="py-12 bg-background">
+          <div className="container">
+            <SupportContact />
           </div>
         </section>
 
