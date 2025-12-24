@@ -1,19 +1,25 @@
+export interface UploadField {
+  id: string;
+  label: string;
+  required: boolean;
+}
+
 export interface Category {
   id: string;
   name: string;
-  description: string | null;
-  image_url: string | null;
-  is_active: boolean;
-  created_at: string;
+  description?: string | null;
+  image_url?: string | null;
+  is_active?: boolean;
+  created_at?: string;
 }
 
 export interface Product {
   id: string;
   name: string;
-  description: string | null;
+  description?: string | null;
   price: number;
-  image_url: string | null;
-  category_id: string | null;
+  image_url?: string | null;
+  category_id?: string | null;
   stock_quantity: number;
   is_active: boolean;
   created_at: string;
@@ -23,6 +29,7 @@ export interface Product {
   customization_enabled?: boolean;
   front_upload_required?: boolean;
   back_upload_enabled?: boolean;
+  upload_config?: UploadField[];
 }
 
 export interface CartItem {
@@ -47,11 +54,11 @@ export interface Order {
   shipping_state: string;
   shipping_pincode: string;
   shipping_phone: string;
-  payment_id: string | null;
-  payment_status: string;
-  razorpay_order_id: string | null;
-  razorpay_payment_id: string | null;
-  razorpay_signature: string | null;
+  payment_id?: string | null;
+  payment_status?: string;
+  razorpay_order_id?: string | null;
+  razorpay_payment_id?: string | null;
+  razorpay_signature?: string | null;
   created_at: string;
   updated_at: string;
   order_items?: OrderItem[];
@@ -75,18 +82,19 @@ export interface OrderItem {
   back_design_url?: string | null;
   design_approval_status?: string;
   admin_preview_url?: string | null;
+  design_urls?: Record<string, string>;
 }
 
 export interface Profile {
   id: string;
   user_id: string;
-  full_name: string | null;
-  phone: string | null;
-  address: string | null;
-  city: string | null;
-  state: string | null;
-  pincode: string | null;
-  is_admin: boolean;
+  full_name?: string | null;
+  phone?: string | null;
+  address?: string | null;
+  city?: string | null;
+  state?: string | null;
+  pincode?: string | null;
+  is_admin?: boolean;
   created_at: string;
   updated_at: string;
 }

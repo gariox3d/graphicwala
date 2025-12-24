@@ -214,6 +214,7 @@ export type Database = {
           price: number
           stock_quantity: number | null
           updated_at: string
+          upload_config: Json | null
         }
         Insert: {
           back_upload_enabled?: boolean | null
@@ -229,6 +230,7 @@ export type Database = {
           price: number
           stock_quantity?: number | null
           updated_at?: string
+          upload_config?: Json | null
         }
         Update: {
           back_upload_enabled?: boolean | null
@@ -244,6 +246,7 @@ export type Database = {
           price?: number
           stock_quantity?: number | null
           updated_at?: string
+          upload_config?: Json | null
         }
         Relationships: [
           {

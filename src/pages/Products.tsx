@@ -21,7 +21,7 @@ const Products = () => {
         supabase.from('products').select('*, categories(*)'),
         supabase.from('categories').select('*'),
       ]);
-      if (productsRes.data) setProducts(productsRes.data as Product[]);
+      if (productsRes.data) setProducts(productsRes.data as unknown as Product[]);
       if (categoriesRes.data) setCategories(categoriesRes.data as Category[]);
       setLoading(false);
     };

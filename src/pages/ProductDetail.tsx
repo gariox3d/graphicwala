@@ -1,27 +1,27 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { ShoppingCart, ArrowLeft, Minus, Plus, Image } from 'lucide-react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { ShoppingCart, ArrowLeft, Minus, Plus, Image, Zap } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
-import { Product } from '@/lib/types';
+import { Product, UploadField } from '@/lib/types';
 import { useCart } from '@/contexts/CartContext';
+import { useAuth } from '@/contexts/AuthContext';
 import DesignUpload from '@/components/DesignUpload';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import { toast } from 'sonner';
 
 const ProductDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [product, setProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const { addToCart } = useCart();
-  const [designUrls, setDesignUrls] = useState<{ front: string | null; back: string | null }>({
-    front: null,
-    back: null,
-  });
+  const [designUrls, setDesignUrls] = useState<Record<string, string>>({});
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -30,30 +30,97 @@ const ProductDetail = () => {
         .select('*, categories(*)')
         .eq('id', id)
         .maybeSingle();
-      if (data) setProduct(data as Product);
+      if (data) {
+        // Parse upload_config from JSON
+        const uploadConfig = Array.isArray(data.upload_config) 
+          ? data.upload_config as unknown as UploadField[]
+          : [];
+        setProduct({ ...data, upload_config: uploadConfig } as unknown as Product);
+      }
       setLoading(false);
     };
     if (id) fetchProduct();
   }, [id]);
 
+  // Load existing designs from session storage
+  useEffect(() => {
+    if (product) {
+      const savedDesigns = sessionStorage.getItem('productDesigns');
+      if (savedDesigns) {
+        const designs = JSON.parse(savedDesigns);
+        if (designs[product.id]) {
+          setDesignUrls(designs[product.id]);
+        }
+      }
+    }
+  }, [product]);
+
+  const getUploadConfig = (): UploadField[] => {
+    if (!product?.customization_enabled) return [];
+    
+    // Use new upload_config if available
+    if (product.upload_config && product.upload_config.length > 0) {
+      return product.upload_config;
+    }
+    
+    // Fallback to legacy fields
+    const legacyConfig: UploadField[] = [];
+    if (product.front_upload_required) {
+      legacyConfig.push({ id: 'front', label: 'Front Design', required: true });
+    }
+    if (product.back_upload_enabled) {
+      legacyConfig.push({ id: 'back', label: 'Back Design', required: false });
+    }
+    return legacyConfig;
+  };
+
+  const uploadConfig = getUploadConfig();
+  const requiredFields = uploadConfig.filter(f => f.required);
+  const allRequiredUploaded = requiredFields.every(f => designUrls[f.id]);
+
   const handleAddToCart = () => {
     if (!product) return;
-
-    // Check if customization is required
-    if (product.customization_enabled && product.front_upload_required && !designUrls.front) {
-      toast.error('Please upload your front design before adding to cart');
+    if (!user) {
+      toast.error('Please login to add items to cart');
+      navigate('/auth');
       return;
     }
 
     // Store design URLs in sessionStorage for checkout
-    if (designUrls.front || designUrls.back) {
+    if (Object.keys(designUrls).length > 0) {
       const designs = JSON.parse(sessionStorage.getItem('productDesigns') || '{}');
       designs[product.id] = designUrls;
       sessionStorage.setItem('productDesigns', JSON.stringify(designs));
     }
 
     addToCart(product.id, quantity);
-    toast.success('Added to cart! Your designs will be included with your order.');
+    toast.success('Added to cart! You can upload designs now or before checkout.');
+  };
+
+  const handleBuyNow = () => {
+    if (!product) return;
+    if (!user) {
+      toast.error('Please login to continue');
+      navigate('/auth');
+      return;
+    }
+
+    // Check if required uploads are missing
+    if (uploadConfig.length > 0 && !allRequiredUploaded) {
+      toast.error('Please upload all required photos before proceeding');
+      return;
+    }
+
+    // Store design URLs
+    if (Object.keys(designUrls).length > 0) {
+      const designs = JSON.parse(sessionStorage.getItem('productDesigns') || '{}');
+      designs[product.id] = designUrls;
+      sessionStorage.setItem('productDesigns', JSON.stringify(designs));
+    }
+
+    // Add to cart and go to checkout
+    addToCart(product.id, quantity);
+    navigate('/checkout');
   };
 
   if (loading) {
@@ -138,17 +205,13 @@ const ProductDetail = () => {
               </div>
 
               {/* Customization Section */}
-              {product.customization_enabled && (
+              {uploadConfig.length > 0 && (
                 <DesignUpload
                   productId={product.id}
                   productName={product.name}
-                  frontRequired={product.front_upload_required}
-                  backEnabled={product.back_upload_enabled}
-                  onUploadComplete={(frontUrl, backUrl) => {
-                    setDesignUrls({ front: frontUrl, back: backUrl });
-                  }}
-                  existingFrontUrl={designUrls.front}
-                  existingBackUrl={designUrls.back}
+                  uploadConfig={uploadConfig}
+                  onUploadComplete={(urls) => setDesignUrls(urls)}
+                  existingDesigns={designUrls}
                 />
               )}
 
@@ -185,19 +248,34 @@ const ProductDetail = () => {
                     <ShoppingCart className="h-5 w-5 mr-2" />
                     Add to Cart
                   </Button>
-                  <WhatsAppButton
-                    message={`Hi, I'm interested in ${product.name} (₹${product.price}). Can you help me?`}
-                    variant="outline"
+                  <Button
                     size="lg"
-                    className="bg-green-500 hover:bg-green-600 text-white border-green-500"
-                  />
+                    variant="hero"
+                    className="flex-1"
+                    onClick={handleBuyNow}
+                    disabled={product.stock_quantity === 0}
+                  >
+                    <Zap className="h-5 w-5 mr-2" />
+                    Buy Now
+                  </Button>
                 </div>
+
+                {uploadConfig.length > 0 && (
+                  <p className="text-xs text-muted-foreground text-center">
+                    💡 You can upload photos now or add to cart and upload before checkout
+                  </p>
+                )}
               </div>
 
               {/* Help Section */}
-              <div className="p-4 bg-muted rounded-lg">
+              <div className="p-4 bg-muted rounded-lg flex items-center gap-3">
+                <WhatsAppButton
+                  message={`Hi, I'm interested in ${product.name} (₹${product.price}). Can you help me?`}
+                  size="sm"
+                  className="bg-green-500 hover:bg-green-600 text-white"
+                />
                 <p className="text-sm text-muted-foreground">
-                  Need help with your design? Contact us on WhatsApp and we'll assist you!
+                  Need help? Chat with us on WhatsApp!
                 </p>
               </div>
             </div>

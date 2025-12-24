@@ -48,11 +48,11 @@ const AdminProducts = () => {
       if (!isAdmin) return;
 
       const [productsRes, categoriesRes] = await Promise.all([
-        supabase.from('products').select('*, categories(name)').order('created_at', { ascending: false }),
+        supabase.from('products').select('*, categories(id, name, description, image_url, is_active, created_at)').order('created_at', { ascending: false }),
         supabase.from('categories').select('*').eq('is_active', true),
       ]);
 
-      if (productsRes.data) setProducts(productsRes.data as Product[]);
+      if (productsRes.data) setProducts(productsRes.data as unknown as Product[]);
       if (categoriesRes.data) setCategories(categoriesRes.data as Category[]);
       setLoading(false);
     };
