@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter, Mail, MapPin, MessageCircle, Phone } from 'lucide-react';
 import { WHATSAPP_NUMBER, PHONE_NUMBER, BUSINESS_NAME } from '@/lib/types';
+import logoImage from '@/assets/logo.png';
 
 const Footer = () => {
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hello ${BUSINESS_NAME}, I have a question.`)}`;
@@ -12,9 +13,11 @@ const Footer = () => {
           {/* Brand */}
           <div>
             <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-                <span className="text-lg font-bold text-primary-foreground">G</span>
-              </div>
+              <img 
+                src={logoImage} 
+                alt="Graphic Wala Logo" 
+                className="h-10 w-10 rounded-lg object-cover"
+              />
               <span className="text-xl font-bold">
                 Graphic <span className="text-primary">Wala</span>
               </span>
