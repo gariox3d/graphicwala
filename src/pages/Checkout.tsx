@@ -22,10 +22,7 @@ declare global {
 }
 
 interface ProductDesigns {
-  [productId: string]: {
-    front: string | null;
-    back: string | null;
-  };
+  [productId: string]: Record<string, string>;
 }
 
 const Checkout = () => {
@@ -99,6 +96,14 @@ const Checkout = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const getUploadConfig = (product: any): { id: string; label: string; required: boolean }[] => {
+    if (!product) return [];
+    if (product.upload_config && Array.isArray(product.upload_config) && product.upload_config.length > 0) {
+      return product.upload_config;
+    }
+    return [];
+  };
+
   const validateForm = () => {
     const { fullName, phone, address, city, state, pincode } = formData;
     if (!fullName || !phone || !address || !city || !state || !pincode) {
@@ -114,12 +119,15 @@ const Checkout = () => {
       return false;
     }
 
-    // Check if customizable products have designs
+    // Check if customizable products have required designs using upload_config
     for (const item of cartItems) {
-      if (item.products?.customization_enabled && item.products?.front_upload_required) {
-        const designs = productDesigns[item.product_id];
-        if (!designs?.front) {
-          toast.error(`Please upload design for ${item.products.name}`);
+      const config = getUploadConfig(item.products);
+      const requiredFields = config.filter(f => f.required);
+      const designs = productDesigns[item.product_id] || {};
+      
+      for (const field of requiredFields) {
+        if (!designs[field.id]) {
+          toast.error(`Please upload ${field.label} for ${item.products?.name}`);
           return false;
         }
       }
@@ -188,27 +196,52 @@ const Checkout = () => {
       }
 
       // Create order items with design URLs
-      const orderItems = cartItems.map((item) => {
-        const designs = productDesigns[item.product_id] || { front: null, back: null };
+      const orderItemsData = cartItems.map((item) => {
+        const designs = productDesigns[item.product_id] || {};
         return {
           order_id: dbOrder.id,
           product_id: item.product_id,
           product_name: item.products?.name || 'Unknown Product',
           product_price: item.products?.price || 0,
           quantity: item.quantity,
-          front_design_url: designs.front,
-          back_design_url: designs.back,
-          design_approval_status: designs.front ? 'pending' : null,
+          front_design_url: designs['front'] || null,
+          back_design_url: designs['back'] || null,
+          design_approval_status: Object.keys(designs).length > 0 ? 'pending' : null,
         };
       });
 
-      const { error: itemsError } = await supabase
+      const { data: insertedItems, error: itemsError } = await supabase
         .from('order_items')
-        .insert(orderItems);
+        .insert(orderItemsData)
+        .select();
 
       if (itemsError) {
         console.error('Items Error:', itemsError);
         throw new Error('Failed to create order items');
+      }
+
+      // Save uploads to order_item_uploads table
+      if (insertedItems) {
+        for (let i = 0; i < insertedItems.length; i++) {
+          const orderItem = insertedItems[i];
+          const cartItem = cartItems[i];
+          const config = getUploadConfig(cartItem.products);
+          const designs = productDesigns[cartItem.product_id] || {};
+          
+          const uploadRecords = config
+            .filter(field => designs[field.id])
+            .map(field => ({
+              order_item_id: orderItem.id,
+              field_id: field.id,
+              label: field.label,
+              required: field.required,
+              file_url: designs[field.id],
+            }));
+          
+          if (uploadRecords.length > 0) {
+            await supabase.from('order_item_uploads').insert(uploadRecords);
+          }
+        }
       }
 
       // Initialize Razorpay checkout
@@ -281,15 +314,16 @@ const Checkout = () => {
     return null;
   }
 
-  const hasCustomizableProducts = cartItems.some(
-    (item) => item.products?.customization_enabled
-  );
-  const missingDesigns = cartItems.filter(
-    (item) =>
-      item.products?.customization_enabled &&
-      item.products?.front_upload_required &&
-      !productDesigns[item.product_id]?.front
-  );
+  const missingDesigns = cartItems.filter((item) => {
+    const config = getUploadConfig(item.products);
+    const requiredFields = config.filter(f => f.required);
+    const designs = productDesigns[item.product_id] || {};
+    return requiredFields.some(f => !designs[f.id]);
+  });
+  const hasCustomizableProducts = cartItems.some((item) => {
+    const config = getUploadConfig(item.products);
+    return config.length > 0;
+  });
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
