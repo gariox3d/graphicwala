@@ -14,6 +14,50 @@ export type Database = {
   }
   public: {
     Tables: {
+      cart_item_uploads: {
+        Row: {
+          cart_item_id: string
+          created_at: string
+          field_id: string
+          file_url: string
+          id: string
+          label: string
+          product_id: string
+          required: boolean
+          user_id: string
+        }
+        Insert: {
+          cart_item_id: string
+          created_at?: string
+          field_id: string
+          file_url: string
+          id?: string
+          label: string
+          product_id: string
+          required?: boolean
+          user_id: string
+        }
+        Update: {
+          cart_item_id?: string
+          created_at?: string
+          field_id?: string
+          file_url?: string
+          id?: string
+          label?: string
+          product_id?: string
+          required?: boolean
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cart_item_uploads_cart_item_id_fkey"
+            columns: ["cart_item_id"]
+            isOneToOne: false
+            referencedRelation: "cart_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cart_items: {
         Row: {
           created_at: string
@@ -72,6 +116,44 @@ export type Database = {
           name?: string
         }
         Relationships: []
+      }
+      order_item_uploads: {
+        Row: {
+          created_at: string
+          field_id: string
+          file_url: string
+          id: string
+          label: string
+          order_item_id: string
+          required: boolean
+        }
+        Insert: {
+          created_at?: string
+          field_id: string
+          file_url: string
+          id?: string
+          label: string
+          order_item_id: string
+          required?: boolean
+        }
+        Update: {
+          created_at?: string
+          field_id?: string
+          file_url?: string
+          id?: string
+          label?: string
+          order_item_id?: string
+          required?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_item_uploads_order_item_id_fkey"
+            columns: ["order_item_id"]
+            isOneToOne: false
+            referencedRelation: "order_items"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       order_items: {
         Row: {

@@ -1,8 +1,10 @@
-import { Link } from 'react-router-dom';
-import { ShoppingCart } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ShoppingCart, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Product } from '@/lib/types';
+import { Product, UploadField } from '@/lib/types';
 import { useCart } from '@/contexts/CartContext';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
 interface ProductCardProps {
   product: Product;
@@ -10,6 +12,46 @@ interface ProductCardProps {
 
 const ProductCard = ({ product }: ProductCardProps) => {
   const { addToCart } = useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const uploadConfig = Array.isArray(product.upload_config) 
+    ? product.upload_config as UploadField[] 
+    : [];
+  const hasCustomization = uploadConfig.length > 0;
+  const requiredUploads = uploadConfig.filter(f => f.required);
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!user) {
+      toast.error('Please login to add items to cart');
+      navigate('/auth');
+      return;
+    }
+    addToCart(product.id);
+  };
+
+  const handleBuyNow = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!user) {
+      toast.error('Please login to continue');
+      navigate('/auth');
+      return;
+    }
+    
+    // If product has required uploads, redirect to product page
+    if (hasCustomization && requiredUploads.length > 0) {
+      toast.info('Please upload required photos before checkout');
+      navigate(`/product/${product.id}`);
+      return;
+    }
+    
+    // No customization needed - add to cart and go to checkout
+    addToCart(product.id);
+    navigate('/checkout');
+  };
 
   return (
     <div className="group bg-card rounded-xl overflow-hidden shadow-soft hover:shadow-brand transition-all duration-300 animate-scale-in">
@@ -38,6 +80,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
             Out of Stock
           </span>
         )}
+        {hasCustomization && (
+          <span className="absolute top-3 right-3 bg-primary/90 text-primary-foreground text-xs font-semibold px-2 py-1 rounded-md">
+            Customizable
+          </span>
+        )}
       </Link>
 
       {/* Content */}
@@ -52,19 +99,32 @@ const ProductCard = ({ product }: ProductCardProps) => {
             {product.description}
           </p>
         )}
-        <div className="flex items-center justify-between mt-4">
-          <span className="text-lg font-bold text-primary">
+        <div className="mt-4 space-y-3">
+          <span className="text-lg font-bold text-primary block">
             ₹{product.price.toFixed(2)}
           </span>
-          <Button
-            variant="hero"
-            size="sm"
-            onClick={() => addToCart(product.id)}
-            disabled={product.stock_quantity === 0}
-          >
-            <ShoppingCart className="h-4 w-4" />
-            Add
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1"
+              onClick={handleAddToCart}
+              disabled={product.stock_quantity === 0}
+            >
+              <ShoppingCart className="h-4 w-4 mr-1" />
+              Cart
+            </Button>
+            <Button
+              variant="hero"
+              size="sm"
+              className="flex-1"
+              onClick={handleBuyNow}
+              disabled={product.stock_quantity === 0}
+            >
+              <Zap className="h-4 w-4 mr-1" />
+              Buy
+            </Button>
+          </div>
         </div>
       </div>
     </div>

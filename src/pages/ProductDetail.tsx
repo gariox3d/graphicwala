@@ -56,14 +56,15 @@ const ProductDetail = () => {
   }, [product]);
 
   const getUploadConfig = (): UploadField[] => {
-    if (!product?.customization_enabled) return [];
-    
-    // Use new upload_config if available
-    if (product.upload_config && product.upload_config.length > 0) {
+    // Check for new upload_config first - this is the primary source
+    if (product?.upload_config && product.upload_config.length > 0) {
       return product.upload_config;
     }
     
-    // Fallback to legacy fields
+    // Check customization_enabled flag (set by admin)
+    if (!product?.customization_enabled) return [];
+    
+    // Fallback to legacy fields for backward compatibility
     const legacyConfig: UploadField[] = [];
     if (product.front_upload_required) {
       legacyConfig.push({ id: 'front', label: 'Front Design', required: true });
