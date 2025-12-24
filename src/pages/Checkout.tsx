@@ -6,12 +6,14 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import WhatsAppButton from '@/components/WhatsAppButton';
 import { toast } from 'sonner';
-import { Loader2, ShoppingBag, MapPin, CreditCard } from 'lucide-react';
+import { Loader2, ShoppingBag, MapPin, CreditCard, Image, AlertCircle } from 'lucide-react';
 
 declare global {
   interface Window {
@@ -19,18 +21,29 @@ declare global {
   }
 }
 
+interface ProductDesigns {
+  [productId: string]: {
+    front: string | null;
+    back: string | null;
+  };
+}
+
 const Checkout = () => {
   const { user, profile } = useAuth();
   const { cartItems, cartTotal, clearCart } = useCart();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [productDesigns, setProductDesigns] = useState<ProductDesigns>({});
   const [formData, setFormData] = useState({
     fullName: profile?.full_name || '',
+    email: user?.email || '',
     phone: profile?.phone || '',
     address: profile?.address || '',
+    landmark: '',
     city: profile?.city || '',
     state: profile?.state || '',
     pincode: profile?.pincode || '',
+    orderNotes: '',
   });
 
   useEffect(() => {
@@ -42,11 +55,19 @@ const Checkout = () => {
       navigate('/cart');
       return;
     }
+
     // Load Razorpay script
     const script = document.createElement('script');
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
     script.async = true;
     document.body.appendChild(script);
+
+    // Load saved designs from sessionStorage
+    const savedDesigns = sessionStorage.getItem('productDesigns');
+    if (savedDesigns) {
+      setProductDesigns(JSON.parse(savedDesigns));
+    }
+
     return () => {
       document.body.removeChild(script);
     };
@@ -54,25 +75,34 @@ const Checkout = () => {
 
   useEffect(() => {
     if (profile) {
-      setFormData({
-        fullName: profile.full_name || '',
-        phone: profile.phone || '',
-        address: profile.address || '',
-        city: profile.city || '',
-        state: profile.state || '',
-        pincode: profile.pincode || '',
-      });
+      setFormData((prev) => ({
+        ...prev,
+        fullName: profile.full_name || prev.fullName,
+        phone: profile.phone || prev.phone,
+        address: profile.address || prev.address,
+        city: profile.city || prev.city,
+        state: profile.state || prev.state,
+        pincode: profile.pincode || prev.pincode,
+      }));
     }
-  }, [profile]);
+    if (user?.email) {
+      setFormData((prev) => ({
+        ...prev,
+        email: user.email || prev.email,
+      }));
+    }
+  }, [profile, user]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const validateForm = () => {
     const { fullName, phone, address, city, state, pincode } = formData;
     if (!fullName || !phone || !address || !city || !state || !pincode) {
-      toast.error('Please fill in all fields');
+      toast.error('Please fill in all required fields');
       return false;
     }
     if (phone.length < 10) {
@@ -83,32 +113,52 @@ const Checkout = () => {
       toast.error('Please enter a valid 6-digit pincode');
       return false;
     }
+
+    // Check if customizable products have designs
+    for (const item of cartItems) {
+      if (item.products?.customization_enabled && item.products?.front_upload_required) {
+        const designs = productDesigns[item.product_id];
+        if (!designs?.front) {
+          toast.error(`Please upload design for ${item.products.name}`);
+          return false;
+        }
+      }
+    }
+
     return true;
   };
 
   const handlePayment = async () => {
     if (!validateForm()) return;
-    
+
     setLoading(true);
     try {
       // Create Razorpay order
-      const { data: orderData, error: orderError } = await supabase.functions.invoke('razorpay', {
-        body: {
-          action: 'create-order',
-          amount: cartTotal,
-          currency: 'INR',
-          receipt: `order_${Date.now()}`,
-          notes: {
-            user_id: user?.id,
+      const { data: orderData, error: orderError } = await supabase.functions.invoke(
+        'razorpay',
+        {
+          body: {
+            action: 'create-order',
+            amount: cartTotal,
+            currency: 'INR',
+            receipt: `order_${Date.now()}`,
+            notes: {
+              user_id: user?.id,
+            },
           },
-        },
-      });
+        }
+      );
 
       if (orderError || !orderData?.success) {
         throw new Error(orderData?.error || 'Failed to create payment order');
       }
 
       const { order, key_id } = orderData;
+
+      // Build full address with landmark
+      const fullAddress = formData.landmark
+        ? `${formData.address}, ${formData.landmark}`
+        : formData.address;
 
       // Create order in database with pending status
       const { data: dbOrder, error: dbError } = await supabase
@@ -118,12 +168,16 @@ const Checkout = () => {
           total_amount: cartTotal,
           status: 'pending',
           payment_status: 'pending',
-          shipping_address: formData.address,
+          shipping_address: fullAddress,
           shipping_city: formData.city,
           shipping_state: formData.state,
           shipping_pincode: formData.pincode,
           shipping_phone: formData.phone,
           razorpay_order_id: order.id,
+          customer_name: formData.fullName,
+          email: formData.email || null,
+          landmark: formData.landmark || null,
+          order_notes: formData.orderNotes || null,
         })
         .select()
         .single();
@@ -133,14 +187,20 @@ const Checkout = () => {
         throw new Error('Failed to create order');
       }
 
-      // Create order items
-      const orderItems = cartItems.map(item => ({
-        order_id: dbOrder.id,
-        product_id: item.product_id,
-        product_name: item.products?.name || 'Unknown Product',
-        product_price: item.products?.price || 0,
-        quantity: item.quantity,
-      }));
+      // Create order items with design URLs
+      const orderItems = cartItems.map((item) => {
+        const designs = productDesigns[item.product_id] || { front: null, back: null };
+        return {
+          order_id: dbOrder.id,
+          product_id: item.product_id,
+          product_name: item.products?.name || 'Unknown Product',
+          product_price: item.products?.price || 0,
+          quantity: item.quantity,
+          front_design_url: designs.front,
+          back_design_url: designs.back,
+          design_approval_status: designs.front ? 'pending' : null,
+        };
+      });
 
       const { error: itemsError } = await supabase
         .from('order_items')
@@ -162,22 +222,24 @@ const Checkout = () => {
         handler: async (response: any) => {
           try {
             // Verify payment
-            const { data: verifyData, error: verifyError } = await supabase.functions.invoke('razorpay', {
-              body: {
-                action: 'verify-payment',
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                order_id: dbOrder.id,
-              },
-            });
+            const { data: verifyData, error: verifyError } =
+              await supabase.functions.invoke('razorpay', {
+                body: {
+                  action: 'verify-payment',
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                  order_id: dbOrder.id,
+                },
+              });
 
             if (verifyError || !verifyData?.verified) {
               throw new Error('Payment verification failed');
             }
 
-            // Clear cart and redirect
+            // Clear cart and session storage
             await clearCart();
+            sessionStorage.removeItem('productDesigns');
             toast.success('Payment successful! Order confirmed.');
             navigate(`/order-confirmation/${dbOrder.id}`);
           } catch (error: any) {
@@ -187,7 +249,7 @@ const Checkout = () => {
         },
         prefill: {
           name: formData.fullName,
-          email: user?.email,
+          email: formData.email || user?.email,
           contact: formData.phone,
         },
         theme: {
@@ -219,21 +281,61 @@ const Checkout = () => {
     return null;
   }
 
+  const hasCustomizableProducts = cartItems.some(
+    (item) => item.products?.customization_enabled
+  );
+  const missingDesigns = cartItems.filter(
+    (item) =>
+      item.products?.customization_enabled &&
+      item.products?.front_upload_required &&
+      !productDesigns[item.product_id]?.front
+  );
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
       <main className="flex-1 py-8 md:py-12">
         <div className="container mx-auto px-4 max-w-6xl">
           <h1 className="text-3xl md:text-4xl font-bold mb-8">Checkout</h1>
-          
+
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Shipping Form */}
             <div className="lg:col-span-2 space-y-6">
+              {/* Missing Designs Warning */}
+              {missingDesigns.length > 0 && (
+                <Card className="border-destructive bg-destructive/5">
+                  <CardContent className="pt-6">
+                    <div className="flex items-start gap-3">
+                      <AlertCircle className="h-5 w-5 text-destructive mt-0.5" />
+                      <div>
+                        <p className="font-medium text-destructive">Designs Required</p>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Please upload designs for the following products before checkout:
+                        </p>
+                        <ul className="list-disc list-inside text-sm mt-2">
+                          {missingDesigns.map((item) => (
+                            <li key={item.id}>{item.products?.name}</li>
+                          ))}
+                        </ul>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="mt-3"
+                          onClick={() => navigate('/cart')}
+                        >
+                          Go to Cart
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <MapPin className="h-5 w-5 text-primary" />
-                    Shipping Address
+                    Delivery Details
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -249,27 +351,52 @@ const Checkout = () => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="phone">Phone Number *</Label>
+                      <Label htmlFor="phone">Mobile Number *</Label>
                       <Input
                         id="phone"
                         name="phone"
                         value={formData.phone}
                         onChange={handleInputChange}
-                        placeholder="Enter 10-digit phone number"
+                        placeholder="10-digit mobile number"
                         maxLength={10}
                       />
                     </div>
                   </div>
+
                   <div className="space-y-2">
-                    <Label htmlFor="address">Street Address *</Label>
+                    <Label htmlFor="email">Email (Optional)</Label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      placeholder="your@email.com"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="address">Full Address *</Label>
                     <Input
                       id="address"
                       name="address"
                       value={formData.address}
                       onChange={handleInputChange}
-                      placeholder="Enter your full address"
+                      placeholder="House/Flat No., Building, Street"
                     />
                   </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="landmark">Landmark (Optional)</Label>
+                    <Input
+                      id="landmark"
+                      name="landmark"
+                      value={formData.landmark}
+                      onChange={handleInputChange}
+                      placeholder="Near temple, school, etc."
+                    />
+                  </div>
+
                   <div className="grid md:grid-cols-3 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="city">City *</Label>
@@ -303,6 +430,18 @@ const Checkout = () => {
                       />
                     </div>
                   </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="orderNotes">Order Notes / Special Instructions (Optional)</Label>
+                    <Textarea
+                      id="orderNotes"
+                      name="orderNotes"
+                      value={formData.orderNotes}
+                      onChange={handleInputChange}
+                      placeholder="Any special instructions for your order..."
+                      rows={3}
+                    />
+                  </div>
                 </CardContent>
               </Card>
 
@@ -316,24 +455,39 @@ const Checkout = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {cartItems.map((item) => (
-                      <div key={item.id} className="flex gap-4 items-center">
-                        <img
-                          src={item.products?.image_url || '/placeholder.svg'}
-                          alt={item.products?.name}
-                          className="w-16 h-16 object-cover rounded-lg border"
-                        />
-                        <div className="flex-1">
-                          <h4 className="font-medium">{item.products?.name}</h4>
-                          <p className="text-sm text-muted-foreground">
-                            Qty: {item.quantity} × ₹{item.products?.price?.toLocaleString()}
+                    {cartItems.map((item) => {
+                      const designs = productDesigns[item.product_id];
+                      const hasDesign = designs?.front || designs?.back;
+
+                      return (
+                        <div key={item.id} className="flex gap-4 items-start">
+                          <img
+                            src={item.products?.image_url || '/placeholder.svg'}
+                            alt={item.products?.name}
+                            className="w-16 h-16 object-cover rounded-lg border"
+                          />
+                          <div className="flex-1">
+                            <h4 className="font-medium">{item.products?.name}</h4>
+                            <p className="text-sm text-muted-foreground">
+                              Qty: {item.quantity} × ₹
+                              {item.products?.price?.toLocaleString()}
+                            </p>
+                            {hasDesign && (
+                              <div className="flex items-center gap-1 mt-1 text-xs text-green-600">
+                                <Image className="h-3 w-3" />
+                                Design uploaded
+                              </div>
+                            )}
+                          </div>
+                          <p className="font-semibold">
+                            ₹
+                            {(
+                              (item.products?.price || 0) * item.quantity
+                            ).toLocaleString()}
                           </p>
                         </div>
-                        <p className="font-semibold">
-                          ₹{((item.products?.price || 0) * item.quantity).toLocaleString()}
-                        </p>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </CardContent>
               </Card>
@@ -364,7 +518,7 @@ const Checkout = () => {
                   </div>
                   <Button
                     onClick={handlePayment}
-                    disabled={loading}
+                    disabled={loading || missingDesigns.length > 0}
                     className="w-full h-12 text-lg"
                     size="lg"
                   >
@@ -383,6 +537,18 @@ const Checkout = () => {
                   <p className="text-xs text-center text-muted-foreground">
                     Secure payment powered by Razorpay
                   </p>
+
+                  {/* Help Section */}
+                  <div className="pt-4 border-t">
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Need help with your order?
+                    </p>
+                    <WhatsAppButton
+                      message="Hi, I need help with my checkout."
+                      variant="outline"
+                      className="w-full bg-green-500 hover:bg-green-600 text-white border-green-500"
+                    />
+                  </div>
                 </CardContent>
               </Card>
             </div>

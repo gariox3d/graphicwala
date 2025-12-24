@@ -1,9 +1,10 @@
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingCart, User, Menu, X, LogOut } from 'lucide-react';
+import { ShoppingCart, User, Menu, X, LogOut, MessageCircle, Phone } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
+import { WHATSAPP_NUMBER, PHONE_NUMBER, BUSINESS_NAME } from '@/lib/types';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,6 +20,8 @@ const Header = () => {
   ];
 
   const isActive = (path: string) => location.pathname === path;
+
+  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hello ${BUSINESS_NAME}, I need help with my order.`)}`;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -49,7 +52,27 @@ const Header = () => {
         </nav>
 
         {/* Desktop Actions */}
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-2">
+          {/* WhatsApp Button */}
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-white bg-green-500 hover:bg-green-600 rounded-lg transition-colors"
+          >
+            <MessageCircle className="h-4 w-4" />
+            <span className="hidden lg:inline">WhatsApp</span>
+          </a>
+          
+          {/* Call Button */}
+          <a
+            href={`tel:${PHONE_NUMBER}`}
+            className="flex items-center gap-1 px-3 py-2 text-sm font-medium border border-border rounded-lg hover:bg-muted transition-colors"
+          >
+            <Phone className="h-4 w-4" />
+            <span className="hidden lg:inline">Call</span>
+          </a>
+
           {user ? (
             <>
               <Link to="/cart" className="relative">
@@ -84,7 +107,7 @@ const Header = () => {
                 <Button variant="ghost">Login</Button>
               </Link>
               <Link to="/auth?mode=signup">
-                <Button variant="hero">Sign Up</Button>
+                <Button variant="default">Sign Up</Button>
               </Link>
             </>
           )}
@@ -115,7 +138,30 @@ const Header = () => {
                 {link.name}
               </Link>
             ))}
-            <div className="flex flex-col gap-2 pt-4 border-t border-border">
+            
+            {/* Mobile WhatsApp & Call */}
+            <div className="flex gap-2 pt-2 pb-2">
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 text-white bg-green-500 hover:bg-green-600 rounded-lg font-medium"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <MessageCircle className="h-5 w-5" />
+                WhatsApp
+              </a>
+              <a
+                href={`tel:${PHONE_NUMBER}`}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-border rounded-lg font-medium hover:bg-muted"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Phone className="h-5 w-5" />
+                Call
+              </a>
+            </div>
+
+            <div className="flex flex-col gap-2 pt-2 border-t border-border">
               {user ? (
                 <>
                   <Link to="/cart" onClick={() => setIsMenuOpen(false)}>
@@ -157,7 +203,7 @@ const Header = () => {
                     </Button>
                   </Link>
                   <Link to="/auth?mode=signup" onClick={() => setIsMenuOpen(false)}>
-                    <Button variant="hero" className="w-full">
+                    <Button variant="default" className="w-full">
                       Sign Up
                     </Button>
                   </Link>

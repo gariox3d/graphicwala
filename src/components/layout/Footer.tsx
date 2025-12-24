@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
-import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Mail, MapPin, MessageCircle, Phone } from 'lucide-react';
+import { WHATSAPP_NUMBER, PHONE_NUMBER, BUSINESS_NAME } from '@/lib/types';
 
 const Footer = () => {
+  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hello ${BUSINESS_NAME}, I have a question.`)}`;
+
   return (
     <footer className="bg-foreground text-background">
       <div className="container py-12">
@@ -64,23 +67,28 @@ const Footer = () => {
             <h4 className="font-semibold mb-4">Products</h4>
             <ul className="space-y-3">
               <li>
-                <Link to="/products?category=Photo+Frames" className="text-background/70 hover:text-primary text-sm transition-colors">
+                <Link to="/products" className="text-background/70 hover:text-primary text-sm transition-colors">
                   Photo Frames
                 </Link>
               </li>
               <li>
-                <Link to="/products?category=PVC+Cards" className="text-background/70 hover:text-primary text-sm transition-colors">
+                <Link to="/products" className="text-background/70 hover:text-primary text-sm transition-colors">
                   PVC Cards
                 </Link>
               </li>
               <li>
-                <Link to="/products?category=ID+Cards" className="text-background/70 hover:text-primary text-sm transition-colors">
+                <Link to="/products" className="text-background/70 hover:text-primary text-sm transition-colors">
                   ID Cards
                 </Link>
               </li>
               <li>
-                <Link to="/products?category=Visiting+Cards" className="text-background/70 hover:text-primary text-sm transition-colors">
+                <Link to="/products" className="text-background/70 hover:text-primary text-sm transition-colors">
                   Visiting Cards
+                </Link>
+              </li>
+              <li>
+                <Link to="/products" className="text-background/70 hover:text-primary text-sm transition-colors">
+                  Keychains
                 </Link>
               </li>
             </ul>
@@ -90,19 +98,55 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold mb-4">Contact Us</h4>
             <ul className="space-y-3">
+              <li>
+                <a 
+                  href={whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 text-background/70 hover:text-green-400 text-sm transition-colors"
+                >
+                  <MessageCircle className="h-4 w-4 text-green-400" />
+                  Chat on WhatsApp
+                </a>
+              </li>
+              <li>
+                <a 
+                  href={`tel:${PHONE_NUMBER}`}
+                  className="flex items-center gap-3 text-background/70 hover:text-primary text-sm transition-colors"
+                >
+                  <Phone className="h-4 w-4 text-primary" />
+                  {PHONE_NUMBER}
+                </a>
+              </li>
               <li className="flex items-center gap-3 text-background/70 text-sm">
                 <Mail className="h-4 w-4 text-primary" />
                 hello@graphicwala.com
               </li>
-              <li className="flex items-center gap-3 text-background/70 text-sm">
-                <Phone className="h-4 w-4 text-primary" />
-                +91 98765 43210
-              </li>
               <li className="flex items-start gap-3 text-background/70 text-sm">
                 <MapPin className="h-4 w-4 text-primary mt-0.5" />
-                123 Print Street, Design City, India - 110001
+                Katihar, Bihar, India
               </li>
             </ul>
+
+            {/* WhatsApp & Call Buttons */}
+            <div className="flex gap-2 mt-6">
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm font-medium transition-colors"
+              >
+                <MessageCircle className="h-4 w-4" />
+                WhatsApp
+              </a>
+              <a
+                href={`tel:${PHONE_NUMBER}`}
+                className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg text-sm font-medium transition-colors"
+              >
+                <Phone className="h-4 w-4" />
+                Call Now
+              </a>
+            </div>
           </div>
         </div>
 
