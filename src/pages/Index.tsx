@@ -88,55 +88,56 @@ const Index = () => {
         <HeroSection />
 
         {/* Delivery Info Banner */}
-        <section className="py-8 bg-background">
+        <section className="py-8 bg-background" aria-label="Delivery information">
           <div className="container">
             <DeliveryInfoBanner />
           </div>
         </section>
 
         {/* Services Section */}
-        <section className="py-16 md:py-24 bg-secondary">
+        <section className="py-16 md:py-24 bg-secondary" aria-labelledby="services-heading">
           <div className="container">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Choose Graphic Wala?</h2>
+            <header className="text-center mb-12">
+              <h2 id="services-heading" className="text-3xl md:text-4xl font-bold mb-4">Why Choose Graphic Wala?</h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                We deliver excellence in every print, ensuring your satisfaction with our premium services.
+                Premium custom printing services in Bihar. We deliver excellence in every print with home delivery across the state.
               </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            </header>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" role="list">
               {services.map((service, index) => (
-                <div
+                <article
                   key={service.title}
                   className="bg-card rounded-xl p-6 shadow-soft hover:shadow-brand transition-all duration-300 animate-slide-up"
                   style={{ animationDelay: `${index * 0.1}s` }}
+                  role="listitem"
                 >
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4" aria-hidden="true">
                     <service.icon className="h-6 w-6 text-primary" />
                   </div>
                   <h3 className="font-semibold text-lg mb-2">{service.title}</h3>
                   <p className="text-muted-foreground text-sm">{service.description}</p>
-                </div>
+                </article>
               ))}
             </div>
           </div>
         </section>
 
         {/* Categories Section */}
-        <section className="py-16 md:py-24">
+        <section className="py-16 md:py-24" aria-labelledby="categories-heading">
           <div className="container">
-            <div className="flex items-center justify-between mb-12">
+            <header className="flex items-center justify-between mb-12">
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold mb-2">Shop by Category</h2>
-                <p className="text-muted-foreground">Find the perfect product for your needs</p>
+                <h2 id="categories-heading" className="text-3xl md:text-4xl font-bold mb-2">Shop by Category</h2>
+                <p className="text-muted-foreground">Custom Photo Frames, PVC Cards, ID Cards, Keychains & Visiting Cards in Bihar</p>
               </div>
-              <Link to="/products" className="hidden md:block">
+              <Link to="/products" className="hidden md:block" aria-label="View all product categories">
                 <Button variant="outline">
                   View All
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Button>
               </Link>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            </header>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4" role="list">
               {categories.map((category, index) => {
                 const categoryImage = getCategoryImage(category.name, category.image_url);
                 return (
@@ -145,13 +146,16 @@ const Index = () => {
                     to={`/products?category=${encodeURIComponent(category.name)}`}
                     className="group relative aspect-square rounded-xl overflow-hidden shadow-soft hover:shadow-brand transition-all duration-300 animate-scale-in"
                     style={{ animationDelay: `${index * 0.05}s` }}
+                    aria-label={`Shop ${category.name} in Bihar`}
+                    role="listitem"
                   >
                     {/* Background Image or Gradient */}
                     {categoryImage ? (
                       <img
                         src={categoryImage}
-                        alt={category.name}
+                        alt={`${category.name} - Custom Printing Bihar`}
                         className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        loading="lazy"
                       />
                     ) : (
                       <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-foreground" />
@@ -172,20 +176,20 @@ const Index = () => {
         </section>
 
         {/* Featured Products */}
-        <section className="py-16 md:py-24 bg-secondary">
+        <section className="py-16 md:py-24 bg-secondary" aria-labelledby="products-heading">
           <div className="container">
-            <div className="flex items-center justify-between mb-12">
+            <header className="flex items-center justify-between mb-12">
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold mb-2">Featured Products</h2>
-                <p className="text-muted-foreground">Discover our best-selling items</p>
+                <h2 id="products-heading" className="text-3xl md:text-4xl font-bold mb-2">Featured Products</h2>
+                <p className="text-muted-foreground">Personalized gifts and custom printed products with Bihar delivery</p>
               </div>
-              <Link to="/products" className="hidden md:block">
+              <Link to="/products" className="hidden md:block" aria-label="View all products">
                 <Button variant="outline">
                   View All
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Button>
               </Link>
-            </div>
+            </header>
             {loading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[...Array(4)].map((_, i) => (
@@ -200,17 +204,17 @@ const Index = () => {
                 ))}
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" role="list">
                 {products.slice(0, 8).map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))}
               </div>
             )}
             <div className="text-center mt-8 md:hidden">
-              <Link to="/products">
+              <Link to="/products" aria-label="View all products">
                 <Button variant="outline" size="lg">
                   View All Products
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Button>
               </Link>
             </div>
@@ -218,38 +222,49 @@ const Index = () => {
         </section>
 
         {/* Support Section */}
-        <section className="py-12 bg-background">
+        <section className="py-12 bg-background" aria-label="Customer support">
           <div className="container">
             <SupportContact />
           </div>
         </section>
 
         {/* CTA Section */}
-        <section className="py-16 md:py-24 bg-primary text-primary-foreground">
+        <section className="py-16 md:py-24 bg-primary text-primary-foreground" aria-labelledby="cta-heading">
           <div className="container text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 drop-shadow-md">Ready to Get Started?</h2>
+            <h2 id="cta-heading" className="text-3xl md:text-4xl font-bold mb-4 drop-shadow-md">Ready to Get Started?</h2>
             <p className="text-primary-foreground/90 max-w-2xl mx-auto mb-8 font-medium">
-              Join thousands of satisfied customers who trust Graphic Wala for their printing needs.
+              Order personalized photo frames, PVC cards, keychains and more. Prepaid orders with home delivery across Bihar.
             </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <Link to="/products">
+            <nav className="flex flex-wrap justify-center gap-4" aria-label="Get started actions">
+              <Link to="/products" aria-label="Browse all products">
                 <Button variant="cta-secondary" size="xl">
                   Browse Products
-                  <ArrowRight className="h-5 w-5" />
+                  <ArrowRight className="h-5 w-5" aria-hidden="true" />
                 </Button>
               </Link>
-              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
+              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" aria-label="Chat with us on WhatsApp">
                 <Button
                   variant="outline"
                   size="xl"
                   className="border-2 border-primary-foreground/80 bg-primary-foreground/10 text-primary-foreground hover:bg-primary-foreground hover:text-primary font-bold backdrop-blur-sm"
                 >
-                  <MessageCircle className="h-5 w-5" />
+                  <MessageCircle className="h-5 w-5" aria-hidden="true" />
                   Chat on WhatsApp
                 </Button>
               </a>
-            </div>
+            </nav>
           </div>
+        </section>
+
+        {/* SEO Footer Content */}
+        <section className="sr-only" aria-label="About Graphic Wala Store">
+          <h2>Graphic Wala Store - Custom Printing Services in Bihar</h2>
+          <p>
+            Graphic Wala Store is Bihar's leading online store for custom printing and personalized gifts. 
+            We specialize in photo frame printing, PVC card printing, ID card printing, visiting card printing, 
+            and keychain printing with premium quality materials. All orders are prepaid with home delivery 
+            available across Bihar, India. Contact us on WhatsApp at +91 6207142994 for support.
+          </p>
         </section>
       </main>
 

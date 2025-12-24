@@ -34,7 +34,10 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <section className="relative min-h-[90vh] md:min-h-[85vh] flex items-center bg-foreground text-background overflow-hidden">
+    <section 
+      className="relative min-h-[90vh] md:min-h-[85vh] flex items-center bg-foreground text-background overflow-hidden"
+      aria-label="Graphic Wala - Custom Printing Store Bihar"
+    >
       {/* Premium Animated Background */}
       <div className="absolute inset-0">
         <div className="absolute inset-0 bg-gradient-to-br from-foreground via-foreground to-foreground/95" />
@@ -48,14 +51,14 @@ const HeroSection = () => {
       </div>
 
       <div className="container relative z-10 py-16 md:py-24">
-        <div className="max-w-4xl mx-auto text-center">
+        <header className="max-w-4xl mx-auto text-center">
           {/* Badge */}
           <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary/20 border border-primary/30 text-primary text-sm font-bold mb-8 animate-fade-in backdrop-blur-sm">
             <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-            India's Favorite Gift Printing Store
+            Bihar's Favorite Custom Printing Store
           </span>
 
-          {/* Animated Headline */}
+          {/* Animated Headline - H1 for SEO */}
           <div className="h-[120px] md:h-[160px] flex items-center justify-center mb-6">
             <h1 
               className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-background transition-all duration-500 ${
@@ -67,15 +70,15 @@ const HeroSection = () => {
             </h1>
           </div>
 
-          {/* Sub-heading */}
-          <p 
+          {/* Sub-heading with SEO keywords */}
+          <h2 
             className="text-lg md:text-xl lg:text-2xl text-background/90 mb-6 max-w-3xl mx-auto animate-fade-in font-medium px-4"
             style={{ animationDelay: '0.2s', textShadow: '0 2px 10px rgba(0,0,0,0.2)' }}
           >
-            From Photo Frames to PVC Cards and Keychains —
+            Custom Photo Frames, PVC Cards, ID Cards & Keychains —
             <br className="hidden md:block" />
-            <span className="text-primary font-semibold">Custom-made gifts delivered anywhere in India 🇮🇳</span>
-          </p>
+            <span className="text-primary font-semibold">Personalized Gifts Delivered Across Bihar 🇮🇳</span>
+          </h2>
 
           {/* Emotional Quote */}
           <blockquote 
@@ -93,33 +96,37 @@ const HeroSection = () => {
           <div 
             className="flex flex-wrap justify-center gap-3 md:gap-6 mb-10 animate-fade-in px-4"
             style={{ animationDelay: '0.5s' }}
+            role="list"
+            aria-label="Store features"
           >
-            {trustBadges.map((badge, index) => (
+            {trustBadges.map((badge) => (
               <div 
                 key={badge.text}
                 className="flex items-center gap-2 px-3 py-2 md:px-4 md:py-2.5 rounded-full bg-background/10 border border-background/20 backdrop-blur-sm"
+                role="listitem"
               >
-                <badge.icon className="h-4 w-4 md:h-5 md:w-5 text-primary" />
+                <badge.icon className="h-4 w-4 md:h-5 md:w-5 text-primary" aria-hidden="true" />
                 <span className="text-xs md:text-sm font-medium text-background/90">{badge.text}</span>
               </div>
             ))}
           </div>
 
           {/* CTA Buttons */}
-          <div 
+          <nav 
             className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in px-4"
             style={{ animationDelay: '0.6s' }}
+            aria-label="Shop actions"
           >
-            <Link to="/products">
+            <Link to="/products" aria-label="Create your personalized gift">
               <Button 
                 size="xl" 
                 className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-all duration-300 hover:-translate-y-1"
               >
                 Create Your Gift
-                <ArrowRight className="h-5 w-5 ml-1" />
+                <ArrowRight className="h-5 w-5 ml-1" aria-hidden="true" />
               </Button>
             </Link>
-            <Link to="/products">
+            <Link to="/products" aria-label="Browse gift categories">
               <Button 
                 variant="outline" 
                 size="xl"
@@ -128,13 +135,21 @@ const HeroSection = () => {
                 Browse Gift Categories
               </Button>
             </Link>
-          </div>
+          </nav>
 
-          {/* Scroll Indicator */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce hidden md:block">
-            <div className="w-6 h-10 rounded-full border-2 border-background/30 flex items-start justify-center p-2">
-              <div className="w-1.5 h-3 rounded-full bg-background/50 animate-pulse" />
-            </div>
+          {/* SEO Content - Hidden visually but readable by search engines */}
+          <p className="sr-only">
+            Graphic Wala Store offers premium custom printing services in Bihar including personalized photo frames, 
+            PVC card printing, ID card printing, visiting card printing, and keychain printing. 
+            We provide home delivery across Bihar with prepaid orders only. 
+            Order your custom printed gifts online and get them delivered to your doorstep.
+          </p>
+        </header>
+
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce hidden md:block" aria-hidden="true">
+          <div className="w-6 h-10 rounded-full border-2 border-background/30 flex items-start justify-center p-2">
+            <div className="w-1.5 h-3 rounded-full bg-background/50 animate-pulse" />
           </div>
         </div>
       </div>
