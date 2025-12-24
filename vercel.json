@@ -1,0 +1,26 @@
+{
+  "rewrites": [
+    {
+      "source": "/share/product/:id",
+      "destination": "https://haeggvlmnfapopmyuaya.supabase.co/functions/v1/og-meta?id=:id&path=/product/:id"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/og-square.png",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
+      "source": "/og-image.jpg",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    }
+  ]
+}
