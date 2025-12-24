@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { ShoppingCart, ArrowLeft, Minus, Plus, Image, Zap, Truck } from 'lucide-react';
+import { ShoppingCart, ArrowLeft, Minus, Plus, Image, Zap, Truck, Share2 } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
@@ -16,12 +16,14 @@ import DesignUpload from '@/components/DesignUpload';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import DeliveryInfoBanner from '@/components/DeliveryInfoBanner';
 import SupportContact from '@/components/SupportContact';
+import ShareButton from '@/components/ShareButton';
 import PriceBreakdown from '@/components/PriceBreakdown';
 import { useStoreSettings, getProductDeliveryCharge } from '@/hooks/useStoreSettings';
 import { toast } from 'sonner';
 
 const SITE_URL = 'https://store.graphicwala.com';
-const DEFAULT_OG_IMAGE = `${SITE_URL}/og-image.jpg`;
+const DEFAULT_OG_IMAGE = `${SITE_URL}/og-square.png`;
+const SHARE_BASE_URL = `${SITE_URL}/share/product`;
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -164,6 +166,7 @@ const ProductDetail = () => {
     ? `${product.description.slice(0, 140)}${product.description.length > 140 ? '...' : ''} Delivered across Bihar. Prepaid only.`
     : `Order ${product.name} from Graphic Wala. Premium quality with home delivery across Bihar. Prepaid orders only.`;
   const productUrl = `${SITE_URL}/product/${product.id}`;
+  const shareUrl = `${SHARE_BASE_URL}/${product.id}`; // Use share URL for social previews
   const productImage = product.image_url || DEFAULT_OG_IMAGE;
   const categoryName = product.categories?.name || 'Custom Products';
 
@@ -278,16 +281,19 @@ const ProductDetail = () => {
             {/* Product Details */}
             <div className="space-y-6">
               <div>
-                <div className="flex items-center gap-2 mb-2">
-                  {product.categories && (
-                    <Badge variant="secondary">{product.categories.name}</Badge>
-                  )}
-                  {product.customization_enabled && (
-                    <Badge className="bg-primary/10 text-primary border-primary/30">
-                      <Image className="h-3 w-3 mr-1" />
-                      Customizable
-                    </Badge>
-                  )}
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    {product.categories && (
+                      <Badge variant="secondary">{product.categories.name}</Badge>
+                    )}
+                    {product.customization_enabled && (
+                      <Badge className="bg-primary/10 text-primary border-primary/30">
+                        <Image className="h-3 w-3 mr-1" />
+                        Customizable
+                      </Badge>
+                    )}
+                  </div>
+                  <ShareButton productId={product.id} productName={product.name} />
                 </div>
                 <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
                 <p className="text-muted-foreground mb-4">
