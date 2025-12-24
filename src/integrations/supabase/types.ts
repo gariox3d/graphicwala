@@ -216,6 +216,8 @@ export type Database = {
         Row: {
           created_at: string
           customer_name: string | null
+          delivery_charge: number | null
+          delivery_method: string | null
           email: string | null
           id: string
           landmark: string | null
@@ -238,6 +240,8 @@ export type Database = {
         Insert: {
           created_at?: string
           customer_name?: string | null
+          delivery_charge?: number | null
+          delivery_method?: string | null
           email?: string | null
           id?: string
           landmark?: string | null
@@ -260,6 +264,8 @@ export type Database = {
         Update: {
           created_at?: string
           customer_name?: string | null
+          delivery_charge?: number | null
+          delivery_method?: string | null
           email?: string | null
           id?: string
           landmark?: string | null
@@ -287,6 +293,7 @@ export type Database = {
           category_id: string | null
           created_at: string
           customization_enabled: boolean | null
+          delivery_charge: number | null
           description: string | null
           front_upload_required: boolean | null
           id: string
@@ -303,6 +310,7 @@ export type Database = {
           category_id?: string | null
           created_at?: string
           customization_enabled?: boolean | null
+          delivery_charge?: number | null
           description?: string | null
           front_upload_required?: boolean | null
           id?: string
@@ -319,6 +327,7 @@ export type Database = {
           category_id?: string | null
           created_at?: string
           customization_enabled?: boolean | null
+          delivery_charge?: number | null
           description?: string | null
           front_upload_required?: boolean | null
           id?: string
@@ -379,6 +388,33 @@ export type Database = {
           state?: string | null
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      store_settings: {
+        Row: {
+          created_at: string
+          default_delivery_charge: number | null
+          id: string
+          pickup_address: string | null
+          store_pickup_enabled: boolean | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          default_delivery_charge?: number | null
+          id?: string
+          pickup_address?: string | null
+          store_pickup_enabled?: boolean | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          default_delivery_charge?: number | null
+          id?: string
+          pickup_address?: string | null
+          store_pickup_enabled?: boolean | null
+          updated_at?: string
         }
         Relationships: []
       }

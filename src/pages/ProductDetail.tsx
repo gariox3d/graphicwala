@@ -1,27 +1,34 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, ArrowLeft, Minus, Plus, Image, Zap } from 'lucide-react';
+import { ShoppingCart, ArrowLeft, Minus, Plus, Image, Zap, Truck } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 import { supabase } from '@/integrations/supabase/client';
 import { Product, UploadField } from '@/lib/types';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import DesignUpload from '@/components/DesignUpload';
 import WhatsAppButton from '@/components/WhatsAppButton';
+import DeliveryInfoBanner from '@/components/DeliveryInfoBanner';
+import SupportContact from '@/components/SupportContact';
+import PriceBreakdown from '@/components/PriceBreakdown';
+import { useStoreSettings, getProductDeliveryCharge } from '@/hooks/useStoreSettings';
 import { toast } from 'sonner';
 
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [product, setProduct] = useState<Product | null>(null);
+  const [product, setProduct] = useState<(Product & { delivery_charge?: number | null }) | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const { addToCart } = useCart();
   const [designUrls, setDesignUrls] = useState<Record<string, string>>({});
+  const { settings } = useStoreSettings();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -31,11 +38,14 @@ const ProductDetail = () => {
         .eq('id', id)
         .maybeSingle();
       if (data) {
-        // Parse upload_config from JSON
         const uploadConfig = Array.isArray(data.upload_config) 
           ? data.upload_config as unknown as UploadField[]
           : [];
-        setProduct({ ...data, upload_config: uploadConfig } as unknown as Product);
+        setProduct({ 
+          ...data, 
+          upload_config: uploadConfig,
+          delivery_charge: data.delivery_charge 
+        } as unknown as (Product & { delivery_charge?: number | null }));
       }
       setLoading(false);
     };
@@ -190,9 +200,6 @@ const ProductDetail = () => {
                   )}
                 </div>
                 <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
-                <p className="text-3xl font-bold text-primary mb-4">
-                  ₹{product.price.toFixed(2)}
-                </p>
                 <p className="text-muted-foreground mb-4">
                   {product.description || 'No description available.'}
                 </p>
@@ -204,6 +211,17 @@ const ProductDetail = () => {
                   )}
                 </p>
               </div>
+
+              {/* Price Breakdown */}
+              <Card>
+                <CardContent className="pt-6">
+                  <PriceBreakdown
+                    productTotal={product.price * quantity}
+                    deliveryCharge={getProductDeliveryCharge(product.delivery_charge, settings?.default_delivery_charge || 0)}
+                    showDetails={true}
+                  />
+                </CardContent>
+              </Card>
 
               {/* Customization Section */}
               {uploadConfig.length > 0 && (
@@ -268,17 +286,14 @@ const ProductDetail = () => {
                 )}
               </div>
 
+              {/* Delivery Info */}
+              <DeliveryInfoBanner variant="compact" />
+
               {/* Help Section */}
-              <div className="p-4 bg-muted rounded-lg flex items-center gap-3">
-                <WhatsAppButton
-                  message={`Hi, I'm interested in ${product.name} (₹${product.price}). Can you help me?`}
-                  size="sm"
-                  className="bg-green-500 hover:bg-green-600 text-white"
-                />
-                <p className="text-sm text-muted-foreground">
-                  Need help? Chat with us on WhatsApp!
-                </p>
-              </div>
+              <SupportContact 
+                variant="compact" 
+                message={`Hi, I'm interested in ${product.name} (₹${product.price}). Can you help me?`}
+              />
             </div>
           </div>
         </div>

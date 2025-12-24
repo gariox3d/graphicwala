@@ -9,11 +9,17 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
+import PriceBreakdown from '@/components/PriceBreakdown';
+import SupportContact from '@/components/SupportContact';
+import DeliveryInfoBanner from '@/components/DeliveryInfoBanner';
+import { useStoreSettings, getProductDeliveryCharge } from '@/hooks/useStoreSettings';
+import { Product } from '@/lib/types';
 import { toast } from 'sonner';
-import { Loader2, ShoppingBag, MapPin, CreditCard, Image, AlertCircle } from 'lucide-react';
+import { Loader2, ShoppingBag, MapPin, CreditCard, Image, AlertCircle, Truck, Store } from 'lucide-react';
 
 declare global {
   interface Window {
@@ -31,6 +37,23 @@ const Checkout = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [productDesigns, setProductDesigns] = useState<ProductDesigns>({});
+  const [deliveryMethod, setDeliveryMethod] = useState<'home_delivery' | 'store_pickup'>('home_delivery');
+  const { settings } = useStoreSettings();
+
+  // Calculate delivery charge
+  const calculateDeliveryCharge = () => {
+    if (deliveryMethod === 'store_pickup') return 0;
+    let totalDelivery = 0;
+    cartItems.forEach(item => {
+      const product = item.products as Product & { delivery_charge?: number | null };
+      const deliveryCharge = getProductDeliveryCharge(product?.delivery_charge, settings?.default_delivery_charge || 0);
+      totalDelivery += deliveryCharge;
+    });
+    return totalDelivery;
+  };
+
+  const deliveryCharge = calculateDeliveryCharge();
+  const totalPayable = cartTotal + deliveryCharge;
   const [formData, setFormData] = useState({
     fullName: profile?.full_name || '',
     email: user?.email || '',
@@ -106,16 +129,27 @@ const Checkout = () => {
 
   const validateForm = () => {
     const { fullName, phone, address, city, state, pincode } = formData;
-    if (!fullName || !phone || !address || !city || !state || !pincode) {
-      toast.error('Please fill in all required fields');
-      return false;
+    
+    // For home delivery, address is required
+    if (deliveryMethod === 'home_delivery') {
+      if (!fullName || !phone || !address || !city || !state || !pincode) {
+        toast.error('Please fill in all required fields');
+        return false;
+      }
+      if (pincode.length !== 6) {
+        toast.error('Please enter a valid 6-digit pincode');
+        return false;
+      }
+    } else {
+      // Store pickup - only name and phone required
+      if (!fullName || !phone) {
+        toast.error('Please fill in your name and phone number');
+        return false;
+      }
     }
+
     if (phone.length < 10) {
       toast.error('Please enter a valid phone number');
-      return false;
-    }
-    if (pincode.length !== 6) {
-      toast.error('Please enter a valid 6-digit pincode');
       return false;
     }
 
@@ -141,13 +175,13 @@ const Checkout = () => {
 
     setLoading(true);
     try {
-      // Create Razorpay order
+      // Create Razorpay order with total including delivery
       const { data: orderData, error: orderError } = await supabase.functions.invoke(
         'razorpay',
         {
           body: {
             action: 'create-order',
-            amount: cartTotal,
+            amount: totalPayable,
             currency: 'INR',
             receipt: `order_${Date.now()}`,
             notes: {
@@ -164,28 +198,32 @@ const Checkout = () => {
       const { order, key_id } = orderData;
 
       // Build full address with landmark
-      const fullAddress = formData.landmark
-        ? `${formData.address}, ${formData.landmark}`
-        : formData.address;
+      const fullAddress = deliveryMethod === 'store_pickup' 
+        ? `Store Pickup: ${settings?.pickup_address || 'Graphic Wala Shop'}`
+        : (formData.landmark
+          ? `${formData.address}, ${formData.landmark}`
+          : formData.address);
 
       // Create order in database with pending status
       const { data: dbOrder, error: dbError } = await supabase
         .from('orders')
         .insert({
           user_id: user!.id,
-          total_amount: cartTotal,
+          total_amount: totalPayable,
           status: 'pending',
           payment_status: 'pending',
           shipping_address: fullAddress,
-          shipping_city: formData.city,
-          shipping_state: formData.state,
-          shipping_pincode: formData.pincode,
+          shipping_city: deliveryMethod === 'store_pickup' ? 'Store Pickup' : formData.city,
+          shipping_state: deliveryMethod === 'store_pickup' ? '-' : formData.state,
+          shipping_pincode: deliveryMethod === 'store_pickup' ? '000000' : formData.pincode,
           shipping_phone: formData.phone,
           razorpay_order_id: order.id,
           customer_name: formData.fullName,
           email: formData.email || null,
           landmark: formData.landmark || null,
           order_notes: formData.orderNotes || null,
+          delivery_method: deliveryMethod,
+          delivery_charge: deliveryCharge,
         })
         .select()
         .single();
@@ -479,6 +517,57 @@ const Checkout = () => {
                 </CardContent>
               </Card>
 
+              {/* Delivery Method Selection */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Truck className="h-5 w-5 text-primary" />
+                    Delivery Method
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <RadioGroup
+                    value={deliveryMethod}
+                    onValueChange={(value) => setDeliveryMethod(value as 'home_delivery' | 'store_pickup')}
+                    className="space-y-4"
+                  >
+                    <div className={`flex items-start space-x-3 p-4 border rounded-lg ${deliveryMethod === 'home_delivery' ? 'border-primary bg-primary/5' : ''}`}>
+                      <RadioGroupItem value="home_delivery" id="home_delivery" className="mt-1" />
+                      <div className="flex-1">
+                        <Label htmlFor="home_delivery" className="font-medium flex items-center gap-2 cursor-pointer">
+                          <Truck className="h-4 w-4" />
+                          Home Delivery
+                        </Label>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          We'll deliver to your address. Delivery charge: ₹{deliveryCharge > 0 ? deliveryCharge.toLocaleString() : 'Free'}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    {settings?.store_pickup_enabled && (
+                      <div className={`flex items-start space-x-3 p-4 border rounded-lg ${deliveryMethod === 'store_pickup' ? 'border-primary bg-primary/5' : ''}`}>
+                        <RadioGroupItem value="store_pickup" id="store_pickup" className="mt-1" />
+                        <div className="flex-1">
+                          <Label htmlFor="store_pickup" className="font-medium flex items-center gap-2 cursor-pointer">
+                            <Store className="h-4 w-4" />
+                            Store Pickup (Free)
+                          </Label>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            Collect from: {settings?.pickup_address || 'Graphic Wala Shop'}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </RadioGroup>
+
+                  <div className="mt-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+                    <p className="text-sm text-destructive font-medium">
+                      💳 Cash on Delivery is not available. All orders must be prepaid.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+
               {/* Order Items */}
               <Card>
                 <CardHeader>
@@ -537,19 +626,13 @@ const Checkout = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Subtotal</span>
-                    <span>₹{cartTotal.toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Shipping</span>
-                    <span className="text-green-600">Free</span>
-                  </div>
-                  <Separator />
-                  <div className="flex justify-between text-lg font-bold">
-                    <span>Total</span>
-                    <span className="text-primary">₹{cartTotal.toLocaleString()}</span>
-                  </div>
+                  <PriceBreakdown
+                    productTotal={cartTotal}
+                    deliveryCharge={deliveryMethod === 'home_delivery' ? deliveryCharge : 0}
+                    deliveryMethod={deliveryMethod}
+                    showDetails={false}
+                  />
+                  
                   <Button
                     onClick={handlePayment}
                     disabled={loading || missingDesigns.length > 0}
@@ -564,24 +647,17 @@ const Checkout = () => {
                     ) : (
                       <>
                         <CreditCard className="mr-2 h-5 w-5" />
-                        Pay ₹{cartTotal.toLocaleString()}
+                        Pay ₹{totalPayable.toLocaleString()}
                       </>
                     )}
                   </Button>
                   <p className="text-xs text-center text-muted-foreground">
-                    Secure payment powered by Razorpay
+                    Secure prepaid payment via Razorpay
                   </p>
 
-                  {/* Help Section */}
+                  {/* Support Section */}
                   <div className="pt-4 border-t">
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Need help with your order?
-                    </p>
-                    <WhatsAppButton
-                      message="Hi, I need help with my checkout."
-                      variant="outline"
-                      className="w-full bg-green-500 hover:bg-green-600 text-white border-green-500"
-                    />
+                    <SupportContact variant="compact" message="Hi, I need help with my checkout." />
                   </div>
                 </CardContent>
               </Card>

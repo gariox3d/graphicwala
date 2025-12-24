@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { Trash2, Minus, Plus, ShoppingBag, Zap, Image, AlertCircle, Upload } from 'lucide-react';
+import { Trash2, Minus, Plus, ShoppingBag, Zap, Image, AlertCircle, Upload, Truck, CreditCard } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,9 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
 import { Product, UploadField } from '@/lib/types';
 import DesignUpload from '@/components/DesignUpload';
+import PriceBreakdown from '@/components/PriceBreakdown';
+import DeliveryInfoBanner from '@/components/DeliveryInfoBanner';
+import { useStoreSettings, getProductDeliveryCharge } from '@/hooks/useStoreSettings';
 import { toast } from 'sonner';
 
 const Cart = () => {
@@ -17,6 +20,21 @@ const Cart = () => {
   const navigate = useNavigate();
   const [productDesigns, setProductDesigns] = useState<Record<string, Record<string, string>>>({});
   const [expandedUploads, setExpandedUploads] = useState<Set<string>>(new Set());
+  const { settings } = useStoreSettings();
+
+  // Calculate total delivery charge
+  const calculateDeliveryCharge = () => {
+    let totalDelivery = 0;
+    cartItems.forEach(item => {
+      const product = item.products as Product & { delivery_charge?: number | null };
+      const deliveryCharge = getProductDeliveryCharge(product?.delivery_charge, settings?.default_delivery_charge || 0);
+      totalDelivery += deliveryCharge;
+    });
+    return totalDelivery;
+  };
+
+  const deliveryCharge = calculateDeliveryCharge();
+  const totalPayable = cartTotal + deliveryCharge;
 
   // Load saved designs from session storage
   useEffect(() => {
@@ -262,20 +280,11 @@ const Cart = () => {
                     <CardTitle>Order Summary</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Subtotal</span>
-                      <span>₹{cartTotal.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Shipping</span>
-                      <span className="text-green-600">Free</span>
-                    </div>
-                    <div className="flex justify-between pt-4 border-t">
-                      <span className="font-semibold">Total</span>
-                      <span className="font-bold text-lg text-primary">
-                        ₹{cartTotal.toLocaleString()}
-                      </span>
-                    </div>
+                    <PriceBreakdown
+                      productTotal={cartTotal}
+                      deliveryCharge={deliveryCharge}
+                      showDetails={true}
+                    />
                     
                     <Button
                       variant="hero"
@@ -301,6 +310,9 @@ const Cart = () => {
                     </Link>
                   </CardContent>
                 </Card>
+
+                {/* Delivery Info */}
+                <DeliveryInfoBanner variant="compact" />
               </div>
             </div>
           )}
