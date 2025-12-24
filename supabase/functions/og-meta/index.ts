@@ -31,6 +31,7 @@ serve(async (req) => {
     let image = DEFAULT_OG_IMAGE;
     let pageUrl = SITE_URL + path;
     let type = "website";
+    let imageType = getImageType(image);
 
     // If product ID is provided, fetch product details
     if (productId) {
@@ -46,6 +47,7 @@ serve(async (req) => {
           ? `${product.description.slice(0, 140)}${product.description.length > 140 ? '...' : ''} Delivered across Bihar.`
           : `Order ${product.name} from Graphic Wala. Premium quality with home delivery across Bihar.`;
         image = product.image_url || DEFAULT_OG_IMAGE;
+        imageType = getImageType(image);
         pageUrl = `${SITE_URL}/product/${product.id}`;
         type = "product";
       }
@@ -72,7 +74,7 @@ serve(async (req) => {
   <meta property="og:image:secure_url" content="${image}">
   <meta property="og:image:width" content="1080">
   <meta property="og:image:height" content="1080">
-  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:type" content="${imageType}">
   <meta property="og:image:alt" content="${escapeHtml(title)}">
   <meta property="og:site_name" content="${BUSINESS_NAME}">
   <meta property="og:locale" content="en_IN">
@@ -131,6 +133,13 @@ function escapeHtml(text: string): string {
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
+    .replace(/\"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+function getImageType(imageUrl: string): string {
+  const lower = imageUrl.toLowerCase();
+  if (lower.endsWith('.png')) return 'image/png';
+  if (lower.endsWith('.webp')) return 'image/webp';
+  return 'image/jpeg';
 }
