@@ -1,6 +1,17 @@
 {
   "rewrites": [
     {
+      "source": "/product/:id",
+      "destination": "https://haeggvlmnfapopmyuaya.supabase.co/functions/v1/og-meta?id=:id&path=/product/:id",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": "(?i).*(whatsapp|facebookexternalhit|twitterbot|telegrambot|linkedinbot|slackbot|discordbot|googlebot|bingbot).*"
+        }
+      ]
+    },
+    {
       "source": "/share/product/:id",
       "destination": "https://haeggvlmnfapopmyuaya.supabase.co/functions/v1/og-meta?id=:id&path=/product/:id"
     },
