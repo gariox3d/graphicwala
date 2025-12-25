@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { ShoppingCart, ArrowLeft, Minus, Plus, Image, Zap, Truck, Share2 } from 'lucide-react';
+import { ShoppingCart, ArrowLeft, Minus, Plus, Image, Zap } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
@@ -20,6 +20,7 @@ import ShareButton from '@/components/ShareButton';
 import PriceBreakdown from '@/components/PriceBreakdown';
 import ProductReviews from '@/components/reviews/ProductReviews';
 import LoginPromptDialog from '@/components/reviews/LoginPromptDialog';
+import ProductImageGallery from '@/components/products/ProductImageGallery';
 import { useStoreSettings, getProductDeliveryCharge } from '@/hooks/useStoreSettings';
 import { toast } from 'sonner';
 
@@ -31,7 +32,7 @@ const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [product, setProduct] = useState<(Product & { delivery_charge?: number | null }) | null>(null);
+  const [product, setProduct] = useState<(Product & { delivery_charge?: number | null; image_urls?: string[] }) | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const { addToCart } = useCart();
@@ -49,11 +50,15 @@ const ProductDetail = () => {
         const uploadConfig = Array.isArray(data.upload_config) 
           ? data.upload_config as unknown as UploadField[]
           : [];
+        const imageUrls = Array.isArray(data.image_urls) 
+          ? data.image_urls as string[]
+          : data.image_url ? [data.image_url] : [];
         setProduct({ 
           ...data, 
           upload_config: uploadConfig,
-          delivery_charge: data.delivery_charge 
-        } as unknown as (Product & { delivery_charge?: number | null }));
+          delivery_charge: data.delivery_charge,
+          image_urls: imageUrls,
+        } as unknown as (Product & { delivery_charge?: number | null; image_urls?: string[] }));
       }
       setLoading(false);
     };
@@ -271,22 +276,11 @@ const ProductDetail = () => {
           </Link>
 
           <div className="grid lg:grid-cols-2 gap-8">
-            {/* Product Image */}
-            <div className="space-y-4">
-              <div className="aspect-square rounded-xl overflow-hidden bg-muted">
-                {product.image_url ? (
-                  <img
-                    src={product.image_url}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-6xl font-bold text-muted-foreground/30">
-                    {product.name.charAt(0)}
-                  </div>
-                )}
-              </div>
-            </div>
+            {/* Product Images Gallery */}
+            <ProductImageGallery 
+              images={product.image_urls || (product.image_url ? [product.image_url] : [])} 
+              productName={product.name} 
+            />
 
             {/* Product Details */}
             <div className="space-y-6">
