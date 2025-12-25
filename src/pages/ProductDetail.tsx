@@ -18,6 +18,7 @@ import DeliveryInfoBanner from '@/components/DeliveryInfoBanner';
 import SupportContact from '@/components/SupportContact';
 import ShareButton from '@/components/ShareButton';
 import PriceBreakdown from '@/components/PriceBreakdown';
+import ProductReviews from '@/components/reviews/ProductReviews';
 import { useStoreSettings, getProductDeliveryCharge } from '@/hooks/useStoreSettings';
 import { toast } from 'sonner';
 
@@ -392,6 +393,10 @@ const ProductDetail = () => {
               />
             </div>
           </div>
+
+          {/* Reviews Section */}
+          <Separator className="my-12" />
+          <ProductReviews productId={product.id} productName={product.name} />
         </div>
       </main>
       <Footer />
