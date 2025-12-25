@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
@@ -13,6 +13,7 @@ const Products = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const selectedCategory = searchParams.get('category');
+  const productsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,6 +29,23 @@ const Products = () => {
     fetchData();
   }, []);
 
+  // Scroll to top of products section when category changes
+  useEffect(() => {
+    if (productsRef.current) {
+      productsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [selectedCategory]);
+
+  const handleCategoryChange = (category?: string) => {
+    if (category) {
+      setSearchParams({ category });
+    } else {
+      setSearchParams({});
+    }
+    // Also scroll to top of page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const filteredProducts = selectedCategory
     ? products.filter((p) => p.categories?.name === selectedCategory)
     : products;
@@ -35,13 +53,13 @@ const Products = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-1 py-8">
+      <main className="flex-1 py-8" ref={productsRef}>
         <div className="container">
           <h1 className="text-3xl md:text-4xl font-bold mb-8">Our Products</h1>
           <div className="flex flex-wrap gap-2 mb-8">
-            <Button variant={!selectedCategory ? 'hero' : 'outline'} size="sm" onClick={() => setSearchParams({})}>All</Button>
+            <Button variant={!selectedCategory ? 'hero' : 'outline'} size="sm" onClick={() => handleCategoryChange()}>All</Button>
             {categories.map((cat) => (
-              <Button key={cat.id} variant={selectedCategory === cat.name ? 'hero' : 'outline'} size="sm" onClick={() => setSearchParams({ category: cat.name })}>{cat.name}</Button>
+              <Button key={cat.id} variant={selectedCategory === cat.name ? 'hero' : 'outline'} size="sm" onClick={() => handleCategoryChange(cat.name)}>{cat.name}</Button>
             ))}
           </div>
           {loading ? (
