@@ -69,9 +69,12 @@ const AdminOrders = () => {
 
   const fetchOrders = async () => {
     if (!isAdmin) return;
+    // SECURITY: Only fetch orders with payment_status = 'paid'
+    // Unpaid/pending orders should NEVER be shown as they represent abandoned checkouts
     const { data, error } = await supabase
       .from('orders')
       .select('*')
+      .eq('payment_status', 'paid')
       .order('created_at', { ascending: false });
 
     if (!error && data) {
