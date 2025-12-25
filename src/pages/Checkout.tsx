@@ -255,6 +255,11 @@ const Checkout = () => {
         handler: async (response: any) => {
           setLoading(true);
           try {
+            // CRITICAL: Validate we received all required payment response fields
+            if (!response.razorpay_order_id || !response.razorpay_payment_id || !response.razorpay_signature) {
+              throw new Error('Incomplete payment response. Please contact support.');
+            }
+
             // STEP 3: Verify payment AND create order ONLY after successful payment
             const { data: verifyData, error: verifyError } =
               await supabase.functions.invoke('razorpay', {
@@ -276,10 +281,11 @@ const Checkout = () => {
             await clearCart();
             sessionStorage.removeItem('productDesigns');
             toast.success('Payment successful! Order confirmed.');
-            navigate(`/order-confirmation/${verifyData.order_id}`);
+            navigate(`/order-confirmation/${verifyData.order_id}`, { replace: true });
           } catch (error: any) {
             console.error('Payment verification error:', error);
-            toast.error('Payment verification failed. Please contact support.');
+            toast.error(error.message || 'Payment verification failed. Please contact support.');
+            navigate('/cart', { replace: true });
           } finally {
             setLoading(false);
           }
@@ -294,14 +300,26 @@ const Checkout = () => {
         },
         modal: {
           ondismiss: () => {
-            // Payment cancelled - NO order was created, nothing to clean up
-            toast.error('Payment cancelled. Order not placed.');
+            // Payment cancelled/closed - NO order was created
+            toast.error('Payment not completed. Order not placed.');
             setLoading(false);
+            navigate('/cart', { replace: true });
           },
+          escape: false, // Prevent escape key from closing without proper handling
+          confirm_close: true, // Ask user before closing the modal
         },
       };
 
       const razorpay = new window.Razorpay(options);
+      
+      // Handle payment failure event
+      razorpay.on('payment.failed', (response: any) => {
+        console.error('Payment failed:', response.error);
+        toast.error(`Payment failed: ${response.error.description || 'Unknown error'}`);
+        setLoading(false);
+        navigate('/cart', { replace: true });
+      });
+      
       razorpay.open();
     } catch (error: any) {
       console.error('Payment error:', error);
