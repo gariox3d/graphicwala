@@ -19,8 +19,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Loader2, ArrowLeft, Upload, ImageIcon, X, Plus, Trash2, Image } from 'lucide-react';
+import { Loader2, ArrowLeft, Plus, Trash2, Image } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import MultiImageUpload from '@/components/admin/MultiImageUpload';
 
 const ProductForm = () => {
   const { id } = useParams<{ id: string }>();
@@ -29,11 +30,8 @@ const ProductForm = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [existingImagePath, setExistingImagePath] = useState<string | null>(null);
+  const [productImages, setProductImages] = useState<string[]>([]);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -42,7 +40,6 @@ const ProductForm = () => {
     category_id: '',
     stock_quantity: '0',
     is_active: true,
-    image_url: '',
     customization_enabled: false,
   });
 
@@ -88,9 +85,16 @@ const ProductForm = () => {
           category_id: product.category_id || '',
           stock_quantity: product.stock_quantity?.toString() || '0',
           is_active: product.is_active,
-          image_url: product.image_url || '',
           customization_enabled: product.customization_enabled || false,
         });
+        
+        // Load images - check image_urls first, then fallback to image_url
+        const imageUrls = product.image_urls as string[] | null;
+        if (imageUrls && Array.isArray(imageUrls) && imageUrls.length > 0) {
+          setProductImages(imageUrls);
+        } else if (product.image_url) {
+          setProductImages([product.image_url]);
+        }
         
         // Parse upload_config
         const config = product.upload_config as unknown as UploadField[] | null;
@@ -109,16 +113,6 @@ const ProductForm = () => {
             setUploadConfig(legacyConfig);
           }
         }
-        
-        setImagePreview(product.image_url);
-        
-        // Extract path from URL if it's a storage URL
-        if (product.image_url?.includes('product-images')) {
-          const pathMatch = product.image_url.match(/product-images\/(.+)$/);
-          if (pathMatch) {
-            setExistingImagePath(pathMatch[1]);
-          }
-        }
       }
 
       setLoading(false);
@@ -131,78 +125,6 @@ const ProductForm = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error('Image size must be less than 5MB');
-        return;
-      }
-      setImageFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const uploadImage = async (file: File): Promise<string | null> => {
-    setUploading(true);
-    try {
-      const fileExt = file.name.split('.').pop()?.toLowerCase();
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-      const filePath = `products/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('product-images')
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: false,
-        });
-
-      if (uploadError) {
-        console.error('Upload error:', uploadError);
-        throw uploadError;
-      }
-
-      const { data } = supabase.storage
-        .from('product-images')
-        .getPublicUrl(filePath);
-
-      setExistingImagePath(filePath);
-      return data.publicUrl;
-    } catch (error: any) {
-      console.error('Image upload failed:', error);
-      toast.error('Failed to upload image');
-      return null;
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const deleteExistingImage = async () => {
-    if (!existingImagePath) return;
-    
-    try {
-      await supabase.storage
-        .from('product-images')
-        .remove([existingImagePath]);
-    } catch (error) {
-      console.error('Failed to delete old image:', error);
-    }
-  };
-
-  const clearImage = async () => {
-    if (existingImagePath) {
-      await deleteExistingImage();
-    }
-    setImageFile(null);
-    setImagePreview(null);
-    setExistingImagePath(null);
-    setFormData({ ...formData, image_url: '' });
   };
 
   const addUploadField = () => {
@@ -244,24 +166,6 @@ const ProductForm = () => {
     setSaving(true);
 
     try {
-      let imageUrl = formData.image_url;
-
-      // Upload new image if selected
-      if (imageFile) {
-        // Delete old image if exists
-        if (existingImagePath) {
-          await deleteExistingImage();
-        }
-        
-        const uploadedUrl = await uploadImage(imageFile);
-        if (uploadedUrl) {
-          imageUrl = uploadedUrl;
-        } else {
-          setSaving(false);
-          return;
-        }
-      }
-
       const productData = {
         name: formData.name.trim(),
         description: formData.description.trim() || null,
@@ -269,7 +173,10 @@ const ProductForm = () => {
         category_id: formData.category_id || null,
         stock_quantity: parseInt(formData.stock_quantity) || 0,
         is_active: formData.is_active,
-        image_url: imageUrl || null,
+        // Primary image (first in array) for backwards compatibility
+        image_url: productImages.length > 0 ? productImages[0] : null,
+        // All images as array
+        image_urls: productImages,
         customization_enabled: formData.customization_enabled,
         upload_config: formData.customization_enabled ? JSON.parse(JSON.stringify(uploadConfig)) : [],
         // Keep legacy fields for backwards compatibility
@@ -525,75 +432,14 @@ const ProductForm = () => {
               {/* Image Upload */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Product Image</CardTitle>
+                  <CardTitle>Product Images</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    {imagePreview ? (
-                      <div className="relative aspect-square rounded-lg overflow-hidden border bg-muted">
-                        <img
-                          src={imagePreview}
-                          alt="Product preview"
-                          className="w-full h-full object-cover"
-                        />
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="icon"
-                          className="absolute top-2 right-2 h-8 w-8"
-                          onClick={clearImage}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className="aspect-square rounded-lg border-2 border-dashed flex flex-col items-center justify-center gap-2 bg-muted/50">
-                        <ImageIcon className="h-12 w-12 text-muted-foreground" />
-                        <p className="text-sm text-muted-foreground">No image</p>
-                      </div>
-                    )}
-                    <div>
-                      <Input
-                        id="image"
-                        type="file"
-                        accept="image/jpeg,image/png,image/webp"
-                        onChange={handleImageChange}
-                        className="hidden"
-                        disabled={uploading}
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        className="w-full"
-                        onClick={() => document.getElementById('image')?.click()}
-                        disabled={uploading}
-                      >
-                        {uploading ? (
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        ) : (
-                          <Upload className="mr-2 h-4 w-4" />
-                        )}
-                        {imagePreview ? 'Replace Image' : 'Upload Image'}
-                      </Button>
-                      <p className="text-xs text-muted-foreground mt-2 text-center">
-                        Max 5MB. JPG, PNG, or WebP.
-                      </p>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="image_url">Or paste Image URL</Label>
-                      <Input
-                        id="image_url"
-                        name="image_url"
-                        value={formData.image_url}
-                        onChange={(e) => {
-                          setFormData({ ...formData, image_url: e.target.value });
-                          setImagePreview(e.target.value);
-                          setImageFile(null);
-                        }}
-                        placeholder="https://..."
-                      />
-                    </div>
-                  </div>
+                  <MultiImageUpload
+                    images={productImages}
+                    onChange={setProductImages}
+                    maxImages={10}
+                  />
                 </CardContent>
               </Card>
 
@@ -629,7 +475,7 @@ const ProductForm = () => {
                 >
                   Cancel
                 </Button>
-                <Button type="submit" className="flex-1" disabled={saving || uploading}>
+                <Button type="submit" className="flex-1" disabled={saving}>
                   {saving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   {isEditing ? 'Update' : 'Create'}
                 </Button>

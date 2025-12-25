@@ -298,6 +298,7 @@ export type Database = {
           front_upload_required: boolean | null
           id: string
           image_url: string | null
+          image_urls: Json | null
           is_active: boolean | null
           name: string
           price: number
@@ -315,6 +316,7 @@ export type Database = {
           front_upload_required?: boolean | null
           id?: string
           image_url?: string | null
+          image_urls?: Json | null
           is_active?: boolean | null
           name: string
           price: number
@@ -332,6 +334,7 @@ export type Database = {
           front_upload_required?: boolean | null
           id?: string
           image_url?: string | null
+          image_urls?: Json | null
           is_active?: boolean | null
           name?: string
           price?: number
