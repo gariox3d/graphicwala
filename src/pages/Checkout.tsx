@@ -175,7 +175,54 @@ const Checkout = () => {
 
     setLoading(true);
     try {
-      // Create Razorpay order with total including delivery
+      // Build full address with landmark
+      const fullAddress = deliveryMethod === 'store_pickup' 
+        ? `Store Pickup: ${settings?.pickup_address || 'Graphic Wala Shop'}`
+        : (formData.landmark
+          ? `${formData.address}, ${formData.landmark}`
+          : formData.address);
+
+      // Prepare order data to send to server (NOT creating order yet)
+      const orderPayload = {
+        user_id: user!.id,
+        total_amount: totalPayable,
+        shipping_address: fullAddress,
+        shipping_city: deliveryMethod === 'store_pickup' ? 'Store Pickup' : formData.city,
+        shipping_state: deliveryMethod === 'store_pickup' ? '-' : formData.state,
+        shipping_pincode: deliveryMethod === 'store_pickup' ? '000000' : formData.pincode,
+        shipping_phone: formData.phone,
+        customer_name: formData.fullName,
+        email: formData.email || null,
+        landmark: formData.landmark || null,
+        order_notes: formData.orderNotes || null,
+        delivery_method: deliveryMethod,
+        delivery_charge: deliveryCharge,
+      };
+
+      // Prepare order items data
+      const orderItemsPayload = cartItems.map((item) => {
+        const designs = productDesigns[item.product_id] || {};
+        const config = getUploadConfig(item.products);
+        return {
+          product_id: item.product_id,
+          product_name: item.products?.name || 'Unknown Product',
+          product_price: item.products?.price || 0,
+          quantity: item.quantity,
+          front_design_url: designs['front'] || null,
+          back_design_url: designs['back'] || null,
+          design_approval_status: Object.keys(designs).length > 0 ? 'pending' : null,
+          uploads: config
+            .filter(field => designs[field.id])
+            .map(field => ({
+              field_id: field.id,
+              label: field.label,
+              required: field.required,
+              file_url: designs[field.id],
+            })),
+        };
+      });
+
+      // STEP 1: Create Razorpay order ONLY (no database order yet)
       const { data: orderData, error: orderError } = await supabase.functions.invoke(
         'razorpay',
         {
@@ -197,92 +244,7 @@ const Checkout = () => {
 
       const { order, key_id } = orderData;
 
-      // Build full address with landmark
-      const fullAddress = deliveryMethod === 'store_pickup' 
-        ? `Store Pickup: ${settings?.pickup_address || 'Graphic Wala Shop'}`
-        : (formData.landmark
-          ? `${formData.address}, ${formData.landmark}`
-          : formData.address);
-
-      // Create order in database with pending status
-      const { data: dbOrder, error: dbError } = await supabase
-        .from('orders')
-        .insert({
-          user_id: user!.id,
-          total_amount: totalPayable,
-          status: 'pending',
-          payment_status: 'pending',
-          shipping_address: fullAddress,
-          shipping_city: deliveryMethod === 'store_pickup' ? 'Store Pickup' : formData.city,
-          shipping_state: deliveryMethod === 'store_pickup' ? '-' : formData.state,
-          shipping_pincode: deliveryMethod === 'store_pickup' ? '000000' : formData.pincode,
-          shipping_phone: formData.phone,
-          razorpay_order_id: order.id,
-          customer_name: formData.fullName,
-          email: formData.email || null,
-          landmark: formData.landmark || null,
-          order_notes: formData.orderNotes || null,
-          delivery_method: deliveryMethod,
-          delivery_charge: deliveryCharge,
-        })
-        .select()
-        .single();
-
-      if (dbError) {
-        console.error('DB Error:', dbError);
-        throw new Error('Failed to create order');
-      }
-
-      // Create order items with design URLs
-      const orderItemsData = cartItems.map((item) => {
-        const designs = productDesigns[item.product_id] || {};
-        return {
-          order_id: dbOrder.id,
-          product_id: item.product_id,
-          product_name: item.products?.name || 'Unknown Product',
-          product_price: item.products?.price || 0,
-          quantity: item.quantity,
-          front_design_url: designs['front'] || null,
-          back_design_url: designs['back'] || null,
-          design_approval_status: Object.keys(designs).length > 0 ? 'pending' : null,
-        };
-      });
-
-      const { data: insertedItems, error: itemsError } = await supabase
-        .from('order_items')
-        .insert(orderItemsData)
-        .select();
-
-      if (itemsError) {
-        console.error('Items Error:', itemsError);
-        throw new Error('Failed to create order items');
-      }
-
-      // Save uploads to order_item_uploads table
-      if (insertedItems) {
-        for (let i = 0; i < insertedItems.length; i++) {
-          const orderItem = insertedItems[i];
-          const cartItem = cartItems[i];
-          const config = getUploadConfig(cartItem.products);
-          const designs = productDesigns[cartItem.product_id] || {};
-          
-          const uploadRecords = config
-            .filter(field => designs[field.id])
-            .map(field => ({
-              order_item_id: orderItem.id,
-              field_id: field.id,
-              label: field.label,
-              required: field.required,
-              file_url: designs[field.id],
-            }));
-          
-          if (uploadRecords.length > 0) {
-            await supabase.from('order_item_uploads').insert(uploadRecords);
-          }
-        }
-      }
-
-      // Initialize Razorpay checkout
+      // STEP 2: Initialize Razorpay checkout (NO order in database yet)
       const options = {
         key: key_id,
         amount: order.amount,
@@ -291,31 +253,35 @@ const Checkout = () => {
         description: 'Purchase from Graphic Wala',
         order_id: order.id,
         handler: async (response: any) => {
+          setLoading(true);
           try {
-            // Verify payment
+            // STEP 3: Verify payment AND create order ONLY after successful payment
             const { data: verifyData, error: verifyError } =
               await supabase.functions.invoke('razorpay', {
                 body: {
-                  action: 'verify-payment',
+                  action: 'verify-and-create-order',
                   razorpay_order_id: response.razorpay_order_id,
                   razorpay_payment_id: response.razorpay_payment_id,
                   razorpay_signature: response.razorpay_signature,
-                  order_id: dbOrder.id,
+                  order_data: orderPayload,
+                  order_items: orderItemsPayload,
                 },
               });
 
-            if (verifyError || !verifyData?.verified) {
-              throw new Error('Payment verification failed');
+            if (verifyError || !verifyData?.success) {
+              throw new Error(verifyData?.error || 'Payment verification failed');
             }
 
-            // Clear cart and session storage
+            // Payment verified and order created successfully
             await clearCart();
             sessionStorage.removeItem('productDesigns');
             toast.success('Payment successful! Order confirmed.');
-            navigate(`/order-confirmation/${dbOrder.id}`);
+            navigate(`/order-confirmation/${verifyData.order_id}`);
           } catch (error: any) {
             console.error('Payment verification error:', error);
             toast.error('Payment verification failed. Please contact support.');
+          } finally {
+            setLoading(false);
           }
         },
         prefill: {
@@ -327,13 +293,10 @@ const Checkout = () => {
           color: '#dc2626',
         },
         modal: {
-          ondismiss: async () => {
-            // Update order status to cancelled if payment was dismissed
-            await supabase
-              .from('orders')
-              .update({ status: 'cancelled', payment_status: 'failed' })
-              .eq('id', dbOrder.id);
-            toast.error('Payment cancelled');
+          ondismiss: () => {
+            // Payment cancelled - NO order was created, nothing to clean up
+            toast.error('Payment cancelled. Order not placed.');
+            setLoading(false);
           },
         },
       };
@@ -343,7 +306,6 @@ const Checkout = () => {
     } catch (error: any) {
       console.error('Payment error:', error);
       toast.error(error.message || 'Payment failed. Please try again.');
-    } finally {
       setLoading(false);
     }
   };
