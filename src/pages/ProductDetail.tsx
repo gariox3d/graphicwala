@@ -19,6 +19,7 @@ import SupportContact from '@/components/SupportContact';
 import ShareButton from '@/components/ShareButton';
 import PriceBreakdown from '@/components/PriceBreakdown';
 import ProductReviews from '@/components/reviews/ProductReviews';
+import LoginPromptDialog from '@/components/reviews/LoginPromptDialog';
 import { useStoreSettings, getProductDeliveryCharge } from '@/hooks/useStoreSettings';
 import { toast } from 'sonner';
 
@@ -96,11 +97,19 @@ const ProductDetail = () => {
   const requiredFields = uploadConfig.filter(f => f.required);
   const allRequiredUploaded = requiredFields.every(f => designUrls[f.id]);
 
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
+
   const handleAddToCart = () => {
     if (!product) return;
     if (!user) {
-      toast.error('Please login to add items to cart');
-      navigate('/auth');
+      // Show login dialog if user tries to add to cart without login
+      setShowLoginDialog(true);
+      return;
+    }
+
+    // Check if required uploads are missing when user is logged in
+    if (uploadConfig.length > 0 && requiredFields.length > 0 && !allRequiredUploaded) {
+      toast.error('Please upload all required photos before adding to cart');
       return;
     }
 
@@ -112,14 +121,14 @@ const ProductDetail = () => {
     }
 
     addToCart(product.id, quantity);
-    toast.success('Added to cart! You can upload designs now or before checkout.');
+    toast.success('Added to cart!');
   };
 
   const handleBuyNow = () => {
     if (!product) return;
     if (!user) {
-      toast.error('Please login to continue');
-      navigate('/auth');
+      // Show login dialog if user tries to buy without login
+      setShowLoginDialog(true);
       return;
     }
 
@@ -403,6 +412,14 @@ const ProductDetail = () => {
       
       {/* Floating WhatsApp Button */}
       <WhatsAppButton variant="floating" showText={false} />
+
+      {/* Login Prompt Dialog */}
+      <LoginPromptDialog 
+        open={showLoginDialog} 
+        onOpenChange={setShowLoginDialog}
+        title="Login Required"
+        description="To upload photos and place a customized order, please login first."
+      />
     </div>
   );
 };
