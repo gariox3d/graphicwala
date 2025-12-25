@@ -210,17 +210,26 @@ function generateId(): string {
 const AIAssistant = () => {
   const [messages, setMessages] = useState<Message[]>([WELCOME_MESSAGE]);
   const [inputValue, setInputValue] = useState('');
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const isInitialLoad = useRef(true);
 
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hello ${BUSINESS_NAME}, I need help.`)}`;
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  const scrollChatToBottom = () => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
   };
 
   useEffect(() => {
-    scrollToBottom();
+    // Skip auto-scroll on initial page load
+    if (isInitialLoad.current) {
+      isInitialLoad.current = false;
+      return;
+    }
+    // Only scroll the chat container, not the page
+    scrollChatToBottom();
   }, [messages]);
 
   const handleSendMessage = (text: string) => {
@@ -301,7 +310,10 @@ const AIAssistant = () => {
           {/* Chat Container */}
           <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden flex flex-col" style={{ height: 'calc(100vh - 320px)', minHeight: '400px' }}>
             {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <div 
+              ref={chatContainerRef}
+              className="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth"
+            >
               {messages.map((message) => (
                 <div
                   key={message.id}
@@ -330,7 +342,6 @@ const AIAssistant = () => {
                   )}
                 </div>
               ))}
-              <div ref={messagesEndRef} />
             </div>
 
             {/* Quick Questions */}
