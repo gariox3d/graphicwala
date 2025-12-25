@@ -20,10 +20,12 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProducts from "./pages/admin/AdminProducts";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminCategories from "./pages/admin/AdminCategories";
+import AdminSettings from "./pages/admin/AdminSettings";
 import ProductForm from "./pages/admin/ProductForm";
 import NotFound from "./pages/NotFound";
 import ShareRedirect from "./pages/ShareRedirect";
 import ScrollToTop from "./components/ScrollToTop";
+import AdminGuard from "./components/admin/AdminGuard";
 
 const queryClient = new QueryClient();
 
@@ -49,13 +51,14 @@ const App = () => (
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
-                {/* Admin Routes */}
-                <Route path="/admin" element={<AdminDashboard />} />
-                <Route path="/admin/products" element={<AdminProducts />} />
-                <Route path="/admin/products/new" element={<ProductForm />} />
-                <Route path="/admin/products/:id" element={<ProductForm />} />
-                <Route path="/admin/orders" element={<AdminOrders />} />
-                <Route path="/admin/categories" element={<AdminCategories />} />
+                {/* Admin Routes - Protected by AdminGuard */}
+                <Route path="/admin" element={<AdminGuard><AdminDashboard /></AdminGuard>} />
+                <Route path="/admin/products" element={<AdminGuard><AdminProducts /></AdminGuard>} />
+                <Route path="/admin/products/new" element={<AdminGuard><ProductForm /></AdminGuard>} />
+                <Route path="/admin/products/:id" element={<AdminGuard><ProductForm /></AdminGuard>} />
+                <Route path="/admin/orders" element={<AdminGuard><AdminOrders /></AdminGuard>} />
+                <Route path="/admin/categories" element={<AdminGuard><AdminCategories /></AdminGuard>} />
+                <Route path="/admin/settings" element={<AdminGuard><AdminSettings /></AdminGuard>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
