@@ -9,15 +9,22 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { LogIn, Mail } from 'lucide-react';
+import { Mail } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface LoginPromptDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  title?: string;
+  description?: string;
 }
 
-const LoginPromptDialog = ({ open, onOpenChange }: LoginPromptDialogProps) => {
+const LoginPromptDialog = ({ 
+  open, 
+  onOpenChange,
+  title = "Login Required",
+  description = "Please login to submit a review. Your feedback helps other customers make better decisions."
+}: LoginPromptDialogProps) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -48,9 +55,9 @@ const LoginPromptDialog = ({ open, onOpenChange }: LoginPromptDialogProps) => {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-center">Login Required</DialogTitle>
+          <DialogTitle className="text-center">{title}</DialogTitle>
           <DialogDescription className="text-center">
-            Please login to submit a review. Your feedback helps other customers make better decisions.
+            {description}
           </DialogDescription>
         </DialogHeader>
         
@@ -95,7 +102,15 @@ const LoginPromptDialog = ({ open, onOpenChange }: LoginPromptDialogProps) => {
             className="w-full h-12"
           >
             <Mail className="mr-2 h-5 w-5" />
-            Login with Email
+            Continue with Email
+          </Button>
+
+          <Button 
+            onClick={() => onOpenChange(false)} 
+            variant="ghost" 
+            className="w-full"
+          >
+            Cancel
           </Button>
         </div>
       </DialogContent>
