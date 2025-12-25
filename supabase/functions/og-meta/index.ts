@@ -10,6 +10,33 @@ const SITE_URL = "https://store.graphicwala.com";
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-square.png`;
 const BUSINESS_NAME = "Graphic Wala Store";
 
+const CRAWLER_USER_AGENTS = [
+  'whatsapp',
+  'facebookexternalhit',
+  'facebookcatalog',
+  'twitterbot',
+  'telegrambot',
+  'linkedinbot',
+  'slackbot',
+  'discordbot',
+  'pinterest',
+  'googlebot',
+  'bingbot',
+  'yandexbot',
+  'applebot',
+  'embedly',
+  'quora',
+  'outbrain',
+  'redditbot',
+  'vkshare',
+];
+
+function isCrawler(userAgent: string | null): boolean {
+  if (!userAgent) return false;
+  const lowerUA = userAgent.toLowerCase();
+  return CRAWLER_USER_AGENTS.some(bot => lowerUA.includes(bot));
+}
+
 serve(async (req) => {
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
@@ -20,8 +47,29 @@ serve(async (req) => {
     const url = new URL(req.url);
     const productId = url.searchParams.get("id");
     const path = url.searchParams.get("path") || "/";
+    const userAgent = req.headers.get("user-agent");
 
-    console.log(`OG Meta request - productId: ${productId}, path: ${path}`);
+    console.log(`OG Meta request - productId: ${productId}, path: ${path}, userAgent: ${userAgent}`);
+
+    // If not a crawler, redirect immediately to the actual product page
+    if (!isCrawler(userAgent)) {
+      const redirectUrl = productId 
+        ? `${SITE_URL}/product/${productId}`
+        : `${SITE_URL}${path}`;
+      
+      console.log(`Redirecting non-crawler to: ${redirectUrl}`);
+      
+      return new Response(null, {
+        status: 302,
+        headers: {
+          ...corsHeaders,
+          "Location": redirectUrl,
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+        },
+      });
+    }
+
+    console.log(`Serving OG meta HTML for crawler: ${userAgent}`);
 
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
