@@ -21,6 +21,8 @@ serve(async (req) => {
     const productId = url.searchParams.get("id");
     const path = url.searchParams.get("path") || "/";
 
+    console.log(`OG Meta request - productId: ${productId}, path: ${path}`);
+
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY")!;
@@ -37,22 +39,33 @@ serve(async (req) => {
     if (productId) {
       const { data: product, error } = await supabase
         .from("products")
-        .select("id, name, description, image_url, price, stock_quantity, categories(name)")
+        .select("id, name, description, image_url, image_urls, price, stock_quantity, categories(name)")
         .eq("id", productId)
         .maybeSingle();
+
+      console.log(`Product fetch result:`, { product, error });
 
       if (product && !error) {
         title = `${product.name} | ${BUSINESS_NAME}`;
         description = product.description 
           ? `${product.description.slice(0, 140)}${product.description.length > 140 ? '...' : ''} Delivered across Bihar.`
           : `Order ${product.name} from Graphic Wala. Premium quality with home delivery across Bihar.`;
-        image = product.image_url || DEFAULT_OG_IMAGE;
+        
+        // Use first image from image_urls array, fallback to image_url, then default
+        const imageUrls = product.image_urls as string[] | null;
+        if (imageUrls && Array.isArray(imageUrls) && imageUrls.length > 0) {
+          image = imageUrls[0];
+        } else if (product.image_url) {
+          image = product.image_url;
+        }
+        
         imageType = getImageType(image);
         pageUrl = `${SITE_URL}/product/${product.id}`;
         type = "product";
+        
+        console.log(`Using image: ${image}`);
       }
     }
-
     // Generate HTML with meta tags for social crawlers
     const html = `<!DOCTYPE html>
 <html lang="en">
