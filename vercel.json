@@ -22,10 +22,5 @@
         { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
       ]
     }
-  ],
-  "functions": {
-    "middleware.ts": {
-      "runtime": "edge@1.0.0"
-    }
-  }
+  ]
 }
