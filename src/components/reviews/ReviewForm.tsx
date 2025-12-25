@@ -139,8 +139,11 @@ const ReviewForm = ({ productId, existingReview, onReviewSubmitted }: ReviewForm
         <CardContent>
           {!user ? (
             <div className="text-center py-4">
-              <p className="text-muted-foreground mb-4">
+              <p className="text-muted-foreground mb-2">
                 Please login to submit a review
+              </p>
+              <p className="text-xs text-muted-foreground mb-4">
+                Login is required for order tracking and reviews. Takes less than 30 seconds.
               </p>
               <Button onClick={handleWriteReviewClick}>
                 Write a Review

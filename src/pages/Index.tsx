@@ -87,6 +87,15 @@ const Index = () => {
         {/* Hero Section */}
         <HeroSection />
 
+        {/* Trust Notice Banner */}
+        <section className="py-4 bg-amber-50 dark:bg-amber-950/30 border-y border-amber-200 dark:border-amber-900">
+          <div className="container">
+            <p className="text-center text-sm font-medium text-amber-800 dark:text-amber-200">
+              ⚠️ All products are custom-made and prepaid only. No Cash on Delivery available.
+            </p>
+          </div>
+        </section>
+
         {/* Delivery Info Banner */}
         <section className="py-8 bg-background" aria-label="Delivery information">
           <div className="container">
