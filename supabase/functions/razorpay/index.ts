@@ -9,6 +9,7 @@ const corsHeaders = {
 
 const RAZORPAY_KEY_ID = Deno.env.get('RAZORPAY_KEY_ID');
 const RAZORPAY_KEY_SECRET = Deno.env.get('RAZORPAY_KEY_SECRET');
+const RAZORPAY_WEBHOOK_SECRET = Deno.env.get('RAZORPAY_WEBHOOK_SECRET');
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
@@ -38,14 +39,21 @@ async function verifySignature(
   return expectedSignature === razorpay_signature;
 }
 
-// Verify webhook signature
+// Verify webhook signature using dedicated RAZORPAY_WEBHOOK_SECRET
 async function verifyWebhookSignature(
   body: string,
   signature: string
 ): Promise<boolean> {
+  // Use dedicated webhook secret, fallback to key secret for backwards compatibility
+  const webhookSecret = RAZORPAY_WEBHOOK_SECRET || RAZORPAY_KEY_SECRET;
+  if (!webhookSecret) {
+    console.error('No webhook secret configured');
+    return false;
+  }
+  
   const encoder = new TextEncoder();
   const data = encoder.encode(body);
-  const key = encoder.encode(RAZORPAY_KEY_SECRET!);
+  const key = encoder.encode(webhookSecret);
   
   const cryptoKey = await crypto.subtle.importKey(
     'raw',

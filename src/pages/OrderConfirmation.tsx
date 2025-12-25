@@ -18,10 +18,12 @@ const OrderConfirmation = () => {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [verified, setVerified] = useState(false);
 
   useEffect(() => {
     const fetchOrder = async () => {
-      if (!orderId) {
+      // SECURITY: Validate orderId format (UUID)
+      if (!orderId || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(orderId)) {
         setError('Invalid order ID');
         setLoading(false);
         return;
@@ -47,9 +49,18 @@ const OrderConfirmation = () => {
         return;
       }
 
+      // CRITICAL: Only show confirmation for PAID orders
       if (orderData.payment_status !== 'paid') {
         console.error('Order payment not completed:', orderData.payment_status);
         setError('Payment not completed for this order');
+        setLoading(false);
+        return;
+      }
+
+      // Additional verification: razorpay_payment_id must exist for paid orders
+      if (!orderData.razorpay_payment_id) {
+        console.error('Order marked as paid but missing payment ID');
+        setError('Invalid payment verification');
         setLoading(false);
         return;
       }
@@ -64,6 +75,7 @@ const OrderConfirmation = () => {
         ...orderData,
         order_items: itemsData || [],
       } as Order);
+      setVerified(true);
       setLoading(false);
     };
 
@@ -87,7 +99,8 @@ const OrderConfirmation = () => {
         <main className="flex-1 flex items-center justify-center">
           <div className="flex flex-col items-center gap-4">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <p className="text-muted-foreground">Verifying payment...</p>
+            <p className="text-muted-foreground">Verifying payment status...</p>
+            <p className="text-xs text-muted-foreground">Please do not refresh this page</p>
           </div>
         </main>
         <Footer />
@@ -95,25 +108,11 @@ const OrderConfirmation = () => {
     );
   }
 
-  // This should not render as we redirect in useEffect, but just in case
-  if (error || !order) {
-    return (
-      <div className="min-h-screen flex flex-col bg-background">
-        <Header />
-        <main className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
-            <h1 className="text-2xl font-bold mb-2">Order Not Found</h1>
-            <p className="text-muted-foreground mb-4">Invalid or unpaid order.</p>
-            <Button asChild>
-              <Link to="/cart">Go to Cart</Link>
-            </Button>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
+  // SECURITY: Only render confirmation if order is verified as paid
+  if (!verified || !order) {
+    return null; // Redirect handled by error useEffect
   }
+
 
   const hasDesigns = order.order_items?.some(
     (item) => item.front_design_url || item.back_design_url
