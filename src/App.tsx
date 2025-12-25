@@ -24,6 +24,7 @@ import AdminSettings from "./pages/admin/AdminSettings";
 import ProductForm from "./pages/admin/ProductForm";
 import NotFound from "./pages/NotFound";
 import ShareRedirect from "./pages/ShareRedirect";
+import AIAssistant from "./pages/AIAssistant";
 import ScrollToTop from "./components/ScrollToTop";
 import AdminGuard from "./components/admin/AdminGuard";
 
@@ -51,6 +52,7 @@ const App = () => (
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/ai-assistant" element={<AIAssistant />} />
                 {/* Admin Routes - Protected by AdminGuard */}
                 <Route path="/admin" element={<AdminGuard><AdminDashboard /></AdminGuard>} />
                 <Route path="/admin/products" element={<AdminGuard><AdminProducts /></AdminGuard>} />
