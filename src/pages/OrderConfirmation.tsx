@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Order, OrderItem, WHATSAPP_NUMBER, BUSINESS_NAME } from '@/lib/types';
 import { Button } from '@/components/ui/button';
@@ -9,47 +9,85 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import CallButton from '@/components/CallButton';
-import { CheckCircle, Package, MapPin, CreditCard, ArrowRight, Image, MessageCircle, Phone } from 'lucide-react';
+import { CheckCircle, Package, MapPin, CreditCard, ArrowRight, Image, MessageCircle, AlertTriangle, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 const OrderConfirmation = () => {
   const { orderId } = useParams<{ orderId: string }>();
+  const navigate = useNavigate();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchOrder = async () => {
-      if (!orderId) return;
+      if (!orderId) {
+        setError('Invalid order ID');
+        setLoading(false);
+        return;
+      }
 
-      const { data: orderData, error } = await supabase
+      const { data: orderData, error: fetchError } = await supabase
         .from('orders')
         .select('*')
         .eq('id', orderId)
-        .single();
+        .maybeSingle();
 
-      if (!error && orderData) {
-        const { data: itemsData } = await supabase
-          .from('order_items')
-          .select('*')
-          .eq('order_id', orderId);
-
-        setOrder({
-          ...orderData,
-          order_items: itemsData || [],
-        } as Order);
+      if (fetchError) {
+        console.error('Error fetching order:', fetchError);
+        setError('Failed to fetch order');
+        setLoading(false);
+        return;
       }
+
+      // SECURITY: Order must exist and have payment_status = 'paid'
+      if (!orderData) {
+        setError('Order not found');
+        setLoading(false);
+        return;
+      }
+
+      if (orderData.payment_status !== 'paid') {
+        console.error('Order payment not completed:', orderData.payment_status);
+        setError('Payment not completed for this order');
+        setLoading(false);
+        return;
+      }
+
+      // Fetch order items only after verifying payment
+      const { data: itemsData } = await supabase
+        .from('order_items')
+        .select('*')
+        .eq('order_id', orderId);
+
+      setOrder({
+        ...orderData,
+        order_items: itemsData || [],
+      } as Order);
       setLoading(false);
     };
 
     fetchOrder();
   }, [orderId]);
 
+  // Handle error state - redirect to cart with error message
+  useEffect(() => {
+    if (!loading && error) {
+      toast.error(error === 'Payment not completed for this order' 
+        ? 'Payment not completed. No order was placed.' 
+        : 'Invalid or unpaid order.');
+      navigate('/cart');
+    }
+  }, [loading, error, navigate]);
+
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
         <Header />
         <main className="flex-1 flex items-center justify-center">
-          <div className="animate-pulse text-muted-foreground">
-            Loading order details...
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <p className="text-muted-foreground">Verifying payment...</p>
           </div>
         </main>
         <Footer />
@@ -57,15 +95,18 @@ const OrderConfirmation = () => {
     );
   }
 
-  if (!order) {
+  // This should not render as we redirect in useEffect, but just in case
+  if (error || !order) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
         <Header />
         <main className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <h1 className="text-2xl font-bold mb-4">Order Not Found</h1>
+            <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
+            <h1 className="text-2xl font-bold mb-2">Order Not Found</h1>
+            <p className="text-muted-foreground mb-4">Invalid or unpaid order.</p>
             <Button asChild>
-              <Link to="/">Go Home</Link>
+              <Link to="/cart">Go to Cart</Link>
             </Button>
           </div>
         </main>
