@@ -2,10 +2,76 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+// Allowed origins for CORS - restrict to known domains
+const ALLOWED_ORIGINS = [
+  'https://lovable.dev',
+  'https://haeggvlmnfapopmyuaya.lovable.app',
+  'http://localhost:5173',
+  'http://localhost:3000',
+];
+
+function getCorsHeaders(origin: string | null): Record<string, string> {
+  // For webhooks from Razorpay, allow any origin
+  const allowedOrigin = origin && ALLOWED_ORIGINS.some(allowed => 
+    origin === allowed || origin.endsWith('.lovable.app') || origin.endsWith('.lovable.dev')
+  ) ? origin : ALLOWED_ORIGINS[0];
+  
+  return {
+    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Credentials': 'true',
+  };
+}
+
+// Validation functions for order data
+function validateOrderData(orderData: any): { valid: boolean; error?: string } {
+  // Phone validation - Indian mobile numbers start with 6-9
+  if (!orderData.shipping_phone || !/^[6-9]\d{9}$/.test(orderData.shipping_phone.replace(/\s/g, ''))) {
+    return { valid: false, error: 'Invalid phone number format. Must be a valid 10-digit Indian mobile number.' };
+  }
+  
+  // Pincode validation (for home delivery)
+  if (orderData.delivery_method !== 'store_pickup') {
+    if (!orderData.shipping_pincode || !/^\d{6}$/.test(orderData.shipping_pincode)) {
+      return { valid: false, error: 'Invalid pincode format. Must be a 6-digit number.' };
+    }
+  }
+  
+  // Length limits to prevent database bloat
+  if (orderData.customer_name && orderData.customer_name.length > 100) {
+    return { valid: false, error: 'Customer name too long. Maximum 100 characters.' };
+  }
+  if (orderData.shipping_address && orderData.shipping_address.length > 500) {
+    return { valid: false, error: 'Shipping address too long. Maximum 500 characters.' };
+  }
+  if (orderData.shipping_city && orderData.shipping_city.length > 100) {
+    return { valid: false, error: 'City name too long. Maximum 100 characters.' };
+  }
+  if (orderData.shipping_state && orderData.shipping_state.length > 100) {
+    return { valid: false, error: 'State name too long. Maximum 100 characters.' };
+  }
+  if (orderData.landmark && orderData.landmark.length > 200) {
+    return { valid: false, error: 'Landmark too long. Maximum 200 characters.' };
+  }
+  if (orderData.order_notes && orderData.order_notes.length > 500) {
+    return { valid: false, error: 'Order notes too long. Maximum 500 characters.' };
+  }
+  if (orderData.email && orderData.email.length > 255) {
+    return { valid: false, error: 'Email too long. Maximum 255 characters.' };
+  }
+  
+  // Email format validation (if provided)
+  if (orderData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(orderData.email)) {
+    return { valid: false, error: 'Invalid email format.' };
+  }
+  
+  // Amount validation
+  if (!orderData.total_amount || orderData.total_amount <= 0) {
+    return { valid: false, error: 'Invalid order amount.' };
+  }
+  
+  return { valid: true };
+}
 
 const RAZORPAY_KEY_ID = Deno.env.get('RAZORPAY_KEY_ID');
 const RAZORPAY_KEY_SECRET = Deno.env.get('RAZORPAY_KEY_SECRET');
@@ -72,6 +138,9 @@ async function verifyWebhookSignature(
 }
 
 serve(async (req) => {
+  const origin = req.headers.get('origin');
+  const corsHeaders = getCorsHeaders(origin);
+  
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -197,6 +266,19 @@ serve(async (req) => {
 
       if (!order_data || !order_items) {
         throw new Error('Missing order data');
+      }
+
+      // SERVER-SIDE VALIDATION: Validate order data before processing
+      const validation = validateOrderData(order_data);
+      if (!validation.valid) {
+        console.error('Order data validation failed:', validation.error);
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: validation.error,
+        }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
       }
 
       // STEP 1: Verify payment signature

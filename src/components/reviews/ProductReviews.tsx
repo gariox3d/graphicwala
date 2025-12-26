@@ -32,9 +32,10 @@ const ProductReviews = ({ productId, productName }: ProductReviewsProps) => {
   const fetchReviews = async () => {
     setLoading(true);
     try {
+      // Only select necessary columns - exclude user_id from public queries for privacy
       const { data, error } = await supabase
         .from('reviews')
-        .select('*')
+        .select('id, product_id, user_name, rating, comment, created_at, updated_at, user_id')
         .eq('product_id', productId)
         .order('created_at', { ascending: false });
 
