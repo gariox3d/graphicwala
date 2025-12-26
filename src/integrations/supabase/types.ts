@@ -217,8 +217,10 @@ export type Database = {
           created_at: string
           customer_name: string | null
           delivery_charge: number | null
+          delivery_days_used: number | null
           delivery_method: string | null
           email: string | null
+          estimated_delivery_date: string | null
           id: string
           landmark: string | null
           order_notes: string | null
@@ -241,8 +243,10 @@ export type Database = {
           created_at?: string
           customer_name?: string | null
           delivery_charge?: number | null
+          delivery_days_used?: number | null
           delivery_method?: string | null
           email?: string | null
+          estimated_delivery_date?: string | null
           id?: string
           landmark?: string | null
           order_notes?: string | null
@@ -265,8 +269,10 @@ export type Database = {
           created_at?: string
           customer_name?: string | null
           delivery_charge?: number | null
+          delivery_days_used?: number | null
           delivery_method?: string | null
           email?: string | null
+          estimated_delivery_date?: string | null
           id?: string
           landmark?: string | null
           order_notes?: string | null
@@ -293,8 +299,11 @@ export type Database = {
           category_id: string | null
           created_at: string
           customization_enabled: boolean | null
+          cutoff_time: string | null
           delivery_charge: number | null
+          delivery_days: number | null
           description: string | null
+          enable_delivery: boolean | null
           front_upload_required: boolean | null
           id: string
           image_url: string | null
@@ -311,8 +320,11 @@ export type Database = {
           category_id?: string | null
           created_at?: string
           customization_enabled?: boolean | null
+          cutoff_time?: string | null
           delivery_charge?: number | null
+          delivery_days?: number | null
           description?: string | null
+          enable_delivery?: boolean | null
           front_upload_required?: boolean | null
           id?: string
           image_url?: string | null
@@ -329,8 +341,11 @@ export type Database = {
           category_id?: string | null
           created_at?: string
           customization_enabled?: boolean | null
+          cutoff_time?: string | null
           delivery_charge?: number | null
+          delivery_days?: number | null
           description?: string | null
+          enable_delivery?: boolean | null
           front_upload_required?: boolean | null
           id?: string
           image_url?: string | null

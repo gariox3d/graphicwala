@@ -11,7 +11,6 @@ import { Product, UploadField } from '@/lib/types';
 import DesignUpload from '@/components/DesignUpload';
 import PriceBreakdown from '@/components/PriceBreakdown';
 import DeliveryInfoBanner from '@/components/DeliveryInfoBanner';
-import { useStoreSettings, getProductDeliveryCharge } from '@/hooks/useStoreSettings';
 import { toast } from 'sonner';
 
 const Cart = () => {
@@ -20,15 +19,14 @@ const Cart = () => {
   const navigate = useNavigate();
   const [productDesigns, setProductDesigns] = useState<Record<string, Record<string, string>>>({});
   const [expandedUploads, setExpandedUploads] = useState<Set<string>>(new Set());
-  const { settings } = useStoreSettings();
 
-  // Calculate total delivery charge
+  // Calculate total delivery charge from product-level charges only
   const calculateDeliveryCharge = () => {
     let totalDelivery = 0;
     cartItems.forEach(item => {
       const product = item.products as Product & { delivery_charge?: number | null };
-      const deliveryCharge = getProductDeliveryCharge(product?.delivery_charge, settings?.default_delivery_charge || 0);
-      totalDelivery += deliveryCharge;
+      // Use product's delivery charge directly, no fallback to global
+      totalDelivery += (product?.delivery_charge || 0);
     });
     return totalDelivery;
   };

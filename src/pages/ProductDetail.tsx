@@ -21,7 +21,7 @@ import PriceBreakdown from '@/components/PriceBreakdown';
 import ProductReviews from '@/components/reviews/ProductReviews';
 import LoginPromptDialog from '@/components/reviews/LoginPromptDialog';
 import ProductImageGallery from '@/components/products/ProductImageGallery';
-import { useStoreSettings, getProductDeliveryCharge } from '@/hooks/useStoreSettings';
+import DeliveryCountdown from '@/components/products/DeliveryCountdown';
 import { toast } from 'sonner';
 
 const SITE_URL = 'https://store.graphicwala.com';
@@ -32,12 +32,17 @@ const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [product, setProduct] = useState<(Product & { delivery_charge?: number | null; image_urls?: string[] }) | null>(null);
+  const [product, setProduct] = useState<(Product & { 
+    delivery_charge?: number | null; 
+    image_urls?: string[];
+    cutoff_time?: string;
+    enable_delivery?: boolean;
+    delivery_days?: number;
+  }) | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const { addToCart } = useCart();
   const [designUrls, setDesignUrls] = useState<Record<string, string>>({});
-  const { settings } = useStoreSettings();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -58,7 +63,10 @@ const ProductDetail = () => {
           upload_config: uploadConfig,
           delivery_charge: data.delivery_charge,
           image_urls: imageUrls,
-        } as unknown as (Product & { delivery_charge?: number | null; image_urls?: string[] }));
+          cutoff_time: data.cutoff_time,
+          enable_delivery: data.enable_delivery ?? true,
+          delivery_days: data.delivery_days ?? 7,
+        } as any);
       }
       setLoading(false);
     };
@@ -312,12 +320,21 @@ const ProductDetail = () => {
                 </p>
               </div>
 
+              {/* Delivery Countdown */}
+              {product.enable_delivery && product.cutoff_time && (
+                <DeliveryCountdown
+                  cutoffTime={product.cutoff_time}
+                  enableDelivery={product.enable_delivery}
+                  deliveryDays={product.delivery_days || 7}
+                />
+              )}
+
               {/* Price Breakdown */}
               <Card>
                 <CardContent className="pt-6">
                   <PriceBreakdown
                     productTotal={product.price * quantity}
-                    deliveryCharge={getProductDeliveryCharge(product.delivery_charge, settings?.default_delivery_charge || 0)}
+                    deliveryCharge={product.delivery_charge || 0}
                     showDetails={true}
                   />
                 </CardContent>

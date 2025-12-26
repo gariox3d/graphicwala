@@ -16,7 +16,7 @@ import WhatsAppButton from '@/components/WhatsAppButton';
 import PriceBreakdown from '@/components/PriceBreakdown';
 import SupportContact from '@/components/SupportContact';
 import DeliveryInfoBanner from '@/components/DeliveryInfoBanner';
-import { useStoreSettings, getProductDeliveryCharge } from '@/hooks/useStoreSettings';
+import { useStoreSettings } from '@/hooks/useStoreSettings';
 import { Product } from '@/lib/types';
 import { toast } from 'sonner';
 import { Loader2, ShoppingBag, MapPin, CreditCard, Image, AlertCircle, Truck, Store } from 'lucide-react';
@@ -40,14 +40,14 @@ const Checkout = () => {
   const [deliveryMethod, setDeliveryMethod] = useState<'home_delivery' | 'store_pickup'>('home_delivery');
   const { settings } = useStoreSettings();
 
-  // Calculate delivery charge
+  // Calculate delivery charge from product-level charges only
   const calculateDeliveryCharge = () => {
     if (deliveryMethod === 'store_pickup') return 0;
     let totalDelivery = 0;
     cartItems.forEach(item => {
       const product = item.products as Product & { delivery_charge?: number | null };
-      const deliveryCharge = getProductDeliveryCharge(product?.delivery_charge, settings?.default_delivery_charge || 0);
-      totalDelivery += deliveryCharge;
+      // Use product's delivery charge directly, no fallback to global
+      totalDelivery += (product?.delivery_charge || 0);
     });
     return totalDelivery;
   };
@@ -182,6 +182,11 @@ const Checkout = () => {
           ? `${formData.address}, ${formData.landmark}`
           : formData.address);
 
+      // Calculate estimated delivery date (7 days from today)
+      const estimatedDeliveryDate = new Date();
+      estimatedDeliveryDate.setDate(estimatedDeliveryDate.getDate() + 7);
+      const formattedDeliveryDate = estimatedDeliveryDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+
       // Prepare order data to send to server (NOT creating order yet)
       const orderPayload = {
         user_id: user!.id,
@@ -197,6 +202,8 @@ const Checkout = () => {
         order_notes: formData.orderNotes || null,
         delivery_method: deliveryMethod,
         delivery_charge: deliveryCharge,
+        delivery_days_used: 7,
+        estimated_delivery_date: formattedDeliveryDate,
       };
 
       // Prepare order items data

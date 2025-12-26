@@ -1,4 +1,4 @@
-import { Truck, Store, CreditCard } from 'lucide-react';
+import { Truck, Store, CreditCard, Package } from 'lucide-react';
 
 interface DeliveryInfoBannerProps {
   variant?: 'full' | 'compact';
@@ -8,41 +8,38 @@ interface DeliveryInfoBannerProps {
 const DeliveryInfoBanner = ({ variant = 'full', className = '' }: DeliveryInfoBannerProps) => {
   if (variant === 'compact') {
     return (
-      <div className={`bg-primary/5 border border-primary/20 rounded-lg p-4 ${className}`}>
-        <div className="flex items-start gap-3">
-          <Truck className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-          <div className="text-sm">
-            <p className="font-medium text-foreground">Online Delivery Service</p>
-            <p className="text-muted-foreground">
-              All products are custom-made and delivered to your address. Store pickup available at checkout.
-            </p>
-          </div>
-        </div>
+      <div className={`flex items-center gap-2 text-sm text-muted-foreground p-3 bg-muted/50 rounded-lg ${className}`}>
+        <Package className="h-4 w-4 text-primary" />
+        <span>7-Day Delivery • All orders prepaid only</span>
       </div>
     );
   }
 
   return (
-    <div className={`bg-gradient-to-r from-primary/10 to-secondary border border-primary/20 rounded-xl p-6 ${className}`}>
-      <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-        <div className="flex-1">
-          <h3 className="font-semibold text-lg flex items-center gap-2 mb-2">
-            <Truck className="h-5 w-5 text-primary" />
-            Delivery-Based Printing Service
-          </h3>
-          <p className="text-muted-foreground">
-            All products are custom-made and delivered to your address. 
-            This is an online delivery-based service. Store pickup is available only if selected during checkout.
+    <div className={`bg-gradient-to-r from-primary/5 to-orange-500/5 border border-primary/20 rounded-xl p-6 ${className}`}>
+      <div className="flex items-start gap-3 mb-4">
+        <Truck className="h-6 w-6 text-primary mt-0.5" />
+        <div>
+          <h3 className="font-semibold text-lg">7-Day Delivery</h3>
+          <p className="text-sm text-muted-foreground">
+            All orders are delivered within 7 days from order confirmation
           </p>
         </div>
-        <div className="flex flex-col sm:flex-row gap-3">
-          <div className="flex items-center gap-2 text-sm bg-background/80 rounded-lg px-3 py-2">
-            <Store className="h-4 w-4 text-primary" />
-            <span>Pickup Available</span>
+      </div>
+      
+      <div className="grid sm:grid-cols-2 gap-4 mt-4">
+        <div className="flex items-center gap-3 p-3 bg-background/50 rounded-lg">
+          <Store className="h-5 w-5 text-green-600" />
+          <div>
+            <p className="font-medium text-sm">Store Pickup Available</p>
+            <p className="text-xs text-muted-foreground">Free pickup from store</p>
           </div>
-          <div className="flex items-center gap-2 text-sm bg-background/80 rounded-lg px-3 py-2">
-            <CreditCard className="h-4 w-4 text-primary" />
-            <span>Prepaid Only</span>
+        </div>
+        <div className="flex items-center gap-3 p-3 bg-background/50 rounded-lg">
+          <CreditCard className="h-5 w-5 text-blue-600" />
+          <div>
+            <p className="font-medium text-sm">Prepaid Only</p>
+            <p className="text-xs text-muted-foreground">Secure online payment</p>
           </div>
         </div>
       </div>

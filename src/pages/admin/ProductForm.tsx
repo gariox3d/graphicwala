@@ -19,7 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Loader2, ArrowLeft, Plus, Trash2, Image } from 'lucide-react';
+import { Loader2, ArrowLeft, Plus, Trash2, Image, Truck, Clock, IndianRupee } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import MultiImageUpload from '@/components/admin/MultiImageUpload';
 
@@ -41,6 +41,9 @@ const ProductForm = () => {
     stock_quantity: '0',
     is_active: true,
     customization_enabled: false,
+    delivery_charge: '',
+    cutoff_time: '18:00',
+    enable_delivery: true,
   });
 
   const [uploadConfig, setUploadConfig] = useState<UploadField[]>([]);
@@ -86,6 +89,9 @@ const ProductForm = () => {
           stock_quantity: product.stock_quantity?.toString() || '0',
           is_active: product.is_active,
           customization_enabled: product.customization_enabled || false,
+          delivery_charge: product.delivery_charge?.toString() || '',
+          cutoff_time: product.cutoff_time?.slice(0, 5) || '18:00',
+          enable_delivery: product.enable_delivery ?? true,
         });
         
         // Load images - check image_urls first, then fallback to image_url
@@ -182,6 +188,11 @@ const ProductForm = () => {
         // Keep legacy fields for backwards compatibility
         front_upload_required: uploadConfig.some(f => f.id === 'front' && f.required),
         back_upload_enabled: uploadConfig.some(f => f.id === 'back'),
+        // Delivery settings
+        delivery_charge: formData.delivery_charge ? parseFloat(formData.delivery_charge) : null,
+        cutoff_time: formData.cutoff_time ? `${formData.cutoff_time}:00` : '18:00:00',
+        enable_delivery: formData.enable_delivery,
+        delivery_days: 7, // Fixed 7 days
       };
 
       if (isEditing) {
@@ -420,6 +431,79 @@ const ProductForm = () => {
                           <li>Photo Frame: 1 Photo (required)</li>
                           <li>Visiting Card: Front (required) + Back (optional)</li>
                         </ul>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Delivery Settings */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Truck className="h-5 w-5 text-primary" />
+                    Delivery Settings
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label htmlFor="enable_delivery">Enable Delivery</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Show delivery countdown timer
+                      </p>
+                    </div>
+                    <Switch
+                      id="enable_delivery"
+                      checked={formData.enable_delivery}
+                      onCheckedChange={(checked) => setFormData({ ...formData, enable_delivery: checked })}
+                    />
+                  </div>
+
+                  {formData.enable_delivery && (
+                    <div className="space-y-4 pt-4 border-t">
+                      <div className="space-y-2">
+                        <Label htmlFor="delivery_charge" className="flex items-center gap-2">
+                          <IndianRupee className="h-4 w-4" />
+                          Delivery Charge (₹) *
+                        </Label>
+                        <Input
+                          id="delivery_charge"
+                          name="delivery_charge"
+                          type="number"
+                          min="0"
+                          value={formData.delivery_charge}
+                          onChange={handleInputChange}
+                          placeholder="Enter delivery charge"
+                          required
+                        />
+                        <p className="text-xs text-muted-foreground">
+                          Set to 0 for free delivery
+                        </p>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="cutoff_time" className="flex items-center gap-2">
+                          <Clock className="h-4 w-4" />
+                          Order Cut-off Time
+                        </Label>
+                        <Input
+                          id="cutoff_time"
+                          name="cutoff_time"
+                          type="time"
+                          value={formData.cutoff_time}
+                          onChange={handleInputChange}
+                        />
+                        <p className="text-xs text-muted-foreground">
+                          Orders after this time start delivery from next day
+                        </p>
+                      </div>
+
+                      <div className="bg-blue-50 p-3 rounded-lg text-sm text-blue-700">
+                        <strong>Fixed: 7-Day Delivery</strong>
+                        <p className="mt-1">
+                          All products have 7-day delivery. This cannot be changed.
+                        </p>
                       </div>
                     </div>
                   )}
