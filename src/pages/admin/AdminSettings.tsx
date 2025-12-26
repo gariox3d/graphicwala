@@ -77,7 +77,7 @@ const AdminSettings = () => {
         </div>
 
         <div className="grid gap-6 max-w-2xl">
-          {/* Delivery Charge */}
+          {/* Delivery Info */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -85,26 +85,25 @@ const AdminSettings = () => {
                 Delivery Settings
               </CardTitle>
               <CardDescription>
-                Set default delivery charge for all products
+                Delivery configuration for your store
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="delivery_charge" className="flex items-center gap-2">
-                  <IndianRupee className="h-4 w-4" />
-                  Default Delivery Charge (₹)
-                </Label>
-                <Input
-                  id="delivery_charge"
-                  type="number"
-                  min="0"
-                  value={formData.default_delivery_charge}
-                  onChange={(e) => setFormData({ ...formData, default_delivery_charge: Number(e.target.value) })}
-                  placeholder="50"
-                />
-                <p className="text-xs text-muted-foreground">
-                  This charge applies to all products unless overridden in product settings
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <p className="text-sm text-blue-700">
+                  <strong>📦 Fixed 7-Day Delivery</strong>
                 </p>
+                <p className="text-sm text-blue-600 mt-1">
+                  All products have a fixed 7-day delivery time. Delivery charges are set per product in the product settings.
+                </p>
+              </div>
+              <div className="text-sm text-muted-foreground">
+                <p>To set delivery charges:</p>
+                <ol className="list-decimal list-inside mt-2 space-y-1">
+                  <li>Go to Products → Edit Product</li>
+                  <li>Set Delivery Charge (₹) for each product</li>
+                  <li>Set Order Cut-off Time for countdown timer</li>
+                </ol>
               </div>
             </CardContent>
           </Card>
