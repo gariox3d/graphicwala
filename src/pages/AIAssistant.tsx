@@ -268,17 +268,73 @@ const AIAssistant = () => {
     handleSendMessage(question);
   };
 
-  // Parse markdown-like syntax for display
+  // Parse markdown-like syntax for display - safe React components (no dangerouslySetInnerHTML)
   const formatMessage = (text: string) => {
-    return text
-      .split('\n')
-      .map((line, i) => {
-        // Bold text
-        line = line.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        // Links
-        line = line.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-primary underline hover:no-underline">$1</a>');
-        return <p key={i} className="mb-1" dangerouslySetInnerHTML={{ __html: line || '&nbsp;' }} />;
-      });
+    return text.split('\n').map((line, lineIndex) => {
+      if (!line) return <p key={lineIndex} className="mb-1">&nbsp;</p>;
+      
+      // Parse line into segments (text, bold, links)
+      const segments: React.ReactNode[] = [];
+      let remaining = line;
+      let segmentIndex = 0;
+      
+      while (remaining.length > 0) {
+        // Check for bold text first
+        const boldMatch = remaining.match(/\*\*(.*?)\*\*/);
+        // Check for markdown links - only allow safe protocols (http, https, relative paths)
+        const linkMatch = remaining.match(/\[([^\]]+)\]\(([^)]+)\)/);
+        
+        // Find the earliest match
+        const boldIndex = boldMatch ? remaining.indexOf(boldMatch[0]) : -1;
+        const linkIndex = linkMatch ? remaining.indexOf(linkMatch[0]) : -1;
+        
+        // No more matches, add remaining text
+        if (boldIndex === -1 && linkIndex === -1) {
+          segments.push(<span key={`${lineIndex}-${segmentIndex++}`}>{remaining}</span>);
+          break;
+        }
+        
+        // Determine which comes first
+        const usesBold = boldIndex !== -1 && (linkIndex === -1 || boldIndex < linkIndex);
+        const usesLink = linkIndex !== -1 && (boldIndex === -1 || linkIndex < boldIndex);
+        
+        if (usesBold && boldMatch) {
+          // Add text before bold
+          if (boldIndex > 0) {
+            segments.push(<span key={`${lineIndex}-${segmentIndex++}`}>{remaining.substring(0, boldIndex)}</span>);
+          }
+          // Add bold text
+          segments.push(<strong key={`${lineIndex}-${segmentIndex++}`}>{boldMatch[1]}</strong>);
+          remaining = remaining.substring(boldIndex + boldMatch[0].length);
+        } else if (usesLink && linkMatch) {
+          // Add text before link
+          if (linkIndex > 0) {
+            segments.push(<span key={`${lineIndex}-${segmentIndex++}`}>{remaining.substring(0, linkIndex)}</span>);
+          }
+          // Validate URL - only allow safe protocols
+          const url = linkMatch[2];
+          const isSafeUrl = /^(https?:\/\/|\/[^/])/.test(url);
+          
+          if (isSafeUrl) {
+            segments.push(
+              <a 
+                key={`${lineIndex}-${segmentIndex++}`} 
+                href={url} 
+                className="text-primary underline hover:no-underline"
+              >
+                {linkMatch[1]}
+              </a>
+            );
+          } else {
+            // Unsafe URL - just show the text without linking
+            segments.push(<span key={`${lineIndex}-${segmentIndex++}`}>{linkMatch[1]}</span>);
+          }
+          remaining = remaining.substring(linkIndex + linkMatch[0].length);
+        }
+      }
+      
+      return <p key={lineIndex} className="mb-1">{segments}</p>;
+    });
   };
 
   return (
