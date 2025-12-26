@@ -11,7 +11,9 @@ import {
   LogOut,
   Home,
   Menu,
-  X
+  X,
+  Truck,
+  FolderOpen
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -30,7 +32,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/products', label: 'Products', icon: Package },
     { path: '/admin/orders', label: 'Orders', icon: ShoppingCart },
     { path: '/admin/reviews', label: 'Reviews', icon: Users },
-    { path: '/admin/categories', label: 'Categories', icon: Settings },
+    { path: '/admin/categories', label: 'Categories', icon: FolderOpen },
+    { path: '/admin/settings', label: 'Delivery & Settings', icon: Truck },
   ];
 
   const handleSignOut = async () => {
