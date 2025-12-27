@@ -2,19 +2,29 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-// Allowed origins for CORS - restrict to known domains
+// Allowed origins for CORS - includes Vercel production domains
 const ALLOWED_ORIGINS = [
   'https://lovable.dev',
   'https://haeggvlmnfapopmyuaya.lovable.app',
   'http://localhost:5173',
   'http://localhost:3000',
+  // Vercel production domains - add your custom domain here
+  'https://graphicwala.vercel.app',
+  'https://www.graphicwala.in',
+  'https://graphicwala.in',
 ];
 
 function getCorsHeaders(origin: string | null): Record<string, string> {
-  // For webhooks from Razorpay, allow any origin
-  const allowedOrigin = origin && ALLOWED_ORIGINS.some(allowed => 
-    origin === allowed || origin.endsWith('.lovable.app') || origin.endsWith('.lovable.dev')
-  ) ? origin : ALLOWED_ORIGINS[0];
+  // For webhooks from Razorpay (no origin), allow
+  // For browser requests, validate origin
+  const isAllowed = !origin || ALLOWED_ORIGINS.some(allowed => 
+    origin === allowed || 
+    origin.endsWith('.lovable.app') || 
+    origin.endsWith('.lovable.dev') ||
+    origin.endsWith('.vercel.app')
+  );
+  
+  const allowedOrigin = isAllowed && origin ? origin : ALLOWED_ORIGINS[0];
   
   return {
     'Access-Control-Allow-Origin': allowedOrigin,
@@ -79,15 +89,30 @@ const RAZORPAY_WEBHOOK_SECRET = Deno.env.get('RAZORPAY_WEBHOOK_SECRET');
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
+// Validate required secrets on startup
+function validateSecrets(): { valid: boolean; missing: string[] } {
+  const missing: string[] = [];
+  if (!RAZORPAY_KEY_ID) missing.push('RAZORPAY_KEY_ID');
+  if (!RAZORPAY_KEY_SECRET) missing.push('RAZORPAY_KEY_SECRET');
+  if (!SUPABASE_URL) missing.push('SUPABASE_URL');
+  if (!SUPABASE_SERVICE_ROLE_KEY) missing.push('SUPABASE_SERVICE_ROLE_KEY');
+  return { valid: missing.length === 0, missing };
+}
+
 // Verify Razorpay signature
 async function verifySignature(
   razorpay_order_id: string,
   razorpay_payment_id: string,
   razorpay_signature: string
 ): Promise<boolean> {
+  if (!RAZORPAY_KEY_SECRET) {
+    console.error('RAZORPAY_KEY_SECRET not configured');
+    return false;
+  }
+  
   const encoder = new TextEncoder();
   const data = encoder.encode(`${razorpay_order_id}|${razorpay_payment_id}`);
-  const key = encoder.encode(RAZORPAY_KEY_SECRET!);
+  const key = encoder.encode(RAZORPAY_KEY_SECRET);
   
   const cryptoKey = await crypto.subtle.importKey(
     'raw',
@@ -110,11 +135,15 @@ async function verifyWebhookSignature(
   body: string,
   signature: string
 ): Promise<boolean> {
-  // Use dedicated webhook secret, fallback to key secret for backwards compatibility
+  // CRITICAL: Use dedicated webhook secret, require it for production
   const webhookSecret = RAZORPAY_WEBHOOK_SECRET || RAZORPAY_KEY_SECRET;
   if (!webhookSecret) {
-    console.error('No webhook secret configured');
+    console.error('No webhook secret configured - RAZORPAY_WEBHOOK_SECRET is required');
     return false;
+  }
+  
+  if (!RAZORPAY_WEBHOOK_SECRET) {
+    console.warn('RAZORPAY_WEBHOOK_SECRET not set, using RAZORPAY_KEY_SECRET as fallback');
   }
   
   const encoder = new TextEncoder();
@@ -147,6 +176,19 @@ serve(async (req) => {
   }
 
   try {
+    // Validate secrets are configured
+    const secretsCheck = validateSecrets();
+    if (!secretsCheck.valid) {
+      console.error('Missing required secrets:', secretsCheck.missing);
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: 'Payment service configuration error. Please contact support.',
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    
     const contentType = req.headers.get('content-type') || '';
     
     // Handle webhook from Razorpay
@@ -154,12 +196,12 @@ serve(async (req) => {
       const rawBody = await req.text();
       const webhookSignature = req.headers.get('x-razorpay-signature') || '';
       
-      console.log('Webhook received');
+      console.log('Webhook received at:', new Date().toISOString());
       
-      // Verify webhook signature
+      // CRITICAL: Verify webhook signature - mandatory for security
       const isValidWebhook = await verifyWebhookSignature(rawBody, webhookSignature);
       if (!isValidWebhook) {
-        console.error('Invalid webhook signature');
+        console.error('Invalid webhook signature - rejecting request');
         return new Response(JSON.stringify({ error: 'Invalid signature' }), {
           status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -169,7 +211,9 @@ serve(async (req) => {
       const webhookData = JSON.parse(rawBody);
       const event = webhookData.event;
       
-      console.log(`Webhook event: ${event}`);
+      console.log(`Verified webhook event: ${event}`);
+
+      const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
 
       if (event === 'payment.captured') {
         const payment = webhookData.payload.payment.entity;
@@ -178,23 +222,68 @@ serve(async (req) => {
 
         console.log(`Payment captured - order_id: ${razorpay_order_id}, payment_id: ${razorpay_payment_id}`);
 
-        const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
-
-        // Update order if it exists (safety net)
-        const { error: updateError } = await supabase
+        // Update order if it exists (safety net for idempotency)
+        const { data: existingOrder, error: fetchError } = await supabase
           .from('orders')
-          .update({
-            payment_status: 'paid',
-            status: 'confirmed',
-            razorpay_payment_id,
-          })
+          .select('id, payment_status')
           .eq('razorpay_order_id', razorpay_order_id)
-          .eq('payment_status', 'pending'); // Only update if still pending
+          .maybeSingle();
 
-        if (updateError) {
-          console.error('Webhook update error:', updateError);
+        if (existingOrder) {
+          // Idempotency check - only update if not already paid
+          if (existingOrder.payment_status !== 'paid') {
+            const { error: updateError } = await supabase
+              .from('orders')
+              .update({
+                payment_status: 'paid',
+                status: 'confirmed',
+                razorpay_payment_id,
+              })
+              .eq('id', existingOrder.id);
+
+            if (updateError) {
+              console.error('Webhook update error:', updateError);
+            } else {
+              console.log('Order confirmed via webhook:', existingOrder.id);
+            }
+          } else {
+            console.log('Order already paid, skipping duplicate webhook:', existingOrder.id);
+          }
         } else {
-          console.log('Order updated via webhook');
+          console.log('No order found for razorpay_order_id:', razorpay_order_id);
+        }
+      }
+
+      // Handle payment failure events
+      if (event === 'payment.failed') {
+        const payment = webhookData.payload.payment.entity;
+        const razorpay_order_id = payment.order_id;
+        const error_code = payment.error_code;
+        const error_description = payment.error_description;
+
+        console.log(`Payment failed - order_id: ${razorpay_order_id}, error: ${error_code} - ${error_description}`);
+
+        // If an order exists with pending status, mark it as failed
+        const { data: existingOrder } = await supabase
+          .from('orders')
+          .select('id, payment_status')
+          .eq('razorpay_order_id', razorpay_order_id)
+          .maybeSingle();
+
+        if (existingOrder && existingOrder.payment_status === 'pending') {
+          const { error: updateError } = await supabase
+            .from('orders')
+            .update({
+              payment_status: 'failed',
+              status: 'cancelled',
+            })
+            .eq('id', existingOrder.id);
+
+          if (updateError) {
+            console.error('Failed to mark order as failed:', updateError);
+          } else {
+            console.log('Order marked as failed via webhook:', existingOrder.id);
+          }
         }
       }
 
