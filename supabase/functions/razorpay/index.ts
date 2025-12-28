@@ -2,7 +2,8 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-// Allowed origins for CORS - includes Vercel production domains
+// Allowed origins for CORS
+// NOTE: Lovable preview runs on *.lovableproject.com
 const ALLOWED_ORIGINS = [
   'https://lovable.dev',
   'https://haeggvlmnfapopmyuaya.lovable.app',
@@ -17,12 +18,13 @@ const ALLOWED_ORIGINS = [
 function getCorsHeaders(origin: string | null): Record<string, string> {
   // For webhooks from Razorpay (no origin), allow
   // For browser requests, validate origin
-  const isAllowed = !origin || ALLOWED_ORIGINS.some(allowed => 
-    origin === allowed || 
-    origin.endsWith('.lovable.app') || 
+  const isAllowed =
+    !origin ||
+    ALLOWED_ORIGINS.some((allowed) => origin === allowed) ||
+    origin.endsWith('.lovable.app') ||
     origin.endsWith('.lovable.dev') ||
-    origin.endsWith('.vercel.app')
-  );
+    origin.endsWith('.vercel.app') ||
+    origin.endsWith('.lovableproject.com');
   
   const allowedOrigin = isAllowed && origin ? origin : ALLOWED_ORIGINS[0];
   
