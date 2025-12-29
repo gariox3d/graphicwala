@@ -28,6 +28,7 @@ import ShareRedirect from "./pages/ShareRedirect";
 import AIAssistant from "./pages/AIAssistant";
 import ScrollToTop from "./components/ScrollToTop";
 import AdminGuard from "./components/admin/AdminGuard";
+import WelcomeBackPopup from "./components/WelcomeBackPopup";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,7 @@ const App = () => (
           <CartProvider>
             <Toaster />
             <Sonner />
+            <WelcomeBackPopup />
             <BrowserRouter>
               <ScrollToTop />
               <Routes>
