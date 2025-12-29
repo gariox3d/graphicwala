@@ -9,13 +9,19 @@ const ALLOWED_ORIGINS = [
   'https://haeggvlmnfapopmyuaya.lovable.app',
   'http://localhost:5173',
   'http://localhost:3000',
-  // Vercel production domains - add your custom domain here
+  // Vercel production domains
   'https://graphicwala.vercel.app',
   'https://www.graphicwala.in',
   'https://graphicwala.in',
+  // Custom domains - CRITICAL: Must include store.graphicwala.com
+  'https://store.graphicwala.com',
+  'https://www.store.graphicwala.com',
 ];
 
 function getCorsHeaders(origin: string | null): Record<string, string> {
+  // Log incoming origin for debugging
+  console.log('[CORS] Incoming origin:', origin);
+  
   // For webhooks from Razorpay (no origin), allow
   // For browser requests, validate origin
   const isAllowed =
@@ -24,9 +30,12 @@ function getCorsHeaders(origin: string | null): Record<string, string> {
     origin.endsWith('.lovable.app') ||
     origin.endsWith('.lovable.dev') ||
     origin.endsWith('.vercel.app') ||
-    origin.endsWith('.lovableproject.com');
+    origin.endsWith('.lovableproject.com') ||
+    origin.endsWith('.graphicwala.com'); // Allow all graphicwala.com subdomains
   
   const allowedOrigin = isAllowed && origin ? origin : ALLOWED_ORIGINS[0];
+  
+  console.log('[CORS] Origin allowed:', isAllowed, '| Using:', allowedOrigin);
   
   return {
     'Access-Control-Allow-Origin': allowedOrigin,
@@ -170,10 +179,20 @@ async function verifyWebhookSignature(
 
 serve(async (req) => {
   const origin = req.headers.get('origin');
+  const referer = req.headers.get('referer');
+  const host = req.headers.get('host');
   const corsHeaders = getCorsHeaders(origin);
+  
+  // Enhanced logging for debugging domain issues
+  console.log('[REQUEST] Method:', req.method);
+  console.log('[REQUEST] Origin:', origin);
+  console.log('[REQUEST] Referer:', referer);
+  console.log('[REQUEST] Host:', host);
+  console.log('[REQUEST] URL:', req.url);
   
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
+    console.log('[CORS] Preflight request - returning CORS headers');
     return new Response(null, { headers: corsHeaders });
   }
 
@@ -181,7 +200,7 @@ serve(async (req) => {
     // Validate secrets are configured
     const secretsCheck = validateSecrets();
     if (!secretsCheck.valid) {
-      console.error('Missing required secrets:', secretsCheck.missing);
+      console.error('[ERROR] Missing required secrets:', secretsCheck.missing);
       return new Response(JSON.stringify({ 
         success: false, 
         error: 'Payment service configuration error. Please contact support.',
@@ -190,6 +209,8 @@ serve(async (req) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+    
+    console.log('[CONFIG] All required secrets present');
     
     const contentType = req.headers.get('content-type') || '';
     
