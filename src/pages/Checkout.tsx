@@ -16,6 +16,7 @@ import WhatsAppButton from '@/components/WhatsAppButton';
 import PriceBreakdown from '@/components/PriceBreakdown';
 import SupportContact from '@/components/SupportContact';
 import DeliveryInfoBanner from '@/components/DeliveryInfoBanner';
+import PhotoPrivacyNotice from '@/components/PhotoPrivacyNotice';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
 import { Product } from '@/lib/types';
 import { toast } from 'sonner';
@@ -598,6 +599,13 @@ const Checkout = () => {
                         </div>
                       );
                     })}
+                    
+                    {/* Privacy notice when designs are uploaded */}
+                    {hasCustomizableProducts && (
+                      <div className="pt-3 border-t">
+                        <PhotoPrivacyNotice />
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>

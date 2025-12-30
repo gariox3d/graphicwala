@@ -452,6 +452,8 @@ export type Database = {
       }
       store_settings: {
         Row: {
+          announcement_enabled: boolean | null
+          announcement_text: string | null
           created_at: string
           default_delivery_charge: number | null
           id: string
@@ -460,6 +462,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          announcement_enabled?: boolean | null
+          announcement_text?: string | null
           created_at?: string
           default_delivery_charge?: number | null
           id?: string
@@ -468,6 +472,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          announcement_enabled?: boolean | null
+          announcement_text?: string | null
           created_at?: string
           default_delivery_charge?: number | null
           id?: string

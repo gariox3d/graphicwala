@@ -6,6 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import LoginPromptDialog from '@/components/reviews/LoginPromptDialog';
+import PhotoPrivacyNotice from '@/components/PhotoPrivacyNotice';
 
 interface UploadField {
   id: string;
@@ -143,6 +144,8 @@ const DesignUpload = ({
           <p className="text-sm text-muted-foreground">
             {isCartMode ? 'Complete uploads before checkout' : 'Upload now or add to cart and upload later'}
           </p>
+          {/* Privacy Notice */}
+          <PhotoPrivacyNotice className="mt-2" />
           {!isLoggedIn && (
             <p className="text-xs text-amber-600 flex items-center gap-1 mt-1">
               <Lock className="h-3 w-3" />

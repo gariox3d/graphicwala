@@ -177,6 +177,49 @@ async function verifyWebhookSignature(
   return expectedSignature === signature;
 }
 
+// Send WhatsApp order confirmation (non-blocking, fail-safe)
+async function sendWhatsAppConfirmation(
+  phone: string,
+  orderId: string,
+  customerName: string | null
+): Promise<void> {
+  // Format phone for WhatsApp (ensure +91 prefix)
+  const cleanPhone = phone.replace(/\s/g, '').replace(/^0+/, '');
+  const whatsappPhone = cleanPhone.startsWith('91') ? cleanPhone : `91${cleanPhone}`;
+  
+  // Create the confirmation message
+  const name = customerName || 'Customer';
+  const shortOrderId = orderId.slice(0, 8).toUpperCase();
+  const message = `Hi ${name} 👋
+
+Your order #${shortOrderId} has been successfully confirmed.
+We will start processing your print shortly.
+
+Thank you for choosing Graphic Wala ❤️`;
+
+  console.log('[WhatsApp] Preparing to send confirmation:', {
+    phone: whatsappPhone,
+    orderId: shortOrderId,
+    customerName: name,
+  });
+
+  // Log the message for now - can be connected to WhatsApp Business API later
+  // Popular options: Twilio, Gupshup, Meta WhatsApp Business API
+  console.log('[WhatsApp] Message content:', message);
+  
+  // TODO: When ready, integrate with WhatsApp Business API:
+  // const WHATSAPP_API_KEY = Deno.env.get('WHATSAPP_API_KEY');
+  // if (WHATSAPP_API_KEY) {
+  //   await fetch('https://api.whatsapp-provider.com/send', {
+  //     method: 'POST',
+  //     headers: { 'Authorization': `Bearer ${WHATSAPP_API_KEY}` },
+  //     body: JSON.stringify({ to: whatsappPhone, message }),
+  //   });
+  // }
+  
+  console.log('[WhatsApp] Order confirmation logged successfully for:', shortOrderId);
+}
+
 serve(async (req) => {
   const origin = req.headers.get('origin');
   const referer = req.headers.get('referer');
@@ -248,7 +291,7 @@ serve(async (req) => {
         // Update order if it exists (safety net for idempotency)
         const { data: existingOrder, error: fetchError } = await supabase
           .from('orders')
-          .select('id, payment_status')
+          .select('id, payment_status, shipping_phone, customer_name')
           .eq('razorpay_order_id', razorpay_order_id)
           .maybeSingle();
 
@@ -268,6 +311,18 @@ serve(async (req) => {
               console.error('Webhook update error:', updateError);
             } else {
               console.log('Order confirmed via webhook:', existingOrder.id);
+              
+              // Send WhatsApp confirmation (non-blocking)
+              try {
+                await sendWhatsAppConfirmation(
+                  existingOrder.shipping_phone,
+                  existingOrder.id,
+                  existingOrder.customer_name
+                );
+              } catch (whatsappError) {
+                // Log error but don't fail the webhook - order is already confirmed
+                console.error('WhatsApp notification failed (non-blocking):', whatsappError);
+              }
             }
           } else {
             console.log('Order already paid, skipping duplicate webhook:', existingOrder.id);
