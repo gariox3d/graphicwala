@@ -10,7 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
 import { toast } from 'sonner';
-import { Loader2, Settings, Truck, Store, IndianRupee } from 'lucide-react';
+import { Loader2, Settings, Truck, Store, Megaphone } from 'lucide-react';
 
 const AdminSettings = () => {
   const { user, isAdmin, loading: authLoading } = useAuth();
@@ -22,6 +22,8 @@ const AdminSettings = () => {
     default_delivery_charge: 50,
     store_pickup_enabled: true,
     pickup_address: 'Graphic Wala Shop, Main Road',
+    announcement_text: '',
+    announcement_enabled: false,
   });
 
   useEffect(() => {
@@ -36,6 +38,8 @@ const AdminSettings = () => {
         default_delivery_charge: settings.default_delivery_charge,
         store_pickup_enabled: settings.store_pickup_enabled,
         pickup_address: settings.pickup_address,
+        announcement_text: settings.announcement_text || '',
+        announcement_enabled: settings.announcement_enabled || false,
       });
     }
   }, [settings]);
@@ -146,6 +150,48 @@ const AdminSettings = () => {
                   />
                 </div>
               )}
+            </CardContent>
+          </Card>
+
+          {/* Announcement Banner */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Megaphone className="h-5 w-5 text-primary" />
+                Homepage Announcement
+              </CardTitle>
+              <CardDescription>
+                Display seasonal or festival messages on the homepage
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="announcement_enabled">Enable Announcement Banner</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Shows a banner at the top of the homepage
+                  </p>
+                </div>
+                <Switch
+                  id="announcement_enabled"
+                  checked={formData.announcement_enabled}
+                  onCheckedChange={(checked) => setFormData({ ...formData, announcement_enabled: checked })}
+                />
+              </div>
+
+              <div className="space-y-2 pt-4 border-t">
+                <Label htmlFor="announcement_text">Announcement Message</Label>
+                <Textarea
+                  id="announcement_text"
+                  value={formData.announcement_text}
+                  onChange={(e) => setFormData({ ...formData, announcement_text: e.target.value })}
+                  placeholder="e.g., 🎁 Raksha Bandhan Special Printing – Order Early!"
+                  rows={2}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Use emojis to make it eye-catching. Keep it short and clear.
+                </p>
+              </div>
             </CardContent>
           </Card>
 

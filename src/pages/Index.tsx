@@ -8,6 +8,7 @@ import ProductCard from '@/components/products/ProductCard';
 import DeliveryInfoBanner from '@/components/DeliveryInfoBanner';
 import SupportContact from '@/components/SupportContact';
 import HeroSection from '@/components/HeroSection';
+import AnnouncementBanner from '@/components/AnnouncementBanner';
 import { supabase } from '@/integrations/supabase/client';
 import { Product, Category, WHATSAPP_NUMBER, BUSINESS_NAME } from '@/lib/types';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
@@ -81,6 +82,9 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      {/* Announcement Banner - Top of page */}
+      <AnnouncementBanner />
+      
       <Header />
 
       <main className="flex-1">

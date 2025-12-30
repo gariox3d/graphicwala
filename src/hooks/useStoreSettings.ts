@@ -6,6 +6,8 @@ export interface StoreSettings {
   default_delivery_charge: number;
   store_pickup_enabled: boolean;
   pickup_address: string;
+  announcement_text: string | null;
+  announcement_enabled: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -34,6 +36,8 @@ export const useStoreSettings = () => {
         default_delivery_charge: 50,
         store_pickup_enabled: true,
         pickup_address: 'Graphic Wala Shop, Main Road',
+        announcement_text: null,
+        announcement_enabled: false,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       });
