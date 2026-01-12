@@ -220,6 +220,34 @@ Thank you for choosing Graphic Wala ❤️`;
   console.log('[WhatsApp] Order confirmation logged successfully for:', shortOrderId);
 }
 
+// Send order confirmation email (non-blocking, fail-safe)
+async function sendOrderConfirmationEmail(orderId: string): Promise<void> {
+  try {
+    const SUPABASE_URL_ENV = Deno.env.get('SUPABASE_URL');
+    
+    console.log('[Email] Triggering order confirmation email for:', orderId);
+    
+    const response = await fetch(`${SUPABASE_URL_ENV}/functions/v1/send-order-confirmation`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+      },
+      body: JSON.stringify({ orderId }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('[Email] Failed to trigger email:', errorText);
+    } else {
+      const result = await response.json();
+      console.log('[Email] Trigger response:', result);
+    }
+  } catch (error) {
+    console.error('[Email] Error triggering email (non-blocking):', error);
+  }
+}
+
 serve(async (req) => {
   const origin = req.headers.get('origin');
   const referer = req.headers.get('referer');
@@ -322,6 +350,13 @@ serve(async (req) => {
               } catch (whatsappError) {
                 // Log error but don't fail the webhook - order is already confirmed
                 console.error('WhatsApp notification failed (non-blocking):', whatsappError);
+              }
+              
+              // Send order confirmation email (non-blocking)
+              try {
+                await sendOrderConfirmationEmail(existingOrder.id);
+              } catch (emailError) {
+                console.error('Email notification failed (non-blocking):', emailError);
               }
             }
           } else {
@@ -590,6 +625,12 @@ serve(async (req) => {
       }
 
       console.log('Order creation complete:', dbOrder.id);
+
+      // Send order confirmation email (non-blocking, in background)
+      // Don't await - let response return immediately
+      sendOrderConfirmationEmail(dbOrder.id).catch(err => {
+        console.error('Email trigger failed (non-blocking):', err);
+      });
 
       return new Response(JSON.stringify({ 
         success: true, 
