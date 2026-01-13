@@ -105,6 +105,26 @@ const AdminOrders = () => {
     } else {
       setOrders(orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
       toast.success('Order status updated');
+      
+      // Trigger status email (async, don't block UI)
+      sendStatusEmail(orderId, newStatus);
+    }
+  };
+
+  const sendStatusEmail = async (orderId: string, newStatus: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('send-status-email', {
+        body: { orderId, newStatus }
+      });
+      
+      if (error) {
+        console.error('Failed to send status email:', error);
+        // Don't show error toast - email is secondary to status update
+      } else if (data?.success) {
+        console.log('Status email sent successfully');
+      }
+    } catch (err) {
+      console.error('Status email error:', err);
     }
   };
 
