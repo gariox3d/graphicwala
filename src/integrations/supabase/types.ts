@@ -235,6 +235,7 @@ export type Database = {
           shipping_pincode: string
           shipping_state: string
           status: string
+          status_emails_sent: string[] | null
           total_amount: number
           updated_at: string
           user_id: string
@@ -261,6 +262,7 @@ export type Database = {
           shipping_pincode: string
           shipping_state: string
           status?: string
+          status_emails_sent?: string[] | null
           total_amount: number
           updated_at?: string
           user_id: string
@@ -287,6 +289,7 @@ export type Database = {
           shipping_pincode?: string
           shipping_state?: string
           status?: string
+          status_emails_sent?: string[] | null
           total_amount?: number
           updated_at?: string
           user_id?: string
