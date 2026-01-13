@@ -16,9 +16,9 @@ const Contact = () => (
           <div>
             <h2 className="text-xl font-semibold mb-6">Get in Touch</h2>
             <div className="space-y-4">
-              <div className="flex items-center gap-4"><Mail className="h-5 w-5 text-primary" /><span>hello@graphicwala.com</span></div>
-              <div className="flex items-center gap-4"><Phone className="h-5 w-5 text-primary" /><span>+91 98765 43210</span></div>
-              <div className="flex items-center gap-4"><MapPin className="h-5 w-5 text-primary" /><span>123 Print Street, Design City, India</span></div>
+              <div className="flex items-center gap-4"><Mail className="h-5 w-5 text-primary" /><span>graphicwalaktr@gmail.com</span></div>
+              <div className="flex items-center gap-4"><Phone className="h-5 w-5 text-primary" /><span>+91 620714 2994</span></div>
+              <div className="flex items-center gap-4"><MapPin className="h-5 w-5 text-primary" /><span>Nasirganj, Sabji Mandi, Near Sarfaraz Art, Katihar India</span></div>
             </div>
           </div>
           <form className="space-y-4">
