@@ -234,6 +234,10 @@ export type Database = {
           shipping_phone: string
           shipping_pincode: string
           shipping_state: string
+          shiprocket_awb: string | null
+          shiprocket_courier_name: string | null
+          shiprocket_order_id: string | null
+          shiprocket_shipment_id: string | null
           status: string
           status_emails_sent: string[] | null
           total_amount: number
@@ -261,6 +265,10 @@ export type Database = {
           shipping_phone: string
           shipping_pincode: string
           shipping_state: string
+          shiprocket_awb?: string | null
+          shiprocket_courier_name?: string | null
+          shiprocket_order_id?: string | null
+          shiprocket_shipment_id?: string | null
           status?: string
           status_emails_sent?: string[] | null
           total_amount: number
@@ -288,6 +296,10 @@ export type Database = {
           shipping_phone?: string
           shipping_pincode?: string
           shipping_state?: string
+          shiprocket_awb?: string | null
+          shiprocket_courier_name?: string | null
+          shiprocket_order_id?: string | null
+          shiprocket_shipment_id?: string | null
           status?: string
           status_emails_sent?: string[] | null
           total_amount?: number
@@ -299,6 +311,7 @@ export type Database = {
       products: {
         Row: {
           back_upload_enabled: boolean | null
+          breadth_cm: number | null
           category_id: string | null
           created_at: string
           customization_enabled: boolean | null
@@ -308,18 +321,22 @@ export type Database = {
           description: string | null
           enable_delivery: boolean | null
           front_upload_required: boolean | null
+          height_cm: number | null
           id: string
           image_url: string | null
           image_urls: Json | null
           is_active: boolean | null
+          length_cm: number | null
           name: string
           price: number
           stock_quantity: number | null
           updated_at: string
           upload_config: Json | null
+          weight_kg: number | null
         }
         Insert: {
           back_upload_enabled?: boolean | null
+          breadth_cm?: number | null
           category_id?: string | null
           created_at?: string
           customization_enabled?: boolean | null
@@ -329,18 +346,22 @@ export type Database = {
           description?: string | null
           enable_delivery?: boolean | null
           front_upload_required?: boolean | null
+          height_cm?: number | null
           id?: string
           image_url?: string | null
           image_urls?: Json | null
           is_active?: boolean | null
+          length_cm?: number | null
           name: string
           price: number
           stock_quantity?: number | null
           updated_at?: string
           upload_config?: Json | null
+          weight_kg?: number | null
         }
         Update: {
           back_upload_enabled?: boolean | null
+          breadth_cm?: number | null
           category_id?: string | null
           created_at?: string
           customization_enabled?: boolean | null
@@ -350,15 +371,18 @@ export type Database = {
           description?: string | null
           enable_delivery?: boolean | null
           front_upload_required?: boolean | null
+          height_cm?: number | null
           id?: string
           image_url?: string | null
           image_urls?: Json | null
           is_active?: boolean | null
+          length_cm?: number | null
           name?: string
           price?: number
           stock_quantity?: number | null
           updated_at?: string
           upload_config?: Json | null
+          weight_kg?: number | null
         }
         Relationships: [
           {
@@ -461,6 +485,9 @@ export type Database = {
           default_delivery_charge: number | null
           id: string
           pickup_address: string | null
+          pickup_pincode: string | null
+          shiprocket_enabled: boolean | null
+          shiprocket_fallback_message: string | null
           store_pickup_enabled: boolean | null
           updated_at: string
         }
@@ -471,6 +498,9 @@ export type Database = {
           default_delivery_charge?: number | null
           id?: string
           pickup_address?: string | null
+          pickup_pincode?: string | null
+          shiprocket_enabled?: boolean | null
+          shiprocket_fallback_message?: string | null
           store_pickup_enabled?: boolean | null
           updated_at?: string
         }
@@ -481,6 +511,9 @@ export type Database = {
           default_delivery_charge?: number | null
           id?: string
           pickup_address?: string | null
+          pickup_pincode?: string | null
+          shiprocket_enabled?: boolean | null
+          shiprocket_fallback_message?: string | null
           store_pickup_enabled?: boolean | null
           updated_at?: string
         }

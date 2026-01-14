@@ -8,6 +8,9 @@ export interface StoreSettings {
   pickup_address: string;
   announcement_text: string | null;
   announcement_enabled: boolean;
+  pickup_pincode: string;
+  shiprocket_enabled: boolean;
+  shiprocket_fallback_message: string;
   created_at: string;
   updated_at: string;
 }
@@ -38,6 +41,9 @@ export const useStoreSettings = () => {
         pickup_address: 'Graphic Wala Shop, Main Road',
         announcement_text: null,
         announcement_enabled: false,
+        pickup_pincode: '854105',
+        shiprocket_enabled: false,
+        shiprocket_fallback_message: 'Delivery estimate unavailable for your location. Standard delivery: 5-7 working days.',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       });

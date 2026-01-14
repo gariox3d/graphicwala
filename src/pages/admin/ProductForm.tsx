@@ -19,7 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Loader2, ArrowLeft, Plus, Trash2, Image, Truck, Clock, IndianRupee } from 'lucide-react';
+import { Loader2, ArrowLeft, Plus, Trash2, Image, Truck, Clock, IndianRupee, Scale, Ruler } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import MultiImageUpload from '@/components/admin/MultiImageUpload';
 
@@ -44,6 +44,11 @@ const ProductForm = () => {
     delivery_charge: '',
     cutoff_time: '18:00',
     enable_delivery: true,
+    // Shipping dimensions
+    weight_kg: '0.5',
+    length_cm: '10',
+    breadth_cm: '10',
+    height_cm: '5',
   });
 
   const [uploadConfig, setUploadConfig] = useState<UploadField[]>([]);
@@ -92,6 +97,11 @@ const ProductForm = () => {
           delivery_charge: product.delivery_charge?.toString() || '',
           cutoff_time: product.cutoff_time?.slice(0, 5) || '18:00',
           enable_delivery: product.enable_delivery ?? true,
+          // Shipping dimensions
+          weight_kg: product.weight_kg?.toString() || '0.5',
+          length_cm: product.length_cm?.toString() || '10',
+          breadth_cm: product.breadth_cm?.toString() || '10',
+          height_cm: product.height_cm?.toString() || '5',
         });
         
         // Load images - check image_urls first, then fallback to image_url
@@ -193,6 +203,11 @@ const ProductForm = () => {
         cutoff_time: formData.cutoff_time ? `${formData.cutoff_time}:00` : '18:00:00',
         enable_delivery: formData.enable_delivery,
         delivery_days: 7, // Fixed 7 days
+        // Shipping dimensions for Shiprocket
+        weight_kg: parseFloat(formData.weight_kg) || 0.5,
+        length_cm: parseFloat(formData.length_cm) || 10,
+        breadth_cm: parseFloat(formData.breadth_cm) || 10,
+        height_cm: parseFloat(formData.height_cm) || 5,
       };
 
       if (isEditing) {
@@ -507,6 +522,86 @@ const ProductForm = () => {
                       </div>
                     </div>
                   )}
+                </CardContent>
+              </Card>
+
+              {/* Shipping Dimensions for Shiprocket */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Scale className="h-5 w-5 text-primary" />
+                    Shipping Dimensions
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="bg-amber-50 p-3 rounded-lg text-sm text-amber-700">
+                    <strong>📦 Required for Shiprocket</strong>
+                    <p className="mt-1">
+                      These dimensions are used to calculate real shipping rates when Shiprocket is enabled.
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="weight_kg" className="flex items-center gap-2">
+                      <Scale className="h-4 w-4" />
+                      Weight (kg) *
+                    </Label>
+                    <Input
+                      id="weight_kg"
+                      name="weight_kg"
+                      type="number"
+                      min="0.1"
+                      step="0.1"
+                      value={formData.weight_kg}
+                      onChange={handleInputChange}
+                      placeholder="0.5"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Package weight including product and packaging
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="space-y-2">
+                      <Label htmlFor="length_cm" className="flex items-center gap-2">
+                        <Ruler className="h-4 w-4" />
+                        Length (cm)
+                      </Label>
+                      <Input
+                        id="length_cm"
+                        name="length_cm"
+                        type="number"
+                        min="1"
+                        value={formData.length_cm}
+                        onChange={handleInputChange}
+                        placeholder="10"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="breadth_cm">Breadth (cm)</Label>
+                      <Input
+                        id="breadth_cm"
+                        name="breadth_cm"
+                        type="number"
+                        min="1"
+                        value={formData.breadth_cm}
+                        onChange={handleInputChange}
+                        placeholder="10"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="height_cm">Height (cm)</Label>
+                      <Input
+                        id="height_cm"
+                        name="height_cm"
+                        type="number"
+                        min="1"
+                        value={formData.height_cm}
+                        onChange={handleInputChange}
+                        placeholder="5"
+                      />
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </div>
