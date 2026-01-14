@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
@@ -17,10 +17,11 @@ import PriceBreakdown from '@/components/PriceBreakdown';
 import SupportContact from '@/components/SupportContact';
 import DeliveryInfoBanner from '@/components/DeliveryInfoBanner';
 import PhotoPrivacyNotice from '@/components/PhotoPrivacyNotice';
+import ShippingRateCalculator from '@/components/shipping/ShippingRateCalculator';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
 import { Product } from '@/lib/types';
 import { toast } from 'sonner';
-import { Loader2, ShoppingBag, MapPin, CreditCard, Image, AlertCircle, Truck, Store } from 'lucide-react';
+import { Loader2, ShoppingBag, MapPin, CreditCard, Image, AlertCircle, Truck, Store, Package } from 'lucide-react';
 
 declare global {
   interface Window {
@@ -32,6 +33,14 @@ interface ProductDesigns {
   [productId: string]: Record<string, string>;
 }
 
+interface ShiprocketRate {
+  shippingCharge: number;
+  estimatedDays: number;
+  estimatedDeliveryDate: string;
+  courierName: string;
+  available: boolean;
+}
+
 const Checkout = () => {
   const { user, profile } = useAuth();
   const { cartItems, cartTotal, clearCart } = useCart();
@@ -40,21 +49,38 @@ const Checkout = () => {
   const [productDesigns, setProductDesigns] = useState<ProductDesigns>({});
   const [deliveryMethod, setDeliveryMethod] = useState<'home_delivery' | 'store_pickup'>('home_delivery');
   const { settings } = useStoreSettings();
+  const [shiprocketRate, setShiprocketRate] = useState<ShiprocketRate | null>(null);
 
-  // Calculate delivery charge from product-level charges only
-  const calculateDeliveryCharge = () => {
+  // Calculate shipping products for Shiprocket
+  const shippingProducts = cartItems.map(item => {
+    const product = item.products as Product & { weight_kg?: number };
+    return {
+      weight_kg: product?.weight_kg || 0.5,
+      quantity: item.quantity,
+    };
+  });
+
+  // Calculate delivery charge - use Shiprocket if available, else fallback to product charges
+  const calculateDeliveryCharge = useCallback(() => {
     if (deliveryMethod === 'store_pickup') return 0;
+    
+    // If Shiprocket is enabled and rate is available, use it
+    if (settings?.shiprocket_enabled && shiprocketRate?.available) {
+      return shiprocketRate.shippingCharge;
+    }
+    
+    // Fallback to product-level charges
     let totalDelivery = 0;
     cartItems.forEach(item => {
       const product = item.products as Product & { delivery_charge?: number | null };
-      // Use product's delivery charge directly, no fallback to global
       totalDelivery += (product?.delivery_charge || 0);
     });
     return totalDelivery;
-  };
+  }, [deliveryMethod, settings?.shiprocket_enabled, shiprocketRate, cartItems]);
 
   const deliveryCharge = calculateDeliveryCharge();
   const totalPayable = cartTotal + deliveryCharge;
+  
   const [formData, setFormData] = useState({
     fullName: profile?.full_name || '',
     email: user?.email || '',
@@ -120,6 +146,18 @@ const Checkout = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handlePincodeChange = (pincode: string) => {
+    setFormData({ ...formData, pincode });
+    // Reset Shiprocket rate when pincode changes
+    if (pincode.length !== 6) {
+      setShiprocketRate(null);
+    }
+  };
+
+  const handleShiprocketRateCalculated = useCallback((rate: ShiprocketRate | null) => {
+    setShiprocketRate(rate);
+  }, []);
+
   const getUploadConfig = (product: any): { id: string; label: string; required: boolean }[] => {
     if (!product) return [];
     if (product.upload_config && Array.isArray(product.upload_config) && product.upload_config.length > 0) {
@@ -139,6 +177,12 @@ const Checkout = () => {
       }
       if (pincode.length !== 6) {
         toast.error('Please enter a valid 6-digit pincode');
+        return false;
+      }
+      
+      // Check if Shiprocket is enabled but delivery is not available
+      if (settings?.shiprocket_enabled && !shiprocketRate?.available) {
+        toast.error('Delivery is not available for this pincode. Please try a different address or choose store pickup.');
         return false;
       }
     } else {
@@ -183,10 +227,18 @@ const Checkout = () => {
           ? `${formData.address}, ${formData.landmark}`
           : formData.address);
 
-      // Calculate estimated delivery date (7 days from today)
-      const estimatedDeliveryDate = new Date();
-      estimatedDeliveryDate.setDate(estimatedDeliveryDate.getDate() + 7);
-      const formattedDeliveryDate = estimatedDeliveryDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+      // Calculate estimated delivery date
+      let estimatedDeliveryDays = 7;
+      let formattedDeliveryDate = '';
+      
+      if (shiprocketRate?.available && settings?.shiprocket_enabled) {
+        estimatedDeliveryDays = shiprocketRate.estimatedDays;
+        formattedDeliveryDate = shiprocketRate.estimatedDeliveryDate;
+      } else {
+        const estimatedDeliveryDate = new Date();
+        estimatedDeliveryDate.setDate(estimatedDeliveryDate.getDate() + 7);
+        formattedDeliveryDate = estimatedDeliveryDate.toISOString().split('T')[0];
+      }
 
       // Prepare order data to send to server (NOT creating order yet)
       const orderPayload = {
@@ -203,8 +255,9 @@ const Checkout = () => {
         order_notes: formData.orderNotes || null,
         delivery_method: deliveryMethod,
         delivery_charge: deliveryCharge,
-        delivery_days_used: 7,
+        delivery_days_used: estimatedDeliveryDays,
         estimated_delivery_date: formattedDeliveryDate,
+        shiprocket_courier_name: shiprocketRate?.courierName || null,
       };
 
       // Prepare order items data
@@ -313,8 +366,8 @@ const Checkout = () => {
             setLoading(false);
             navigate('/cart', { replace: true });
           },
-          escape: false, // Prevent escape key from closing without proper handling
-          confirm_close: true, // Ask user before closing the modal
+          escape: false,
+          confirm_close: true,
         },
       };
 
@@ -350,6 +403,10 @@ const Checkout = () => {
     const config = getUploadConfig(item.products);
     return config.length > 0;
   });
+
+  // Check if checkout should be blocked
+  const isShiprocketRequired = settings?.shiprocket_enabled && deliveryMethod === 'home_delivery';
+  const isShiprocketUnavailable = isShiprocketRequired && formData.pincode.length === 6 && !shiprocketRate?.available;
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -484,12 +541,23 @@ const Checkout = () => {
                         id="pincode"
                         name="pincode"
                         value={formData.pincode}
-                        onChange={handleInputChange}
+                        onChange={(e) => handlePincodeChange(e.target.value)}
                         placeholder="6-digit pincode"
                         maxLength={6}
                       />
                     </div>
                   </div>
+
+                  {/* Shiprocket Rate Calculator */}
+                  {deliveryMethod === 'home_delivery' && (
+                    <ShippingRateCalculator
+                      products={shippingProducts}
+                      deliveryPincode={formData.pincode}
+                      onPincodeChange={handlePincodeChange}
+                      onRateCalculated={handleShiprocketRateCalculated}
+                      autoCalculate={true}
+                    />
+                  )}
 
                   <div className="space-y-2">
                     <Label htmlFor="orderNotes">Order Notes / Special Instructions (Optional)</Label>
@@ -516,7 +584,12 @@ const Checkout = () => {
                 <CardContent>
                   <RadioGroup
                     value={deliveryMethod}
-                    onValueChange={(value) => setDeliveryMethod(value as 'home_delivery' | 'store_pickup')}
+                    onValueChange={(value) => {
+                      setDeliveryMethod(value as 'home_delivery' | 'store_pickup');
+                      if (value === 'store_pickup') {
+                        setShiprocketRate(null);
+                      }
+                    }}
                     className="space-y-4"
                   >
                     <div className={`flex items-start space-x-3 p-4 border rounded-lg ${deliveryMethod === 'home_delivery' ? 'border-primary bg-primary/5' : ''}`}>
@@ -527,7 +600,13 @@ const Checkout = () => {
                           Home Delivery
                         </Label>
                         <p className="text-sm text-muted-foreground mt-1">
-                          We'll deliver to your address. Delivery charge: ₹{deliveryCharge > 0 ? deliveryCharge.toLocaleString() : 'Free'}
+                          {settings?.shiprocket_enabled && shiprocketRate?.available ? (
+                            <>Shipping: ₹{shiprocketRate.shippingCharge} via {shiprocketRate.courierName} ({shiprocketRate.estimatedDays} days)</>
+                          ) : settings?.shiprocket_enabled ? (
+                            <>Enter pincode to calculate shipping</>
+                          ) : (
+                            <>Delivery charge: ₹{deliveryCharge > 0 ? deliveryCharge.toLocaleString() : 'Free'}</>
+                          )}
                         </p>
                       </div>
                     </div>
@@ -627,10 +706,30 @@ const Checkout = () => {
                     deliveryMethod={deliveryMethod}
                     showDetails={false}
                   />
+
+                  {/* Shiprocket delivery info */}
+                  {settings?.shiprocket_enabled && shiprocketRate?.available && deliveryMethod === 'home_delivery' && (
+                    <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-sm">
+                      <div className="flex items-center gap-2 text-green-700 font-medium">
+                        <Package className="h-4 w-4" />
+                        Estimated Delivery
+                      </div>
+                      <p className="text-green-600 mt-1">
+                        {shiprocketRate.estimatedDays} days via {shiprocketRate.courierName}
+                      </p>
+                      <p className="text-green-600 text-xs mt-1">
+                        Est. by {new Date(shiprocketRate.estimatedDeliveryDate).toLocaleDateString('en-IN', { 
+                          weekday: 'long',
+                          day: 'numeric', 
+                          month: 'long' 
+                        })}
+                      </p>
+                    </div>
+                  )}
                   
                   <Button
                     onClick={handlePayment}
-                    disabled={loading || missingDesigns.length > 0}
+                    disabled={loading || missingDesigns.length > 0 || isShiprocketUnavailable}
                     className="w-full h-12 text-lg"
                     size="lg"
                   >
@@ -646,6 +745,13 @@ const Checkout = () => {
                       </>
                     )}
                   </Button>
+
+                  {isShiprocketUnavailable && (
+                    <p className="text-xs text-center text-destructive">
+                      Delivery unavailable for this pincode
+                    </p>
+                  )}
+
                   <p className="text-xs text-center text-muted-foreground">
                     Secure prepaid payment via Razorpay
                   </p>
