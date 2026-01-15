@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { ShoppingCart, ArrowLeft, Minus, Plus, Image, Zap } from 'lucide-react';
@@ -21,7 +21,7 @@ import PriceBreakdown from '@/components/PriceBreakdown';
 import ProductReviews from '@/components/reviews/ProductReviews';
 import LoginPromptDialog from '@/components/reviews/LoginPromptDialog';
 import ProductImageGallery from '@/components/products/ProductImageGallery';
-import DeliveryCountdown from '@/components/products/DeliveryCountdown';
+import ShippingEstimator from '@/components/shipping/ShippingEstimator';
 import { toast } from 'sonner';
 
 const SITE_URL = 'https://store.graphicwala.com';
@@ -35,14 +35,31 @@ const ProductDetail = () => {
   const [product, setProduct] = useState<(Product & { 
     delivery_charge?: number | null; 
     image_urls?: string[];
-    cutoff_time?: string;
-    enable_delivery?: boolean;
-    delivery_days?: number;
+    weight_kg?: number;
   }) | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const { addToCart } = useCart();
   const [designUrls, setDesignUrls] = useState<Record<string, string>>({});
+  
+  // Shiprocket-calculated shipping data
+  const [shippingCharge, setShippingCharge] = useState<number | null>(null);
+  const [estimatedDays, setEstimatedDays] = useState<number | null>(null);
+  const [deliveryDate, setDeliveryDate] = useState<string | null>(null);
+
+  const handleShippingCalculated = useCallback((charge: number, days: number, date: string) => {
+    setShippingCharge(charge);
+    setEstimatedDays(days);
+    setDeliveryDate(date);
+    
+    // Store in session for checkout sync
+    sessionStorage.setItem('shiprocketShipping', JSON.stringify({
+      charge,
+      estimatedDays: days,
+      deliveryDate: date,
+      timestamp: Date.now()
+    }));
+  }, []);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -63,9 +80,7 @@ const ProductDetail = () => {
           upload_config: uploadConfig,
           delivery_charge: data.delivery_charge,
           image_urls: imageUrls,
-          cutoff_time: data.cutoff_time,
-          enable_delivery: data.enable_delivery ?? true,
-          delivery_days: data.delivery_days ?? 7,
+          weight_kg: data.weight_kg ?? 0.5,
         } as any);
       }
       setLoading(false);
@@ -320,23 +335,26 @@ const ProductDetail = () => {
                 </p>
               </div>
 
-              {/* Delivery Countdown */}
-              {product.enable_delivery && product.cutoff_time && (
-                <DeliveryCountdown
-                  cutoffTime={product.cutoff_time}
-                  enableDelivery={product.enable_delivery}
-                  deliveryDays={product.delivery_days || 7}
-                />
-              )}
+              {/* Shipping Estimator - Real Shiprocket Data */}
+              <ShippingEstimator
+                productWeight={product.weight_kg || 0.5}
+                quantity={quantity}
+                onShippingCalculated={handleShippingCalculated}
+              />
 
               {/* Price Breakdown */}
               <Card>
                 <CardContent className="pt-6">
                   <PriceBreakdown
                     productTotal={product.price * quantity}
-                    deliveryCharge={product.delivery_charge || 0}
+                    deliveryCharge={shippingCharge ?? product.delivery_charge ?? 0}
                     showDetails={true}
                   />
+                  {shippingCharge === null && (
+                    <p className="text-xs text-muted-foreground mt-2">
+                      * Enter pincode above to see exact shipping charges
+                    </p>
+                  )}
                 </CardContent>
               </Card>
 
