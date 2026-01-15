@@ -347,12 +347,12 @@ const ProductDetail = () => {
                 <CardContent className="pt-6">
                   <PriceBreakdown
                     productTotal={product.price * quantity}
-                    deliveryCharge={shippingCharge ?? product.delivery_charge ?? 0}
+                    deliveryCharge={shippingCharge ?? 0}
                     showDetails={true}
                   />
                   {shippingCharge === null && (
                     <p className="text-xs text-muted-foreground mt-2">
-                      * Enter pincode above to see exact shipping charges
+                      * Shipping charges calculated based on your delivery pincode
                     </p>
                   )}
                 </CardContent>

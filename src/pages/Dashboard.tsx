@@ -8,7 +8,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { User, Package, Eye, ShoppingBag } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { User, Package, Eye, ShoppingBag, Edit2, Save, X, Loader2, MapPin, Phone } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface Order {
   id: string;
@@ -23,9 +26,19 @@ interface Order {
 }
 
 const Dashboard = () => {
-  const { user, profile, loading } = useAuth();
+  const { user, profile, loading, refreshProfile } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [editForm, setEditForm] = useState({
+    full_name: '',
+    phone: '',
+    address: '',
+    city: '',
+    state: '',
+    pincode: '',
+  });
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -47,6 +60,97 @@ const Dashboard = () => {
       fetchOrders();
     }
   }, [user]);
+
+  // Sync edit form with profile
+  useEffect(() => {
+    if (profile) {
+      setEditForm({
+        full_name: profile.full_name || '',
+        phone: profile.phone || '',
+        address: profile.address || '',
+        city: profile.city || '',
+        state: profile.state || '',
+        pincode: profile.pincode || '',
+      });
+    }
+  }, [profile]);
+
+  const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    
+    if (name === 'phone') {
+      const sanitized = value.replace(/\D/g, '').slice(0, 10);
+      setEditForm(prev => ({ ...prev, phone: sanitized }));
+      return;
+    }
+    if (name === 'pincode') {
+      const sanitized = value.replace(/\D/g, '').slice(0, 6);
+      setEditForm(prev => ({ ...prev, pincode: sanitized }));
+      return;
+    }
+    
+    setEditForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSaveProfile = async () => {
+    if (!user) return;
+
+    // Validation
+    if (!editForm.full_name.trim()) {
+      toast.error('Please enter your full name');
+      return;
+    }
+    if (!editForm.phone || editForm.phone.length !== 10) {
+      toast.error('Please enter a valid 10-digit mobile number');
+      return;
+    }
+    if (editForm.pincode && editForm.pincode.length !== 6) {
+      toast.error('Please enter a valid 6-digit pincode');
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          full_name: editForm.full_name,
+          phone: editForm.phone,
+          address: editForm.address || null,
+          city: editForm.city || null,
+          state: editForm.state || null,
+          pincode: editForm.pincode || null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      await refreshProfile();
+      toast.success('Profile updated successfully!');
+      setIsEditing(false);
+    } catch (error: any) {
+      console.error('Error saving profile:', error);
+      toast.error(error.message || 'Failed to save profile');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    // Reset form to profile values
+    if (profile) {
+      setEditForm({
+        full_name: profile.full_name || '',
+        phone: profile.phone || '',
+        address: profile.address || '',
+        city: profile.city || '',
+        state: profile.state || '',
+        pincode: profile.pincode || '',
+      });
+    }
+    setIsEditing(false);
+  };
 
   const getStatusBadge = (status: string) => {
     const statusStyles: Record<string, string> = {
@@ -88,43 +192,168 @@ const Dashboard = () => {
             {/* Profile Section */}
             <div className="lg:col-span-1">
               <Card>
-                <CardHeader>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
                   <CardTitle className="flex items-center gap-2">
                     <User className="h-5 w-5 text-primary" />
                     Profile Information
                   </CardTitle>
+                  {!isEditing && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setIsEditing(true)}
+                    >
+                      <Edit2 className="h-4 w-4 mr-1" />
+                      Edit
+                    </Button>
+                  )}
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Name</p>
-                    <p className="font-medium">{profile?.full_name || 'Not set'}</p>
-                  </div>
-                  <Separator />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Email</p>
-                    <p className="font-medium">{user.email}</p>
-                  </div>
-                  <Separator />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Phone</p>
-                    <p className="font-medium">{profile?.phone || 'Not set'}</p>
-                  </div>
-                  <Separator />
-                  <div>
-                    <p className="text-sm text-muted-foreground">Address</p>
-                    <p className="font-medium">
-                      {profile?.address ? (
+                  {isEditing ? (
+                    // Edit Mode
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="full_name">Full Name</Label>
+                        <Input
+                          id="full_name"
+                          name="full_name"
+                          value={editForm.full_name}
+                          onChange={handleEditChange}
+                          placeholder="Your full name"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="phone" className="flex items-center gap-1">
+                          <Phone className="h-3 w-3" /> Mobile Number
+                        </Label>
+                        <Input
+                          id="phone"
+                          name="phone"
+                          value={editForm.phone}
+                          onChange={handleEditChange}
+                          placeholder="10-digit mobile"
+                          maxLength={10}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="address">Address</Label>
+                        <Input
+                          id="address"
+                          name="address"
+                          value={editForm.address}
+                          onChange={handleEditChange}
+                          placeholder="House/Flat, Street, Area"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="space-y-2">
+                          <Label htmlFor="city">City</Label>
+                          <Input
+                            id="city"
+                            name="city"
+                            value={editForm.city}
+                            onChange={handleEditChange}
+                            placeholder="City"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="state">State</Label>
+                          <Input
+                            id="state"
+                            name="state"
+                            value={editForm.state}
+                            onChange={handleEditChange}
+                            placeholder="State"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="pincode" className="flex items-center gap-1">
+                          <MapPin className="h-3 w-3" /> Pincode
+                        </Label>
+                        <Input
+                          id="pincode"
+                          name="pincode"
+                          value={editForm.pincode}
+                          onChange={handleEditChange}
+                          placeholder="6-digit pincode"
+                          maxLength={6}
+                        />
+                      </div>
+
+                      <div className="flex gap-2 pt-2">
+                        <Button
+                          onClick={handleSaveProfile}
+                          disabled={saving}
+                          className="flex-1"
+                        >
+                          {saving ? (
+                            <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                          ) : (
+                            <Save className="h-4 w-4 mr-1" />
+                          )}
+                          Save
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={handleCancelEdit}
+                          disabled={saving}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    // View Mode
+                    <>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Name</p>
+                        <p className="font-medium">{profile?.full_name || 'Not set'}</p>
+                      </div>
+                      <Separator />
+                      <div>
+                        <p className="text-sm text-muted-foreground">Email</p>
+                        <p className="font-medium">{user.email}</p>
+                      </div>
+                      <Separator />
+                      <div>
+                        <p className="text-sm text-muted-foreground">Phone</p>
+                        <p className="font-medium">{profile?.phone || 'Not set'}</p>
+                      </div>
+                      <Separator />
+                      <div>
+                        <p className="text-sm text-muted-foreground">Address</p>
+                        <p className="font-medium">
+                          {profile?.address ? (
+                            <>
+                              {profile.address}
+                              {profile.city && `, ${profile.city}`}
+                              {profile.state && `, ${profile.state}`}
+                              {profile.pincode && ` - ${profile.pincode}`}
+                            </>
+                          ) : (
+                            'Not set'
+                          )}
+                        </p>
+                      </div>
+                      {profile?.pincode && (
                         <>
-                          {profile.address}
-                          {profile.city && `, ${profile.city}`}
-                          {profile.state && `, ${profile.state}`}
-                          {profile.pincode && ` - ${profile.pincode}`}
+                          <Separator />
+                          <div className="flex items-center gap-2">
+                            <MapPin className="h-4 w-4 text-primary" />
+                            <div>
+                              <p className="text-sm text-muted-foreground">Delivery Pincode</p>
+                              <p className="font-medium">{profile.pincode}</p>
+                            </div>
+                          </div>
                         </>
-                      ) : (
-                        'Not set'
                       )}
-                    </p>
-                  </div>
+                    </>
+                  )}
                 </CardContent>
               </Card>
             </div>
