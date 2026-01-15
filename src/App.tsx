@@ -29,6 +29,7 @@ import AIAssistant from "./pages/AIAssistant";
 import ScrollToTop from "./components/ScrollToTop";
 import AdminGuard from "./components/admin/AdminGuard";
 import WelcomeBackPopup from "./components/WelcomeBackPopup";
+import AddressGate from "./components/AddressGate";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const App = () => (
             <Toaster />
             <Sonner />
             <WelcomeBackPopup />
+            <AddressGate>
             <BrowserRouter>
               <ScrollToTop />
               <Routes>
@@ -68,6 +70,7 @@ const App = () => (
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
+            </AddressGate>
           </CartProvider>
         </AuthProvider>
       </TooltipProvider>

@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react';
-import { MapPin, Truck, Package, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { MapPin, Truck, Package, Loader2, AlertCircle, CheckCircle2, Edit2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { useShiprocket } from '@/hooks/useShiprocket';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ShippingEstimatorProps {
   productWeight?: number;
@@ -20,16 +21,41 @@ const ShippingEstimator = ({
   onShippingCalculated,
   className = ''
 }: ShippingEstimatorProps) => {
+  const { profile } = useAuth();
   const [pincode, setPincode] = useState('');
   const [hasChecked, setHasChecked] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const { loading, error, data, getShippingRates, reset } = useShiprocket();
   const { settings, loading: settingsLoading } = useStoreSettings();
+  const initialFetchDone = useRef(false);
 
-  // Reset when quantity changes
+  // Auto-load user's pincode from profile
   useEffect(() => {
-    if (hasChecked && data) {
-      // Recalculate if we have previous data
-      handleCheckDelivery();
+    if (profile?.pincode && profile.pincode.length === 6 && !pincode) {
+      setPincode(profile.pincode);
+    }
+  }, [profile]);
+
+  // Auto-fetch shipping rates when user has pincode in profile
+  useEffect(() => {
+    if (
+      !initialFetchDone.current &&
+      profile?.pincode &&
+      profile.pincode.length === 6 &&
+      settings?.shiprocket_enabled &&
+      !settingsLoading &&
+      !loading &&
+      !hasChecked
+    ) {
+      initialFetchDone.current = true;
+      handleCheckDelivery(profile.pincode);
+    }
+  }, [profile?.pincode, settings?.shiprocket_enabled, settingsLoading]);
+
+  // Recalculate when quantity changes and we already have data
+  useEffect(() => {
+    if (hasChecked && data && pincode.length === 6) {
+      handleCheckDelivery(pincode);
     }
   }, [quantity]);
 
@@ -40,8 +66,9 @@ const ShippingEstimator = ({
     }
   }, [data, onShippingCalculated]);
 
-  const handleCheckDelivery = async () => {
-    if (!pincode || pincode.length !== 6) {
+  const handleCheckDelivery = async (deliveryPincode?: string) => {
+    const pincodeToUse = deliveryPincode || pincode;
+    if (!pincodeToUse || pincodeToUse.length !== 6) {
       return;
     }
 
@@ -51,15 +78,15 @@ const ShippingEstimator = ({
 
     const pickupPincode = settings?.pickup_pincode || '800001';
     
-    await getShippingRates(pickupPincode, pincode, [
+    await getShippingRates(pickupPincode, pincodeToUse, [
       { weight_kg: productWeight, quantity }
     ]);
     
     setHasChecked(true);
+    setIsEditing(false);
   };
 
   const handlePincodeChange = (value: string) => {
-    // Only allow digits and max 6 characters
     const sanitized = value.replace(/\D/g, '').slice(0, 6);
     setPincode(sanitized);
     
@@ -74,6 +101,12 @@ const ShippingEstimator = ({
     if (e.key === 'Enter' && pincode.length === 6) {
       handleCheckDelivery();
     }
+  };
+
+  const handleEditPincode = () => {
+    setIsEditing(true);
+    reset();
+    setHasChecked(false);
   };
 
   // Show loading state for settings
@@ -106,60 +139,100 @@ const ShippingEstimator = ({
     );
   }
 
+  // Show auto-loading state
+  if (profile?.pincode && !hasChecked && !isEditing && loading) {
+    return (
+      <Card className={className}>
+        <CardContent className="pt-6">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span className="text-sm">
+              Checking delivery to {profile.pincode}...
+            </span>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className={`${className} overflow-hidden`}>
       <CardContent className="pt-6 space-y-4">
-        {/* Pincode Input */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium flex items-center gap-2">
-            <MapPin className="h-4 w-4 text-primary" />
-            Check Delivery Availability
-          </label>
-          <div className="flex gap-2">
-            <Input
-              type="text"
-              placeholder="Enter 6-digit pincode"
-              value={pincode}
-              onChange={(e) => handlePincodeChange(e.target.value)}
-              onKeyPress={handleKeyPress}
-              className="flex-1"
-              maxLength={6}
-            />
-            <Button
-              onClick={handleCheckDelivery}
-              disabled={loading || pincode.length !== 6}
-              size="default"
-            >
-              {loading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                'Check'
-              )}
-            </Button>
+        {/* Show pincode input only if editing or no pincode */}
+        {(!hasChecked || isEditing || !data) && (
+          <div className="space-y-2">
+            <label className="text-sm font-medium flex items-center gap-2">
+              <MapPin className="h-4 w-4 text-primary" />
+              {profile?.pincode && !isEditing ? 'Delivery to Your Address' : 'Check Delivery Availability'}
+            </label>
+            <div className="flex gap-2">
+              <Input
+                type="text"
+                placeholder="Enter 6-digit pincode"
+                value={pincode}
+                onChange={(e) => handlePincodeChange(e.target.value)}
+                onKeyPress={handleKeyPress}
+                className="flex-1"
+                maxLength={6}
+              />
+              <Button
+                onClick={() => handleCheckDelivery()}
+                disabled={loading || pincode.length !== 6}
+                size="default"
+              >
+                {loading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  'Check'
+                )}
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Results */}
-        {hasChecked && (
+        {/* Results - show when we have data and not editing */}
+        {hasChecked && !isEditing && (
           <div className="space-y-3">
             {error ? (
               <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
                 <div className="flex items-start gap-2">
                   <AlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
-                  <div>
+                  <div className="flex-1">
                     <p className="text-sm font-medium text-destructive">Delivery Unavailable</p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {error || settings?.shiprocket_fallback_message || 'Delivery not available for this location.'}
+                      Delivery temporarily unavailable for pincode {pincode}. Please try a different address.
                     </p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="mt-2"
+                      onClick={handleEditPincode}
+                    >
+                      <Edit2 className="h-3 w-3 mr-1" />
+                      Change Pincode
+                    </Button>
                   </div>
                 </div>
               </div>
             ) : data ? (
               <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4 space-y-3">
-                {/* Success Header */}
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5 text-green-600" />
-                  <span className="text-sm font-medium text-green-700">Delivery Available!</span>
+                {/* Success Header with Edit option */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-5 w-5 text-green-600" />
+                    <span className="text-sm font-medium text-green-700">
+                      Delivering to {pincode}
+                    </span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 text-xs"
+                    onClick={handleEditPincode}
+                  >
+                    <Edit2 className="h-3 w-3 mr-1" />
+                    Change
+                  </Button>
                 </div>
 
                 {/* Delivery Details */}
@@ -200,8 +273,8 @@ const ShippingEstimator = ({
           </div>
         )}
 
-        {/* Initial prompt when no check done */}
-        {!hasChecked && (
+        {/* Initial prompt when no check done and not loading */}
+        {!hasChecked && !loading && !profile?.pincode && (
           <p className="text-xs text-muted-foreground">
             Enter your pincode to see exact delivery date and shipping charges
           </p>
