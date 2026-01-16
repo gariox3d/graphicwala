@@ -1,10 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
-import { MapPin, Truck, Package, Loader2, AlertCircle, CheckCircle2, Edit2 } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Truck, Package, CheckCircle2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { useShiprocket } from '@/hooks/useShiprocket';
+import { Badge } from '@/components/ui/badge';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -16,267 +12,100 @@ interface ShippingEstimatorProps {
 }
 
 const ShippingEstimator = ({
-  productWeight = 0.5,
   quantity,
   onShippingCalculated,
   className = ''
 }: ShippingEstimatorProps) => {
   const { profile } = useAuth();
-  const [pincode, setPincode] = useState('');
-  const [hasChecked, setHasChecked] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const { loading, error, data, getShippingRates, reset } = useShiprocket();
-  const { settings, loading: settingsLoading } = useStoreSettings();
-  const initialFetchDone = useRef(false);
+  const { settings, loading } = useStoreSettings();
 
-  // Auto-load user's pincode from profile
-  useEffect(() => {
-    if (profile?.pincode && profile.pincode.length === 6 && !pincode) {
-      setPincode(profile.pincode);
-    }
-  }, [profile]);
-
-  // Auto-fetch shipping rates when user has pincode in profile
-  useEffect(() => {
-    if (
-      !initialFetchDone.current &&
-      profile?.pincode &&
-      profile.pincode.length === 6 &&
-      settings?.shiprocket_enabled &&
-      !settingsLoading &&
-      !loading &&
-      !hasChecked
-    ) {
-      initialFetchDone.current = true;
-      handleCheckDelivery(profile.pincode);
-    }
-  }, [profile?.pincode, settings?.shiprocket_enabled, settingsLoading]);
-
-  // Recalculate when quantity changes and we already have data
-  useEffect(() => {
-    if (hasChecked && data && pincode.length === 6) {
-      handleCheckDelivery(pincode);
-    }
-  }, [quantity]);
-
-  // Notify parent when shipping is calculated
-  useEffect(() => {
-    if (data && onShippingCalculated) {
-      onShippingCalculated(data.shippingCharge, data.estimatedDays, data.estimatedDeliveryDate);
-    }
-  }, [data, onShippingCalculated]);
-
-  const handleCheckDelivery = async (deliveryPincode?: string) => {
-    const pincodeToUse = deliveryPincode || pincode;
-    if (!pincodeToUse || pincodeToUse.length !== 6) {
-      return;
-    }
-
-    if (!settings?.shiprocket_enabled) {
-      return;
-    }
-
-    const pickupPincode = settings?.pickup_pincode || '800001';
-    
-    await getShippingRates(pickupPincode, pincodeToUse, [
-      { weight_kg: productWeight, quantity }
-    ]);
-    
-    setHasChecked(true);
-    setIsEditing(false);
+  // Calculate delivery date (5-7 days from now)
+  const calculateDeliveryDate = () => {
+    const date = new Date();
+    date.setDate(date.getDate() + 7); // Use 7 days as default
+    return date.toISOString().split('T')[0];
   };
 
-  const handlePincodeChange = (value: string) => {
-    const sanitized = value.replace(/\D/g, '').slice(0, 6);
-    setPincode(sanitized);
-    
-    // Reset previous results when pincode changes
-    if (hasChecked) {
-      reset();
-      setHasChecked(false);
-    }
-  };
+  // Notify parent of shipping info when settings load
+  if (settings && onShippingCalculated) {
+    const charge = settings.default_delivery_charge || 0;
+    onShippingCalculated(charge, 7, calculateDeliveryDate());
+  }
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && pincode.length === 6) {
-      handleCheckDelivery();
-    }
-  };
-
-  const handleEditPincode = () => {
-    setIsEditing(true);
-    reset();
-    setHasChecked(false);
-  };
-
-  // Show loading state for settings
-  if (settingsLoading) {
+  if (loading) {
     return (
       <Card className={className}>
         <CardContent className="pt-6">
           <div className="flex items-center gap-2 text-muted-foreground">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            <span className="text-sm">Loading delivery options...</span>
+            <Truck className="h-4 w-4 animate-pulse" />
+            <span className="text-sm">Loading delivery info...</span>
           </div>
         </CardContent>
       </Card>
     );
   }
 
-  // If Shiprocket is not enabled, show a simple message
-  if (!settings?.shiprocket_enabled) {
-    return (
-      <Card className={className}>
-        <CardContent className="pt-6">
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <Truck className="h-4 w-4" />
-            <span className="text-sm">
-              {settings?.shiprocket_fallback_message || 'Delivery available across India. Shipping calculated at checkout.'}
-            </span>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
+  const deliveryTimeText = settings?.delivery_time_text || '🚚 Estimated Delivery: 5–7 working days\n\nOrders are dispatched after quality checks.\nIn rare cases, delivery may take slightly longer due to logistics or regional delays.';
+  const showDisclaimer = settings?.delivery_disclaimer_enabled ?? true;
 
-  // Show auto-loading state
-  if (profile?.pincode && !hasChecked && !isEditing && loading) {
-    return (
-      <Card className={className}>
-        <CardContent className="pt-6">
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            <span className="text-sm">
-              Checking delivery to {profile.pincode}...
-            </span>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
+  // Split the delivery text to show first line prominently
+  const lines = deliveryTimeText.split('\n').filter(line => line.trim());
+  const mainDeliveryText = lines[0] || '🚚 Estimated Delivery: 5–7 working days';
+  const disclaimerLines = lines.slice(1);
+
+  const userPincode = profile?.pincode;
 
   return (
     <Card className={`${className} overflow-hidden`}>
       <CardContent className="pt-6 space-y-4">
-        {/* Show pincode input only if editing or no pincode */}
-        {(!hasChecked || isEditing || !data) && (
-          <div className="space-y-2">
-            <label className="text-sm font-medium flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-primary" />
-              {profile?.pincode && !isEditing ? 'Delivery to Your Address' : 'Check Delivery Availability'}
-            </label>
-            <div className="flex gap-2">
-              <Input
-                type="text"
-                placeholder="Enter 6-digit pincode"
-                value={pincode}
-                onChange={(e) => handlePincodeChange(e.target.value)}
-                onKeyPress={handleKeyPress}
-                className="flex-1"
-                maxLength={6}
-              />
-              <Button
-                onClick={() => handleCheckDelivery()}
-                disabled={loading || pincode.length !== 6}
-                size="default"
-              >
-                {loading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  'Check'
-                )}
-              </Button>
+        {/* Pincode confirmation if user has one */}
+        {userPincode && userPincode.length === 6 && (
+          <div className="flex items-center gap-2 text-green-600">
+            <CheckCircle2 className="h-5 w-5" />
+            <span className="text-sm font-medium">
+              ✅ Delivery available to {userPincode}
+            </span>
+          </div>
+        )}
+
+        {/* Main delivery info */}
+        <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4 space-y-3">
+          <div className="flex items-center gap-2 text-green-700">
+            <Truck className="h-5 w-5" />
+            <span className="font-semibold">{mainDeliveryText}</span>
+          </div>
+
+          {/* Delivery charge info */}
+          {settings?.default_delivery_charge !== undefined && (
+            <div className="flex items-center gap-2 text-sm">
+              <Package className="h-4 w-4 text-muted-foreground" />
+              <span>
+                Shipping: {settings.default_delivery_charge > 0 
+                  ? `₹${settings.default_delivery_charge}` 
+                  : 'Free'}
+              </span>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Results - show when we have data and not editing */}
-        {hasChecked && !isEditing && (
-          <div className="space-y-3">
-            {error ? (
-              <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
-                <div className="flex items-start gap-2">
-                  <AlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-destructive">Delivery Unavailable</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Delivery temporarily unavailable for pincode {pincode}. Please try a different address.
-                    </p>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="mt-2"
-                      onClick={handleEditPincode}
-                    >
-                      <Edit2 className="h-3 w-3 mr-1" />
-                      Change Pincode
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            ) : data ? (
-              <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4 space-y-3">
-                {/* Success Header with Edit option */}
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-green-600" />
-                    <span className="text-sm font-medium text-green-700">
-                      Delivering to {pincode}
-                    </span>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-7 text-xs"
-                    onClick={handleEditPincode}
-                  >
-                    <Edit2 className="h-3 w-3 mr-1" />
-                    Change
-                  </Button>
-                </div>
+          {/* Disclaimer text */}
+          {showDisclaimer && disclaimerLines.length > 0 && (
+            <div className="text-xs text-muted-foreground pt-2 border-t border-green-500/20">
+              {disclaimerLines.map((line, idx) => (
+                <p key={idx} className="mt-1">{line}</p>
+              ))}
+            </div>
+          )}
 
-                {/* Delivery Details */}
-                <div className="grid gap-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-sm">
-                      <Truck className="h-4 w-4 text-muted-foreground" />
-                      <span>Estimated Delivery</span>
-                    </div>
-                    <span className="font-semibold text-sm">
-                      {data.estimatedDays} {data.estimatedDays === 1 ? 'day' : 'days'}
-                    </span>
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-sm">
-                      <Package className="h-4 w-4 text-muted-foreground" />
-                      <span>Shipping Charge</span>
-                    </div>
-                    <span className="font-semibold text-sm">₹{data.shippingCharge}</span>
-                  </div>
-                </div>
+          <Badge variant="secondary" className="bg-green-500/20 text-green-700 border-green-500/30">
+            <Truck className="h-3 w-3 mr-1" />
+            Home Delivery Available
+          </Badge>
+        </div>
 
-                {/* Delivery Date Badge */}
-                <div className="flex items-center gap-2 flex-wrap">
-                  <Badge variant="secondary" className="bg-green-500/20 text-green-700 border-green-500/30">
-                    <Truck className="h-3 w-3 mr-1" />
-                    Delivered by {data.estimatedDeliveryDate}
-                  </Badge>
-                  {data.courierName && (
-                    <span className="text-xs text-muted-foreground">
-                      via {data.courierName}
-                    </span>
-                  )}
-                </div>
-              </div>
-            ) : null}
-          </div>
-        )}
-
-        {/* Initial prompt when no check done and not loading */}
-        {!hasChecked && !loading && !profile?.pincode && (
+        {/* No pincode prompt */}
+        {(!userPincode || userPincode.length < 6) && (
           <p className="text-xs text-muted-foreground">
-            Enter your pincode to see exact delivery date and shipping charges
+            Add your address in your profile to see delivery confirmation
           </p>
         )}
       </CardContent>

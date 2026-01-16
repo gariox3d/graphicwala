@@ -17,11 +17,10 @@ import PriceBreakdown from '@/components/PriceBreakdown';
 import SupportContact from '@/components/SupportContact';
 import DeliveryInfoBanner from '@/components/DeliveryInfoBanner';
 import PhotoPrivacyNotice from '@/components/PhotoPrivacyNotice';
-import ShippingRateCalculator from '@/components/shipping/ShippingRateCalculator';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
 import { Product } from '@/lib/types';
 import { toast } from 'sonner';
-import { Loader2, ShoppingBag, MapPin, CreditCard, Image, AlertCircle, Truck, Store, Package } from 'lucide-react';
+import { Loader2, ShoppingBag, MapPin, CreditCard, Image, AlertCircle, Truck, Store, Package, CheckCircle2 } from 'lucide-react';
 
 declare global {
   interface Window {
@@ -33,14 +32,6 @@ interface ProductDesigns {
   [productId: string]: Record<string, string>;
 }
 
-interface ShiprocketRate {
-  shippingCharge: number;
-  estimatedDays: number;
-  estimatedDeliveryDate: string;
-  courierName: string;
-  available: boolean;
-}
-
 const Checkout = () => {
   const { user, profile } = useAuth();
   const { cartItems, cartTotal, clearCart } = useCart();
@@ -49,34 +40,12 @@ const Checkout = () => {
   const [productDesigns, setProductDesigns] = useState<ProductDesigns>({});
   const [deliveryMethod, setDeliveryMethod] = useState<'home_delivery' | 'store_pickup'>('home_delivery');
   const { settings } = useStoreSettings();
-  const [shiprocketRate, setShiprocketRate] = useState<ShiprocketRate | null>(null);
 
-  // Calculate shipping products for Shiprocket
-  const shippingProducts = cartItems.map(item => {
-    const product = item.products as Product & { weight_kg?: number };
-    return {
-      weight_kg: product?.weight_kg || 0.5,
-      quantity: item.quantity,
-    };
-  });
-
-  // Calculate delivery charge - use Shiprocket if available, else fallback to product charges
+  // Calculate delivery charge - use admin-configured charge
   const calculateDeliveryCharge = useCallback(() => {
     if (deliveryMethod === 'store_pickup') return 0;
-    
-    // If Shiprocket is enabled and rate is available, use it
-    if (settings?.shiprocket_enabled && shiprocketRate?.available) {
-      return shiprocketRate.shippingCharge;
-    }
-    
-    // Fallback to product-level charges
-    let totalDelivery = 0;
-    cartItems.forEach(item => {
-      const product = item.products as Product & { delivery_charge?: number | null };
-      totalDelivery += (product?.delivery_charge || 0);
-    });
-    return totalDelivery;
-  }, [deliveryMethod, settings?.shiprocket_enabled, shiprocketRate, cartItems]);
+    return settings?.default_delivery_charge || 0;
+  }, [deliveryMethod, settings?.default_delivery_charge]);
 
   const deliveryCharge = calculateDeliveryCharge();
   const totalPayable = cartTotal + deliveryCharge;
@@ -146,18 +115,6 @@ const Checkout = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handlePincodeChange = (pincode: string) => {
-    setFormData({ ...formData, pincode });
-    // Reset Shiprocket rate when pincode changes
-    if (pincode.length !== 6) {
-      setShiprocketRate(null);
-    }
-  };
-
-  const handleShiprocketRateCalculated = useCallback((rate: ShiprocketRate | null) => {
-    setShiprocketRate(rate);
-  }, []);
-
   const getUploadConfig = (product: any): { id: string; label: string; required: boolean }[] => {
     if (!product) return [];
     if (product.upload_config && Array.isArray(product.upload_config) && product.upload_config.length > 0) {
@@ -177,12 +134,6 @@ const Checkout = () => {
       }
       if (pincode.length !== 6) {
         toast.error('Please enter a valid 6-digit pincode');
-        return false;
-      }
-      
-      // Check if Shiprocket is enabled but delivery is not available
-      if (settings?.shiprocket_enabled && !shiprocketRate?.available) {
-        toast.error('Delivery is not available for this pincode. Please try a different address or choose store pickup.');
         return false;
       }
     } else {
@@ -227,18 +178,10 @@ const Checkout = () => {
           ? `${formData.address}, ${formData.landmark}`
           : formData.address);
 
-      // Calculate estimated delivery date
-      let estimatedDeliveryDays = 7;
-      let formattedDeliveryDate = '';
-      
-      if (shiprocketRate?.available && settings?.shiprocket_enabled) {
-        estimatedDeliveryDays = shiprocketRate.estimatedDays;
-        formattedDeliveryDate = shiprocketRate.estimatedDeliveryDate;
-      } else {
-        const estimatedDeliveryDate = new Date();
-        estimatedDeliveryDate.setDate(estimatedDeliveryDate.getDate() + 7);
-        formattedDeliveryDate = estimatedDeliveryDate.toISOString().split('T')[0];
-      }
+      // Calculate estimated delivery date (7 days from now)
+      const estimatedDeliveryDate = new Date();
+      estimatedDeliveryDate.setDate(estimatedDeliveryDate.getDate() + 7);
+      const formattedDeliveryDate = estimatedDeliveryDate.toISOString().split('T')[0];
 
       // Prepare order data to send to server (NOT creating order yet)
       const orderPayload = {
@@ -255,9 +198,8 @@ const Checkout = () => {
         order_notes: formData.orderNotes || null,
         delivery_method: deliveryMethod,
         delivery_charge: deliveryCharge,
-        delivery_days_used: estimatedDeliveryDays,
+        delivery_days_used: 7,
         estimated_delivery_date: formattedDeliveryDate,
-        shiprocket_courier_name: shiprocketRate?.courierName || null,
       };
 
       // Prepare order items data
@@ -404,10 +346,6 @@ const Checkout = () => {
     return config.length > 0;
   });
 
-  // Check if checkout should be blocked
-  const isShiprocketRequired = settings?.shiprocket_enabled && deliveryMethod === 'home_delivery';
-  const isShiprocketUnavailable = isShiprocketRequired && formData.pincode.length === 6 && !shiprocketRate?.available;
-
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
@@ -541,22 +479,21 @@ const Checkout = () => {
                         id="pincode"
                         name="pincode"
                         value={formData.pincode}
-                        onChange={(e) => handlePincodeChange(e.target.value)}
+                        onChange={(e) => setFormData({ ...formData, pincode: e.target.value })}
                         placeholder="6-digit pincode"
                         maxLength={6}
                       />
                     </div>
                   </div>
 
-                  {/* Shiprocket Rate Calculator */}
-                  {deliveryMethod === 'home_delivery' && (
-                    <ShippingRateCalculator
-                      products={shippingProducts}
-                      deliveryPincode={formData.pincode}
-                      onPincodeChange={handlePincodeChange}
-                      onRateCalculated={handleShiprocketRateCalculated}
-                      autoCalculate={true}
-                    />
+                  {/* Delivery confirmation */}
+                  {deliveryMethod === 'home_delivery' && formData.pincode.length === 6 && (
+                    <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                      <div className="flex items-center gap-2 text-green-700">
+                        <CheckCircle2 className="h-4 w-4" />
+                        <span className="text-sm font-medium">✅ Delivery available to {formData.pincode}</span>
+                      </div>
+                    </div>
                   )}
 
                   <div className="space-y-2">
@@ -586,9 +523,6 @@ const Checkout = () => {
                     value={deliveryMethod}
                     onValueChange={(value) => {
                       setDeliveryMethod(value as 'home_delivery' | 'store_pickup');
-                      if (value === 'store_pickup') {
-                        setShiprocketRate(null);
-                      }
                     }}
                     className="space-y-4"
                   >
@@ -600,13 +534,7 @@ const Checkout = () => {
                           Home Delivery
                         </Label>
                         <p className="text-sm text-muted-foreground mt-1">
-                          {settings?.shiprocket_enabled && shiprocketRate?.available ? (
-                            <>Shipping: ₹{shiprocketRate.shippingCharge} via {shiprocketRate.courierName} ({shiprocketRate.estimatedDays} days)</>
-                          ) : settings?.shiprocket_enabled ? (
-                            <>Enter pincode to calculate shipping</>
-                          ) : (
-                            <>Delivery charge: ₹{deliveryCharge > 0 ? deliveryCharge.toLocaleString() : 'Free'}</>
-                          )}
+                          Delivery charge: ₹{deliveryCharge > 0 ? deliveryCharge.toLocaleString() : 'Free'} • 5-7 working days
                         </p>
                       </div>
                     </div>
@@ -707,29 +635,25 @@ const Checkout = () => {
                     showDetails={false}
                   />
 
-                  {/* Shiprocket delivery info */}
-                  {settings?.shiprocket_enabled && shiprocketRate?.available && deliveryMethod === 'home_delivery' && (
+                  {/* Delivery info */}
+                  {deliveryMethod === 'home_delivery' && (
                     <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-sm">
                       <div className="flex items-center gap-2 text-green-700 font-medium">
                         <Package className="h-4 w-4" />
                         Estimated Delivery
                       </div>
                       <p className="text-green-600 mt-1">
-                        {shiprocketRate.estimatedDays} days via {shiprocketRate.courierName}
+                        5-7 working days
                       </p>
                       <p className="text-green-600 text-xs mt-1">
-                        Est. by {new Date(shiprocketRate.estimatedDeliveryDate).toLocaleDateString('en-IN', { 
-                          weekday: 'long',
-                          day: 'numeric', 
-                          month: 'long' 
-                        })}
+                        You will be notified once your order is shipped
                       </p>
                     </div>
                   )}
                   
                   <Button
                     onClick={handlePayment}
-                    disabled={loading || missingDesigns.length > 0 || isShiprocketUnavailable}
+                    disabled={loading || missingDesigns.length > 0}
                     className="w-full h-12 text-lg"
                     size="lg"
                   >
@@ -745,12 +669,6 @@ const Checkout = () => {
                       </>
                     )}
                   </Button>
-
-                  {isShiprocketUnavailable && (
-                    <p className="text-xs text-center text-destructive">
-                      Delivery unavailable for this pincode
-                    </p>
-                  )}
 
                   <p className="text-xs text-center text-muted-foreground">
                     Secure prepaid payment via Razorpay

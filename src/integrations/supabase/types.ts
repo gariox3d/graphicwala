@@ -483,6 +483,8 @@ export type Database = {
           announcement_text: string | null
           created_at: string
           default_delivery_charge: number | null
+          delivery_disclaimer_enabled: boolean | null
+          delivery_time_text: string | null
           id: string
           pickup_address: string | null
           pickup_pincode: string | null
@@ -496,6 +498,8 @@ export type Database = {
           announcement_text?: string | null
           created_at?: string
           default_delivery_charge?: number | null
+          delivery_disclaimer_enabled?: boolean | null
+          delivery_time_text?: string | null
           id?: string
           pickup_address?: string | null
           pickup_pincode?: string | null
@@ -509,6 +513,8 @@ export type Database = {
           announcement_text?: string | null
           created_at?: string
           default_delivery_charge?: number | null
+          delivery_disclaimer_enabled?: boolean | null
+          delivery_time_text?: string | null
           id?: string
           pickup_address?: string | null
           pickup_pincode?: string | null

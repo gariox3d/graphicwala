@@ -41,25 +41,6 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const { addToCart } = useCart();
   const [designUrls, setDesignUrls] = useState<Record<string, string>>({});
-  
-  // Shiprocket-calculated shipping data
-  const [shippingCharge, setShippingCharge] = useState<number | null>(null);
-  const [estimatedDays, setEstimatedDays] = useState<number | null>(null);
-  const [deliveryDate, setDeliveryDate] = useState<string | null>(null);
-
-  const handleShippingCalculated = useCallback((charge: number, days: number, date: string) => {
-    setShippingCharge(charge);
-    setEstimatedDays(days);
-    setDeliveryDate(date);
-    
-    // Store in session for checkout sync
-    sessionStorage.setItem('shiprocketShipping', JSON.stringify({
-      charge,
-      estimatedDays: days,
-      deliveryDate: date,
-      timestamp: Date.now()
-    }));
-  }, []);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -335,11 +316,9 @@ const ProductDetail = () => {
                 </p>
               </div>
 
-              {/* Shipping Estimator - Real Shiprocket Data */}
+              {/* Delivery Estimate */}
               <ShippingEstimator
-                productWeight={product.weight_kg || 0.5}
                 quantity={quantity}
-                onShippingCalculated={handleShippingCalculated}
               />
 
               {/* Price Breakdown */}
@@ -347,14 +326,12 @@ const ProductDetail = () => {
                 <CardContent className="pt-6">
                   <PriceBreakdown
                     productTotal={product.price * quantity}
-                    deliveryCharge={shippingCharge ?? 0}
+                    deliveryCharge={0}
                     showDetails={true}
                   />
-                  {shippingCharge === null && (
-                    <p className="text-xs text-muted-foreground mt-2">
-                      * Shipping charges calculated based on your delivery pincode
-                    </p>
-                  )}
+                  <p className="text-xs text-muted-foreground mt-2">
+                    * Shipping charges will be added at checkout
+                  </p>
                 </CardContent>
               </Card>
 
