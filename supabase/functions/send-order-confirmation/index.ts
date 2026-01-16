@@ -79,7 +79,7 @@ function formatCurrency(amount: number): string {
 }
 
 function formatDate(dateStr: string | null): string {
-  if (!dateStr) return "Within 7-10 business days";
+  if (!dateStr) return "5-7 working days";
   try {
     const date = new Date(dateStr);
     return date.toLocaleDateString('en-IN', {
@@ -89,7 +89,7 @@ function formatDate(dateStr: string | null): string {
       day: 'numeric',
     });
   } catch {
-    return "Within 7-10 business days";
+    return "5-7 working days";
   }
 }
 

@@ -10,7 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
 import { toast } from 'sonner';
-import { Loader2, Settings, Truck, Store, Megaphone, Package, MapPin } from 'lucide-react';
+import { Loader2, Settings, Truck, Store, Megaphone } from 'lucide-react';
 
 const AdminSettings = () => {
   const { user, isAdmin, loading: authLoading } = useAuth();
@@ -24,9 +24,8 @@ const AdminSettings = () => {
     pickup_address: 'Graphic Wala Shop, Main Road',
     announcement_text: '',
     announcement_enabled: false,
-    pickup_pincode: '854105',
-    shiprocket_enabled: false,
-    shiprocket_fallback_message: 'Delivery estimate unavailable for your location. Standard delivery: 5-7 working days.',
+    delivery_time_text: '🚚 Estimated Delivery: 5–7 working days\n\nOrders are dispatched after quality checks.\nIn rare cases, delivery may take slightly longer due to logistics or regional delays.',
+    delivery_disclaimer_enabled: true,
   });
 
   useEffect(() => {
@@ -43,9 +42,8 @@ const AdminSettings = () => {
         pickup_address: settings.pickup_address,
         announcement_text: settings.announcement_text || '',
         announcement_enabled: settings.announcement_enabled || false,
-        pickup_pincode: settings.pickup_pincode || '854105',
-        shiprocket_enabled: settings.shiprocket_enabled || false,
-        shiprocket_fallback_message: settings.shiprocket_fallback_message || 'Delivery estimate unavailable for your location. Standard delivery: 5-7 working days.',
+        delivery_time_text: settings.delivery_time_text || '🚚 Estimated Delivery: 5–7 working days\n\nOrders are dispatched after quality checks.\nIn rare cases, delivery may take slightly longer due to logistics or regional delays.',
+        delivery_disclaimer_enabled: settings.delivery_disclaimer_enabled ?? true,
       });
     }
   }, [settings]);
@@ -87,116 +85,68 @@ const AdminSettings = () => {
         </div>
 
         <div className="grid gap-6 max-w-2xl">
-          {/* Shiprocket Integration */}
+          {/* Delivery Settings */}
           <Card className="border-primary/20">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Package className="h-5 w-5 text-primary" />
-                Shiprocket Shipping
+                <Truck className="h-5 w-5 text-primary" />
+                Delivery Settings
               </CardTitle>
               <CardDescription>
-                Enable real-time shipping rates and delivery estimates from Shiprocket
+                Configure delivery charges and delivery time messaging
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label htmlFor="shiprocket_enabled">Enable Shiprocket</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Get real shipping rates & delivery estimates
-                  </p>
-                </div>
-                <Switch
-                  id="shiprocket_enabled"
-                  checked={formData.shiprocket_enabled}
-                  onCheckedChange={(checked) => setFormData({ ...formData, shiprocket_enabled: checked })}
+              <div className="space-y-2">
+                <Label htmlFor="default_delivery_charge">Delivery Charge (₹)</Label>
+                <Input
+                  id="default_delivery_charge"
+                  type="number"
+                  min="0"
+                  value={formData.default_delivery_charge}
+                  onChange={(e) => setFormData({ ...formData, default_delivery_charge: parseFloat(e.target.value) || 0 })}
+                  placeholder="Enter delivery charge"
                 />
+                <p className="text-xs text-muted-foreground">
+                  This charge applies to all home delivery orders. Set to 0 for free delivery.
+                </p>
               </div>
 
               <div className="space-y-2 pt-4 border-t">
-                <Label htmlFor="pickup_pincode" className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4" />
-                  Pickup Pincode (Seller Location) *
-                </Label>
-                <Input
-                  id="pickup_pincode"
-                  value={formData.pickup_pincode}
-                  onChange={(e) => setFormData({ ...formData, pickup_pincode: e.target.value })}
-                  placeholder="Enter your shop's pincode"
-                  maxLength={6}
+                <Label htmlFor="delivery_time_text">Delivery Time Message</Label>
+                <Textarea
+                  id="delivery_time_text"
+                  value={formData.delivery_time_text}
+                  onChange={(e) => setFormData({ ...formData, delivery_time_text: e.target.value })}
+                  placeholder="Enter delivery time message"
+                  rows={4}
                 />
                 <p className="text-xs text-muted-foreground">
-                  This is your shop's pincode from where orders will be shipped
+                  This message is shown on product pages and checkout. Use line breaks for formatting.
                 </p>
               </div>
 
-              {formData.shiprocket_enabled && (
-                <div className="space-y-2 pt-4 border-t">
-                  <Label htmlFor="shiprocket_fallback_message">Fallback Message</Label>
-                  <Textarea
-                    id="shiprocket_fallback_message"
-                    value={formData.shiprocket_fallback_message}
-                    onChange={(e) => setFormData({ ...formData, shiprocket_fallback_message: e.target.value })}
-                    placeholder="Message to show when Shiprocket is unavailable"
-                    rows={2}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Shown when delivery estimate is unavailable for a pincode
+              <div className="flex items-center justify-between pt-4 border-t">
+                <div>
+                  <Label htmlFor="delivery_disclaimer_enabled">Show Delivery Disclaimer</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Show additional lines after the main delivery message
                   </p>
                 </div>
-              )}
-
-              {formData.shiprocket_enabled && (
-                <div className="bg-green-50 p-4 rounded-lg">
-                  <p className="text-sm text-green-700">
-                    <strong>✓ Shiprocket Active</strong>
-                  </p>
-                  <p className="text-sm text-green-600 mt-1">
-                    Customers will see real shipping charges and delivery estimates based on their pincode. Make sure to set product weights in each product's settings.
-                  </p>
-                </div>
-              )}
-
-              {!formData.shiprocket_enabled && (
-                <div className="bg-amber-50 p-4 rounded-lg">
-                  <p className="text-sm text-amber-700">
-                    <strong>⚠️ Using Fixed Delivery</strong>
-                  </p>
-                  <p className="text-sm text-amber-600 mt-1">
-                    When disabled, products use their fixed delivery charge set in product settings.
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Delivery Info */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Truck className="h-5 w-5 text-primary" />
-                Fallback Delivery Settings
-              </CardTitle>
-              <CardDescription>
-                Used when Shiprocket is disabled or unavailable
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <p className="text-sm text-blue-700">
-                  <strong>📦 Fixed 7-Day Delivery</strong>
-                </p>
-                <p className="text-sm text-blue-600 mt-1">
-                  When Shiprocket is disabled, products use their individual delivery charge settings.
-                </p>
+                <Switch
+                  id="delivery_disclaimer_enabled"
+                  checked={formData.delivery_disclaimer_enabled}
+                  onCheckedChange={(checked) => setFormData({ ...formData, delivery_disclaimer_enabled: checked })}
+                />
               </div>
-              <div className="text-sm text-muted-foreground">
-                <p>To set fallback delivery charges:</p>
-                <ol className="list-decimal list-inside mt-2 space-y-1">
-                  <li>Go to Products → Edit Product</li>
-                  <li>Set Delivery Charge (₹) for each product</li>
-                  <li>Set Order Cut-off Time for countdown timer</li>
-                </ol>
+
+              <div className="bg-green-50 p-4 rounded-lg mt-4">
+                <p className="text-sm text-green-700">
+                  <strong>📦 Manual Delivery System Active</strong>
+                </p>
+                <p className="text-sm text-green-600 mt-1">
+                  All orders show "Delivery available" to customers. No pincode validation is performed.
+                </p>
               </div>
             </CardContent>
           </Card>

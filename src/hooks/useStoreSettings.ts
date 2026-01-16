@@ -8,9 +8,8 @@ export interface StoreSettings {
   pickup_address: string;
   announcement_text: string | null;
   announcement_enabled: boolean;
-  pickup_pincode: string;
-  shiprocket_enabled: boolean;
-  shiprocket_fallback_message: string;
+  delivery_time_text: string;
+  delivery_disclaimer_enabled: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -29,7 +28,20 @@ export const useStoreSettings = () => {
         .single();
 
       if (fetchError) throw fetchError;
-      setSettings(data as StoreSettings);
+      
+      // Map database fields to our interface
+      setSettings({
+        id: data.id,
+        default_delivery_charge: data.default_delivery_charge ?? 50,
+        store_pickup_enabled: data.store_pickup_enabled ?? true,
+        pickup_address: data.pickup_address ?? 'Graphic Wala Shop, Main Road',
+        announcement_text: data.announcement_text,
+        announcement_enabled: data.announcement_enabled ?? false,
+        delivery_time_text: data.delivery_time_text ?? '🚚 Estimated Delivery: 5–7 working days\n\nOrders are dispatched after quality checks.\nIn rare cases, delivery may take slightly longer due to logistics or regional delays.',
+        delivery_disclaimer_enabled: data.delivery_disclaimer_enabled ?? true,
+        created_at: data.created_at,
+        updated_at: data.updated_at,
+      });
     } catch (err: any) {
       console.error('Error fetching store settings:', err);
       setError(err.message);
@@ -41,9 +53,8 @@ export const useStoreSettings = () => {
         pickup_address: 'Graphic Wala Shop, Main Road',
         announcement_text: null,
         announcement_enabled: false,
-        pickup_pincode: '854105',
-        shiprocket_enabled: false,
-        shiprocket_fallback_message: 'Delivery estimate unavailable for your location. Standard delivery: 5-7 working days.',
+        delivery_time_text: '🚚 Estimated Delivery: 5–7 working days\n\nOrders are dispatched after quality checks.\nIn rare cases, delivery may take slightly longer due to logistics or regional delays.',
+        delivery_disclaimer_enabled: true,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       });
