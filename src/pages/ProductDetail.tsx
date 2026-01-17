@@ -22,6 +22,8 @@ import ProductReviews from '@/components/reviews/ProductReviews';
 import LoginPromptDialog from '@/components/reviews/LoginPromptDialog';
 import ProductImageGallery from '@/components/products/ProductImageGallery';
 import ShippingEstimator from '@/components/shipping/ShippingEstimator';
+import ReturnPolicy from '@/components/ReturnPolicy';
+import { useStoreSettings } from '@/hooks/useStoreSettings';
 import { toast } from 'sonner';
 
 const SITE_URL = 'https://store.graphicwala.com';
@@ -32,6 +34,7 @@ const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { settings } = useStoreSettings();
   const [product, setProduct] = useState<(Product & { 
     delivery_charge?: number | null; 
     image_urls?: string[];
@@ -41,6 +44,9 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const { addToCart } = useCart();
   const [designUrls, setDesignUrls] = useState<Record<string, string>>({});
+  
+  // Get delivery charge from admin settings (default to 0 if not set)
+  const deliveryCharge = settings?.default_delivery_charge ?? 0;
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -326,12 +332,14 @@ const ProductDetail = () => {
                 <CardContent className="pt-6">
                   <PriceBreakdown
                     productTotal={product.price * quantity}
-                    deliveryCharge={0}
+                    deliveryCharge={deliveryCharge}
                     showDetails={true}
                   />
-                  <p className="text-xs text-muted-foreground mt-2">
-                    * Shipping charges will be added at checkout
-                  </p>
+                  {deliveryCharge > 0 && (
+                    <p className="text-xs text-muted-foreground mt-2">
+                      * Delivery charge: ₹{deliveryCharge.toLocaleString()}
+                    </p>
+                  )}
                 </CardContent>
               </Card>
 
@@ -400,6 +408,9 @@ const ProductDetail = () => {
 
               {/* Delivery Info */}
               <DeliveryInfoBanner variant="compact" />
+
+              {/* Return Policy */}
+              <ReturnPolicy variant="compact" />
 
               {/* Help Section */}
               <SupportContact 

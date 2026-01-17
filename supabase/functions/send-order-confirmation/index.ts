@@ -294,6 +294,45 @@ function generateEmailHtml(data: OrderEmailData): string {
             </td>
           </tr>
           
+          <!-- Delivery Estimate Notice -->
+          <tr>
+            <td style="padding: 0 40px 24px;">
+              <table cellpadding="0" cellspacing="0" border="0" width="100%" style="background: #ECFDF5; border: 1px solid #A7F3D0; border-radius: 12px; overflow: hidden;">
+                <tr>
+                  <td style="padding: 20px;">
+                    <p style="margin: 0 0 8px 0; font-size: 15px; font-weight: 600; color: #065F46; font-family: 'Segoe UI', Roboto, Arial, sans-serif;">
+                      🚚 Estimated Delivery: 5–7 working days
+                    </p>
+                    <p style="margin: 0; font-size: 13px; color: #047857; font-family: 'Segoe UI', Roboto, Arial, sans-serif; line-height: 1.5;">
+                      Orders are dispatched after quality checks. You will be notified once your order is shipped.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
+          <!-- Return Policy Notice -->
+          <tr>
+            <td style="padding: 0 40px 24px;">
+              <table cellpadding="0" cellspacing="0" border="0" width="100%" style="background: #FEF3C7; border: 1px solid #FCD34D; border-radius: 12px; overflow: hidden;">
+                <tr>
+                  <td style="padding: 20px;">
+                    <p style="margin: 0 0 8px 0; font-size: 15px; font-weight: 600; color: #92400E; font-family: 'Segoe UI', Roboto, Arial, sans-serif;">
+                      🔁 Damaged or Wrong Product?
+                    </p>
+                    <p style="margin: 0 0 12px 0; font-size: 13px; color: #B45309; font-family: 'Segoe UI', Roboto, Arial, sans-serif; line-height: 1.5;">
+                      If your product arrives damaged or defective, please contact us on WhatsApp within 48 hours with video proof showing the damaged product, outer packaging, and Order ID.
+                    </p>
+                    <a href="https://wa.me/916207142994?text=${encodeURIComponent(`Hello Graphic Wala, I received a damaged product.\n\nOrder ID: ${shortOrderId}\n\nI am sharing the video as requested.`)}" style="display: inline-block; background: #25D366; color: white; text-decoration: none; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; font-family: 'Segoe UI', Roboto, Arial, sans-serif;">
+                      Report Issue on WhatsApp
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          
           <!-- CTA Button -->
           <tr>
             <td style="padding: 8px 40px 32px; text-align: center;">
