@@ -67,6 +67,11 @@ export interface Order {
   email?: string | null;
   landmark?: string | null;
   order_notes?: string | null;
+  // Delivery info
+  delivery_charge?: number | null;
+  delivery_method?: string | null;
+  delivery_days_used?: number | null;
+  estimated_delivery_date?: string | null;
 }
 
 export interface OrderItem {

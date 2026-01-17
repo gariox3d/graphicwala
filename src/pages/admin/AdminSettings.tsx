@@ -10,7 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
 import { toast } from 'sonner';
-import { Loader2, Settings, Truck, Store, Megaphone } from 'lucide-react';
+import { Loader2, Settings, Truck, Store, Megaphone, Shield, Phone } from 'lucide-react';
 
 const AdminSettings = () => {
   const { user, isAdmin, loading: authLoading } = useAuth();
@@ -26,6 +26,10 @@ const AdminSettings = () => {
     announcement_enabled: false,
     delivery_time_text: '🚚 Estimated Delivery: 5–7 working days\n\nOrders are dispatched after quality checks.\nIn rare cases, delivery may take slightly longer due to logistics or regional delays.',
     delivery_disclaimer_enabled: true,
+    // Return policy settings
+    whatsapp_support_number: '+916207142994',
+    return_policy_enabled: true,
+    return_window_hours: 48,
   });
 
   useEffect(() => {
@@ -44,6 +48,9 @@ const AdminSettings = () => {
         announcement_enabled: settings.announcement_enabled || false,
         delivery_time_text: settings.delivery_time_text || '🚚 Estimated Delivery: 5–7 working days\n\nOrders are dispatched after quality checks.\nIn rare cases, delivery may take slightly longer due to logistics or regional delays.',
         delivery_disclaimer_enabled: settings.delivery_disclaimer_enabled ?? true,
+        whatsapp_support_number: settings.whatsapp_support_number || '+916207142994',
+        return_policy_enabled: settings.return_policy_enabled ?? true,
+        return_window_hours: settings.return_window_hours ?? 48,
       });
     }
   }, [settings]);
@@ -229,6 +236,74 @@ const AdminSettings = () => {
                 />
                 <p className="text-xs text-muted-foreground">
                   Use emojis to make it eye-catching. Keep it short and clear.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Return Policy Settings */}
+          <Card className="border-primary/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-primary" />
+                Return & Damage Policy
+              </CardTitle>
+              <CardDescription>
+                Configure return policy and WhatsApp support for damaged products
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="return_policy_enabled">Enable Return Policy Section</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Show return policy on product, checkout, and order confirmation pages
+                  </p>
+                </div>
+                <Switch
+                  id="return_policy_enabled"
+                  checked={formData.return_policy_enabled}
+                  onCheckedChange={(checked) => setFormData({ ...formData, return_policy_enabled: checked })}
+                />
+              </div>
+
+              <div className="space-y-2 pt-4 border-t">
+                <Label htmlFor="whatsapp_support_number" className="flex items-center gap-2">
+                  <Phone className="h-4 w-4" />
+                  WhatsApp Support Number
+                </Label>
+                <Input
+                  id="whatsapp_support_number"
+                  value={formData.whatsapp_support_number}
+                  onChange={(e) => setFormData({ ...formData, whatsapp_support_number: e.target.value })}
+                  placeholder="+916207142994"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Include country code (e.g., +91 for India). Used for return/damage reports.
+                </p>
+              </div>
+
+              <div className="space-y-2 pt-4 border-t">
+                <Label htmlFor="return_window_hours">Return Window (Hours)</Label>
+                <Input
+                  id="return_window_hours"
+                  type="number"
+                  min="12"
+                  max="168"
+                  value={formData.return_window_hours}
+                  onChange={(e) => setFormData({ ...formData, return_window_hours: parseInt(e.target.value) || 48 })}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Time limit for customers to report damaged/defective products (default: 48 hours)
+                </p>
+              </div>
+
+              <div className="bg-amber-50 p-4 rounded-lg mt-4">
+                <p className="text-sm text-amber-700">
+                  <strong>📦 Return Policy Notice</strong>
+                </p>
+                <p className="text-sm text-amber-600 mt-1">
+                  Returns are only accepted for damaged or defective products. Customers must send video proof via WhatsApp.
                 </p>
               </div>
             </CardContent>

@@ -17,6 +17,7 @@ import PriceBreakdown from '@/components/PriceBreakdown';
 import SupportContact from '@/components/SupportContact';
 import DeliveryInfoBanner from '@/components/DeliveryInfoBanner';
 import PhotoPrivacyNotice from '@/components/PhotoPrivacyNotice';
+import ReturnPolicy from '@/components/ReturnPolicy';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
 import { Product } from '@/lib/types';
 import { toast } from 'sonner';
@@ -534,7 +535,7 @@ const Checkout = () => {
                           Home Delivery
                         </Label>
                         <p className="text-sm text-muted-foreground mt-1">
-                          Delivery charge: ₹{deliveryCharge > 0 ? deliveryCharge.toLocaleString() : 'Free'} • 5-7 working days
+                          Delivery charge: {deliveryCharge > 0 ? `₹${deliveryCharge.toLocaleString()}` : 'Free'} • 5-7 working days
                         </p>
                       </div>
                     </div>
@@ -673,6 +674,9 @@ const Checkout = () => {
                   <p className="text-xs text-center text-muted-foreground">
                     Secure prepaid payment via Razorpay
                   </p>
+
+                  {/* Return Policy */}
+                  <ReturnPolicy variant="compact" className="mt-4" />
 
                   {/* Support Section */}
                   <div className="pt-4 border-t">

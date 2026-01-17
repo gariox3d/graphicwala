@@ -488,10 +488,13 @@ export type Database = {
           id: string
           pickup_address: string | null
           pickup_pincode: string | null
+          return_policy_enabled: boolean | null
+          return_window_hours: number | null
           shiprocket_enabled: boolean | null
           shiprocket_fallback_message: string | null
           store_pickup_enabled: boolean | null
           updated_at: string
+          whatsapp_support_number: string | null
         }
         Insert: {
           announcement_enabled?: boolean | null
@@ -503,10 +506,13 @@ export type Database = {
           id?: string
           pickup_address?: string | null
           pickup_pincode?: string | null
+          return_policy_enabled?: boolean | null
+          return_window_hours?: number | null
           shiprocket_enabled?: boolean | null
           shiprocket_fallback_message?: string | null
           store_pickup_enabled?: boolean | null
           updated_at?: string
+          whatsapp_support_number?: string | null
         }
         Update: {
           announcement_enabled?: boolean | null
@@ -518,10 +524,13 @@ export type Database = {
           id?: string
           pickup_address?: string | null
           pickup_pincode?: string | null
+          return_policy_enabled?: boolean | null
+          return_window_hours?: number | null
           shiprocket_enabled?: boolean | null
           shiprocket_fallback_message?: string | null
           store_pickup_enabled?: boolean | null
           updated_at?: string
+          whatsapp_support_number?: string | null
         }
         Relationships: []
       }

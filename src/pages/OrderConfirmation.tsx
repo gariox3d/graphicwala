@@ -9,7 +9,9 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import CallButton from '@/components/CallButton';
-import { CheckCircle, Package, MapPin, CreditCard, ArrowRight, Image, MessageCircle, AlertTriangle, Loader2 } from 'lucide-react';
+import ReturnPolicy from '@/components/ReturnPolicy';
+import DeliveryInfoBanner from '@/components/DeliveryInfoBanner';
+import { CheckCircle, Package, MapPin, CreditCard, ArrowRight, Image, MessageCircle, AlertTriangle, Loader2, Truck } from 'lucide-react';
 import { toast } from 'sonner';
 
 const OrderConfirmation = () => {
@@ -188,6 +190,12 @@ const OrderConfirmation = () => {
                   <span className="text-muted-foreground">Date</span>
                   <span>{new Date(order.created_at).toLocaleDateString()}</span>
                 </div>
+                {order.delivery_charge !== undefined && order.delivery_charge !== null && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Delivery</span>
+                    <span>{Number(order.delivery_charge) > 0 ? `₹${Number(order.delivery_charge).toLocaleString()}` : 'Free'}</span>
+                  </div>
+                )}
                 <Separator />
                 <div className="flex justify-between text-lg font-bold">
                   <span>Total</span>
@@ -289,6 +297,29 @@ const OrderConfirmation = () => {
               </CardContent>
             </Card>
           )}
+
+          {/* Delivery Estimate */}
+          <Card className="mt-6 bg-green-50 border-green-200 animate-slide-up" style={{ animationDelay: '0.35s' }}>
+            <CardContent className="pt-6">
+              <div className="flex items-start gap-3">
+                <Truck className="h-5 w-5 text-green-600 mt-0.5" />
+                <div>
+                  <h4 className="font-semibold text-green-900">Estimated Delivery</h4>
+                  <p className="text-sm text-green-700 mt-1">
+                    🚚 Your order will be delivered in 5-7 working days.
+                  </p>
+                  <p className="text-xs text-green-600 mt-2">
+                    You will be notified once your order is shipped.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Return Policy */}
+          <div className="mt-6 animate-slide-up" style={{ animationDelay: '0.4s' }}>
+            <ReturnPolicy orderId={order.id.slice(0, 8).toUpperCase()} />
+          </div>
 
           {/* What's Next Info */}
           {hasDesigns && (
