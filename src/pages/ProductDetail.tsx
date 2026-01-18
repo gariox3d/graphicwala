@@ -21,7 +21,7 @@ import PriceBreakdown from '@/components/PriceBreakdown';
 import ProductReviews from '@/components/reviews/ProductReviews';
 import LoginPromptDialog from '@/components/reviews/LoginPromptDialog';
 import ProductImageGallery from '@/components/products/ProductImageGallery';
-import ShippingEstimator from '@/components/shipping/ShippingEstimator';
+import DeliveryCountdown from '@/components/products/DeliveryCountdown';
 import ReturnPolicy from '@/components/ReturnPolicy';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
 import { toast } from 'sonner';
@@ -39,6 +39,8 @@ const ProductDetail = () => {
     delivery_charge?: number | null; 
     image_urls?: string[];
     weight_kg?: number;
+    cutoff_time?: string | null;
+    delivery_days?: number | null;
   }) | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -322,9 +324,10 @@ const ProductDetail = () => {
                 </p>
               </div>
 
-              {/* Delivery Estimate */}
-              <ShippingEstimator
-                quantity={quantity}
+              {/* Delivery Countdown & Estimate */}
+              <DeliveryCountdown 
+                cutoffTime={product.cutoff_time || "17:00"}
+                deliveryDays={product.delivery_days || 7}
               />
 
               {/* Price Breakdown */}

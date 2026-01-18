@@ -303,8 +303,14 @@ function generateEmailHtml(data: OrderEmailData): string {
                     <p style="margin: 0 0 8px 0; font-size: 15px; font-weight: 600; color: #065F46; font-family: 'Segoe UI', Roboto, Arial, sans-serif;">
                       🚚 Estimated Delivery: 5–7 working days
                     </p>
+                    <p style="margin: 0 0 8px 0; font-size: 14px; color: #047857; font-family: 'Segoe UI', Roboto, Arial, sans-serif; line-height: 1.5;">
+                      📅 Expected by: <strong>${formatDate(data.estimatedDeliveryDate)}</strong>
+                    </p>
                     <p style="margin: 0; font-size: 13px; color: #047857; font-family: 'Segoe UI', Roboto, Arial, sans-serif; line-height: 1.5;">
                       Orders are dispatched after quality checks. You will be notified once your order is shipped.
+                    </p>
+                    <p style="margin: 8px 0 0 0; font-size: 12px; color: #059669; font-family: 'Segoe UI', Roboto, Arial, sans-serif;">
+                      ⚠️ Delivery may take slightly longer in rare cases due to logistics or regional delays.
                     </p>
                   </td>
                 </tr>
