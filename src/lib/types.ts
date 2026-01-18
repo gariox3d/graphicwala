@@ -30,6 +30,11 @@ export interface Product {
   front_upload_required?: boolean;
   back_upload_enabled?: boolean;
   upload_config?: UploadField[];
+  // Delivery fields
+  cutoff_time?: string | null;
+  delivery_days?: number | null;
+  enable_delivery?: boolean | null;
+  delivery_charge?: number | null;
 }
 
 export interface CartItem {

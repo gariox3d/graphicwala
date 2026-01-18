@@ -11,7 +11,8 @@ import WhatsAppButton from '@/components/WhatsAppButton';
 import CallButton from '@/components/CallButton';
 import ReturnPolicy from '@/components/ReturnPolicy';
 import DeliveryInfoBanner from '@/components/DeliveryInfoBanner';
-import { CheckCircle, Package, MapPin, CreditCard, ArrowRight, Image, MessageCircle, AlertTriangle, Loader2, Truck } from 'lucide-react';
+import DeliveryCountdown from '@/components/products/DeliveryCountdown';
+import { CheckCircle, Package, MapPin, CreditCard, ArrowRight, Image, MessageCircle, AlertTriangle, Loader2, Truck, Calendar } from 'lucide-react';
 import { toast } from 'sonner';
 
 const OrderConfirmation = () => {
@@ -303,11 +304,22 @@ const OrderConfirmation = () => {
             <CardContent className="pt-6">
               <div className="flex items-start gap-3">
                 <Truck className="h-5 w-5 text-green-600 mt-0.5" />
-                <div>
+                <div className="flex-1">
                   <h4 className="font-semibold text-green-900">Estimated Delivery</h4>
                   <p className="text-sm text-green-700 mt-1">
                     🚚 Your order will be delivered in 5-7 working days.
                   </p>
+                  {order.estimated_delivery_date && (
+                    <p className="text-sm text-green-700 mt-1 flex items-center gap-1">
+                      <Calendar className="h-4 w-4" />
+                      📅 Expected by: <strong>{new Date(order.estimated_delivery_date).toLocaleDateString('en-IN', {
+                        weekday: 'long',
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                      })}</strong>
+                    </p>
+                  )}
                   <p className="text-xs text-green-600 mt-2">
                     You will be notified once your order is shipped.
                   </p>

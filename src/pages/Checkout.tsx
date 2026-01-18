@@ -18,6 +18,7 @@ import SupportContact from '@/components/SupportContact';
 import DeliveryInfoBanner from '@/components/DeliveryInfoBanner';
 import PhotoPrivacyNotice from '@/components/PhotoPrivacyNotice';
 import ReturnPolicy from '@/components/ReturnPolicy';
+import DeliveryCountdown, { calculateEstimatedDeliveryDate } from '@/components/products/DeliveryCountdown';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
 import { Product } from '@/lib/types';
 import { toast } from 'sonner';
@@ -179,10 +180,8 @@ const Checkout = () => {
           ? `${formData.address}, ${formData.landmark}`
           : formData.address);
 
-      // Calculate estimated delivery date (7 days from now)
-      const estimatedDeliveryDate = new Date();
-      estimatedDeliveryDate.setDate(estimatedDeliveryDate.getDate() + 7);
-      const formattedDeliveryDate = estimatedDeliveryDate.toISOString().split('T')[0];
+      // Calculate estimated delivery date using working days calculation
+      const formattedDeliveryDate = calculateEstimatedDeliveryDate("17:00", 7);
 
       // Prepare order data to send to server (NOT creating order yet)
       const orderPayload = {
@@ -636,20 +635,14 @@ const Checkout = () => {
                     showDetails={false}
                   />
 
-                  {/* Delivery info */}
+                  {/* Delivery Countdown & Estimate */}
                   {deliveryMethod === 'home_delivery' && (
-                    <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-sm">
-                      <div className="flex items-center gap-2 text-green-700 font-medium">
-                        <Package className="h-4 w-4" />
-                        Estimated Delivery
-                      </div>
-                      <p className="text-green-600 mt-1">
-                        5-7 working days
-                      </p>
-                      <p className="text-green-600 text-xs mt-1">
-                        You will be notified once your order is shipped
-                      </p>
-                    </div>
+                    <DeliveryCountdown 
+                      cutoffTime="17:00"
+                      deliveryDays={7}
+                      variant="compact"
+                      showDisclaimer={true}
+                    />
                   )}
                   
                   <Button
