@@ -23,7 +23,7 @@ import DeliveryCountdown, { calculateEstimatedDeliveryDate } from '@/components/
 import { useStoreSettings } from '@/hooks/useStoreSettings';
 import { Product } from '@/lib/types';
 import { toast } from 'sonner';
-import { Loader2, ShoppingBag, MapPin, CreditCard, Image, AlertCircle, Truck, Store, Package, CheckCircle2 } from 'lucide-react';
+import { Loader2, ShoppingBag, MapPin, CreditCard, Image, AlertCircle, Truck, Store, Package, CheckCircle2, Plus, Minus, Trash2 } from 'lucide-react';
 
 declare global {
   interface Window {
@@ -37,7 +37,7 @@ interface ProductDesigns {
 
 const Checkout = () => {
   const { user, profile } = useAuth();
-  const { cartItems, cartTotal, clearCart } = useCart();
+  const { cartItems, cartTotal, clearCart, updateQuantity, removeFromCart } = useCart();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [productDesigns, setProductDesigns] = useState<ProductDesigns>({});
@@ -600,11 +600,10 @@ const Checkout = () => {
                             alt={item.products?.name}
                             className="w-16 h-16 object-cover rounded-lg border"
                           />
-                          <div className="flex-1">
-                            <h4 className="font-medium">{item.products?.name}</h4>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-medium truncate">{item.products?.name}</h4>
                             <p className="text-sm text-muted-foreground">
-                              Qty: {item.quantity} × ₹
-                              {item.products?.price?.toLocaleString()}
+                              ₹{item.products?.price?.toLocaleString()} each
                             </p>
                             {hasDesign && (
                               <div className="flex items-center gap-1 mt-1 text-xs text-green-600">
@@ -612,8 +611,37 @@ const Checkout = () => {
                                 Design uploaded
                               </div>
                             )}
+                            {/* Quantity Controls */}
+                            <div className="flex items-center gap-2 mt-2">
+                              <div className="flex items-center border rounded-lg overflow-hidden">
+                                <button
+                                  onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                  className="p-1.5 hover:bg-muted transition-colors"
+                                  aria-label="Decrease quantity"
+                                >
+                                  <Minus className="h-3.5 w-3.5" />
+                                </button>
+                                <span className="px-3 py-1 text-sm font-medium min-w-[2rem] text-center border-x">
+                                  {item.quantity}
+                                </span>
+                                <button
+                                  onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                  className="p-1.5 hover:bg-muted transition-colors"
+                                  aria-label="Increase quantity"
+                                >
+                                  <Plus className="h-3.5 w-3.5" />
+                                </button>
+                              </div>
+                              <button
+                                onClick={() => removeFromCart(item.id)}
+                                className="p-1.5 text-destructive hover:bg-destructive/10 rounded-md transition-colors"
+                                aria-label="Remove item"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </div>
                           </div>
-                          <p className="font-semibold">
+                          <p className="font-semibold whitespace-nowrap">
                             ₹
                             {(
                               (item.products?.price || 0) * item.quantity
