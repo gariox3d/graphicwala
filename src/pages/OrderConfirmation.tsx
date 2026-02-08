@@ -197,6 +197,14 @@ const OrderConfirmation = () => {
                     <span>{Number(order.delivery_charge) > 0 ? `₹${Number(order.delivery_charge).toLocaleString()}` : 'Free'}</span>
                   </div>
                 )}
+                {order.coupon_code && order.coupon_discount && Number(order.coupon_discount) > 0 && (
+                  <div className="flex justify-between text-green-600">
+                    <span className="flex items-center gap-1">
+                      Coupon ({order.coupon_code})
+                    </span>
+                    <span>-₹{Number(order.coupon_discount).toLocaleString()}</span>
+                  </div>
+                )}
                 <Separator />
                 <div className="flex justify-between text-lg font-bold">
                   <span>Total</span>

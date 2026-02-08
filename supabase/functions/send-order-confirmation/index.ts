@@ -61,6 +61,8 @@ interface OrderEmailData {
   shippingState: string;
   shippingPincode: string;
   deliveryCharge: number;
+  couponCode: string | null;
+  couponDiscount: number;
   items: {
     productName: string;
     productPrice: number;
@@ -227,17 +229,31 @@ function generateEmailHtml(data: OrderEmailData): string {
                         </td>
                       </tr>
                       <tr>
-                        <td style="padding-bottom: 12px;">
+                        <td style="padding-bottom: 8px;">
                           <span style="font-size: 14px; color: ${BRAND_TEXT_MUTED}; font-family: 'Segoe UI', Roboto, Arial, sans-serif;">
                             ${data.deliveryMethod === 'store_pickup' ? 'Store Pickup' : 'Delivery Charges'}
                           </span>
                         </td>
-                        <td style="padding-bottom: 12px; text-align: right;">
+                        <td style="padding-bottom: 8px; text-align: right;">
                           <span style="font-size: 14px; color: ${data.deliveryCharge === 0 ? '#10B981' : BRAND_TEXT_DARK}; font-family: 'Segoe UI', Roboto, Arial, sans-serif;">
                             ${data.deliveryCharge === 0 ? 'FREE' : formatCurrency(data.deliveryCharge)}
                           </span>
                         </td>
                       </tr>
+                      ${data.couponCode && data.couponDiscount > 0 ? `
+                      <tr>
+                        <td style="padding-bottom: 12px;">
+                          <span style="font-size: 14px; color: #10B981; font-family: 'Segoe UI', Roboto, Arial, sans-serif;">
+                            🎟️ Coupon (${data.couponCode})
+                          </span>
+                        </td>
+                        <td style="padding-bottom: 12px; text-align: right;">
+                          <span style="font-size: 14px; font-weight: 600; color: #10B981; font-family: 'Segoe UI', Roboto, Arial, sans-serif;">
+                            -${formatCurrency(data.couponDiscount)}
+                          </span>
+                        </td>
+                      </tr>
+                      ` : ''}
                       <tr>
                         <td colspan="2" style="border-top: 1px dashed ${BRAND_BORDER}; padding-top: 12px;">
                           <table cellpadding="0" cellspacing="0" border="0" width="100%">
@@ -536,6 +552,8 @@ const handler = async (req: Request): Promise<Response> => {
       shippingState: order.shipping_state,
       shippingPincode: order.shipping_pincode,
       deliveryCharge: order.delivery_charge || 0,
+      couponCode: order.coupon_code || null,
+      couponDiscount: order.coupon_discount || 0,
       items: itemsWithImages,
     };
 
