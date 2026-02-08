@@ -13,7 +13,8 @@ import {
   Menu,
   X,
   Truck,
-  FolderOpen
+  FolderOpen,
+  Ticket
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -33,6 +34,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/orders', label: 'Orders', icon: ShoppingCart },
     { path: '/admin/reviews', label: 'Reviews', icon: Users },
     { path: '/admin/categories', label: 'Categories', icon: FolderOpen },
+    { path: '/admin/coupons', label: 'Coupons', icon: Ticket },
     { path: '/admin/settings', label: 'Delivery & Settings', icon: Truck },
   ];
 
