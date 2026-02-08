@@ -9,15 +9,18 @@ import DeliveryInfoBanner from '@/components/DeliveryInfoBanner';
 import SupportContact from '@/components/SupportContact';
 import HeroSection from '@/components/HeroSection';
 import AnnouncementBanner from '@/components/AnnouncementBanner';
+import RecentlyViewedProducts from '@/components/products/RecentlyViewedProducts';
 import { supabase } from '@/integrations/supabase/client';
 import { Product, Category, WHATSAPP_NUMBER, BUSINESS_NAME } from '@/lib/types';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
+import { useRecentlyViewed } from '@/hooks/useRecentlyViewed';
 
 const Index = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const { settings } = useStoreSettings();
+  const { viewedIds } = useRecentlyViewed();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -233,6 +236,9 @@ const Index = () => {
             </div>
           </div>
         </section>
+
+        {/* Recently Viewed Products */}
+        {viewedIds.length > 0 && <RecentlyViewedProducts viewedIds={viewedIds} />}
 
         {/* Support Section */}
         <section className="py-12 bg-background" aria-label="Customer support">

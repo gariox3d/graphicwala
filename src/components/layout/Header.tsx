@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingCart, User, Menu, X, LogOut, MessageCircle, Phone } from 'lucide-react';
+import { ShoppingCart, User, Menu, X, LogOut, MessageCircle, Phone, Heart } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -79,6 +79,11 @@ const Header = () => {
 
           {user ? (
             <>
+              <Link to="/wishlist">
+                <Button variant="ghost" size="icon">
+                  <Heart className="h-5 w-5" />
+                </Button>
+              </Link>
               <Link to="/cart" className="relative">
                 <Button variant="ghost" size="icon">
                   <ShoppingCart className="h-5 w-5" />
@@ -172,6 +177,12 @@ const Header = () => {
                     <Button variant="outline" className="w-full justify-start">
                       <ShoppingCart className="h-5 w-5 mr-2" />
                       Cart ({cartCount})
+                    </Button>
+                  </Link>
+                  <Link to="/wishlist" onClick={() => setIsMenuOpen(false)}>
+                    <Button variant="outline" className="w-full justify-start">
+                      <Heart className="h-5 w-5 mr-2" />
+                      Wishlist
                     </Button>
                   </Link>
                   <Link to="/dashboard" onClick={() => setIsMenuOpen(false)}>

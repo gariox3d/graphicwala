@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Product, UploadField } from '@/lib/types';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useWishlist } from '@/hooks/useWishlist';
+import WishlistButton from './WishlistButton';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
@@ -16,6 +18,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const { addToCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { isWishlisted, toggleWishlist } = useWishlist();
   const [isHovered, setIsHovered] = useState(false);
 
   const uploadConfig = Array.isArray(product.upload_config) 
@@ -24,7 +27,6 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const hasCustomization = uploadConfig.length > 0;
   const requiredUploads = uploadConfig.filter(f => f.required);
 
-  // Get images - prefer image_urls array, fallback to image_url
   const images = product.image_urls && product.image_urls.length > 0 
     ? product.image_urls 
     : product.image_url ? [product.image_url] : [];
@@ -50,22 +52,28 @@ const ProductCard = ({ product }: ProductCardProps) => {
       navigate('/auth');
       return;
     }
-    
-    // If product has required uploads, redirect to product page
     if (hasCustomization && requiredUploads.length > 0) {
       toast.info('Please upload required photos before checkout');
       navigate(`/product/${product.id}`);
       return;
     }
-    
-    // No customization needed - add to cart and go to checkout
     addToCart(product.id);
     navigate('/checkout');
   };
 
+  const handleWishlistClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!user) {
+      toast.error('Please login to save items');
+      navigate('/auth');
+      return;
+    }
+    toggleWishlist(product.id);
+  };
+
   return (
     <div className="group bg-card rounded-xl overflow-hidden shadow-soft hover:shadow-brand transition-all duration-300 animate-scale-in">
-      {/* Image with hover preview */}
       <Link 
         to={`/product/${product.id}`} 
         className="block relative aspect-square overflow-hidden bg-muted"
@@ -102,6 +110,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
             </span>
           </div>
         )}
+        
+        {/* Wishlist Heart Button */}
+        <WishlistButton
+          isWishlisted={isWishlisted(product.id)}
+          onClick={handleWishlistClick}
+          className="absolute bottom-3 right-3"
+        />
+
         {product.stock_quantity <= 5 && product.stock_quantity > 0 && (
           <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-xs font-semibold px-2 py-1 rounded-md z-10">
             Low Stock
@@ -119,7 +135,6 @@ const ProductCard = ({ product }: ProductCardProps) => {
         )}
       </Link>
 
-      {/* Content */}
       <div className="p-4">
         <Link to={`/product/${product.id}`}>
           <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-1">
