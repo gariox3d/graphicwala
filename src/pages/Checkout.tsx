@@ -649,6 +649,15 @@ const Checkout = () => {
                     deliveryCharge={deliveryMethod === 'home_delivery' ? deliveryCharge : 0}
                     deliveryMethod={deliveryMethod}
                     showDetails={false}
+                    couponDiscount={couponDiscount}
+                    couponCode={appliedCoupon?.code}
+                  />
+
+                  {/* Coupon Code Input */}
+                  <CouponInput
+                    orderTotal={cartTotal}
+                    onApply={setAppliedCoupon}
+                    appliedCoupon={appliedCoupon}
                   />
 
                   {/* Delivery Countdown & Estimate */}

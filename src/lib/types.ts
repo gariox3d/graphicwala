@@ -77,6 +77,9 @@ export interface Order {
   delivery_method?: string | null;
   delivery_days_used?: number | null;
   estimated_delivery_date?: string | null;
+  // Coupon info
+  coupon_code?: string | null;
+  coupon_discount?: number | null;
 }
 
 export interface OrderItem {
