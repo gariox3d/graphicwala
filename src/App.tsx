@@ -22,6 +22,7 @@ import AdminOrders from "./pages/admin/AdminOrders";
 import AdminCategories from "./pages/admin/AdminCategories";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminReviews from "./pages/admin/AdminReviews";
+import AdminCoupons from "./pages/admin/AdminCoupons";
 import ProductForm from "./pages/admin/ProductForm";
 import NotFound from "./pages/NotFound";
 import ShareRedirect from "./pages/ShareRedirect";
@@ -66,6 +67,7 @@ const App = () => (
                 <Route path="/admin/orders" element={<AdminGuard><AdminOrders /></AdminGuard>} />
                 <Route path="/admin/reviews" element={<AdminGuard><AdminReviews /></AdminGuard>} />
                 <Route path="/admin/categories" element={<AdminGuard><AdminCategories /></AdminGuard>} />
+                <Route path="/admin/coupons" element={<AdminGuard><AdminCoupons /></AdminGuard>} />
                 <Route path="/admin/settings" element={<AdminGuard><AdminSettings /></AdminGuard>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>

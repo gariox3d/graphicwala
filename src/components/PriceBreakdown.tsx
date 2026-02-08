@@ -1,5 +1,5 @@
 import { Separator } from '@/components/ui/separator';
-import { Truck, Package } from 'lucide-react';
+import { Truck, Package, Ticket } from 'lucide-react';
 
 interface PriceBreakdownProps {
   productTotal: number;
@@ -7,6 +7,8 @@ interface PriceBreakdownProps {
   deliveryMethod?: 'home_delivery' | 'store_pickup';
   className?: string;
   showDetails?: boolean;
+  couponDiscount?: number;
+  couponCode?: string;
 }
 
 const PriceBreakdown = ({ 
@@ -14,11 +16,13 @@ const PriceBreakdown = ({
   deliveryCharge, 
   deliveryMethod = 'home_delivery',
   className = '',
-  showDetails = true
+  showDetails = true,
+  couponDiscount = 0,
+  couponCode,
 }: PriceBreakdownProps) => {
   const isPickup = deliveryMethod === 'store_pickup';
   const finalDeliveryCharge = isPickup ? 0 : deliveryCharge;
-  const total = productTotal + finalDeliveryCharge;
+  const total = productTotal + finalDeliveryCharge - couponDiscount;
 
   return (
     <div className={`space-y-3 ${className}`}>
@@ -44,12 +48,22 @@ const PriceBreakdown = ({
           <span className="text-green-600">Free</span>
         )}
       </div>
+
+      {couponDiscount > 0 && (
+        <div className="flex justify-between text-sm">
+          <span className="text-green-600 flex items-center gap-2">
+            <Ticket className="h-4 w-4" />
+            Coupon {couponCode && <span className="font-mono text-xs">({couponCode})</span>}
+          </span>
+          <span className="text-green-600">-₹{couponDiscount.toLocaleString()}</span>
+        </div>
+      )}
       
       <Separator />
       
       <div className="flex justify-between font-semibold text-lg">
         <span>Total Payable</span>
-        <span className="text-primary">₹{total.toLocaleString()}</span>
+        <span className="text-primary">₹{Math.max(0, total).toLocaleString()}</span>
       </div>
 
       {showDetails && (

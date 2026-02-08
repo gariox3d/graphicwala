@@ -5,6 +5,7 @@ import { useCart } from '@/contexts/CartContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import CouponInput, { AppliedCoupon } from '@/components/CouponInput';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -42,6 +43,7 @@ const Checkout = () => {
   const [productDesigns, setProductDesigns] = useState<ProductDesigns>({});
   const [deliveryMethod, setDeliveryMethod] = useState<'home_delivery' | 'store_pickup'>('home_delivery');
   const { settings } = useStoreSettings();
+  const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
 
   // Calculate delivery charge - use admin-configured charge
   const calculateDeliveryCharge = useCallback(() => {
@@ -50,7 +52,8 @@ const Checkout = () => {
   }, [deliveryMethod, settings?.default_delivery_charge]);
 
   const deliveryCharge = calculateDeliveryCharge();
-  const totalPayable = cartTotal + deliveryCharge;
+  const couponDiscount = appliedCoupon?.discountAmount || 0;
+  const totalPayable = Math.max(0, cartTotal + deliveryCharge - couponDiscount);
   
   const [formData, setFormData] = useState({
     fullName: profile?.full_name || '',
@@ -200,6 +203,8 @@ const Checkout = () => {
         delivery_charge: deliveryCharge,
         delivery_days_used: 7,
         estimated_delivery_date: formattedDeliveryDate,
+        coupon_code: appliedCoupon?.code || null,
+        coupon_discount: couponDiscount,
       };
 
       // Prepare order items data
@@ -281,6 +286,17 @@ const Checkout = () => {
             }
 
             // Payment verified and order created successfully
+            // Track coupon usage
+            if (appliedCoupon && verifyData.order_id) {
+              await supabase.from('coupon_usage').insert({
+                coupon_id: appliedCoupon.id,
+                user_id: user!.id,
+                order_id: verifyData.order_id,
+              });
+              // Increment used_count
+              await supabase.rpc('increment_coupon_usage' as any, { coupon_id_input: appliedCoupon.id });
+            }
+
             await clearCart();
             sessionStorage.removeItem('productDesigns');
             toast.success('Payment successful! Order confirmed.');
