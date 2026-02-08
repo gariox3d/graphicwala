@@ -10,8 +10,10 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { User, Package, Eye, ShoppingBag, Edit2, Save, X, Loader2, MapPin, Phone } from 'lucide-react';
+import { User, Package, Eye, ShoppingBag, Edit2, Save, X, Loader2, MapPin, Phone, Heart } from 'lucide-react';
 import { toast } from 'sonner';
+import OrderTimeline from '@/components/OrderTimeline';
+import ReferralSection from '@/components/ReferralSection';
 
 interface Order {
   id: string;
@@ -61,7 +63,6 @@ const Dashboard = () => {
     }
   }, [user]);
 
-  // Sync edit form with profile
   useEffect(() => {
     if (profile) {
       setEditForm({
@@ -77,7 +78,6 @@ const Dashboard = () => {
 
   const handleEditChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    
     if (name === 'phone') {
       const sanitized = value.replace(/\D/g, '').slice(0, 10);
       setEditForm(prev => ({ ...prev, phone: sanitized }));
@@ -88,14 +88,11 @@ const Dashboard = () => {
       setEditForm(prev => ({ ...prev, pincode: sanitized }));
       return;
     }
-    
     setEditForm(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSaveProfile = async () => {
     if (!user) return;
-
-    // Validation
     if (!editForm.full_name.trim()) {
       toast.error('Please enter your full name');
       return;
@@ -125,7 +122,6 @@ const Dashboard = () => {
         .eq('user_id', user.id);
 
       if (error) throw error;
-
       await refreshProfile();
       toast.success('Profile updated successfully!');
       setIsEditing(false);
@@ -138,7 +134,6 @@ const Dashboard = () => {
   };
 
   const handleCancelEdit = () => {
-    // Reset form to profile values
     if (profile) {
       setEditForm({
         full_name: profile.full_name || '',
@@ -150,25 +145,6 @@ const Dashboard = () => {
       });
     }
     setIsEditing(false);
-  };
-
-  const getStatusBadge = (status: string) => {
-    const statusStyles: Record<string, string> = {
-      pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      processing: 'bg-blue-100 text-blue-800 border-blue-200',
-      completed: 'bg-green-100 text-green-800 border-green-200',
-      cancelled: 'bg-red-100 text-red-800 border-red-200',
-    };
-    return statusStyles[status] || 'bg-muted text-muted-foreground';
-  };
-
-  const getPaymentBadge = (status: string) => {
-    const statusStyles: Record<string, string> = {
-      paid: 'bg-green-100 text-green-800 border-green-200',
-      pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      failed: 'bg-red-100 text-red-800 border-red-200',
-    };
-    return statusStyles[status] || 'bg-muted text-muted-foreground';
   };
 
   if (loading) {
@@ -189,8 +165,9 @@ const Dashboard = () => {
           <h1 className="text-3xl md:text-4xl font-bold mb-8">My Account</h1>
           
           <div className="grid lg:grid-cols-3 gap-8">
-            {/* Profile Section */}
-            <div className="lg:col-span-1">
+            {/* Left Column - Profile + Referral */}
+            <div className="lg:col-span-1 space-y-6">
+              {/* Profile Card */}
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
                   <CardTitle className="flex items-center gap-2">
@@ -198,11 +175,7 @@ const Dashboard = () => {
                     Profile Information
                   </CardTitle>
                   {!isEditing && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setIsEditing(true)}
-                    >
+                    <Button variant="ghost" size="sm" onClick={() => setIsEditing(true)}>
                       <Edit2 className="h-4 w-4 mr-1" />
                       Edit
                     </Button>
@@ -210,134 +183,55 @@ const Dashboard = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {isEditing ? (
-                    // Edit Mode
                     <div className="space-y-4">
                       <div className="space-y-2">
                         <Label htmlFor="full_name">Full Name</Label>
-                        <Input
-                          id="full_name"
-                          name="full_name"
-                          value={editForm.full_name}
-                          onChange={handleEditChange}
-                          placeholder="Your full name"
-                        />
+                        <Input id="full_name" name="full_name" value={editForm.full_name} onChange={handleEditChange} placeholder="Your full name" />
                       </div>
-
                       <div className="space-y-2">
-                        <Label htmlFor="phone" className="flex items-center gap-1">
-                          <Phone className="h-3 w-3" /> Mobile Number
-                        </Label>
-                        <Input
-                          id="phone"
-                          name="phone"
-                          value={editForm.phone}
-                          onChange={handleEditChange}
-                          placeholder="10-digit mobile"
-                          maxLength={10}
-                        />
+                        <Label htmlFor="phone" className="flex items-center gap-1"><Phone className="h-3 w-3" /> Mobile Number</Label>
+                        <Input id="phone" name="phone" value={editForm.phone} onChange={handleEditChange} placeholder="10-digit mobile" maxLength={10} />
                       </div>
-
                       <div className="space-y-2">
                         <Label htmlFor="address">Address</Label>
-                        <Input
-                          id="address"
-                          name="address"
-                          value={editForm.address}
-                          onChange={handleEditChange}
-                          placeholder="House/Flat, Street, Area"
-                        />
+                        <Input id="address" name="address" value={editForm.address} onChange={handleEditChange} placeholder="House/Flat, Street, Area" />
                       </div>
-
                       <div className="grid grid-cols-2 gap-2">
                         <div className="space-y-2">
                           <Label htmlFor="city">City</Label>
-                          <Input
-                            id="city"
-                            name="city"
-                            value={editForm.city}
-                            onChange={handleEditChange}
-                            placeholder="City"
-                          />
+                          <Input id="city" name="city" value={editForm.city} onChange={handleEditChange} placeholder="City" />
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="state">State</Label>
-                          <Input
-                            id="state"
-                            name="state"
-                            value={editForm.state}
-                            onChange={handleEditChange}
-                            placeholder="State"
-                          />
+                          <Input id="state" name="state" value={editForm.state} onChange={handleEditChange} placeholder="State" />
                         </div>
                       </div>
-
                       <div className="space-y-2">
-                        <Label htmlFor="pincode" className="flex items-center gap-1">
-                          <MapPin className="h-3 w-3" /> Pincode
-                        </Label>
-                        <Input
-                          id="pincode"
-                          name="pincode"
-                          value={editForm.pincode}
-                          onChange={handleEditChange}
-                          placeholder="6-digit pincode"
-                          maxLength={6}
-                        />
+                        <Label htmlFor="pincode" className="flex items-center gap-1"><MapPin className="h-3 w-3" /> Pincode</Label>
+                        <Input id="pincode" name="pincode" value={editForm.pincode} onChange={handleEditChange} placeholder="6-digit pincode" maxLength={6} />
                       </div>
-
                       <div className="flex gap-2 pt-2">
-                        <Button
-                          onClick={handleSaveProfile}
-                          disabled={saving}
-                          className="flex-1"
-                        >
-                          {saving ? (
-                            <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                          ) : (
-                            <Save className="h-4 w-4 mr-1" />
-                          )}
+                        <Button onClick={handleSaveProfile} disabled={saving} className="flex-1">
+                          {saving ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Save className="h-4 w-4 mr-1" />}
                           Save
                         </Button>
-                        <Button
-                          variant="outline"
-                          onClick={handleCancelEdit}
-                          disabled={saving}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
+                        <Button variant="outline" onClick={handleCancelEdit} disabled={saving}><X className="h-4 w-4" /></Button>
                       </div>
                     </div>
                   ) : (
-                    // View Mode
                     <>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Name</p>
-                        <p className="font-medium">{profile?.full_name || 'Not set'}</p>
-                      </div>
+                      <div><p className="text-sm text-muted-foreground">Name</p><p className="font-medium">{profile?.full_name || 'Not set'}</p></div>
                       <Separator />
-                      <div>
-                        <p className="text-sm text-muted-foreground">Email</p>
-                        <p className="font-medium">{user.email}</p>
-                      </div>
+                      <div><p className="text-sm text-muted-foreground">Email</p><p className="font-medium">{user.email}</p></div>
                       <Separator />
-                      <div>
-                        <p className="text-sm text-muted-foreground">Phone</p>
-                        <p className="font-medium">{profile?.phone || 'Not set'}</p>
-                      </div>
+                      <div><p className="text-sm text-muted-foreground">Phone</p><p className="font-medium">{profile?.phone || 'Not set'}</p></div>
                       <Separator />
                       <div>
                         <p className="text-sm text-muted-foreground">Address</p>
                         <p className="font-medium">
                           {profile?.address ? (
-                            <>
-                              {profile.address}
-                              {profile.city && `, ${profile.city}`}
-                              {profile.state && `, ${profile.state}`}
-                              {profile.pincode && ` - ${profile.pincode}`}
-                            </>
-                          ) : (
-                            'Not set'
-                          )}
+                            <>{profile.address}{profile.city && `, ${profile.city}`}{profile.state && `, ${profile.state}`}{profile.pincode && ` - ${profile.pincode}`}</>
+                          ) : 'Not set'}
                         </p>
                       </div>
                       {profile?.pincode && (
@@ -345,10 +239,7 @@ const Dashboard = () => {
                           <Separator />
                           <div className="flex items-center gap-2">
                             <MapPin className="h-4 w-4 text-primary" />
-                            <div>
-                              <p className="text-sm text-muted-foreground">Delivery Pincode</p>
-                              <p className="font-medium">{profile.pincode}</p>
-                            </div>
+                            <div><p className="text-sm text-muted-foreground">Delivery Pincode</p><p className="font-medium">{profile.pincode}</p></div>
                           </div>
                         </>
                       )}
@@ -356,6 +247,19 @@ const Dashboard = () => {
                   )}
                 </CardContent>
               </Card>
+
+              {/* Quick Links */}
+              <Link to="/wishlist">
+                <Card className="hover:shadow-md transition-shadow cursor-pointer">
+                  <CardContent className="flex items-center gap-3 py-4">
+                    <Heart className="h-5 w-5 text-red-500" />
+                    <span className="font-medium">My Wishlist</span>
+                  </CardContent>
+                </Card>
+              </Link>
+
+              {/* Referral Section */}
+              <ReferralSection />
             </div>
 
             {/* Orders Section */}
@@ -376,45 +280,32 @@ const Dashboard = () => {
                     <div className="text-center py-12">
                       <ShoppingBag className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                       <p className="text-muted-foreground mb-4">No orders yet</p>
-                      <Link to="/products">
-                        <Button>Start Shopping</Button>
-                      </Link>
+                      <Link to="/products"><Button>Start Shopping</Button></Link>
                     </div>
                   ) : (
                     <div className="space-y-4">
                       {orders.map((order) => (
-                        <div
-                          key={order.id}
-                          className="border rounded-lg p-4 hover:bg-muted/50 transition-colors"
-                        >
-                          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                            <div className="space-y-1">
+                        <div key={order.id} className="border rounded-lg p-4 hover:bg-muted/50 transition-colors">
+                          <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                            <div className="space-y-1 flex-1">
                               <div className="flex items-center gap-2 flex-wrap">
                                 <p className="font-mono text-sm text-muted-foreground">
                                   #{order.id.slice(0, 8).toUpperCase()}
                                 </p>
-                                <Badge className={getStatusBadge(order.status)}>
-                                  {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-                                </Badge>
-                                <Badge className={getPaymentBadge(order.payment_status || 'pending')}>
-                                  {order.payment_status === 'paid' ? 'Paid' : 
-                                   order.payment_status === 'failed' ? 'Failed' : 'Pending'}
+                                <Badge className={order.payment_status === 'paid' ? 'bg-green-100 text-green-800 border-green-200' : 'bg-yellow-100 text-yellow-800 border-yellow-200'}>
+                                  {order.payment_status === 'paid' ? 'Paid' : order.payment_status === 'failed' ? 'Failed' : 'Pending'}
                                 </Badge>
                               </div>
                               <p className="text-sm text-muted-foreground">
                                 {new Date(order.created_at).toLocaleDateString('en-IN', {
-                                  day: 'numeric',
-                                  month: 'long',
-                                  year: 'numeric',
-                                  hour: '2-digit',
-                                  minute: '2-digit',
+                                  day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit',
                                 })}
                               </p>
-                              <p className="text-sm text-muted-foreground">
-                                {order.shipping_address}, {order.shipping_city}, {order.shipping_state} - {order.shipping_pincode}
-                              </p>
+                              
+                              {/* Live Order Tracking Timeline */}
+                              <OrderTimeline currentStatus={order.status} />
                             </div>
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-4 md:flex-col md:items-end">
                               <p className="text-lg font-bold text-primary">
                                 ₹{order.total_amount.toLocaleString()}
                               </p>

@@ -26,6 +26,7 @@ import AdminCoupons from "./pages/admin/AdminCoupons";
 import ProductForm from "./pages/admin/ProductForm";
 import NotFound from "./pages/NotFound";
 import ShareRedirect from "./pages/ShareRedirect";
+import Wishlist from "./pages/Wishlist";
 import AIAssistant from "./pages/AIAssistant";
 import ScrollToTop from "./components/ScrollToTop";
 import AdminGuard from "./components/admin/AdminGuard";
@@ -55,6 +56,7 @@ const App = () => (
                 <Route path="/checkout" element={<Checkout />} />
                 <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
                 <Route path="/auth" element={<Auth />} />
+                <Route path="/wishlist" element={<Wishlist />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />

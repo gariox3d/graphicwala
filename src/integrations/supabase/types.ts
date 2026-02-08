@@ -497,6 +497,7 @@ export type Database = {
           is_admin: boolean | null
           phone: string | null
           pincode: string | null
+          referred_by: string | null
           state: string | null
           updated_at: string
           user_id: string
@@ -510,6 +511,7 @@ export type Database = {
           is_admin?: boolean | null
           phone?: string | null
           pincode?: string | null
+          referred_by?: string | null
           state?: string | null
           updated_at?: string
           user_id: string
@@ -523,11 +525,80 @@ export type Database = {
           is_admin?: boolean | null
           phone?: string | null
           pincode?: string | null
+          referred_by?: string | null
           state?: string | null
           updated_at?: string
           user_id?: string
         }
         Relationships: []
+      }
+      referral_codes: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          total_earnings: number
+          total_referrals: number
+          user_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          total_earnings?: number
+          total_referrals?: number
+          user_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          total_earnings?: number
+          total_referrals?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      referral_rewards: {
+        Row: {
+          created_at: string
+          id: string
+          order_id: string | null
+          referee_id: string
+          referee_reward: number
+          referrer_id: string
+          referrer_reward: number
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          order_id?: string | null
+          referee_id: string
+          referee_reward?: number
+          referrer_id: string
+          referrer_reward?: number
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          order_id?: string | null
+          referee_id?: string
+          referee_reward?: number
+          referrer_id?: string
+          referrer_reward?: number
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referral_rewards_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       reviews: {
         Row: {
@@ -647,6 +718,35 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      wishlists: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wishlists_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

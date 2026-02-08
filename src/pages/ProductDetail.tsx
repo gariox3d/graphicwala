@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { ShoppingCart, ArrowLeft, Minus, Plus, Image, Zap } from 'lucide-react';
+import { ShoppingCart, ArrowLeft, Minus, Plus, Image, Zap, Heart } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
@@ -23,7 +23,11 @@ import LoginPromptDialog from '@/components/reviews/LoginPromptDialog';
 import ProductImageGallery from '@/components/products/ProductImageGallery';
 import DeliveryCountdown from '@/components/products/DeliveryCountdown';
 import ReturnPolicy from '@/components/ReturnPolicy';
+import RecentlyViewedProducts from '@/components/products/RecentlyViewedProducts';
+import WishlistButton from '@/components/products/WishlistButton';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
+import { useRecentlyViewed } from '@/hooks/useRecentlyViewed';
+import { useWishlist } from '@/hooks/useWishlist';
 import { toast } from 'sonner';
 
 const SITE_URL = 'https://store.graphicwala.com';
@@ -35,6 +39,8 @@ const ProductDetail = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { settings } = useStoreSettings();
+  const { viewedIds, addProduct: addToRecentlyViewed } = useRecentlyViewed();
+  const { isWishlisted, toggleWishlist } = useWishlist();
   const [product, setProduct] = useState<(Product & { 
     delivery_charge?: number | null; 
     image_urls?: string[];
@@ -76,6 +82,11 @@ const ProductDetail = () => {
     };
     if (id) fetchProduct();
   }, [id]);
+
+  // Track recently viewed
+  useEffect(() => {
+    if (id) addToRecentlyViewed(id);
+  }, [id, addToRecentlyViewed]);
 
   // Load existing designs from session storage
   useEffect(() => {
@@ -309,7 +320,14 @@ const ProductDetail = () => {
                       </Badge>
                     )}
                   </div>
-                  <ShareButton productId={product.id} productName={product.name} />
+                  <div className="flex items-center gap-2">
+                    <WishlistButton
+                      isWishlisted={isWishlisted(product.id)}
+                      onClick={() => toggleWishlist(product.id)}
+                      size="md"
+                    />
+                    <ShareButton productId={product.id} productName={product.name} />
+                  </div>
                 </div>
                 <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
                 <p className="text-muted-foreground mb-4">
@@ -427,6 +445,11 @@ const ProductDetail = () => {
           <Separator className="my-12" />
           <ProductReviews productId={product.id} productName={product.name} />
         </div>
+
+        {/* Recently Viewed Products */}
+        {viewedIds.length > 1 && (
+          <RecentlyViewedProducts viewedIds={viewedIds} excludeId={product.id} />
+        )}
       </main>
       <Footer />
       
