@@ -1,7 +1,9 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { 
   LayoutDashboard, 
   Package, 
@@ -28,6 +30,18 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    const fetchUnread = async () => {
+      const { count } = await supabase
+        .from('contact_messages')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_read', false);
+      setUnreadCount(count || 0);
+    };
+    fetchUnread();
+  }, [location.pathname]);
 
   const navItems = [
     { path: '/admin', label: 'Dashboard', icon: LayoutDashboard },
@@ -100,7 +114,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                 `}
               >
                 <item.icon className="h-5 w-5" />
-                <span className="font-medium">{item.label}</span>
+                <span className="font-medium flex-1">{item.label}</span>
+                {item.path === '/admin/messages' && unreadCount > 0 && (
+                  <Badge variant="destructive" className="text-xs px-1.5 py-0.5 min-w-[20px] text-center">
+                    {unreadCount}
+                  </Badge>
+                )}
               </Link>
             ))}
           </nav>
