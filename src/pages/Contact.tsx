@@ -18,6 +18,17 @@ const Contact = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // 24-hour rate limit check
+    const lastSent = localStorage.getItem('contact_last_sent');
+    if (lastSent) {
+      const hoursSince = (Date.now() - Number(lastSent)) / (1000 * 60 * 60);
+      if (hoursSince < 24) {
+        const hoursLeft = Math.ceil(24 - hoursSince);
+        toast.error(`You can send another message after ${hoursLeft} hour${hoursLeft > 1 ? 's' : ''}.`);
+        return;
+      }
+    }
+
     if (!name.trim() || !phone.trim() || !message.trim()) {
       toast.error('Please fill in all fields');
       return;
@@ -36,6 +47,7 @@ const Contact = () => {
 
       if (error) throw error;
 
+      localStorage.setItem('contact_last_sent', String(Date.now()));
       toast.success('Message sent successfully! We will contact you soon.');
       setName('');
       setPhone('');
