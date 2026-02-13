@@ -25,6 +25,7 @@ import DeliveryCountdown from '@/components/products/DeliveryCountdown';
 import ReturnPolicy from '@/components/ReturnPolicy';
 import RecentlyViewedProducts from '@/components/products/RecentlyViewedProducts';
 import WishlistButton from '@/components/products/WishlistButton';
+import FlashSaleBadge from '@/components/products/FlashSaleBadge';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
 import { useRecentlyViewed } from '@/hooks/useRecentlyViewed';
 import { useWishlist } from '@/hooks/useWishlist';
@@ -47,6 +48,9 @@ const ProductDetail = () => {
     weight_kg?: number;
     cutoff_time?: string | null;
     delivery_days?: number | null;
+    sale_price?: number | null;
+    sale_start?: string | null;
+    sale_end?: string | null;
   }) | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -341,6 +345,18 @@ const ProductDetail = () => {
                   )}
                 </p>
               </div>
+
+              {/* Flash Sale Banner */}
+              {product.sale_price && product.sale_end && new Date(product.sale_end) > new Date() && (
+                (!product.sale_start || new Date(product.sale_start) <= new Date()) && (
+                  <FlashSaleBadge
+                    salePrice={product.sale_price}
+                    originalPrice={product.price}
+                    saleEnd={product.sale_end}
+                    variant="detail"
+                  />
+                )
+              )}
 
               {/* Delivery Countdown & Estimate */}
               <DeliveryCountdown 

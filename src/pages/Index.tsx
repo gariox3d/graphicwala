@@ -10,6 +10,7 @@ import SupportContact from '@/components/SupportContact';
 import HeroSection from '@/components/HeroSection';
 import AnnouncementBanner from '@/components/AnnouncementBanner';
 import RecentlyViewedProducts from '@/components/products/RecentlyViewedProducts';
+import CustomerGallery from '@/components/CustomerGallery';
 import { supabase } from '@/integrations/supabase/client';
 import { Product, Category, WHATSAPP_NUMBER, BUSINESS_NAME } from '@/lib/types';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
@@ -236,6 +237,9 @@ const Index = () => {
             </div>
           </div>
         </section>
+
+        {/* Customer Gallery / Wall of Fame */}
+        <CustomerGallery />
 
         {/* Recently Viewed Products */}
         {viewedIds.length > 0 && <RecentlyViewedProducts viewedIds={viewedIds} />}
