@@ -119,6 +119,23 @@ const AdminProducts = () => {
     toast.success('Order updated');
   };
 
+  const toggleStock = async (id: string, currentStock: number) => {
+    const newStock = currentStock === 0 ? 10 : 0;
+    const { error } = await supabase
+      .from('products')
+      .update({ stock_quantity: newStock })
+      .eq('id', id);
+
+    if (error) {
+      toast.error('Failed to update stock');
+    } else {
+      setProducts(products.map(p =>
+        p.id === id ? { ...p, stock_quantity: newStock } : p
+      ));
+      toast.success(newStock === 0 ? 'Marked as Out of Stock' : 'Marked as In Stock (10)');
+    }
+  };
+
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     product.description?.toLowerCase().includes(searchQuery.toLowerCase())
@@ -229,7 +246,20 @@ const AdminProducts = () => {
                         <TableCell className="font-medium">{product.name}</TableCell>
                         <TableCell>{product.categories?.name || 'Uncategorized'}</TableCell>
                         <TableCell>₹{product.price.toLocaleString()}</TableCell>
-                        <TableCell>{product.stock_quantity}</TableCell>
+                        <TableCell>
+                          <button
+                            onClick={() => toggleStock(product.id, product.stock_quantity)}
+                            className={`px-2 py-1 rounded-full text-xs font-medium cursor-pointer transition-colors ${
+                              product.stock_quantity === 0
+                                ? 'bg-red-100 text-red-700 hover:bg-red-200'
+                                : product.stock_quantity <= 5
+                                ? 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
+                                : 'bg-green-100 text-green-700 hover:bg-green-200'
+                            }`}
+                          >
+                            {product.stock_quantity === 0 ? 'Out of Stock' : `${product.stock_quantity} in stock`}
+                          </button>
+                        </TableCell>
                         <TableCell>
                           <button
                             onClick={() => toggleActive(product.id, product.is_active)}
