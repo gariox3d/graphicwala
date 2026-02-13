@@ -53,7 +53,25 @@ const Checkout = () => {
 
   const deliveryCharge = calculateDeliveryCharge();
   const couponDiscount = appliedCoupon?.discountAmount || 0;
-  const totalPayable = Math.max(0, cartTotal + deliveryCharge - couponDiscount);
+
+  // Calculate bulk discount
+  const bulkDiscount = (() => {
+    if (!settings?.bulk_discount_enabled) return 0;
+    const minQty = settings.bulk_discount_min_qty || 2;
+    const pct = settings.bulk_discount_percent || 10;
+    let discount = 0;
+    for (const item of cartItems) {
+      if (item.quantity >= minQty && item.products) {
+        const price = (item.products as any).sale_price && (item.products as any).sale_end && new Date((item.products as any).sale_end) > new Date()
+          ? (item.products as any).sale_price
+          : item.products.price;
+        discount += price * item.quantity * (pct / 100);
+      }
+    }
+    return Math.round(discount * 100) / 100;
+  })();
+
+  const totalPayable = Math.max(0, cartTotal + deliveryCharge - couponDiscount - bulkDiscount);
   
   const [formData, setFormData] = useState({
     fullName: profile?.full_name || '',
@@ -679,7 +697,14 @@ const Checkout = () => {
                     showDetails={false}
                     couponDiscount={couponDiscount}
                     couponCode={appliedCoupon?.code}
+                    bulkDiscount={bulkDiscount}
                   />
+
+                  {bulkDiscount > 0 && (
+                    <div className="bg-green-50 dark:bg-green-950/30 p-3 rounded-lg text-sm text-green-700 dark:text-green-300">
+                      🎉 Bulk discount of ₹{bulkDiscount.toLocaleString()} applied! Buy {settings?.bulk_discount_min_qty}+ of same product to save {settings?.bulk_discount_percent}%
+                    </div>
+                  )}
 
                   {/* Coupon Code Input */}
                   <CouponInput

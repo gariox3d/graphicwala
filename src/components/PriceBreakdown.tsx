@@ -1,5 +1,5 @@
 import { Separator } from '@/components/ui/separator';
-import { Truck, Package, Ticket } from 'lucide-react';
+import { Truck, Package, Ticket, Percent } from 'lucide-react';
 
 interface PriceBreakdownProps {
   productTotal: number;
@@ -9,6 +9,7 @@ interface PriceBreakdownProps {
   showDetails?: boolean;
   couponDiscount?: number;
   couponCode?: string;
+  bulkDiscount?: number;
 }
 
 const PriceBreakdown = ({ 
@@ -19,10 +20,11 @@ const PriceBreakdown = ({
   showDetails = true,
   couponDiscount = 0,
   couponCode,
+  bulkDiscount = 0,
 }: PriceBreakdownProps) => {
   const isPickup = deliveryMethod === 'store_pickup';
   const finalDeliveryCharge = isPickup ? 0 : deliveryCharge;
-  const total = productTotal + finalDeliveryCharge - couponDiscount;
+  const total = productTotal + finalDeliveryCharge - couponDiscount - bulkDiscount;
 
   return (
     <div className={`space-y-3 ${className}`}>
@@ -48,6 +50,16 @@ const PriceBreakdown = ({
           <span className="text-green-600">Free</span>
         )}
       </div>
+
+      {bulkDiscount > 0 && (
+        <div className="flex justify-between text-sm">
+          <span className="text-green-600 flex items-center gap-2">
+            <Percent className="h-4 w-4" />
+            Bulk Discount
+          </span>
+          <span className="text-green-600">-₹{bulkDiscount.toLocaleString()}</span>
+        </div>
+      )}
 
       {couponDiscount > 0 && (
         <div className="flex justify-between text-sm">

@@ -10,6 +10,7 @@ import SupportContact from '@/components/SupportContact';
 import HeroSection from '@/components/HeroSection';
 import AnnouncementBanner from '@/components/AnnouncementBanner';
 import RecentlyViewedProducts from '@/components/products/RecentlyViewedProducts';
+import TrendingProducts from '@/components/products/TrendingProducts';
 import CustomerGallery from '@/components/CustomerGallery';
 import { supabase } from '@/integrations/supabase/client';
 import { Product, Category, WHATSAPP_NUMBER, BUSINESS_NAME } from '@/lib/types';
@@ -237,6 +238,9 @@ const Index = () => {
             </div>
           </div>
         </section>
+
+        {/* Trending Products */}
+        <TrendingProducts />
 
         {/* Customer Gallery / Wall of Fame */}
         <CustomerGallery />

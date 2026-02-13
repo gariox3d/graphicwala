@@ -10,7 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
 import { toast } from 'sonner';
-import { Loader2, Settings, Truck, Store, Megaphone, Shield, Phone } from 'lucide-react';
+import { Loader2, Settings, Truck, Store, Megaphone, Shield, Phone, Percent } from 'lucide-react';
 
 const AdminSettings = () => {
   const { user, isAdmin, loading: authLoading } = useAuth();
@@ -30,6 +30,9 @@ const AdminSettings = () => {
     whatsapp_support_number: '+916207142994',
     return_policy_enabled: true,
     return_window_hours: 48,
+    bulk_discount_enabled: false,
+    bulk_discount_min_qty: 2,
+    bulk_discount_percent: 10,
   });
 
   useEffect(() => {
@@ -51,6 +54,9 @@ const AdminSettings = () => {
         whatsapp_support_number: settings.whatsapp_support_number || '+916207142994',
         return_policy_enabled: settings.return_policy_enabled ?? true,
         return_window_hours: settings.return_window_hours ?? 48,
+        bulk_discount_enabled: settings.bulk_discount_enabled ?? false,
+        bulk_discount_min_qty: settings.bulk_discount_min_qty ?? 2,
+        bulk_discount_percent: settings.bulk_discount_percent ?? 10,
       });
     }
   }, [settings]);
@@ -306,6 +312,75 @@ const AdminSettings = () => {
                   Returns are only accepted for damaged or defective products. Customers must send video proof via WhatsApp.
                 </p>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Bulk Discount Settings */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Percent className="h-5 w-5 text-primary" />
+                Bulk / Combo Discount
+              </CardTitle>
+              <CardDescription>
+                Auto-discount when customers buy multiple items
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="bulk_discount_enabled">Enable Bulk Discount</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Automatically apply discount when quantity meets minimum
+                  </p>
+                </div>
+                <Switch
+                  id="bulk_discount_enabled"
+                  checked={formData.bulk_discount_enabled}
+                  onCheckedChange={(checked) => setFormData({ ...formData, bulk_discount_enabled: checked })}
+                />
+              </div>
+
+              {formData.bulk_discount_enabled && (
+                <>
+                  <div className="space-y-2 pt-4 border-t">
+                    <Label htmlFor="bulk_discount_min_qty">Minimum Quantity (per product)</Label>
+                    <Input
+                      id="bulk_discount_min_qty"
+                      type="number"
+                      min="2"
+                      max="50"
+                      value={formData.bulk_discount_min_qty}
+                      onChange={(e) => setFormData({ ...formData, bulk_discount_min_qty: parseInt(e.target.value) || 2 })}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Discount applies when a single product quantity reaches this number
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="bulk_discount_percent">Discount Percentage (%)</Label>
+                    <Input
+                      id="bulk_discount_percent"
+                      type="number"
+                      min="1"
+                      max="90"
+                      value={formData.bulk_discount_percent}
+                      onChange={(e) => setFormData({ ...formData, bulk_discount_percent: parseFloat(e.target.value) || 10 })}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      e.g., 10% off when buying {formData.bulk_discount_min_qty}+ of the same product
+                    </p>
+                  </div>
+
+                  <div className="bg-blue-50 p-4 rounded-lg mt-2">
+                    <p className="text-sm text-blue-700">
+                      <strong>💡 Example:</strong> If a product costs ₹500 and customer buys {formData.bulk_discount_min_qty}+, 
+                      they get {formData.bulk_discount_percent}% off = ₹{(500 * (1 - formData.bulk_discount_percent / 100)).toFixed(0)} per piece
+                    </p>
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
 
