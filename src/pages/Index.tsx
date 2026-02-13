@@ -105,41 +105,6 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Delivery Info Banner */}
-        <section className="py-8 bg-background" aria-label="Delivery information">
-          <div className="container">
-            <DeliveryInfoBanner />
-          </div>
-        </section>
-
-        {/* Services Section */}
-        <section className="py-16 md:py-24 bg-secondary" aria-labelledby="services-heading">
-          <div className="container">
-            <header className="text-center mb-12">
-              <h2 id="services-heading" className="text-3xl md:text-4xl font-bold mb-4">Why Choose Graphic Wala?</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Premium custom printing services across India. We deliver excellence in every print with home delivery nationwide.
-              </p>
-            </header>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" role="list">
-              {services.map((service, index) => (
-                <article
-                  key={service.title}
-                  className="bg-card rounded-xl p-6 shadow-soft hover:shadow-brand transition-all duration-300 animate-slide-up"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                  role="listitem"
-                >
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4" aria-hidden="true">
-                    <service.icon className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="font-semibold text-lg mb-2">{service.title}</h3>
-                  <p className="text-muted-foreground text-sm">{service.description}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* Categories Section */}
         <section className="py-16 md:py-24" aria-labelledby="categories-heading">
           <div className="container">
@@ -167,7 +132,6 @@ const Index = () => {
                     aria-label={`Shop ${category.name} - All India Delivery`}
                     role="listitem"
                   >
-                    {/* Background Image or Gradient */}
                     {categoryImage ? (
                       <img
                         src={categoryImage}
@@ -178,9 +142,7 @@ const Index = () => {
                     ) : (
                       <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-foreground" />
                     )}
-                    {/* Dark Overlay for text readability */}
                     <div className="absolute inset-0 bg-foreground/60 group-hover:bg-foreground/50 transition-colors duration-300" />
-                    {/* Category Name */}
                     <div className="absolute inset-0 flex items-center justify-center p-4">
                       <h3 className="text-background font-bold text-center text-sm md:text-base group-hover:scale-105 transition-transform duration-300 drop-shadow-lg">
                         {category.name}
@@ -235,6 +197,41 @@ const Index = () => {
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Button>
               </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Delivery Info Banner */}
+        <section className="py-8 bg-background" aria-label="Delivery information">
+          <div className="container">
+            <DeliveryInfoBanner />
+          </div>
+        </section>
+
+        {/* Services Section */}
+        <section className="py-16 md:py-24 bg-secondary" aria-labelledby="services-heading">
+          <div className="container">
+            <header className="text-center mb-12">
+              <h2 id="services-heading" className="text-3xl md:text-4xl font-bold mb-4">Why Choose Graphic Wala?</h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Premium custom printing services across India. We deliver excellence in every print with home delivery nationwide.
+              </p>
+            </header>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" role="list">
+              {services.map((service, index) => (
+                <article
+                  key={service.title}
+                  className="bg-card rounded-xl p-6 shadow-soft hover:shadow-brand transition-all duration-300 animate-slide-up"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                  role="listitem"
+                >
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4" aria-hidden="true">
+                    <service.icon className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="font-semibold text-lg mb-2">{service.title}</h3>
+                  <p className="text-muted-foreground text-sm">{service.description}</p>
+                </article>
+              ))}
             </div>
           </div>
         </section>
