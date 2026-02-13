@@ -701,6 +701,9 @@ export type Database = {
         Row: {
           announcement_enabled: boolean | null
           announcement_text: string | null
+          bulk_discount_enabled: boolean | null
+          bulk_discount_min_qty: number | null
+          bulk_discount_percent: number | null
           created_at: string
           default_delivery_charge: number | null
           delivery_disclaimer_enabled: boolean | null
@@ -719,6 +722,9 @@ export type Database = {
         Insert: {
           announcement_enabled?: boolean | null
           announcement_text?: string | null
+          bulk_discount_enabled?: boolean | null
+          bulk_discount_min_qty?: number | null
+          bulk_discount_percent?: number | null
           created_at?: string
           default_delivery_charge?: number | null
           delivery_disclaimer_enabled?: boolean | null
@@ -737,6 +743,9 @@ export type Database = {
         Update: {
           announcement_enabled?: boolean | null
           announcement_text?: string | null
+          bulk_discount_enabled?: boolean | null
+          bulk_discount_min_qty?: number | null
+          bulk_discount_percent?: number | null
           created_at?: string
           default_delivery_charge?: number | null
           delivery_disclaimer_enabled?: boolean | null
@@ -806,7 +815,22 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      trending_products: {
+        Row: {
+          order_count: number | null
+          product_id: string | null
+          total_sold: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       has_role: {
