@@ -117,7 +117,7 @@ const Index = () => {
             <header className="text-center mb-12">
               <h2 id="services-heading" className="text-3xl md:text-4xl font-bold mb-4">Why Choose Graphic Wala?</h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                Premium custom printing services in Bihar. We deliver excellence in every print with home delivery across the state.
+                Premium custom printing services across India. We deliver excellence in every print with home delivery nationwide.
               </p>
             </header>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" role="list">
@@ -145,7 +145,7 @@ const Index = () => {
             <header className="flex items-center justify-between mb-12">
               <div>
                 <h2 id="categories-heading" className="text-3xl md:text-4xl font-bold mb-2">Shop by Category</h2>
-                <p className="text-muted-foreground">Custom Photo Frames, PVC Cards, ID Cards, Keychains & Visiting Cards in Bihar</p>
+                <p className="text-muted-foreground">Custom Photo Frames, PVC Cards, ID Cards, Keychains & Visiting Cards — All India Delivery</p>
               </div>
               <Link to="/products" className="hidden md:block" aria-label="View all product categories">
                 <Button variant="outline">
@@ -163,14 +163,14 @@ const Index = () => {
                     to={`/products?category=${encodeURIComponent(category.name)}`}
                     className="group relative aspect-square rounded-xl overflow-hidden shadow-soft hover:shadow-brand transition-all duration-300 animate-scale-in"
                     style={{ animationDelay: `${index * 0.05}s` }}
-                    aria-label={`Shop ${category.name} in Bihar`}
+                    aria-label={`Shop ${category.name} - All India Delivery`}
                     role="listitem"
                   >
                     {/* Background Image or Gradient */}
                     {categoryImage ? (
                       <img
                         src={categoryImage}
-                        alt={`${category.name} - Custom Printing Bihar`}
+                        alt={`${category.name} - Custom Printing India`}
                         className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                         loading="lazy"
                       />
@@ -198,7 +198,7 @@ const Index = () => {
             <header className="flex items-center justify-between mb-12">
               <div>
                 <h2 id="products-heading" className="text-3xl md:text-4xl font-bold mb-2">Featured Products</h2>
-                <p className="text-muted-foreground">Personalized gifts and custom printed products with Bihar delivery</p>
+                <p className="text-muted-foreground">Personalized gifts and custom printed products with All India delivery</p>
               </div>
               <Link to="/products" className="hidden md:block" aria-label="View all products">
                 <Button variant="outline">
@@ -256,7 +256,7 @@ const Index = () => {
           <div className="container text-center">
             <h2 id="cta-heading" className="text-3xl md:text-4xl font-bold mb-4 drop-shadow-md">Ready to Get Started?</h2>
             <p className="text-primary-foreground/90 max-w-2xl mx-auto mb-8 font-medium">
-              Order personalized photo frames, PVC cards, keychains and more. Prepaid orders with home delivery across Bihar.
+              Order personalized photo frames, PVC cards, keychains and more. Prepaid orders with home delivery across India.
             </p>
             <nav className="flex flex-wrap justify-center gap-4" aria-label="Get started actions">
               <Link to="/products" aria-label="Browse all products">
@@ -281,12 +281,12 @@ const Index = () => {
 
         {/* SEO Footer Content */}
         <section className="sr-only" aria-label="About Graphic Wala Store">
-          <h2>Graphic Wala Store - Custom Printing Services in Bihar</h2>
+          <h2>Graphic Wala Store - Custom Printing Services Across India</h2>
           <p>
-            Graphic Wala Store is Bihar's leading online store for custom printing and personalized gifts. 
+            Graphic Wala Store is India's trusted online store for custom printing and personalized gifts. 
             We specialize in photo frame printing, PVC card printing, ID card printing, visiting card printing, 
             and keychain printing with premium quality materials. All orders are prepaid with home delivery 
-            available across Bihar, India. Contact us on WhatsApp at +91 6207142994 for support.
+            available across India. Contact us on WhatsApp at +91 6207142994 for support.
           </p>
         </section>
       </main>

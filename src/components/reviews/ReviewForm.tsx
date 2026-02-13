@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import StarRating from './StarRating';
+import ReviewImageUpload from './ReviewImageUpload';
 import LoginPromptDialog from './LoginPromptDialog';
 import { toast } from 'sonner';
 import { Send, Edit2 } from 'lucide-react';
@@ -15,6 +16,7 @@ interface ReviewFormProps {
     id: string;
     rating: number;
     comment: string;
+    review_images?: string[];
   } | null;
   onReviewSubmitted: () => void;
 }
@@ -23,6 +25,7 @@ const ReviewForm = ({ productId, existingReview, onReviewSubmitted }: ReviewForm
   const { user, profile } = useAuth();
   const [rating, setRating] = useState(existingReview?.rating || 0);
   const [comment, setComment] = useState(existingReview?.comment || '');
+  const [reviewImages, setReviewImages] = useState<string[]>(existingReview?.review_images || []);
   const [loading, setLoading] = useState(false);
   const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [isEditing, setIsEditing] = useState(!existingReview);
@@ -63,6 +66,7 @@ const ReviewForm = ({ productId, existingReview, onReviewSubmitted }: ReviewForm
           .update({
             rating,
             comment: comment.trim(),
+            review_images: reviewImages,
           })
           .eq('id', existingReview.id);
 
@@ -76,6 +80,7 @@ const ReviewForm = ({ productId, existingReview, onReviewSubmitted }: ReviewForm
           user_name: getUserName(),
           rating,
           comment: comment.trim(),
+          review_images: reviewImages,
         });
 
         if (error) {
@@ -123,6 +128,13 @@ const ReviewForm = ({ productId, existingReview, onReviewSubmitted }: ReviewForm
         <CardContent>
           <StarRating rating={existingReview.rating} size="sm" />
           <p className="mt-2 text-sm text-muted-foreground">{existingReview.comment}</p>
+          {existingReview.review_images && existingReview.review_images.length > 0 && (
+            <div className="flex gap-2 mt-2 flex-wrap">
+              {existingReview.review_images.map((url, i) => (
+                <img key={i} src={url} alt={`Review photo ${i + 1}`} className="w-16 h-16 rounded-lg object-cover border border-border" />
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     );
@@ -179,6 +191,15 @@ const ReviewForm = ({ productId, existingReview, onReviewSubmitted }: ReviewForm
                 </p>
               </div>
 
+              {/* Image Upload */}
+              {user && (
+                <ReviewImageUpload
+                  userId={user.id}
+                  images={reviewImages}
+                  onImagesChange={setReviewImages}
+                />
+              )}
+
               <div className="flex gap-2">
                 <Button type="submit" disabled={loading} className="flex-1">
                   <Send className="h-4 w-4 mr-2" />
@@ -192,6 +213,7 @@ const ReviewForm = ({ productId, existingReview, onReviewSubmitted }: ReviewForm
                       setIsEditing(false);
                       setRating(existingReview.rating);
                       setComment(existingReview.comment);
+                      setReviewImages(existingReview.review_images || []);
                     }}
                   >
                     Cancel
