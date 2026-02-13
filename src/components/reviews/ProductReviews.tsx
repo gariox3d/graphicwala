@@ -15,6 +15,7 @@ interface Review {
   rating: number;
   comment: string;
   created_at: string;
+  review_images?: string[];
 }
 
 interface ProductReviewsProps {
@@ -35,13 +36,16 @@ const ProductReviews = ({ productId, productName }: ProductReviewsProps) => {
       // Only select necessary columns - exclude user_id from public queries for privacy
       const { data, error } = await supabase
         .from('reviews')
-        .select('id, product_id, user_name, rating, comment, created_at, updated_at, user_id')
+        .select('id, product_id, user_name, rating, comment, created_at, updated_at, user_id, review_images')
         .eq('product_id', productId)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
 
-      const reviewsData = data || [];
+      const reviewsData = (data || []).map((r: any) => ({
+        ...r,
+        review_images: Array.isArray(r.review_images) ? r.review_images as string[] : [],
+      })) as Review[];
       setReviews(reviewsData);
 
       // Calculate average rating
@@ -54,7 +58,7 @@ const ProductReviews = ({ productId, productName }: ProductReviewsProps) => {
 
       // Find user's review
       if (user) {
-        const existing = reviewsData.find((r) => r.user_id === user.id);
+        const existing = reviewsData.find((r: Review) => r.user_id === user.id);
         setUserReview(existing || null);
       }
     } catch (error) {

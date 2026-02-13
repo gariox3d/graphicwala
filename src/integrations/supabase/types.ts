@@ -657,6 +657,7 @@ export type Database = {
           id: string
           product_id: string
           rating: number
+          review_images: Json | null
           updated_at: string
           user_id: string
           user_name: string
@@ -667,6 +668,7 @@ export type Database = {
           id?: string
           product_id: string
           rating: number
+          review_images?: Json | null
           updated_at?: string
           user_id: string
           user_name: string
@@ -677,6 +679,7 @@ export type Database = {
           id?: string
           product_id?: string
           rating?: number
+          review_images?: Json | null
           updated_at?: string
           user_id?: string
           user_name?: string

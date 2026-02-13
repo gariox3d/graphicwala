@@ -7,17 +7,17 @@ const heroSubtexts = [
   "Photo Frames for Every Special Moment",
   "PVC Cards & Keychains with Your Photos",
   "Visiting Cards & ID Cards",
-  "Delivered Across Bihar • Premium Print • Prepaid Only",
+  "Delivered Across India • Premium Print • Prepaid Only",
 ];
 
 const trustBadges = [
-  { icon: Truck, text: "Bihar Delivery" },
+  { icon: Truck, text: "All India Delivery" },
   { icon: Shield, text: "Premium Quality" },
   { icon: CreditCard, text: "Prepaid Only" },
 ];
 
 const deliveryPoints = [
-  "Delivery Available Across Bihar",
+  "All India Delivery Available",
   "No Cash on Delivery",
   "Online Prepaid Orders Only",
 ];
@@ -53,7 +53,7 @@ const HeroSection = () => {
   return (
     <section 
       className="relative min-h-[95vh] md:min-h-[90vh] flex items-center overflow-hidden"
-      aria-label="Graphic Wala - Custom Printing Store Bihar"
+      aria-label="Graphic Wala - Custom Printing Store India"
     >
       {/* Premium Animated Gradient Background */}
       <div className="absolute inset-0 bg-[#0a0a0a]">
@@ -124,7 +124,7 @@ const HeroSection = () => {
             style={{ animationDelay: '0.1s' }}
           >
             <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-            Bihar's Favorite Custom Gift Store
+            India's Favorite Custom Gift Store
           </div>
 
           {/* Main Heading */}
@@ -227,9 +227,9 @@ const HeroSection = () => {
 
           {/* Hidden SEO Content */}
           <p className="sr-only">
-            Graphic Wala Store offers premium custom printing services in Bihar including personalized photo frames, 
+            Graphic Wala Store offers premium custom printing services across India including personalized photo frames, 
             PVC card printing, ID card printing, visiting card printing, and keychain printing. 
-            We provide home delivery across Bihar with prepaid orders only. 
+            We provide home delivery across India with prepaid orders only. 
             Order your custom printed gifts online and get them delivered to your doorstep.
           </p>
         </header>

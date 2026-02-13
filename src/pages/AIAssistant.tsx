@@ -37,26 +37,26 @@ Har product me apni photo upload karni hoti hai. Kuch products me front + back d
 Har product ki alag price hai jo product page pe clearly dikhti hai.
 
 • Product price + Delivery charge = Total amount
-• Delivery charge Bihar ke andar ₹40-80 ke beech hota hai
+• Delivery charge location ke hisaab se ₹40-150 ke beech hota hai
 • Kuch products me pickup free bhi hai
 
 👉 Exact price dekhne ke liye product page check karein!`
   },
   delivery: {
-    keywords: ['delivery', 'bihar', 'kab milega', 'time', 'shipping', 'ship', 'days', 'din', 'pahunchega', 'address', 'location'],
+    keywords: ['delivery', 'bihar', 'india', 'kab milega', 'time', 'shipping', 'ship', 'days', 'din', 'pahunchega', 'address', 'location'],
     response: `🚚 **Delivery Details:**
 
-✅ **Delivery sirf Bihar me available hai**
-📍 Bihar ke kisi bhi district me deliver hota hai
+✅ **All India Delivery Available!**
+📍 India ke kisi bhi state me deliver hota hai
 
 ⏱️ **Delivery Time:**
-• Order confirm hone ke baad 3-5 working days
+• Order confirm hone ke baad 5-7 working days
 • Design approval ke baad printing start hoti hai
 
 🏪 **Store Pickup Option:**
-Agar aap Patna me ho, toh store se bhi le sakte ho (free pickup)
+Store se bhi le sakte ho (free pickup)
 
-❌ Bihar ke bahar delivery available nahi hai`
+🎉 Ab poore India me delivery available hai!`
   },
   payment: {
     keywords: ['cod', 'cash', 'payment', 'kaise pay', 'pay', 'razorpay', 'upi', 'online', 'paytm', 'gpay'],
@@ -175,7 +175,7 @@ Neeche diye gaye questions pe click karke bhi pooch sakte ho.`,
 const QUICK_QUESTIONS = [
   "Keychain kaise order kare?",
   "Photo frame me photo kaise upload kare?",
-  "Delivery Bihar me hoti hai?",
+  "Delivery All India hoti hai?",
   "COD available hai?",
   "Price kitni hai?",
   "Design help chahiye"

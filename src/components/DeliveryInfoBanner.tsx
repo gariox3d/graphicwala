@@ -10,7 +10,7 @@ const DeliveryInfoBanner = ({ variant = 'full', className = '' }: DeliveryInfoBa
     return (
       <div className={`flex items-center gap-2 text-sm text-muted-foreground p-3 bg-muted/50 rounded-lg ${className}`}>
         <Package className="h-4 w-4 text-primary" />
-        <span>7-Day Delivery • All orders prepaid only</span>
+        <span>All India Delivery • All orders prepaid only</span>
       </div>
     );
   }
@@ -20,9 +20,9 @@ const DeliveryInfoBanner = ({ variant = 'full', className = '' }: DeliveryInfoBa
       <div className="flex items-start gap-3 mb-4">
         <Truck className="h-6 w-6 text-primary mt-0.5" />
         <div>
-          <h3 className="font-semibold text-lg">7-Day Delivery</h3>
+          <h3 className="font-semibold text-lg">All India Delivery</h3>
           <p className="text-sm text-muted-foreground">
-            All orders are delivered within 7 days from order confirmation
+            Orders delivered across India within 5-7 working days
           </p>
         </div>
       </div>

@@ -27,6 +27,7 @@ interface Review {
   rating: number;
   comment: string;
   created_at: string;
+  review_images?: string[];
 }
 
 interface ReviewListProps {
@@ -149,6 +150,20 @@ const ReviewList = ({ reviews, loading, onReviewDeleted }: ReviewListProps) => {
                 <p className="text-sm text-muted-foreground whitespace-pre-wrap">
                   {review.comment}
                 </p>
+                {review.review_images && review.review_images.length > 0 && (
+                  <div className="flex gap-2 mt-2 flex-wrap">
+                    {(review.review_images as string[]).map((url, i) => (
+                      <a key={i} href={url} target="_blank" rel="noopener noreferrer">
+                        <img 
+                          src={url} 
+                          alt={`Review photo ${i + 1}`} 
+                          className="w-20 h-20 rounded-lg object-cover border border-border hover:opacity-80 transition-opacity" 
+                          loading="lazy"
+                        />
+                      </a>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </CardContent>
