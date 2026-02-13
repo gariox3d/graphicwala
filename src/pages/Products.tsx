@@ -19,7 +19,7 @@ const Products = () => {
     const fetchData = async () => {
       setLoading(true);
       const [productsRes, categoriesRes] = await Promise.all([
-        supabase.from('products').select('*, categories(*)'),
+        supabase.from('products').select('*, categories(*)').order('display_order', { ascending: true }),
         supabase.from('categories').select('*'),
       ]);
       if (productsRes.data) setProducts(productsRes.data as unknown as Product[]);

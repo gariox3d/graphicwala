@@ -35,6 +35,8 @@ export interface Product {
   delivery_days?: number | null;
   enable_delivery?: boolean | null;
   delivery_charge?: number | null;
+  // Display order
+  display_order?: number;
 }
 
 export interface CartItem {

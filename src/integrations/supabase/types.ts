@@ -453,6 +453,7 @@ export type Database = {
           delivery_charge: number | null
           delivery_days: number | null
           description: string | null
+          display_order: number
           enable_delivery: boolean | null
           front_upload_required: boolean | null
           height_cm: number | null
@@ -481,6 +482,7 @@ export type Database = {
           delivery_charge?: number | null
           delivery_days?: number | null
           description?: string | null
+          display_order?: number
           enable_delivery?: boolean | null
           front_upload_required?: boolean | null
           height_cm?: number | null
@@ -509,6 +511,7 @@ export type Database = {
           delivery_charge?: number | null
           delivery_days?: number | null
           description?: string | null
+          display_order?: number
           enable_delivery?: boolean | null
           front_upload_required?: boolean | null
           height_cm?: number | null
