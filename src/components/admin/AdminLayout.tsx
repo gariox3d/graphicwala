@@ -14,7 +14,8 @@ import {
   X,
   Truck,
   FolderOpen,
-  Ticket
+  Ticket,
+  MessageSquare
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -35,6 +36,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/reviews', label: 'Reviews', icon: Users },
     { path: '/admin/categories', label: 'Categories', icon: FolderOpen },
     { path: '/admin/coupons', label: 'Coupons', icon: Ticket },
+    { path: '/admin/messages', label: 'Messages', icon: MessageSquare },
     { path: '/admin/settings', label: 'Delivery & Settings', icon: Truck },
   ];
 
