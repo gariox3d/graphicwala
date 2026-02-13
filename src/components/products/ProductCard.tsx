@@ -8,6 +8,7 @@ import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useWishlist } from '@/hooks/useWishlist';
 import WishlistButton from './WishlistButton';
+import { useStoreSettings } from '@/hooks/useStoreSettings';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
@@ -20,6 +21,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { isWishlisted, toggleWishlist } = useWishlist();
+  const { settings } = useStoreSettings();
   const [isHovered, setIsHovered] = useState(false);
 
   const uploadConfig = Array.isArray(product.upload_config) 
@@ -168,6 +170,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
             <span className="text-lg font-bold text-primary block">
               ₹{product.price.toFixed(2)}
             </span>
+          )}
+          {settings?.bulk_discount_enabled && (
+            <p className="text-xs text-green-600 font-medium">
+              🎉 Buy {settings.bulk_discount_min_qty}+ & get {settings.bulk_discount_percent}% off!
+            </p>
           )}
           <div className="flex gap-2">
             <Button

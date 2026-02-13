@@ -14,6 +14,10 @@ export interface StoreSettings {
   whatsapp_support_number: string;
   return_policy_enabled: boolean;
   return_window_hours: number;
+  // Bulk discount settings
+  bulk_discount_enabled: boolean;
+  bulk_discount_min_qty: number;
+  bulk_discount_percent: number;
   created_at: string;
   updated_at: string;
 }
@@ -47,6 +51,9 @@ export const useStoreSettings = () => {
         whatsapp_support_number: data.whatsapp_support_number ?? '+916207142994',
         return_policy_enabled: data.return_policy_enabled ?? true,
         return_window_hours: data.return_window_hours ?? 48,
+        bulk_discount_enabled: data.bulk_discount_enabled ?? false,
+        bulk_discount_min_qty: data.bulk_discount_min_qty ?? 2,
+        bulk_discount_percent: data.bulk_discount_percent ?? 10,
         created_at: data.created_at,
         updated_at: data.updated_at,
       });
@@ -66,6 +73,9 @@ export const useStoreSettings = () => {
         whatsapp_support_number: '+916207142994',
         return_policy_enabled: true,
         return_window_hours: 48,
+        bulk_discount_enabled: false,
+        bulk_discount_min_qty: 2,
+        bulk_discount_percent: 10,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       });
