@@ -26,7 +26,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
-import { Plus, Edit, Trash2, Search, Package } from 'lucide-react';
+import { Plus, Edit, Trash2, Search, Package, ArrowUp, ArrowDown } from 'lucide-react';
 
 const AdminProducts = () => {
   const { user, isAdmin, loading: authLoading } = useAuth();
@@ -48,7 +48,7 @@ const AdminProducts = () => {
       if (!isAdmin) return;
 
       const [productsRes, categoriesRes] = await Promise.all([
-        supabase.from('products').select('*, categories(id, name, description, image_url, is_active, created_at)').order('created_at', { ascending: false }),
+        supabase.from('products').select('*, categories(id, name, description, image_url, is_active, created_at)').order('display_order', { ascending: true }),
         supabase.from('categories').select('*').eq('is_active', true),
       ]);
 
@@ -90,6 +90,33 @@ const AdminProducts = () => {
       ));
       toast.success(`Product ${!currentStatus ? 'activated' : 'deactivated'}`);
     }
+  };
+
+  const moveProduct = async (productId: string, direction: 'up' | 'down') => {
+    const idx = products.findIndex(p => p.id === productId);
+    if (idx < 0) return;
+    const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
+    if (swapIdx < 0 || swapIdx >= products.length) return;
+
+    const currentOrder = products[idx].display_order ?? idx;
+    const swapOrder = products[swapIdx].display_order ?? swapIdx;
+
+    const [res1, res2] = await Promise.all([
+      supabase.from('products').update({ display_order: swapOrder }).eq('id', products[idx].id),
+      supabase.from('products').update({ display_order: currentOrder }).eq('id', products[swapIdx].id),
+    ]);
+
+    if (res1.error || res2.error) {
+      toast.error('Failed to reorder');
+      return;
+    }
+
+    const updated = [...products];
+    [updated[idx], updated[swapIdx]] = [updated[swapIdx], updated[idx]];
+    updated[idx].display_order = currentOrder;
+    updated[swapIdx].display_order = swapOrder;
+    setProducts(updated);
+    toast.success('Order updated');
   };
 
   const filteredProducts = products.filter(product =>
@@ -157,6 +184,7 @@ const AdminProducts = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead className="w-16">Order</TableHead>
                       <TableHead>Image</TableHead>
                       <TableHead>Name</TableHead>
                       <TableHead>Category</TableHead>
@@ -169,6 +197,28 @@ const AdminProducts = () => {
                   <TableBody>
                     {filteredProducts.map((product) => (
                       <TableRow key={product.id}>
+                        <TableCell>
+                          <div className="flex flex-col gap-1">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-6 w-6"
+                              disabled={!searchQuery && products.indexOf(product) === 0}
+                              onClick={() => moveProduct(product.id, 'up')}
+                            >
+                              <ArrowUp className="h-3 w-3" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-6 w-6"
+                              disabled={!searchQuery && products.indexOf(product) === products.length - 1}
+                              onClick={() => moveProduct(product.id, 'down')}
+                            >
+                              <ArrowDown className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </TableCell>
                         <TableCell>
                           <img
                             src={product.image_url || '/placeholder.svg'}

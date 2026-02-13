@@ -26,7 +26,7 @@ const Index = () => {
   useEffect(() => {
     const fetchData = async () => {
       const [productsRes, categoriesRes] = await Promise.all([
-        supabase.from('products').select('*').limit(8),
+        supabase.from('products').select('*').order('display_order', { ascending: true }).limit(8),
         supabase.from('categories').select('*'),
       ]);
 
