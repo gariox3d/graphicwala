@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Product, UploadField } from '@/lib/types';
+import FlashSaleBadge from './FlashSaleBadge';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useWishlist } from '@/hooks/useWishlist';
@@ -11,7 +12,7 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
 interface ProductCardProps {
-  product: Product & { image_urls?: string[] };
+  product: Product & { image_urls?: string[]; sale_price?: number | null; sale_start?: string | null; sale_end?: string | null };
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
@@ -118,7 +119,18 @@ const ProductCard = ({ product }: ProductCardProps) => {
           className="absolute bottom-3 right-3"
         />
 
-        {product.stock_quantity <= 5 && product.stock_quantity > 0 && (
+        {/* Flash Sale Badge */}
+        {product.sale_price && product.sale_end && new Date(product.sale_end) > new Date() && (
+          (!product.sale_start || new Date(product.sale_start) <= new Date()) && (
+            <FlashSaleBadge
+              salePrice={product.sale_price}
+              originalPrice={product.price}
+              saleEnd={product.sale_end}
+            />
+          )
+        )}
+        
+        {!product.sale_price && product.stock_quantity <= 5 && product.stock_quantity > 0 && (
           <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-xs font-semibold px-2 py-1 rounded-md z-10">
             Low Stock
           </span>
@@ -147,9 +159,16 @@ const ProductCard = ({ product }: ProductCardProps) => {
           </p>
         )}
         <div className="mt-4 space-y-3">
-          <span className="text-lg font-bold text-primary block">
-            ₹{product.price.toFixed(2)}
-          </span>
+          {product.sale_price && product.sale_end && new Date(product.sale_end) > new Date() ? (
+            <div className="flex items-center gap-2">
+              <span className="text-lg font-bold text-destructive">₹{product.sale_price.toFixed(2)}</span>
+              <span className="text-sm line-through text-muted-foreground">₹{product.price.toFixed(2)}</span>
+            </div>
+          ) : (
+            <span className="text-lg font-bold text-primary block">
+              ₹{product.price.toFixed(2)}
+            </span>
+          )}
           <div className="flex gap-2">
             <Button
               variant="outline"

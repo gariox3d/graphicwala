@@ -204,6 +204,47 @@ export type Database = {
         }
         Relationships: []
       }
+      customer_gallery: {
+        Row: {
+          caption: string | null
+          created_at: string
+          customer_name: string
+          id: string
+          image_url: string
+          is_approved: boolean
+          product_id: string | null
+          user_id: string
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string
+          customer_name?: string
+          id?: string
+          image_url: string
+          is_approved?: boolean
+          product_id?: string | null
+          user_id: string
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string
+          customer_name?: string
+          id?: string
+          image_url?: string
+          is_approved?: boolean
+          product_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_gallery_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       order_item_uploads: {
         Row: {
           created_at: string
@@ -422,6 +463,9 @@ export type Database = {
           length_cm: number | null
           name: string
           price: number
+          sale_end: string | null
+          sale_price: number | null
+          sale_start: string | null
           stock_quantity: number | null
           updated_at: string
           upload_config: Json | null
@@ -447,6 +491,9 @@ export type Database = {
           length_cm?: number | null
           name: string
           price: number
+          sale_end?: string | null
+          sale_price?: number | null
+          sale_start?: string | null
           stock_quantity?: number | null
           updated_at?: string
           upload_config?: Json | null
@@ -472,6 +519,9 @@ export type Database = {
           length_cm?: number | null
           name?: string
           price?: number
+          sale_end?: string | null
+          sale_price?: number | null
+          sale_start?: string | null
           stock_quantity?: number | null
           updated_at?: string
           upload_config?: Json | null
