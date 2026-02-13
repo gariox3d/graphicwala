@@ -11,38 +11,38 @@ import { toast } from 'sonner';
 
 const Contact = () => {
   const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!name.trim() || !email.trim() || !message.trim()) {
+    if (!name.trim() || !phone.trim() || !message.trim()) {
       toast.error('Please fill in all fields');
       return;
     }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      toast.error('Please enter a valid email address');
+    if (!/^[6-9]\d{9}$/.test(phone.replace(/\s/g, ''))) {
+      toast.error('Please enter a valid 10-digit mobile number');
       return;
     }
 
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('send-contact-message', {
-        body: { name: name.trim(), email: email.trim(), message: message.trim() },
-      });
+      const { error } = await supabase
+        .from('contact_messages')
+        .insert({ name: name.trim(), phone: phone.trim(), message: message.trim() });
 
       if (error) throw error;
 
-      toast.success('Message sent successfully! We will get back to you soon.');
+      toast.success('Message sent successfully! We will contact you soon.');
       setName('');
-      setEmail('');
+      setPhone('');
       setMessage('');
     } catch (err) {
       console.error('Contact form error:', err);
-      toast.error('Failed to send message. Please try again or contact us via WhatsApp.');
+      toast.error('Failed to send message. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -65,7 +65,7 @@ const Contact = () => {
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div><Label htmlFor="name">Name</Label><Input id="name" placeholder="Your name" value={name} onChange={e => setName(e.target.value)} maxLength={100} /></div>
-              <div><Label htmlFor="email">Email</Label><Input id="email" type="email" placeholder="your@email.com" value={email} onChange={e => setEmail(e.target.value)} maxLength={255} /></div>
+              <div><Label htmlFor="phone">Phone Number</Label><Input id="phone" type="tel" placeholder="10-digit mobile number" value={phone} onChange={e => setPhone(e.target.value)} maxLength={10} /></div>
               <div><Label htmlFor="message">Message</Label><Textarea id="message" placeholder="How can we help?" rows={5} value={message} onChange={e => setMessage(e.target.value)} maxLength={1000} /></div>
               <Button variant="hero" className="w-full" type="submit" disabled={loading}>
                 {loading ? 'Sending...' : 'Send Message'}
