@@ -132,13 +132,13 @@ const ProductCard = ({ product }: ProductCardProps) => {
           )
         )}
         
-        {!product.sale_price && product.stock_quantity <= 5 && product.stock_quantity > 0 && (
+        {!product.sale_price && (product.stock_quantity ?? 0) <= 5 && (product.stock_quantity ?? 0) > 0 && (
           <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-xs font-semibold px-2 py-1 rounded-md z-10">
             Low Stock
           </span>
         )}
-        {product.stock_quantity === 0 && (
-          <span className="absolute top-3 left-3 bg-foreground text-background text-xs font-semibold px-2 py-1 rounded-md z-10">
+        {(product.stock_quantity === 0 || product.stock_quantity === null) && (
+          <span className="absolute top-3 left-3 bg-destructive text-destructive-foreground text-xs font-bold px-3 py-1.5 rounded-md z-10 shadow-md">
             Out of Stock
           </span>
         )}
@@ -182,7 +182,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
               size="sm"
               className="flex-1"
               onClick={handleAddToCart}
-              disabled={product.stock_quantity === 0}
+              disabled={!product.stock_quantity}
             >
               <ShoppingCart className="h-4 w-4 mr-1" />
               Cart
@@ -192,7 +192,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
               size="sm"
               className="flex-1"
               onClick={handleBuyNow}
-              disabled={product.stock_quantity === 0}
+              disabled={!product.stock_quantity}
             >
               <Zap className="h-4 w-4 mr-1" />
               Buy
