@@ -37,6 +37,17 @@ export interface Product {
   delivery_charge?: number | null;
   // Display order
   display_order?: number;
+  // Sale / Flash sale fields
+  sale_price?: number | null;
+  sale_start?: string | null;
+  sale_end?: string | null;
+  // Extra image urls
+  image_urls?: string[] | null;
+  // Weight/dimensions
+  weight_kg?: number | null;
+  length_cm?: number | null;
+  breadth_cm?: number | null;
+  height_cm?: number | null;
 }
 
 export interface CartItem {
