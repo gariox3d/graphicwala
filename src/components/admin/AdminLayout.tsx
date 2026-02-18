@@ -17,7 +17,8 @@ import {
   Truck,
   FolderOpen,
   Ticket,
-  MessageSquare
+  MessageSquare,
+  Moon
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -52,6 +53,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/coupons', label: 'Coupons', icon: Ticket },
     { path: '/admin/messages', label: 'Messages', icon: MessageSquare },
     { path: '/admin/settings', label: 'Delivery & Settings', icon: Truck },
+    { path: '/admin/festival-theme', label: 'Festival Theme', icon: Moon },
   ];
 
   const handleSignOut = async () => {

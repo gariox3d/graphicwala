@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Truck, Shield, CreditCard, CheckCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { useFestivalSettings } from '@/hooks/useFestivalSettings';
+import EidCountdown from '@/components/festival/EidCountdown';
 
 const heroSubtexts = [
   "Photo Frames for Every Special Moment",
@@ -26,6 +28,8 @@ const HeroSection = () => {
   const [currentSubtext, setCurrentSubtext] = useState(0);
   const [isAnimating, setIsAnimating] = useState(true);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const { settings, isThemeActive } = useFestivalSettings();
+  const festivalActive = isThemeActive();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -224,6 +228,13 @@ const HeroSection = () => {
               </Button>
             </Link>
           </nav>
+
+          {/* Eid Countdown (when Ramadan theme active + show_countdown enabled + end_date set) */}
+          {festivalActive && settings?.show_countdown && settings?.end_date && (
+            <div className="mt-10 animate-fade-in" style={{ animationDelay: '0.7s' }}>
+              <EidCountdown endDate={settings.end_date} />
+            </div>
+          )}
 
           {/* Hidden SEO Content */}
           <p className="sr-only">
