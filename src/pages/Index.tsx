@@ -12,6 +12,7 @@ import AnnouncementBanner from '@/components/AnnouncementBanner';
 import RecentlyViewedProducts from '@/components/products/RecentlyViewedProducts';
 import TrendingProducts from '@/components/products/TrendingProducts';
 import CustomerGallery from '@/components/CustomerGallery';
+import ProductMarquee from '@/components/products/ProductMarquee';
 import { supabase } from '@/integrations/supabase/client';
 import { Product, Category, WHATSAPP_NUMBER, BUSINESS_NAME } from '@/lib/types';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
@@ -95,6 +96,9 @@ const Index = () => {
       <main className="flex-1">
         {/* Hero Section */}
         <HeroSection />
+
+        {/* Product Marquee / Auto-scroll strip */}
+        <ProductMarquee />
 
         {/* Trust Notice Banner */}
         <section className="py-4 bg-amber-50 dark:bg-amber-950/30 border-y border-amber-200 dark:border-amber-900">
