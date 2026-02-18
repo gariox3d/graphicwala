@@ -19,7 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Loader2, ArrowLeft, Plus, Trash2, Image, Truck, Clock, IndianRupee, Scale, Ruler } from 'lucide-react';
+import { Loader2, ArrowLeft, Plus, Trash2, Image, Truck, Clock, IndianRupee, Scale, Ruler, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import MultiImageUpload from '@/components/admin/MultiImageUpload';
 
@@ -49,6 +49,11 @@ const ProductForm = () => {
     length_cm: '10',
     breadth_cm: '10',
     height_cm: '5',
+    // Flash Sale
+    flash_sale_enabled: false,
+    sale_price: '',
+    sale_start: '',
+    sale_end: '',
   });
 
   const [uploadConfig, setUploadConfig] = useState<UploadField[]>([]);
@@ -102,6 +107,11 @@ const ProductForm = () => {
           length_cm: product.length_cm?.toString() || '10',
           breadth_cm: product.breadth_cm?.toString() || '10',
           height_cm: product.height_cm?.toString() || '5',
+          // Flash Sale
+          flash_sale_enabled: !!product.sale_price,
+          sale_price: product.sale_price?.toString() || '',
+          sale_start: product.sale_start ? new Date(product.sale_start).toISOString().slice(0, 16) : '',
+          sale_end: product.sale_end ? new Date(product.sale_end).toISOString().slice(0, 16) : '',
         });
         
         // Load images - check image_urls first, then fallback to image_url
@@ -202,12 +212,16 @@ const ProductForm = () => {
         delivery_charge: formData.delivery_charge ? parseFloat(formData.delivery_charge) : null,
         cutoff_time: formData.cutoff_time ? `${formData.cutoff_time}:00` : '18:00:00',
         enable_delivery: formData.enable_delivery,
-        delivery_days: 7, // Fixed 7 days
+        delivery_days: 7,
         // Shipping dimensions for Shiprocket
         weight_kg: parseFloat(formData.weight_kg) || 0.5,
         length_cm: parseFloat(formData.length_cm) || 10,
         breadth_cm: parseFloat(formData.breadth_cm) || 10,
         height_cm: parseFloat(formData.height_cm) || 5,
+        // Flash Sale
+        sale_price: formData.flash_sale_enabled && formData.sale_price ? parseFloat(formData.sale_price) : null,
+        sale_start: formData.flash_sale_enabled && formData.sale_start ? new Date(formData.sale_start).toISOString() : null,
+        sale_end: formData.flash_sale_enabled && formData.sale_end ? new Date(formData.sale_end).toISOString() : null,
       };
 
       if (isEditing) {
@@ -602,6 +616,87 @@ const ProductForm = () => {
                       />
                     </div>
                   </div>
+                </CardContent>
+              </Card>
+
+              {/* Flash Sale */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Zap className="h-5 w-5 text-primary" />
+                    Flash Sale
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label htmlFor="flash_sale_enabled">Enable Flash Sale</Label>
+                      <p className="text-sm text-muted-foreground">
+                        Show this product in the homepage Flash Sale banner
+                      </p>
+                    </div>
+                    <Switch
+                      id="flash_sale_enabled"
+                      checked={formData.flash_sale_enabled}
+                      onCheckedChange={(checked) => setFormData({ ...formData, flash_sale_enabled: checked })}
+                    />
+                  </div>
+
+                  {formData.flash_sale_enabled && (
+                    <div className="space-y-4 pt-4 border-t">
+                      <div className="space-y-2">
+                        <Label htmlFor="sale_price" className="flex items-center gap-2">
+                          <IndianRupee className="h-4 w-4" />
+                          Sale Price (₹) *
+                        </Label>
+                        <Input
+                          id="sale_price"
+                          name="sale_price"
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          value={formData.sale_price}
+                          onChange={handleInputChange}
+                          placeholder="Sale price (must be less than original)"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="space-y-2">
+                          <Label htmlFor="sale_start" className="flex items-center gap-2">
+                            <Clock className="h-4 w-4" />
+                            Sale Start
+                          </Label>
+                          <Input
+                            id="sale_start"
+                            name="sale_start"
+                            type="datetime-local"
+                            value={formData.sale_start}
+                            onChange={handleInputChange}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="sale_end">Sale End</Label>
+                          <Input
+                            id="sale_end"
+                            name="sale_end"
+                            type="datetime-local"
+                            value={formData.sale_end}
+                            onChange={handleInputChange}
+                          />
+                        </div>
+                      </div>
+                      {formData.price && formData.sale_price && parseFloat(formData.sale_price) < parseFloat(formData.price) && (
+                        <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 text-sm text-primary font-medium">
+                          🔥 Discount: {Math.round(((parseFloat(formData.price) - parseFloat(formData.sale_price)) / parseFloat(formData.price)) * 100)}% OFF
+                        </div>
+                      )}
+                      {formData.sale_price && parseFloat(formData.sale_price) >= parseFloat(formData.price) && formData.price && (
+                        <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3 text-sm text-destructive">
+                          ⚠️ Sale price must be less than original price (₹{formData.price})
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
