@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
+import RamadanThemeProvider from "@/components/festival/RamadanThemeProvider";
+import AdminFestivalTheme from "./pages/admin/AdminFestivalTheme";
 import Index from "./pages/Index";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
@@ -45,6 +47,7 @@ const App = () => (
             <Toaster />
             <Sonner />
             <WelcomeBackPopup />
+            <RamadanThemeProvider />
             <AddressGate>
             <BrowserRouter>
               <ScrollToTop />
@@ -73,6 +76,7 @@ const App = () => (
                 <Route path="/admin/coupons" element={<AdminGuard><AdminCoupons /></AdminGuard>} />
                 <Route path="/admin/messages" element={<AdminGuard><AdminMessages /></AdminGuard>} />
                 <Route path="/admin/settings" element={<AdminGuard><AdminSettings /></AdminGuard>} />
+                <Route path="/admin/festival-theme" element={<AdminGuard><AdminFestivalTheme /></AdminGuard>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>

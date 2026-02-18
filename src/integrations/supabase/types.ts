@@ -272,6 +272,51 @@ export type Database = {
           },
         ]
       }
+      festival_settings: {
+        Row: {
+          auto_enable_by_date: boolean
+          banner_image_url: string | null
+          created_at: string
+          end_date: string | null
+          greeting_text: string | null
+          id: string
+          is_enabled: boolean
+          primary_color_override: string | null
+          show_countdown: boolean
+          start_date: string | null
+          theme_name: string
+          updated_at: string
+        }
+        Insert: {
+          auto_enable_by_date?: boolean
+          banner_image_url?: string | null
+          created_at?: string
+          end_date?: string | null
+          greeting_text?: string | null
+          id?: string
+          is_enabled?: boolean
+          primary_color_override?: string | null
+          show_countdown?: boolean
+          start_date?: string | null
+          theme_name?: string
+          updated_at?: string
+        }
+        Update: {
+          auto_enable_by_date?: boolean
+          banner_image_url?: string | null
+          created_at?: string
+          end_date?: string | null
+          greeting_text?: string | null
+          id?: string
+          is_enabled?: boolean
+          primary_color_override?: string | null
+          show_countdown?: boolean
+          start_date?: string | null
+          theme_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       order_item_uploads: {
         Row: {
           created_at: string
