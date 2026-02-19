@@ -95,14 +95,14 @@ const Index = () => {
       <Header />
 
       <main className="flex-1">
+        {/* Flash Sale Banner — shown first, only when active sales exist */}
+        <FlashSaleBanner />
+
         {/* Hero Section */}
         <HeroSection />
 
         {/* Product Marquee / Auto-scroll strip */}
         <ProductMarquee />
-
-        {/* Flash Sale Banner — shown only when active sales exist */}
-        <FlashSaleBanner />
 
         {/* Trust Notice Banner */}
         <section className="py-4 bg-amber-50 dark:bg-amber-950/30 border-y border-amber-200 dark:border-amber-900">
