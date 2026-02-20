@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Flame, Zap, Clock, X } from 'lucide-react';
+import { Flame, Zap, Clock, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Product } from '@/lib/types';
 
@@ -32,18 +32,23 @@ const useCountdown = (saleEnd: string | null | undefined) => {
   return state;
 };
 
-// Animation variants for each card
-const animations = [
-  'flash-slide-up',
-  'flash-slide-right',
-  'flash-zoom-in',
-  'flash-slide-left',
-  'flash-flip-in',
-];
+const getProductImages = (product: Product): string[] => {
+  const images: string[] = [];
+  if (product.image_urls && Array.isArray(product.image_urls)) {
+    (product.image_urls as string[]).forEach((url) => {
+      if (typeof url === 'string' && url) images.push(url);
+    });
+  }
+  if (images.length === 0 && product.image_url) {
+    images.push(product.image_url);
+  }
+  return images;
+};
 
-const FlashProductCard = ({ product, index, onSelect }: { product: Product; index: number; onSelect: (p: Product) => void }) => {
+const FlashCard = ({ product, onSelect }: { product: Product; onSelect: (p: Product) => void }) => {
   const { label, expired } = useCountdown(product.sale_end);
-  const [visible, setVisible] = useState(false);
+  const images = getProductImages(product);
+  const [imgIdx, setImgIdx] = useState(0);
 
   const now = Date.now();
   const saleActive =
@@ -54,36 +59,34 @@ const FlashProductCard = ({ product, index, onSelect }: { product: Product; inde
     new Date(product.sale_start).getTime() <= now &&
     new Date(product.sale_end).getTime() >= now;
 
+  // Auto-rotate images
   useEffect(() => {
-    const timer = setTimeout(() => setVisible(true), index * 150);
-    return () => clearTimeout(timer);
-  }, [index]);
+    if (images.length <= 1) return;
+    const id = setInterval(() => setImgIdx((i) => (i + 1) % images.length), 2500);
+    return () => clearInterval(id);
+  }, [images.length]);
 
   if (!saleActive) return null;
 
-  const discount = Math.round(
-    ((product.price - (product.sale_price ?? 0)) / product.price) * 100
-  );
-
-  const animClass = animations[index % animations.length];
+  const discount = Math.round(((product.price - (product.sale_price ?? 0)) / product.price) * 100);
 
   return (
     <div
-      className={`group cursor-pointer ${visible ? animClass : 'opacity-0'}`}
+      className="group cursor-pointer flex-shrink-0 w-40 md:w-48"
       onClick={() => onSelect(product)}
     >
       <div className="relative overflow-hidden rounded-2xl border-2 border-orange-400/50 bg-card shadow-md hover:shadow-xl transition-all duration-300 group-hover:-translate-y-1">
-        <div className="absolute top-2.5 left-2.5 z-10 bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs font-extrabold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-md">
+        <div className="absolute top-2 left-2 z-10 bg-gradient-to-r from-red-500 to-orange-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-md">
           <Flame className="h-3 w-3 animate-pulse" />
           {discount}% OFF
         </div>
 
-        <div className="aspect-square overflow-hidden bg-muted">
-          {product.image_url ? (
+        <div className="aspect-square overflow-hidden bg-muted relative">
+          {images.length > 0 ? (
             <img
-              src={product.image_url}
+              src={images[imgIdx]}
               alt={product.name}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              className="w-full h-full object-cover transition-opacity duration-500"
               loading="lazy"
             />
           ) : (
@@ -91,25 +94,24 @@ const FlashProductCard = ({ product, index, onSelect }: { product: Product; inde
               <Flame className="h-8 w-8 text-muted-foreground" />
             </div>
           )}
+          {images.length > 1 && (
+            <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 flex gap-1">
+              {images.map((_, i) => (
+                <span key={i} className={`w-1.5 h-1.5 rounded-full transition-colors ${i === imgIdx ? 'bg-white' : 'bg-white/40'}`} />
+              ))}
+            </div>
+          )}
         </div>
 
-        <div className="p-3">
-          <p className="text-xs font-semibold text-foreground line-clamp-2 leading-tight mb-2">
-            {product.name}
-          </p>
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-sm font-extrabold text-primary">
-              ₹{(product.sale_price ?? 0).toLocaleString()}
-            </span>
-            <span className="text-xs text-muted-foreground line-through">
-              ₹{product.price.toLocaleString()}
-            </span>
+        <div className="p-2.5">
+          <p className="text-xs font-semibold text-foreground line-clamp-1 leading-tight mb-1.5">{product.name}</p>
+          <div className="flex items-center gap-1.5 mb-1.5">
+            <span className="text-sm font-extrabold text-primary">₹{(product.sale_price ?? 0).toLocaleString()}</span>
+            <span className="text-[10px] text-muted-foreground line-through">₹{product.price.toLocaleString()}</span>
           </div>
-          <div className="flex items-center gap-1.5 bg-destructive/10 border border-destructive/20 rounded-lg px-2 py-1">
-            <Clock className="h-3 w-3 text-destructive flex-shrink-0" />
-            <span className="text-[11px] font-mono font-bold text-destructive">
-              {label}
-            </span>
+          <div className="flex items-center gap-1 bg-destructive/10 border border-destructive/20 rounded-md px-1.5 py-0.5">
+            <Clock className="h-2.5 w-2.5 text-destructive flex-shrink-0" />
+            <span className="text-[10px] font-mono font-bold text-destructive">{label}</span>
           </div>
         </div>
       </div>
@@ -117,23 +119,17 @@ const FlashProductCard = ({ product, index, onSelect }: { product: Product; inde
   );
 };
 
-// Quick-view overlay
+// Quick-view overlay with all images
 const ProductOverlay = ({ product, onClose }: { product: Product; onClose: () => void }) => {
   const { label } = useCountdown(product.sale_end);
-  const discount = Math.round(
-    ((product.price - (product.sale_price ?? 0)) / product.price) * 100
-  );
+  const images = getProductImages(product);
+  const [imgIdx, setImgIdx] = useState(0);
+  const discount = Math.round(((product.price - (product.sale_price ?? 0)) / product.price) * 100);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in" onClick={onClose}>
-      <div
-        className="relative bg-card rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden border border-border flash-zoom-in"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button
-          onClick={onClose}
-          className="absolute top-3 right-3 z-20 bg-background/80 backdrop-blur rounded-full p-1.5 hover:bg-background transition-colors"
-        >
+      <div className="relative bg-card rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden border border-border animate-scale-in" onClick={(e) => e.stopPropagation()}>
+        <button onClick={onClose} className="absolute top-3 right-3 z-20 bg-background/80 backdrop-blur rounded-full p-1.5 hover:bg-background transition-colors">
           <X className="h-4 w-4 text-foreground" />
         </button>
 
@@ -142,39 +138,44 @@ const ProductOverlay = ({ product, onClose }: { product: Product; onClose: () =>
           {discount}% OFF
         </div>
 
-        <div className="aspect-square overflow-hidden bg-muted">
-          {product.image_url ? (
-            <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+        <div className="aspect-square overflow-hidden bg-muted relative">
+          {images.length > 0 ? (
+            <img src={images[imgIdx]} alt={product.name} className="w-full h-full object-cover transition-opacity duration-300" />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-muted">
               <Flame className="h-12 w-12 text-muted-foreground" />
             </div>
           )}
+          {images.length > 1 && (
+            <>
+              <button onClick={(e) => { e.stopPropagation(); setImgIdx((i) => (i - 1 + images.length) % images.length); }} className="absolute left-2 top-1/2 -translate-y-1/2 bg-background/70 backdrop-blur rounded-full p-1 hover:bg-background transition-colors">
+                <ChevronLeft className="h-5 w-5 text-foreground" />
+              </button>
+              <button onClick={(e) => { e.stopPropagation(); setImgIdx((i) => (i + 1) % images.length); }} className="absolute right-2 top-1/2 -translate-y-1/2 bg-background/70 backdrop-blur rounded-full p-1 hover:bg-background transition-colors">
+                <ChevronRight className="h-5 w-5 text-foreground" />
+              </button>
+              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
+                {images.map((_, i) => (
+                  <button key={i} onClick={(e) => { e.stopPropagation(); setImgIdx(i); }} className={`w-2 h-2 rounded-full transition-colors ${i === imgIdx ? 'bg-white' : 'bg-white/40'}`} />
+                ))}
+              </div>
+            </>
+          )}
         </div>
 
         <div className="p-5">
           <h3 className="text-lg font-bold text-foreground mb-2">{product.name}</h3>
-          {product.description && (
-            <p className="text-sm text-muted-foreground mb-3 line-clamp-3">{product.description}</p>
-          )}
+          {product.description && <p className="text-sm text-muted-foreground mb-3 line-clamp-3">{product.description}</p>}
           <div className="flex items-center gap-3 mb-3">
-            <span className="text-2xl font-extrabold text-primary">
-              ₹{(product.sale_price ?? 0).toLocaleString()}
-            </span>
-            <span className="text-base text-muted-foreground line-through">
-              ₹{product.price.toLocaleString()}
-            </span>
+            <span className="text-2xl font-extrabold text-primary">₹{(product.sale_price ?? 0).toLocaleString()}</span>
+            <span className="text-base text-muted-foreground line-through">₹{product.price.toLocaleString()}</span>
           </div>
           <div className="flex items-center gap-2 bg-destructive/10 border border-destructive/20 rounded-lg px-3 py-2 mb-4">
             <Clock className="h-4 w-4 text-destructive" />
             <span className="text-sm font-mono font-bold text-destructive">{label}</span>
             <span className="text-xs text-destructive/80">remaining</span>
           </div>
-          <Link
-            to={`/product/${product.id}`}
-            className="block w-full text-center bg-primary text-primary-foreground font-bold py-3 rounded-xl hover:opacity-90 transition-opacity"
-            onClick={onClose}
-          >
+          <Link to={`/product/${product.id}`} className="block w-full text-center bg-primary text-primary-foreground font-bold py-3 rounded-xl hover:opacity-90 transition-opacity" onClick={onClose}>
             View Product
           </Link>
         </div>
@@ -208,8 +209,7 @@ const FlashSaleBanner = () => {
   useEffect(() => {
     if (products.length === 0) return;
     const earliest = products.reduce(
-      (min: string | null, p) =>
-        p.sale_end && (!min || p.sale_end < min) ? p.sale_end : min,
+      (min: string | null, p) => (p.sale_end && (!min || p.sale_end < min) ? p.sale_end : min),
       null
     );
     if (!earliest) return;
@@ -220,9 +220,7 @@ const FlashSaleBanner = () => {
       const h = Math.floor(diff / 3600000);
       const m = Math.floor((diff % 3600000) / 60000);
       const s = Math.floor((diff % 60000) / 1000);
-      setGlobalTime(
-        `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
-      );
+      setGlobalTime(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`);
     };
     update();
     const id = setInterval(update, 1000);
@@ -230,6 +228,9 @@ const FlashSaleBanner = () => {
   }, [products]);
 
   if (products.length === 0) return null;
+
+  // Triplicate for seamless infinite loop
+  const items = [...products, ...products, ...products];
 
   return (
     <>
@@ -257,54 +258,27 @@ const FlashSaleBanner = () => {
           </div>
         </div>
 
-        <div className="container">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
-            {products.map((product, idx) => (
-              <FlashProductCard
-                key={product.id}
-                product={product}
-                index={idx}
-                onSelect={setSelected}
-              />
+        <div className="relative">
+          <div className="pointer-events-none absolute left-0 top-0 h-full w-16 z-10 bg-gradient-to-r from-secondary to-transparent" />
+          <div className="pointer-events-none absolute right-0 top-0 h-full w-16 z-10 bg-gradient-to-l from-secondary to-transparent" />
+
+          <div className="flex gap-4 w-max flash-marquee-track">
+            {items.map((product, idx) => (
+              <FlashCard key={`${product.id}-${idx}`} product={product} onSelect={setSelected} />
             ))}
           </div>
         </div>
 
         <style>{`
-          .flash-slide-up {
-            animation: flashSlideUp 0.6s ease-out forwards;
+          .flash-marquee-track {
+            animation: flash-marquee-scroll 30s linear infinite;
           }
-          .flash-slide-right {
-            animation: flashSlideRight 0.6s ease-out forwards;
+          .flash-marquee-track:hover {
+            animation-play-state: paused;
           }
-          .flash-zoom-in {
-            animation: flashZoomIn 0.5s ease-out forwards;
-          }
-          .flash-slide-left {
-            animation: flashSlideLeft 0.6s ease-out forwards;
-          }
-          .flash-flip-in {
-            animation: flashFlipIn 0.7s ease-out forwards;
-          }
-          @keyframes flashSlideUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
-          }
-          @keyframes flashSlideRight {
-            from { opacity: 0; transform: translateX(-40px); }
-            to { opacity: 1; transform: translateX(0); }
-          }
-          @keyframes flashZoomIn {
-            from { opacity: 0; transform: scale(0.7); }
-            to { opacity: 1; transform: scale(1); }
-          }
-          @keyframes flashSlideLeft {
-            from { opacity: 0; transform: translateX(40px); }
-            to { opacity: 1; transform: translateX(0); }
-          }
-          @keyframes flashFlipIn {
-            from { opacity: 0; transform: rotateY(90deg); }
-            to { opacity: 1; transform: rotateY(0deg); }
+          @keyframes flash-marquee-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-100% / 3)); }
           }
         `}</style>
       </section>
