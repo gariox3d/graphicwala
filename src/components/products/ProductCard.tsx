@@ -142,10 +142,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
             Low Stock
           </span>
         )}
-        {(product.stock_quantity === 0 || product.stock_quantity === null) && (
-          <span className="absolute top-3 left-3 bg-destructive text-destructive-foreground text-xs font-bold px-3 py-1.5 rounded-md z-10 shadow-md">
-            Out of Stock
-          </span>
+        {isOutOfStock && (
+          <>
+            <div className="absolute inset-0 bg-black/50 z-10 flex items-center justify-center">
+              <span className="text-white text-xl font-extrabold tracking-wider uppercase bg-destructive/90 px-5 py-2 rounded-lg shadow-lg rotate-[-8deg]">
+                Sold Out
+              </span>
+            </div>
+          </>
         )}
         {hasCustomization && (
           <span className="absolute top-3 right-3 bg-primary/90 text-primary-foreground text-xs font-semibold px-2 py-1 rounded-md z-10">
