@@ -75,8 +75,13 @@ const ProductCard = ({ product }: ProductCardProps) => {
     toggleWishlist(product.id);
   };
 
+  const isOutOfStock = !product.stock_quantity;
+
   return (
-    <div className="group bg-card rounded-xl overflow-hidden shadow-soft hover:shadow-brand transition-all duration-300 animate-scale-in">
+    <div className={cn(
+      "group bg-card rounded-xl overflow-hidden shadow-soft hover:shadow-brand transition-all duration-300 animate-scale-in",
+      isOutOfStock && "grayscale opacity-70 pointer-events-auto"
+    )}>
       <Link 
         to={`/product/${product.id}`} 
         className="block relative aspect-square overflow-hidden bg-muted"
