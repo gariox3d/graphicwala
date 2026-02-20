@@ -59,7 +59,7 @@ const FlashCard = ({ product, onSelect }: { product: Product; onSelect: (p: Prod
     new Date(product.sale_start).getTime() <= now &&
     new Date(product.sale_end).getTime() >= now;
 
-  // Auto-rotate images
+  // Auto-rotate through ALL images
   useEffect(() => {
     if (images.length <= 1) return;
     const id = setInterval(() => setImgIdx((i) => (i + 1) % images.length), 2500);
@@ -119,7 +119,6 @@ const FlashCard = ({ product, onSelect }: { product: Product; onSelect: (p: Prod
   );
 };
 
-// Quick-view overlay with all images
 const ProductOverlay = ({ product, onClose }: { product: Product; onClose: () => void }) => {
   const { label } = useCountdown(product.sale_end);
   const images = getProductImages(product);
@@ -132,12 +131,10 @@ const ProductOverlay = ({ product, onClose }: { product: Product; onClose: () =>
         <button onClick={onClose} className="absolute top-3 right-3 z-20 bg-background/80 backdrop-blur rounded-full p-1.5 hover:bg-background transition-colors">
           <X className="h-4 w-4 text-foreground" />
         </button>
-
         <div className="absolute top-3 left-3 z-10 bg-gradient-to-r from-red-500 to-orange-500 text-white text-sm font-extrabold px-3 py-1.5 rounded-full flex items-center gap-1 shadow-md">
           <Flame className="h-4 w-4 animate-pulse" />
           {discount}% OFF
         </div>
-
         <div className="aspect-square overflow-hidden bg-muted relative">
           {images.length > 0 ? (
             <img src={images[imgIdx]} alt={product.name} className="w-full h-full object-cover transition-opacity duration-300" />
@@ -162,7 +159,6 @@ const ProductOverlay = ({ product, onClose }: { product: Product; onClose: () =>
             </>
           )}
         </div>
-
         <div className="p-5">
           <h3 className="text-lg font-bold text-foreground mb-2">{product.name}</h3>
           {product.description && <p className="text-sm text-muted-foreground mb-3 line-clamp-3">{product.description}</p>}
@@ -229,7 +225,7 @@ const FlashSaleBanner = () => {
 
   if (products.length === 0) return null;
 
-  // Triplicate for seamless infinite loop
+  // Triplicate for seamless infinite scroll loop
   const items = [...products, ...products, ...products];
 
   return (
