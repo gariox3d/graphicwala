@@ -368,7 +368,12 @@ const ProductDetail = () => {
               <Card>
                 <CardContent className="pt-6">
                   <PriceBreakdown
-                    productTotal={product.price * quantity}
+                    productTotal={(() => {
+                      const now = new Date();
+                      const saleActive = product.sale_price != null && product.sale_start && product.sale_end &&
+                        new Date(product.sale_start) <= now && new Date(product.sale_end) >= now;
+                      return (saleActive ? product.sale_price! : product.price) * quantity;
+                    })()}
                     deliveryCharge={deliveryCharge}
                     showDetails={true}
                   />
