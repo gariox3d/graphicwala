@@ -26,7 +26,7 @@ const Header = () => {
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hello ${BUSINESS_NAME}, I need help with my order.`)}`;
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full glass-header">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
@@ -133,7 +133,7 @@ const Header = () => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden border-t border-border bg-background animate-slide-down">
+        <div className="md:hidden border-t border-border glass-card-strong animate-slide-down">
           <nav className="container py-4 flex flex-col gap-4">
             {navLinks.map((link) => (
               <Link
