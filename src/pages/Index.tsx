@@ -14,6 +14,8 @@ import TrendingProducts from '@/components/products/TrendingProducts';
 import CustomerGallery from '@/components/CustomerGallery';
 import ProductMarquee from '@/components/products/ProductMarquee';
 import FlashSaleBanner from '@/components/products/FlashSaleBanner';
+import TestimonialsSection from '@/components/TestimonialsSection';
+import StatsCounter from '@/components/StatsCounter';
 import { supabase } from '@/integrations/supabase/client';
 import { Product, Category, WHATSAPP_NUMBER, BUSINESS_NAME } from '@/lib/types';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
@@ -244,11 +246,17 @@ const Index = () => {
           </div>
         </section>
 
+        {/* Stats Counter */}
+        <StatsCounter />
+
         {/* Trending Products */}
         <TrendingProducts />
 
         {/* Customer Gallery / Wall of Fame */}
         <CustomerGallery />
+
+        {/* Testimonials */}
+        <TestimonialsSection />
 
         {/* Recently Viewed Products */}
         {viewedIds.length > 0 && <RecentlyViewedProducts viewedIds={viewedIds} />}
