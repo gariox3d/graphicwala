@@ -905,6 +905,15 @@ export type Database = {
       }
     }
     Functions: {
+      get_public_stats: {
+        Args: never
+        Returns: {
+          total_customers: number
+          total_orders: number
+          total_products: number
+          total_reviews: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

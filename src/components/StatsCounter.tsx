@@ -64,29 +64,22 @@ const StatsCounter = () => {
 
   useEffect(() => {
     const fetchStats = async () => {
-      // Fetch real data using select queries (RLS allows public read on products & reviews)
-      const [productsRes, reviewsRes] = await Promise.all([
-        supabase.from('products').select('id').eq('is_active', true),
-        supabase.from('reviews').select('id'),
-      ]);
+      // Use RPC function that bypasses RLS with SECURITY DEFINER
+      const { data, error } = await supabase.rpc('get_public_stats' as any);
 
-      const totalProducts = productsRes.data?.length || 0;
-      const totalReviews = reviewsRes.data?.length || 0;
+      if (error) {
+        console.error('Error fetching stats:', error);
+        return;
+      }
 
-      // For orders — RLS restricts to own orders, so we count order_items from trending_products view
-      // which gives us real delivered/sold data
-      const { data: trendingData } = await supabase.from('trending_products').select('total_sold');
-      const totalDelivered = trendingData?.reduce((sum, t) => sum + (t.total_sold || 0), 0) || 0;
-      const totalOrders = trendingData?.reduce((sum, t) => sum + 1, 0) || 0;
-
-      // Use unique customers from trending or fallback to order count
-      const uniqueCustomers = trendingData?.length || 0;
+      const row = Array.isArray(data) ? data[0] : data;
+      if (!row) return;
 
       setStats([
-        { icon: ShoppingBag, value: totalDelivered, suffix: '+', label: 'Orders Delivered' },
-        { icon: Users, value: uniqueCustomers, suffix: '+', label: 'Happy Customers' },
-        { icon: Package, value: totalProducts, suffix: '', label: 'Products Available' },
-        { icon: Star, value: totalReviews, suffix: '+', label: '5-Star Reviews' },
+        { icon: ShoppingBag, value: Number(row.total_orders) || 0, suffix: '+', label: 'Orders Delivered' },
+        { icon: Users, value: Number(row.total_customers) || 0, suffix: '+', label: 'Happy Customers' },
+        { icon: Package, value: Number(row.total_products) || 0, suffix: '', label: 'Products Available' },
+        { icon: Star, value: Number(row.total_reviews) || 0, suffix: '+', label: '5-Star Reviews' },
       ]);
     };
     fetchStats();
