@@ -50,7 +50,7 @@ const SupportContact = ({ variant = 'full', message, className = '' }: SupportCo
   }
 
   return (
-    <div className={`glass-card glass-shimmer rounded-xl p-5 ${className}`}>
+    <div className={`bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-xl p-5 ${className}`}>
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <h3 className="font-semibold text-lg flex items-center gap-2">
