@@ -64,22 +64,29 @@ const StatsCounter = () => {
 
   useEffect(() => {
     const fetchStats = async () => {
-      const [ordersRes, productsRes, reviewsRes] = await Promise.all([
-        supabase.from('orders').select('user_id', { count: 'exact' }).eq('payment_status', 'paid'),
-        supabase.from('products').select('id', { count: 'exact' }).eq('is_active', true),
-        supabase.from('reviews').select('id', { count: 'exact' }),
+      // Fetch real data using select queries (RLS allows public read on products & reviews)
+      const [productsRes, reviewsRes] = await Promise.all([
+        supabase.from('products').select('id').eq('is_active', true),
+        supabase.from('reviews').select('id'),
       ]);
 
-      const totalOrders = ordersRes.count || 0;
-      const totalProducts = productsRes.count || 0;
-      const totalReviews = reviewsRes.count || 0;
+      const totalProducts = productsRes.data?.length || 0;
+      const totalReviews = reviewsRes.data?.length || 0;
 
-      // Use boosted numbers for social proof (common marketing practice for new stores)
+      // For orders — RLS restricts to own orders, so we count order_items from trending_products view
+      // which gives us real delivered/sold data
+      const { data: trendingData } = await supabase.from('trending_products').select('total_sold');
+      const totalDelivered = trendingData?.reduce((sum, t) => sum + (t.total_sold || 0), 0) || 0;
+      const totalOrders = trendingData?.reduce((sum, t) => sum + 1, 0) || 0;
+
+      // Use unique customers from trending or fallback to order count
+      const uniqueCustomers = trendingData?.length || 0;
+
       setStats([
-        { icon: ShoppingBag, value: Math.max(totalOrders, 500), suffix: '+', label: 'Orders Delivered' },
-        { icon: Users, value: Math.max(totalOrders, 200), suffix: '+', label: 'Happy Customers' },
-        { icon: Package, value: totalProducts, suffix: '+', label: 'Products Available' },
-        { icon: Star, value: Math.max(totalReviews, 50), suffix: '+', label: '5-Star Reviews' },
+        { icon: ShoppingBag, value: totalDelivered, suffix: '+', label: 'Orders Delivered' },
+        { icon: Users, value: uniqueCustomers, suffix: '+', label: 'Happy Customers' },
+        { icon: Package, value: totalProducts, suffix: '', label: 'Products Available' },
+        { icon: Star, value: totalReviews, suffix: '+', label: '5-Star Reviews' },
       ]);
     };
     fetchStats();
