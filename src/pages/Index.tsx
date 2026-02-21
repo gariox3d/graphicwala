@@ -229,7 +229,7 @@ const Index = () => {
               {services.map((service, index) => (
                 <article
                   key={service.title}
-                  className="bg-card rounded-xl p-6 shadow-soft hover:shadow-brand transition-all duration-300 animate-slide-up"
+                  className="glass-card rounded-xl p-6 hover:shadow-brand transition-all duration-300 animate-slide-up"
                   style={{ animationDelay: `${index * 0.1}s` }}
                   role="listitem"
                 >

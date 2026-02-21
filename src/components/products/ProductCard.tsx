@@ -79,7 +79,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
   return (
     <div
-      className="group bg-card rounded-xl overflow-hidden shadow-soft hover:shadow-brand transition-all duration-300 animate-scale-in"
+      className="group glass-card rounded-xl overflow-hidden hover:shadow-brand transition-all duration-300 animate-scale-in"
       style={isOutOfStock ? { filter: 'grayscale(100%)', opacity: 0.65 } : undefined}
     >
       <Link 

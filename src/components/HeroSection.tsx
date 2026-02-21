@@ -124,7 +124,7 @@ const HeroSection = () => {
         <header className="max-w-4xl mx-auto text-center">
           {/* Top Badge */}
           <div 
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary/15 border border-primary/25 text-primary text-sm font-bold mb-8 animate-fade-in backdrop-blur-md"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full glass-badge text-primary text-sm font-bold mb-8 animate-fade-in"
             style={{ animationDelay: '0.1s' }}
           >
             <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
@@ -194,7 +194,7 @@ const HeroSection = () => {
             {trustBadges.map((badge) => (
               <div 
                 key={badge.text}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl glass-dark"
                 role="listitem"
               >
                 <badge.icon className="h-4 w-4 md:h-5 md:w-5 text-primary" aria-hidden="true" />
