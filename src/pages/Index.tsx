@@ -164,7 +164,7 @@ const Index = () => {
         </section>
 
         {/* Featured Products */}
-        <section className="py-16 md:py-24 bg-secondary" aria-labelledby="products-heading">
+        <section className="py-16 md:py-24 glass-section" aria-labelledby="products-heading">
           <div className="container">
             <header className="flex items-center justify-between mb-12">
               <div>
@@ -217,7 +217,7 @@ const Index = () => {
         </section>
 
         {/* Services Section */}
-        <section className="py-16 md:py-24 bg-secondary" aria-labelledby="services-heading">
+        <section className="py-16 md:py-24 glass-section" aria-labelledby="services-heading">
           <div className="container">
             <header className="text-center mb-12">
               <h2 id="services-heading" className="text-3xl md:text-4xl font-bold mb-4">Why Choose Graphic Wala?</h2>
@@ -229,7 +229,7 @@ const Index = () => {
               {services.map((service, index) => (
                 <article
                   key={service.title}
-                  className="glass-card rounded-xl p-6 hover:shadow-brand transition-all duration-300 animate-slide-up"
+                  className="glass-card glass-shimmer rounded-xl p-6 transition-all duration-300 animate-slide-up"
                   style={{ animationDelay: `${index * 0.1}s` }}
                   role="listitem"
                 >

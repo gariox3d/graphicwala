@@ -16,7 +16,7 @@ const DeliveryInfoBanner = ({ variant = 'full', className = '' }: DeliveryInfoBa
   }
 
   return (
-    <div className={`glass-card rounded-xl p-6 ${className}`}>
+    <div className={`glass-card glass-shimmer rounded-xl p-6 ${className}`}>
       <div className="flex items-start gap-3 mb-4">
         <Truck className="h-6 w-6 text-primary mt-0.5" />
         <div>
