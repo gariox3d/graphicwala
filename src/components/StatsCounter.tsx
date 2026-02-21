@@ -14,6 +14,7 @@ const useCountUp = (target: number, duration = 2000, inView: boolean) => {
 
   useEffect(() => {
     if (!inView || target === 0) return;
+    setCount(0);
     let start = 0;
     const increment = target / (duration / 16);
     const timer = setInterval(() => {
@@ -48,8 +49,15 @@ const StatCard = ({ stat, inView }: { stat: StatItem; inView: boolean }) => {
   );
 };
 
+const defaultStats: StatItem[] = [
+  { icon: ShoppingBag, value: 0, suffix: '+', label: 'Orders Delivered' },
+  { icon: Users, value: 0, suffix: '+', label: 'Happy Customers' },
+  { icon: Package, value: 0, suffix: '', label: 'Products Available' },
+  { icon: Star, value: 0, suffix: '+', label: '5-Star Reviews' },
+];
+
 const StatsCounter = () => {
-  const [stats, setStats] = useState<StatItem[]>([]);
+  const [stats, setStats] = useState<StatItem[]>(defaultStats);
   const [inView, setInView] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -64,28 +72,29 @@ const StatsCounter = () => {
 
   useEffect(() => {
     const fetchStats = async () => {
-      // Use RPC function that bypasses RLS with SECURITY DEFINER
-      const { data, error } = await supabase.rpc('get_public_stats' as any);
+      try {
+        const { data, error } = await supabase.rpc('get_public_stats' as any);
 
-      if (error) {
-        console.error('Error fetching stats:', error);
-        return;
+        if (error) {
+          console.error('Error fetching stats:', error);
+          return;
+        }
+
+        const row = Array.isArray(data) && data.length > 0 ? data[0] : data;
+        if (!row) return;
+
+        setStats([
+          { icon: ShoppingBag, value: Number(row.total_orders) || 0, suffix: '+', label: 'Orders Delivered' },
+          { icon: Users, value: Number(row.total_customers) || 0, suffix: '+', label: 'Happy Customers' },
+          { icon: Package, value: Number(row.total_products) || 0, suffix: '', label: 'Products Available' },
+          { icon: Star, value: Number(row.total_reviews) || 0, suffix: '+', label: '5-Star Reviews' },
+        ]);
+      } catch (err) {
+        console.error('Stats fetch exception:', err);
       }
-
-      const row = Array.isArray(data) ? data[0] : data;
-      if (!row) return;
-
-      setStats([
-        { icon: ShoppingBag, value: Number(row.total_orders) || 0, suffix: '+', label: 'Orders Delivered' },
-        { icon: Users, value: Number(row.total_customers) || 0, suffix: '+', label: 'Happy Customers' },
-        { icon: Package, value: Number(row.total_products) || 0, suffix: '', label: 'Products Available' },
-        { icon: Star, value: Number(row.total_reviews) || 0, suffix: '+', label: '5-Star Reviews' },
-      ]);
     };
     fetchStats();
   }, []);
-
-  if (stats.length === 0) return null;
 
   return (
     <section ref={ref} className="py-12 bg-primary/5 border-y border-border/50" aria-label="Store statistics">
