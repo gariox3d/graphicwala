@@ -26,6 +26,7 @@ import AdminSettings from "./pages/admin/AdminSettings";
 import AdminReviews from "./pages/admin/AdminReviews";
 import AdminCoupons from "./pages/admin/AdminCoupons";
 import AdminMessages from "./pages/admin/AdminMessages";
+import AdminCustomers from "./pages/admin/AdminCustomers";
 import ProductForm from "./pages/admin/ProductForm";
 import NotFound from "./pages/NotFound";
 import ShareRedirect from "./pages/ShareRedirect";
@@ -75,6 +76,7 @@ const App = () => (
                 <Route path="/admin/categories" element={<AdminGuard><AdminCategories /></AdminGuard>} />
                 <Route path="/admin/coupons" element={<AdminGuard><AdminCoupons /></AdminGuard>} />
                 <Route path="/admin/messages" element={<AdminGuard><AdminMessages /></AdminGuard>} />
+                <Route path="/admin/customers" element={<AdminGuard><AdminCustomers /></AdminGuard>} />
                 <Route path="/admin/settings" element={<AdminGuard><AdminSettings /></AdminGuard>} />
                 <Route path="/admin/festival-theme" element={<AdminGuard><AdminFestivalTheme /></AdminGuard>} />
                 <Route path="*" element={<NotFound />} />
