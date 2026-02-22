@@ -22,47 +22,24 @@ const AdminCustomers = () => {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        // Get from profiles (name + phone)
-        const { data: profiles } = await supabase
-          .from('profiles')
-          .select('user_id, full_name, phone');
-
-        // Get from orders (email + customer_name + phone)
-        const { data: orders } = await supabase
-          .from('orders')
-          .select('user_id, customer_name, email, shipping_phone');
-
-        // Merge: use user_id as key
-        const customerMap = new Map<string, CustomerInfo>();
-
-        if (profiles) {
-          for (const p of profiles) {
-            customerMap.set(p.user_id, {
-              name: p.full_name || '',
-              phone: p.phone || '',
-              email: '',
-            });
-          }
+        const { data, error } = await supabase.rpc('get_all_customers');
+        
+        if (error) {
+          console.error('Error fetching customers:', error);
+          return;
         }
 
-        if (orders) {
-          for (const o of orders) {
-            const existing = customerMap.get(o.user_id);
-            if (existing) {
-              if (!existing.name && o.customer_name) existing.name = o.customer_name;
-              if (!existing.phone && o.shipping_phone) existing.phone = o.shipping_phone;
-              if (!existing.email && o.email) existing.email = o.email;
-            } else {
-              customerMap.set(o.user_id, {
-                name: o.customer_name || '',
-                phone: o.shipping_phone || '',
-                email: o.email || '',
-              });
-            }
-          }
+        if (data) {
+          setCustomers(
+            data
+              .filter((c: any) => c.full_name || c.phone || c.email)
+              .map((c: any) => ({
+                name: c.full_name || '',
+                phone: c.phone || '',
+                email: c.email || '',
+              }))
+          );
         }
-
-        setCustomers(Array.from(customerMap.values()).filter(c => c.name || c.phone || c.email));
       } catch (error) {
         console.error('Error fetching customers:', error);
       } finally {
