@@ -905,6 +905,15 @@ export type Database = {
       }
     }
     Functions: {
+      get_all_customers: {
+        Args: never
+        Returns: {
+          email: string
+          full_name: string
+          phone: string
+          user_id: string
+        }[]
+      }
       get_public_stats: {
         Args: never
         Returns: {
