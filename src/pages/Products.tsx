@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import ProductCard from '@/components/products/ProductCard';
@@ -50,8 +51,24 @@ const Products = () => {
     ? products.filter((p) => p.categories?.name === selectedCategory)
     : products;
 
+  const pageTitle = selectedCategory 
+    ? `${selectedCategory} - Buy Online | Graphic Wala`
+    : 'All Products - Photo Frames, PVC Cards, Keychains | Graphic Wala';
+  const pageDescription = selectedCategory
+    ? `Buy ${selectedCategory} online from Graphic Wala. Premium quality with home delivery across Bihar.`
+    : 'Browse all custom printing products - photo frames, PVC cards, ID cards, visiting cards, keychains. Order online with home delivery across Bihar.';
+
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
+        <link rel="canonical" href={`https://graphicwala.com/products${selectedCategory ? `?category=${encodeURIComponent(selectedCategory)}` : ''}`} />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://graphicwala.com/products" />
+      </Helmet>
       <Header />
       <main className="flex-1 py-8" ref={productsRef}>
         <div className="container">

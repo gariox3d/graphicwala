@@ -1,8 +1,9 @@
-# Robots.txt for Graphic Wala Store
-# https://store.graphicwala.com
+# Robots.txt for Graphic Wala
+# https://graphicwala.com
 
 User-agent: Googlebot
 Allow: /
+Crawl-delay: 1
 
 User-agent: Bingbot
 Allow: /
@@ -17,7 +18,7 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://store.graphicwala.com/sitemap.xml
+Sitemap: https://graphicwala.com/sitemap.xml
 
 # Disallow admin and auth pages from indexing
 Disallow: /admin

@@ -31,7 +31,7 @@ import { useRecentlyViewed } from '@/hooks/useRecentlyViewed';
 import { useWishlist } from '@/hooks/useWishlist';
 import { toast } from 'sonner';
 
-const SITE_URL = 'https://store.graphicwala.com';
+const SITE_URL = 'https://graphicwala.com';
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-square.png`;
 const SHARE_BASE_URL = `${SITE_URL}/share/product`;
 

@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/sitemap.xml",
+      "destination": "https://haeggvlmnfapopmyuaya.supabase.co/functions/v1/sitemap"
+    },
+    {
       "source": "/product/:id",
       "destination": "https://haeggvlmnfapopmyuaya.supabase.co/functions/v1/og-meta?id=:id&path=/product/:id",
       "has": [
@@ -18,6 +22,20 @@
     {
       "source": "/(.*)",
       "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "index, follow" }
+      ]
+    },
+    {
+      "source": "/admin/(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+      ]
     }
   ]
 }
