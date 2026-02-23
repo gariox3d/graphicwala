@@ -1,9 +1,10 @@
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useRef, useCallback } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
 import { 
   LayoutDashboard, 
   Package, 
@@ -19,7 +20,9 @@ import {
   FolderOpen,
   Ticket,
   MessageSquare,
-  Moon
+  Moon,
+  Volume2,
+  VolumeX
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -33,6 +36,53 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Preload audio
+  useEffect(() => {
+    audioRef.current = new Audio('/sounds/order-notification.mp3');
+    audioRef.current.volume = 1;
+  }, []);
+
+  const playNotificationSound = useCallback(() => {
+    if (soundEnabled && audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch(() => {});
+    }
+  }, [soundEnabled]);
+
+  // Real-time order notifications
+  useEffect(() => {
+    const channel = supabase
+      .channel('admin-order-alerts')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'orders',
+          filter: 'payment_status=eq.paid',
+        },
+        (payload) => {
+          const order = payload.new as any;
+          playNotificationSound();
+          toast.success(`🎉 नया ऑर्डर आया!`, {
+            description: `Order #${order.id?.slice(0, 8)} — ₹${Number(order.total_amount).toLocaleString()}`,
+            duration: 10000,
+            action: {
+              label: 'देखें',
+              onClick: () => navigate('/admin/orders'),
+            },
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [playNotificationSound, navigate]);
 
   useEffect(() => {
     const fetchUnread = async () => {
@@ -130,6 +180,21 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
           {/* Bottom Actions */}
           <div className="p-4 border-t space-y-2">
+            <Button
+              variant={soundEnabled ? "default" : "outline"}
+              size="sm"
+              className="w-full justify-start"
+              onClick={() => {
+                setSoundEnabled(!soundEnabled);
+                if (!soundEnabled && audioRef.current) {
+                  audioRef.current.currentTime = 0;
+                  audioRef.current.play().catch(() => {});
+                }
+              }}
+            >
+              {soundEnabled ? <Volume2 className="mr-2 h-4 w-4" /> : <VolumeX className="mr-2 h-4 w-4" />}
+              {soundEnabled ? 'Sound ON' : 'Sound OFF'}
+            </Button>
             <Button
               variant="outline"
               className="w-full justify-start"
