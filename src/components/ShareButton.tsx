@@ -15,7 +15,7 @@ interface ShareButtonProps {
   variant?: 'default' | 'icon';
 }
 
-const SITE_URL = 'https://store.graphicwala.com';
+const SITE_URL = 'https://graphicwala.com';
 
 const ShareButton = ({ productId, productName, variant = 'default' }: ShareButtonProps) => {
   const [copied, setCopied] = useState(false);
