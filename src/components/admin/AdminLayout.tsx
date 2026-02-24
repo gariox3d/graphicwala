@@ -24,7 +24,8 @@ import {
   Volume2,
   VolumeX,
     Megaphone,
-    Coins
+    Coins,
+    BarChart3
   } from 'lucide-react';
 import { useState } from 'react';
 
@@ -110,6 +111,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/festival-theme', label: 'Festival Theme', icon: Moon },
     { path: '/admin/ads', label: 'Ads / Banners', icon: Megaphone },
     { path: '/admin/loyalty', label: 'Loyalty Points', icon: Coins },
+    { path: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
   ];
 
   const handleSignOut = async () => {
