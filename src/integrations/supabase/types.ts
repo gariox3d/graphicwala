@@ -1081,6 +1081,7 @@ export type Database = {
           total_reviews: number
         }[]
       }
+      get_referrer_by_code: { Args: { p_code: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1092,6 +1093,7 @@ export type Database = {
         Args: { coupon_id_input: string }
         Returns: undefined
       }
+      validate_referral_code: { Args: { p_code: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
