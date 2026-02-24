@@ -359,6 +359,111 @@ export type Database = {
         }
         Relationships: []
       }
+      loyalty_balances: {
+        Row: {
+          current_balance: number
+          tier: string
+          total_earned: number
+          total_redeemed: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          current_balance?: number
+          tier?: string
+          total_earned?: number
+          total_redeemed?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          current_balance?: number
+          tier?: string
+          total_earned?: number
+          total_redeemed?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      loyalty_points: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          points: number
+          reference_id: string | null
+          source: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          points?: number
+          reference_id?: string | null
+          source: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          points?: number
+          reference_id?: string | null
+          source?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      loyalty_settings: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          gold_threshold: number
+          id: string
+          min_redeem_points: number
+          platinum_threshold: number
+          points_per_rupee: number
+          points_value_rupees: number
+          review_bonus: number
+          signup_bonus: number
+          silver_threshold: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          gold_threshold?: number
+          id?: string
+          min_redeem_points?: number
+          platinum_threshold?: number
+          points_per_rupee?: number
+          points_value_rupees?: number
+          review_bonus?: number
+          signup_bonus?: number
+          silver_threshold?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          gold_threshold?: number
+          id?: string
+          min_redeem_points?: number
+          platinum_threshold?: number
+          points_per_rupee?: number
+          points_value_rupees?: number
+          review_bonus?: number
+          signup_bonus?: number
+          silver_threshold?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       order_item_uploads: {
         Row: {
           created_at: string
@@ -947,6 +1052,17 @@ export type Database = {
       }
     }
     Functions: {
+      add_loyalty_points: {
+        Args: {
+          p_description?: string
+          p_points: number
+          p_reference_id?: string
+          p_source: string
+          p_type: string
+          p_user_id: string
+        }
+        Returns: undefined
+      }
       get_all_customers: {
         Args: never
         Returns: {
