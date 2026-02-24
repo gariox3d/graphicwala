@@ -14,6 +14,7 @@ import { User, Package, Eye, ShoppingBag, Edit2, Save, X, Loader2, MapPin, Phone
 import { toast } from 'sonner';
 import OrderTimeline from '@/components/OrderTimeline';
 import ReferralSection from '@/components/ReferralSection';
+import LoyaltyWidget from '@/components/loyalty/LoyaltyWidget';
 
 interface Order {
   id: string;
@@ -257,6 +258,9 @@ const Dashboard = () => {
                   </CardContent>
                 </Card>
               </Link>
+
+              {/* Loyalty Points */}
+              <LoyaltyWidget />
 
               {/* Referral Section */}
               <ReferralSection />

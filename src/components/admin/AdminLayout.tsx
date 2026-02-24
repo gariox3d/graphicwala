@@ -23,8 +23,9 @@ import {
   Moon,
   Volume2,
   VolumeX,
-  Megaphone
-} from 'lucide-react';
+    Megaphone,
+    Coins
+  } from 'lucide-react';
 import { useState } from 'react';
 
 interface AdminLayoutProps {
@@ -108,6 +109,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/settings', label: 'Delivery & Settings', icon: Truck },
     { path: '/admin/festival-theme', label: 'Festival Theme', icon: Moon },
     { path: '/admin/ads', label: 'Ads / Banners', icon: Megaphone },
+    { path: '/admin/loyalty', label: 'Loyalty Points', icon: Coins },
   ];
 
   const handleSignOut = async () => {
