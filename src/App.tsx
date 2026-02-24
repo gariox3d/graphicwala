@@ -11,6 +11,7 @@ import AdminFestivalTheme from "./pages/admin/AdminFestivalTheme";
 import AdminAds from "./pages/admin/AdminAds";
 import AdminLoyalty from "./pages/admin/AdminLoyalty";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
+import AdminStorage from "./pages/admin/AdminStorage";
 import Index from "./pages/Index";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
@@ -85,6 +86,7 @@ const App = () => (
                 <Route path="/admin/ads" element={<AdminGuard><AdminAds /></AdminGuard>} />
                 <Route path="/admin/loyalty" element={<AdminGuard><AdminLoyalty /></AdminGuard>} />
                 <Route path="/admin/analytics" element={<AdminGuard><AdminAnalytics /></AdminGuard>} />
+                <Route path="/admin/storage" element={<AdminGuard><AdminStorage /></AdminGuard>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
