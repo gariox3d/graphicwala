@@ -231,6 +231,48 @@ export type Database = {
         }
         Relationships: []
       }
+      custom_ads: {
+        Row: {
+          created_at: string
+          display_order: number
+          id: string
+          image_url: string
+          is_active: boolean
+          link_url: string | null
+          slot_height: number
+          slot_id: string
+          slot_width: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          image_url: string
+          is_active?: boolean
+          link_url?: string | null
+          slot_height?: number
+          slot_id: string
+          slot_width?: number
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          id?: string
+          image_url?: string
+          is_active?: boolean
+          link_url?: string | null
+          slot_height?: number
+          slot_id?: string
+          slot_width?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       customer_gallery: {
         Row: {
           caption: string | null

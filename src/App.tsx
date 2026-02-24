@@ -8,6 +8,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
 import RamadanThemeProvider from "@/components/festival/RamadanThemeProvider";
 import AdminFestivalTheme from "./pages/admin/AdminFestivalTheme";
+import AdminAds from "./pages/admin/AdminAds";
 import Index from "./pages/Index";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
@@ -79,6 +80,7 @@ const App = () => (
                 <Route path="/admin/customers" element={<AdminGuard><AdminCustomers /></AdminGuard>} />
                 <Route path="/admin/settings" element={<AdminGuard><AdminSettings /></AdminGuard>} />
                 <Route path="/admin/festival-theme" element={<AdminGuard><AdminFestivalTheme /></AdminGuard>} />
+                <Route path="/admin/ads" element={<AdminGuard><AdminAds /></AdminGuard>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
