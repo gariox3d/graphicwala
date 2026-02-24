@@ -24,6 +24,7 @@ interface StorageFile {
   id: string;
   created_at: string;
   metadata: Record<string, any> | null;
+  fullPath: string;
 }
 
 const BUCKETS = [
@@ -50,18 +51,42 @@ const AdminStorage = () => {
   const [bucketCounts, setBucketCounts] = useState<Record<string, number>>({});
   const [bucketSizes, setBucketSizes] = useState<Record<string, number>>({});
 
+  const listAllFiles = async (bucketId: string, folder: string = ''): Promise<{ name: string; id: string; created_at: string; metadata: Record<string, any> | null; fullPath: string }[]> => {
+    const { data, error } = await supabase.storage.from(bucketId).list(folder, {
+      limit: 500,
+      sortBy: { column: 'created_at', order: 'desc' },
+    });
+    if (error || !data) return [];
+    
+    const results: { name: string; id: string; created_at: string; metadata: Record<string, any> | null; fullPath: string }[] = [];
+    
+    for (const item of data) {
+      if (item.name === '.emptyFolderPlaceholder') continue;
+      const fullPath = folder ? `${folder}/${item.name}` : item.name;
+      // If no metadata, it's likely a folder — recurse into it
+      if (!item.metadata || (item.metadata && !(item.metadata as any).mimetype && !(item.metadata as any).size)) {
+        const subFiles = await listAllFiles(bucketId, fullPath);
+        if (subFiles.length > 0) {
+          results.push(...subFiles);
+        } else {
+          // It might be a real file with no metadata
+          if (item.id) {
+            results.push({ ...item, fullPath, metadata: item.metadata as Record<string, any> | null } as any);
+          }
+        }
+      } else {
+        results.push({ ...item, fullPath, metadata: item.metadata as Record<string, any> | null } as any);
+      }
+    }
+    return results;
+  };
+
   const fetchFiles = async (bucketId: string) => {
     setLoading(true);
     setSelectedFiles(new Set());
     try {
-      const { data, error } = await supabase.storage.from(bucketId).list('', {
-        limit: 500,
-        sortBy: { column: 'created_at', order: 'desc' },
-      });
-      if (error) throw error;
-      // Filter out folder placeholders
-      const realFiles = (data || []).filter(f => f.name !== '.emptyFolderPlaceholder');
-      setFiles(realFiles as StorageFile[]);
+      const allFiles = await listAllFiles(bucketId);
+      setFiles(allFiles as any);
     } catch (err: any) {
       toast.error('Files load nahi ho paye: ' + err.message);
       setFiles([]);
@@ -75,10 +100,9 @@ const AdminStorage = () => {
     const sizes: Record<string, number> = {};
     await Promise.all(
       BUCKETS.map(async (b) => {
-        const { data } = await supabase.storage.from(b.id).list('', { limit: 1000 });
-        const realFiles = (data || []).filter(f => f.name !== '.emptyFolderPlaceholder');
-        counts[b.id] = realFiles.length;
-        sizes[b.id] = realFiles.reduce((sum, f) => sum + ((f.metadata as any)?.size || 0), 0);
+        const allFiles = await listAllFiles(b.id);
+        counts[b.id] = allFiles.length;
+        sizes[b.id] = allFiles.reduce((sum, f) => sum + ((f.metadata as any)?.size || 0), 0);
       })
     );
     setBucketCounts(counts);
@@ -116,11 +140,11 @@ const AdminStorage = () => {
     }
   };
 
-  const toggleFile = (name: string) => {
+  const toggleFile = (path: string) => {
     setSelectedFiles((prev) => {
       const next = new Set(prev);
-      if (next.has(name)) next.delete(name);
-      else next.add(name);
+      if (next.has(path)) next.delete(path);
+      else next.add(path);
       return next;
     });
   };
@@ -129,12 +153,12 @@ const AdminStorage = () => {
     if (selectedFiles.size === files.length) {
       setSelectedFiles(new Set());
     } else {
-      setSelectedFiles(new Set(files.map((f) => f.name)));
+      setSelectedFiles(new Set(files.map((f) => f.fullPath)));
     }
   };
 
-  const getPublicUrl = (fileName: string) => {
-    const { data } = supabase.storage.from(activeBucket).getPublicUrl(fileName);
+  const getPublicUrl = (filePath: string) => {
+    const { data } = supabase.storage.from(activeBucket).getPublicUrl(filePath);
     return data.publicUrl;
   };
 
@@ -245,14 +269,14 @@ const AdminStorage = () => {
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
                       {files.map((file) => {
                         const isImage = file.metadata?.mimetype?.startsWith('image/');
-                        const isSelected = selectedFiles.has(file.name);
+                        const isSelected = selectedFiles.has(file.fullPath);
                         return (
                           <div
-                            key={file.name}
+                            key={file.fullPath}
                             className={`relative group border rounded-lg overflow-hidden cursor-pointer transition-all ${
                               isSelected ? 'ring-2 ring-primary border-primary' : 'hover:border-primary/50'
                             }`}
-                            onClick={() => toggleFile(file.name)}
+                            onClick={() => toggleFile(file.fullPath)}
                           >
                             {/* Checkbox */}
                             <div className={`absolute top-2 left-2 z-10 w-5 h-5 rounded border-2 flex items-center justify-center text-xs font-bold transition-all ${
@@ -265,7 +289,7 @@ const AdminStorage = () => {
                             <div className="aspect-square bg-muted flex items-center justify-center overflow-hidden">
                               {isImage ? (
                                 <img
-                                  src={getPublicUrl(file.name)}
+                                  src={getPublicUrl(file.fullPath)}
                                   alt={file.name}
                                   className="w-full h-full object-cover"
                                   loading="lazy"
@@ -282,7 +306,7 @@ const AdminStorage = () => {
 
                             {/* Info */}
                             <div className="p-2">
-                              <p className="text-[11px] truncate font-medium" title={file.name}>
+                              <p className="text-[11px] truncate font-medium" title={file.fullPath}>
                                 {file.name}
                               </p>
                               <p className="text-[10px] text-muted-foreground">
@@ -311,7 +335,7 @@ const AdminStorage = () => {
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
                                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                  <AlertDialogAction onClick={() => deleteFile(file.name)}>Delete</AlertDialogAction>
+                                  <AlertDialogAction onClick={() => deleteFile(file.fullPath)}>Delete</AlertDialogAction>
                                 </AlertDialogFooter>
                               </AlertDialogContent>
                             </AlertDialog>
