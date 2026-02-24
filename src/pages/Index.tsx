@@ -14,6 +14,7 @@ import TrendingProducts from '@/components/products/TrendingProducts';
 import CustomerGallery from '@/components/CustomerGallery';
 import ProductMarquee from '@/components/products/ProductMarquee';
 import FlashSaleBanner from '@/components/products/FlashSaleBanner';
+import AdBanner from '@/components/ads/AdBanner';
 import TestimonialsSection from '@/components/TestimonialsSection';
 import StatsCounter from '@/components/StatsCounter';
 import { supabase } from '@/integrations/supabase/client';
@@ -106,6 +107,11 @@ const Index = () => {
         {/* Flash Sale Banner — shown only when active sales exist */}
         <FlashSaleBanner />
 
+        {/* Ad Slot: After Hero */}
+        <section className="py-4 bg-background">
+          <div className="container"><AdBanner slotId="homepage_after_hero" /></div>
+        </section>
+
         {/* Trust Notice Banner */}
         <section className="py-4 bg-amber-50 dark:bg-amber-950/30 border-y border-amber-200 dark:border-amber-900">
           <div className="container">
@@ -165,6 +171,11 @@ const Index = () => {
           </div>
         </section>
 
+        {/* Ad Slot: After Categories */}
+        <section className="py-4 bg-background">
+          <div className="container"><AdBanner slotId="homepage_after_categories" /></div>
+        </section>
+
         {/* Featured Products */}
         <section className="py-16 md:py-24 bg-secondary" aria-labelledby="products-heading">
           <div className="container">
@@ -211,6 +222,11 @@ const Index = () => {
           </div>
         </section>
 
+        {/* Ad Slot: After Products */}
+        <section className="py-4 bg-background">
+          <div className="container"><AdBanner slotId="homepage_after_products" /></div>
+        </section>
+
         {/* Delivery Info Banner */}
         <section className="py-8 bg-background" aria-label="Delivery information">
           <div className="container">
@@ -244,6 +260,11 @@ const Index = () => {
               ))}
             </div>
           </div>
+        </section>
+
+        {/* Ad Slot: Mid Page */}
+        <section className="py-4 bg-background">
+          <div className="container"><AdBanner slotId="homepage_mid_page" /></div>
         </section>
 
         {/* Stats Counter */}

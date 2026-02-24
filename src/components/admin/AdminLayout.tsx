@@ -22,7 +22,8 @@ import {
   MessageSquare,
   Moon,
   Volume2,
-  VolumeX
+  VolumeX,
+  Megaphone
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -106,6 +107,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/messages', label: 'Messages', icon: MessageSquare },
     { path: '/admin/settings', label: 'Delivery & Settings', icon: Truck },
     { path: '/admin/festival-theme', label: 'Festival Theme', icon: Moon },
+    { path: '/admin/ads', label: 'Ads / Banners', icon: Megaphone },
   ];
 
   const handleSignOut = async () => {
