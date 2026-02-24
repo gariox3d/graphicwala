@@ -10,6 +10,7 @@ import RamadanThemeProvider from "@/components/festival/RamadanThemeProvider";
 import AdminFestivalTheme from "./pages/admin/AdminFestivalTheme";
 import AdminAds from "./pages/admin/AdminAds";
 import AdminLoyalty from "./pages/admin/AdminLoyalty";
+import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import Index from "./pages/Index";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
@@ -83,6 +84,7 @@ const App = () => (
                 <Route path="/admin/festival-theme" element={<AdminGuard><AdminFestivalTheme /></AdminGuard>} />
                 <Route path="/admin/ads" element={<AdminGuard><AdminAds /></AdminGuard>} />
                 <Route path="/admin/loyalty" element={<AdminGuard><AdminLoyalty /></AdminGuard>} />
+                <Route path="/admin/analytics" element={<AdminGuard><AdminAnalytics /></AdminGuard>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
