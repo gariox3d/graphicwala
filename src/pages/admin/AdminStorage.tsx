@@ -48,6 +48,7 @@ const AdminStorage = () => {
   const [loading, setLoading] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState<Set<string>>(new Set());
   const [bucketCounts, setBucketCounts] = useState<Record<string, number>>({});
+  const [bucketSizes, setBucketSizes] = useState<Record<string, number>>({});
 
   const fetchFiles = async (bucketId: string) => {
     setLoading(true);
@@ -71,13 +72,17 @@ const AdminStorage = () => {
 
   const fetchAllCounts = async () => {
     const counts: Record<string, number> = {};
+    const sizes: Record<string, number> = {};
     await Promise.all(
       BUCKETS.map(async (b) => {
         const { data } = await supabase.storage.from(b.id).list('', { limit: 1000 });
-        counts[b.id] = (data || []).filter(f => f.name !== '.emptyFolderPlaceholder').length;
+        const realFiles = (data || []).filter(f => f.name !== '.emptyFolderPlaceholder');
+        counts[b.id] = realFiles.length;
+        sizes[b.id] = realFiles.reduce((sum, f) => sum + ((f.metadata as any)?.size || 0), 0);
       })
     );
     setBucketCounts(counts);
+    setBucketSizes(sizes);
   };
 
   useEffect(() => {
@@ -147,6 +152,28 @@ const AdminStorage = () => {
               Apne store ki saari images yahan se manage karein — jo zarurat nahi, delete karein.
             </p>
           </div>
+        </div>
+
+        {/* Storage Summary */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          {BUCKETS.map((b) => (
+            <Card key={b.id} className={`cursor-pointer transition-all ${activeBucket === b.id ? 'ring-2 ring-primary' : 'hover:border-primary/50'}`} onClick={() => setActiveBucket(b.id)}>
+              <CardContent className="p-3 text-center">
+                <p className="text-lg">{b.icon}</p>
+                <p className="text-xs font-medium truncate">{b.label}</p>
+                <p className="text-sm font-bold text-primary">{formatSize(bucketSizes[b.id] || 0)}</p>
+                <p className="text-[10px] text-muted-foreground">{bucketCounts[b.id] || 0} files</p>
+              </CardContent>
+            </Card>
+          ))}
+          <Card className="bg-primary/5 border-primary/20">
+            <CardContent className="p-3 text-center">
+              <p className="text-lg">💾</p>
+              <p className="text-xs font-medium">Total</p>
+              <p className="text-sm font-bold text-primary">{formatSize(Object.values(bucketSizes).reduce((a, b) => a + b, 0))}</p>
+              <p className="text-[10px] text-muted-foreground">{Object.values(bucketCounts).reduce((a, b) => a + b, 0)} files</p>
+            </CardContent>
+          </Card>
         </div>
 
         <Tabs value={activeBucket} onValueChange={setActiveBucket}>
