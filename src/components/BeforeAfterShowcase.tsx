@@ -57,11 +57,11 @@ const BeforeAfterShowcase = () => {
               <div className="relative flex">
                 {/* Before */}
                 <div className="w-1/2 relative">
-                  <div className="aspect-square overflow-hidden">
+                  <div className="aspect-square overflow-hidden bg-muted">
                     <img
                       src={item.before_image_url}
                       alt={`${item.product_name} - Customer Design`}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                     />
                   </div>
@@ -77,11 +77,11 @@ const BeforeAfterShowcase = () => {
 
                 {/* After */}
                 <div className="w-1/2 relative">
-                  <div className="aspect-square overflow-hidden">
+                  <div className="aspect-square overflow-hidden bg-muted">
                     <img
                       src={item.after_image_url}
                       alt={`${item.product_name} - Final Product`}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                     />
                   </div>
