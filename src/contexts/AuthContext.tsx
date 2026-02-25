@@ -24,29 +24,56 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  const fetchProfile = async (userId: string) => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('user_id', userId)
-      .maybeSingle();
+  const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-    if (!error && data) {
-      setProfile(data as Profile);
+  const fetchProfile = async (userId: string) => {
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('user_id', userId)
+          .maybeSingle();
+
+        if (!error && data) {
+          setProfile(data as Profile);
+          return;
+        }
+      } catch (error) {
+        console.error('Profile fetch failed:', error);
+      }
+
+      if (attempt < 2) {
+        await wait(300 * (attempt + 1));
+      }
     }
   };
 
   const checkAdminRole = async (userId: string) => {
-    const { data, error } = await supabase
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', userId)
-      .eq('role', 'admin')
-      .maybeSingle();
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        const { data, error } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', userId)
+          .eq('role', 'admin')
+          .maybeSingle();
 
-    const nextIsAdmin = !error && !!data;
-    setIsAdmin(nextIsAdmin);
-    return nextIsAdmin;
+        if (!error) {
+          const nextIsAdmin = !!data;
+          setIsAdmin(nextIsAdmin);
+          return nextIsAdmin;
+        }
+      } catch (error) {
+        console.error('Admin role check failed:', error);
+      }
+
+      if (attempt < 2) {
+        await wait(300 * (attempt + 1));
+      }
+    }
+
+    return false;
   };
 
   useEffect(() => {

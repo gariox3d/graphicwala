@@ -168,8 +168,8 @@ const Auth = () => {
     if (lowerMessage.includes('rate limit')) {
       return 'Too many attempts. Please wait a few minutes and try again.';
     }
-    if (lowerMessage.includes('network')) {
-      return 'Network error. Please check your connection and try again.';
+    if (lowerMessage.includes('failed to fetch') || lowerMessage.includes('network')) {
+      return 'Server se connection nahi ban pa raha. Thodi der baad dubara try karein.';
     }
     return message;
   };

@@ -19,16 +19,24 @@ export const useFestivalSettings = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchSettings = async () => {
-    const { data } = await supabase
-      .from('festival_settings')
-      .select('*')
-      .eq('theme_name', 'ramadan')
-      .single();
-    
-    if (data) {
-      setSettings(data as FestivalSettings);
+    try {
+      const { data, error } = await supabase
+        .from('festival_settings')
+        .select('*')
+        .eq('theme_name', 'ramadan')
+        .maybeSingle();
+
+      if (error) {
+        throw error;
+      }
+
+      setSettings(data ? (data as FestivalSettings) : null);
+    } catch (error) {
+      console.error('Error fetching festival settings:', error);
+      setSettings(null);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {

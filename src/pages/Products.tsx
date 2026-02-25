@@ -19,13 +19,30 @@ const Products = () => {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const [productsRes, categoriesRes] = await Promise.all([
-        supabase.from('products').select('*, categories(*)').order('display_order', { ascending: true }),
-        supabase.from('categories').select('*'),
-      ]);
-      if (productsRes.data) setProducts(productsRes.data as unknown as Product[]);
-      if (categoriesRes.data) setCategories(categoriesRes.data as Category[]);
-      setLoading(false);
+      try {
+        const [productsRes, categoriesRes] = await Promise.allSettled([
+          supabase.from('products').select('*, categories(*)').order('display_order', { ascending: true }),
+          supabase.from('categories').select('*'),
+        ]);
+
+        if (productsRes.status === 'fulfilled' && productsRes.value.data) {
+          setProducts(productsRes.value.data as unknown as Product[]);
+        }
+        if (categoriesRes.status === 'fulfilled' && categoriesRes.value.data) {
+          setCategories(categoriesRes.value.data as Category[]);
+        }
+
+        if (productsRes.status === 'rejected') {
+          console.error('Failed to load products page data:', productsRes.reason);
+        }
+        if (categoriesRes.status === 'rejected') {
+          console.error('Failed to load category filters:', categoriesRes.reason);
+        }
+      } catch (error) {
+        console.error('Error fetching products page data:', error);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchData();
   }, []);
