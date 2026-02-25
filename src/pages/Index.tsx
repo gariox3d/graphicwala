@@ -12,6 +12,7 @@ import AnnouncementBanner from '@/components/AnnouncementBanner';
 import RecentlyViewedProducts from '@/components/products/RecentlyViewedProducts';
 import TrendingProducts from '@/components/products/TrendingProducts';
 import CustomerGallery from '@/components/CustomerGallery';
+import BeforeAfterShowcase from '@/components/BeforeAfterShowcase';
 import ProductMarquee from '@/components/products/ProductMarquee';
 import FlashSaleBanner from '@/components/products/FlashSaleBanner';
 import AdBanner from '@/components/ads/AdBanner';
@@ -289,6 +290,9 @@ const Index = () => {
 
         {/* Trending Products */}
         <TrendingProducts />
+
+        {/* Before/After Showcase */}
+        <BeforeAfterShowcase />
 
         {/* Customer Gallery / Wall of Fame */}
         <CustomerGallery />

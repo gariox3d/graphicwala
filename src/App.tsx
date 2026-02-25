@@ -12,6 +12,7 @@ import AdminAds from "./pages/admin/AdminAds";
 import AdminLoyalty from "./pages/admin/AdminLoyalty";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminStorage from "./pages/admin/AdminStorage";
+import AdminBeforeAfter from "./pages/admin/AdminBeforeAfter";
 import Index from "./pages/Index";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
@@ -87,6 +88,7 @@ const App = () => (
                 <Route path="/admin/loyalty" element={<AdminGuard><AdminLoyalty /></AdminGuard>} />
                 <Route path="/admin/analytics" element={<AdminGuard><AdminAnalytics /></AdminGuard>} />
                 <Route path="/admin/storage" element={<AdminGuard><AdminStorage /></AdminGuard>} />
+                <Route path="/admin/before-after" element={<AdminGuard><AdminBeforeAfter /></AdminGuard>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>

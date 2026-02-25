@@ -26,7 +26,8 @@ import {
     Megaphone,
     Coins,
     BarChart3,
-    HardDrive
+    HardDrive,
+    Layers
   } from 'lucide-react';
 import { useState } from 'react';
 
@@ -114,6 +115,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/loyalty', label: 'Loyalty Points', icon: Coins },
     { path: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
     { path: '/admin/storage', label: 'Storage Manager', icon: HardDrive },
+    { path: '/admin/before-after', label: 'Before/After', icon: Layers },
   ];
 
   const handleSignOut = async () => {
