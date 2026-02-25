@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles, X, ZoomIn } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 interface ShowcaseItem {
   id: string;
@@ -14,6 +15,7 @@ interface ShowcaseItem {
 const BeforeAfterShowcase = () => {
   const [items, setItems] = useState<ShowcaseItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [zoomImage, setZoomImage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchShowcase = async () => {
@@ -57,13 +59,19 @@ const BeforeAfterShowcase = () => {
               <div className="relative flex">
                 {/* Before */}
                 <div className="w-1/2 relative">
-                  <div className="aspect-square overflow-hidden bg-muted">
+                  <div
+                    className="aspect-square overflow-hidden bg-muted cursor-zoom-in relative"
+                    onClick={() => setZoomImage(item.before_image_url)}
+                  >
                     <img
                       src={item.before_image_url}
                       alt={`${item.product_name} - Customer Design`}
                       className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                     />
+                    <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 hover:opacity-100">
+                      <ZoomIn className="h-6 w-6 text-white drop-shadow-lg" />
+                    </div>
                   </div>
                   <span className="absolute top-2 left-2 bg-foreground/70 text-background text-xs font-bold px-2 py-1 rounded-full">
                     DESIGN
@@ -77,13 +85,19 @@ const BeforeAfterShowcase = () => {
 
                 {/* After */}
                 <div className="w-1/2 relative">
-                  <div className="aspect-square overflow-hidden bg-muted">
+                  <div
+                    className="aspect-square overflow-hidden bg-muted cursor-zoom-in relative"
+                    onClick={() => setZoomImage(item.after_image_url)}
+                  >
                     <img
                       src={item.after_image_url}
                       alt={`${item.product_name} - Final Product`}
                       className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                     />
+                    <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 hover:opacity-100">
+                      <ZoomIn className="h-6 w-6 text-white drop-shadow-lg" />
+                    </div>
                   </div>
                   <span className="absolute top-2 right-2 bg-primary text-primary-foreground text-xs font-bold px-2 py-1 rounded-full">
                     PRODUCT
@@ -103,6 +117,19 @@ const BeforeAfterShowcase = () => {
           ))}
         </div>
       </div>
+
+      {/* Zoom Lightbox */}
+      <Dialog open={!!zoomImage} onOpenChange={() => setZoomImage(null)}>
+        <DialogContent className="max-w-3xl p-2 bg-black/90 border-none">
+          {zoomImage && (
+            <img
+              src={zoomImage}
+              alt="Zoomed view"
+              className="w-full h-auto max-h-[85vh] object-contain rounded"
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };
