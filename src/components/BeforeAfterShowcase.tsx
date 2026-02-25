@@ -42,7 +42,7 @@ const BeforeAfterShowcase = () => {
             </h2>
           </div>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            देखिये कैसे आपका design एक premium product बन जाता है! Customer uploaded design vs final printed product.
+            See how your design transforms into a premium product! Customer uploaded design vs final printed product.
           </p>
         </header>
 
