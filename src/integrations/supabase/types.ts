@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      before_after_showcase: {
+        Row: {
+          after_image_url: string
+          before_image_url: string
+          caption: string | null
+          created_at: string
+          customer_name: string
+          display_order: number
+          id: string
+          is_active: boolean
+          product_name: string
+          updated_at: string
+        }
+        Insert: {
+          after_image_url: string
+          before_image_url: string
+          caption?: string | null
+          created_at?: string
+          customer_name?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          product_name: string
+          updated_at?: string
+        }
+        Update: {
+          after_image_url?: string
+          before_image_url?: string
+          caption?: string | null
+          created_at?: string
+          customer_name?: string
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          product_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       cart_item_uploads: {
         Row: {
           cart_item_id: string

@@ -95,6 +95,38 @@ const OrderConfirmation = () => {
     }
   }, [loading, error, navigate]);
 
+  // Auto-open WhatsApp with order details after payment verified
+  useEffect(() => {
+    if (!verified || !order) return;
+    const shortId = order.id.slice(0, 8).toUpperCase();
+    const name = order.customer_name || 'Customer';
+    const itemsList = order.order_items?.map((item: OrderItem) => 
+      `• ${item.product_name} x${item.quantity}`
+    ).join('\n') || '';
+    
+    const msg = `🎉 *New Order Placed!*
+
+👤 Name: ${name}
+📦 Order ID: #${shortId}
+💰 Total: ₹${Number(order.total_amount).toLocaleString()}
+
+*Items:*
+${itemsList}
+
+📍 Delivery: ${order.shipping_city}, ${order.shipping_state} - ${order.shipping_pincode}
+📞 Phone: ${order.shipping_phone}
+
+_Sent from Graphic Wala Store_`;
+
+    const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(msg)}`;
+    
+    const timer = setTimeout(() => {
+      window.open(whatsappLink, '_blank');
+    }, 2500);
+    
+    return () => clearTimeout(timer);
+  }, [verified, order]);
+
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
