@@ -23,10 +23,13 @@ const SpinWheel = () => {
   const [showTrigger, setShowTrigger] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Show trigger after 5 seconds, only once per session
+  // Show trigger after 5 seconds, only once per 24 hours
   useEffect(() => {
-    const alreadyShown = sessionStorage.getItem('spinWheelShown');
-    if (alreadyShown) return;
+    const lastSpinTime = localStorage.getItem('spinWheelLastSpin');
+    if (lastSpinTime) {
+      const elapsed = Date.now() - parseInt(lastSpinTime, 10);
+      if (elapsed < 24 * 60 * 60 * 1000) return;
+    }
     const timer = setTimeout(() => {
       setShowTrigger(true);
     }, 5000);
@@ -117,7 +120,7 @@ const SpinWheel = () => {
   const handleOpen = () => {
     setIsOpen(true);
     setShowTrigger(false);
-    sessionStorage.setItem('spinWheelShown', 'true');
+    localStorage.setItem('spinWheelLastSpin', Date.now().toString());
   };
 
   const handleClose = () => {
@@ -137,7 +140,7 @@ const SpinWheel = () => {
       {showTrigger && !isOpen && (
         <button
           onClick={handleOpen}
-          className="fixed bottom-24 right-6 z-50 flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white px-4 py-3 rounded-full shadow-xl hover:scale-110 transition-all animate-bounce"
+          className="fixed bottom-24 right-6 z-50 flex items-center gap-2 bg-primary text-primary-foreground px-4 py-3 rounded-full shadow-xl hover:scale-110 transition-all animate-bounce"
           aria-label="Spin the wheel for discounts"
         >
           <Gift className="h-5 w-5" />
@@ -204,7 +207,7 @@ const SpinWheel = () => {
               <Button
                 onClick={handleSpin}
                 disabled={isSpinning}
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white font-bold"
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold"
                 size="lg"
               >
                 {isSpinning ? '🎡 Spinning...' : '🎰 Spin Now!'}
