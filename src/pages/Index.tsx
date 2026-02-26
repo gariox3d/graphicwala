@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { ArrowRight, Printer, CreditCard, Palette, Truck, Shield, Clock, MessageCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -110,6 +111,20 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>Graphic Wala | Custom Photo Frames, PVC Cards, Keychains Online India</title>
+        <meta name="description" content="Buy custom photo frames, PVC cards, ID cards, visiting cards, keychains & personalized gifts online from Graphic Wala. Premium quality printing with All India home delivery." />
+        <link rel="canonical" href="https://graphicwala.com/" />
+        <meta property="og:title" content="Graphic Wala | Custom Photo Frames & Personalized Gifts Online India" />
+        <meta property="og:description" content="Buy custom photo frames, PVC cards, keychains & personalized gifts online. Premium quality with All India home delivery." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://graphicwala.com/" />
+        <meta property="og:image" content="https://graphicwala.com/og-square.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Graphic Wala | Custom Photo Frames Online India" />
+        <meta name="twitter:description" content="Buy custom photo frames, PVC cards, keychains online. All India delivery." />
+        <meta name="twitter:image" content="https://graphicwala.com/og-square.png" />
+      </Helmet>
       {/* Announcement Banner - Top of page */}
       <AnnouncementBanner />
       
@@ -340,13 +355,26 @@ const Index = () => {
 
         {/* SEO Footer Content */}
         <section className="sr-only" aria-label="About Graphic Wala Store">
-          <h2>Graphic Wala Store - Custom Printing Services Across India</h2>
+          <h2>Graphic Wala - Custom Photo Frames, PVC Cards & Personalized Gifts Online India</h2>
           <p>
-            Graphic Wala Store is India's trusted online store for custom printing and personalized gifts. 
-            We specialize in photo frame printing, PVC card printing, ID card printing, visiting card printing, 
-            and keychain printing with premium quality materials. All orders are prepaid with home delivery 
-            available across India. Contact us on WhatsApp at +91 6207142994 for support.
+            Graphic Wala is India's trusted online store for custom printing and personalized gifts. 
+            We specialize in custom photo frame printing, acrylic photo frames, wooden photo frames, couple photo frames,
+            family photo frames, birthday gift photo frames, anniversary photo frames, PVC card printing, 
+            ID card printing, visiting card printing, name keychain printing, photo keychain printing
+            with premium quality materials. All orders are prepaid with home delivery 
+            available across India. Buy photo frames online at best prices. Contact us on WhatsApp at +91 6207142994 for support.
           </p>
+          <h3>Popular Products</h3>
+          <ul>
+            <li>Custom Photo Frames - Personalized with your photos</li>
+            <li>Acrylic Photo Frames - Premium quality acrylic prints</li>
+            <li>Wooden Photo Frames - Classic wooden frames with photo print</li>
+            <li>PVC Cards - Custom printed ID cards, membership cards</li>
+            <li>Visiting Cards - Professional business cards</li>
+            <li>Keychains - Name keychains, photo keychains, custom keychains</li>
+            <li>Couple Photo Frames - Perfect gift for couples</li>
+            <li>Birthday Gift Photo Frames - Personalized birthday gifts</li>
+          </ul>
         </section>
       </main>
 

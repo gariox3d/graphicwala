@@ -69,11 +69,26 @@ const Products = () => {
     : products;
 
   const pageTitle = selectedCategory 
-    ? `${selectedCategory} - Buy Online | Graphic Wala`
-    : 'All Products - Photo Frames, PVC Cards, Keychains | Graphic Wala';
+    ? `${selectedCategory} - Buy Online | Graphic Wala India`
+    : 'Custom Photo Frames, PVC Cards, Keychains & More | Graphic Wala';
   const pageDescription = selectedCategory
-    ? `Buy ${selectedCategory} online from Graphic Wala. Premium quality with home delivery across Bihar.`
-    : 'Browse all custom printing products - photo frames, PVC cards, ID cards, visiting cards, keychains. Order online with home delivery across Bihar.';
+    ? `Buy ${selectedCategory} online from Graphic Wala. Premium quality custom printing with All India home delivery. Order now!`
+    : 'Buy custom photo frames, PVC cards, ID cards, visiting cards, keychains & personalized gifts online. Premium quality with All India home delivery.';
+
+  // ItemList JSON-LD for product listing
+  const itemListJsonLd = !loading && filteredProducts.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": selectedCategory || "All Products",
+    "numberOfItems": filteredProducts.length,
+    "itemListElement": filteredProducts.slice(0, 20).map((p, i) => ({
+      "@type": "ListItem",
+      "position": i + 1,
+      "url": `https://graphicwala.com/product/${p.id}`,
+      "name": p.name,
+      "image": p.image_url || undefined
+    }))
+  } : null;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -85,6 +100,13 @@ const Products = () => {
         <meta property="og:description" content={pageDescription} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://graphicwala.com/products" />
+        <meta property="og:image" content="https://graphicwala.com/og-square.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={pageTitle} />
+        <meta name="twitter:description" content={pageDescription} />
+        {itemListJsonLd && (
+          <script type="application/ld+json">{JSON.stringify(itemListJsonLd)}</script>
+        )}
       </Helmet>
       <Header />
       <main className="flex-1 py-8" ref={productsRef}>

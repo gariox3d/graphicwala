@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Mail, Phone, MapPin } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
@@ -9,6 +10,27 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
+const contactJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  "name": "Contact Graphic Wala",
+  "url": "https://graphicwala.com/contact",
+  "mainEntity": {
+    "@type": "LocalBusiness",
+    "name": "Graphic Wala",
+    "telephone": "+916207142994",
+    "email": "graphicwalaktr@gmail.com",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Nasirganj, Sabji Mandi, Near Sarfaraz Art",
+      "addressLocality": "Katihar",
+      "addressRegion": "Bihar",
+      "postalCode": "854105",
+      "addressCountry": "IN"
+    }
+  }
+};
+
 const Contact = () => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -18,7 +40,6 @@ const Contact = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 24-hour rate limit check
     const lastSent = localStorage.getItem('contact_last_sent');
     if (lastSent) {
       const hoursSince = (Date.now() - Number(lastSent)) / (1000 * 60 * 60);
@@ -62,6 +83,19 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>Contact Graphic Wala | Custom Printing Store India | WhatsApp Support</title>
+        <meta name="description" content="Contact Graphic Wala for custom photo frames, PVC cards, keychains & printing queries. WhatsApp: +91 6207142994. Located in Katihar, Bihar. All India delivery support." />
+        <link rel="canonical" href="https://graphicwala.com/contact" />
+        <meta property="og:title" content="Contact Graphic Wala | Custom Printing Support" />
+        <meta property="og:description" content="Get in touch with Graphic Wala for custom printing queries. WhatsApp & phone support available." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://graphicwala.com/contact" />
+        <meta property="og:image" content="https://graphicwala.com/og-square.png" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="Contact Graphic Wala | Custom Printing Support" />
+        <script type="application/ld+json">{JSON.stringify(contactJsonLd)}</script>
+      </Helmet>
       <Header />
       <main className="flex-1 py-16">
         <div className="container">

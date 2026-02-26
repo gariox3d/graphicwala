@@ -3,7 +3,14 @@
 
 User-agent: Googlebot
 Allow: /
+Allow: /product/
+Allow: /products
+Allow: /about
+Allow: /contact
 Crawl-delay: 1
+
+User-agent: Googlebot-Image
+Allow: /
 
 User-agent: Bingbot
 Allow: /
@@ -26,3 +33,4 @@ Disallow: /auth
 Disallow: /dashboard
 Disallow: /checkout
 Disallow: /cart
+Disallow: /order-confirmation

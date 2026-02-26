@@ -40,7 +40,8 @@ serve(async (req) => {
 
     let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
 `;
 
     // Add static pages
@@ -52,6 +53,25 @@ serve(async (req) => {
     <priority>${page.priority}</priority>
   </url>
 `;
+    }
+
+
+    // Add category pages
+    if (categories) {
+      for (const cat of categories) {
+        const catImage = cat.image_url ? `    <image:image>
+      <image:loc>${escapeXml(cat.image_url)}</image:loc>
+      <image:title>${escapeXml(cat.name)} - Buy Online from Graphic Wala</image:title>
+    </image:image>
+` : '';
+        xml += `  <url>
+    <loc>${SITE_URL}/products?category=${encodeURIComponent(cat.name)}</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+${catImage}  </url>
+`;
+      }
     }
 
     // Add product pages with images

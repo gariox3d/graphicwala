@@ -92,7 +92,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           <>
             <img
               src={primaryImage}
-              alt={product.name}
+              alt={`${product.name} - Buy Online from Graphic Wala | Custom Printing India`}
               className={cn(
                 "w-full h-full object-cover transition-all duration-500 absolute inset-0",
                 isHovered && secondaryImage ? "opacity-0 scale-105" : "opacity-100"
@@ -102,7 +102,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
             {secondaryImage && (
               <img
                 src={secondaryImage}
-                alt={`${product.name} - alternate view`}
+                alt={`${product.name} - Alternate View | Graphic Wala`}
                 className={cn(
                   "w-full h-full object-cover transition-all duration-500 absolute inset-0",
                   isHovered ? "opacity-100 scale-100" : "opacity-0 scale-95"

@@ -203,13 +203,16 @@ const ProductDetail = () => {
   }
 
   // Generate SEO-friendly meta data
-  const productTitle = `${product.name} | ${BUSINESS_NAME}`;
+  const productTitle = `${product.name} - Buy Online | ${BUSINESS_NAME}`;
   const productDescription = product.description 
-    ? `${product.description.slice(0, 140)}${product.description.length > 140 ? '...' : ''} Delivered across Bihar. Prepaid only.`
-    : `Order ${product.name} from Graphic Wala. Premium quality with home delivery across Bihar. Prepaid orders only.`;
+    ? `${product.description.slice(0, 120)} | Buy ${product.name} online from Graphic Wala. Premium quality, All India delivery.`
+    : `Buy ${product.name} online from Graphic Wala. Premium quality custom printing with All India home delivery. Order now!`;
   const productUrl = `${SITE_URL}/product/${product.id}`;
-  const shareUrl = `${SHARE_BASE_URL}/${product.id}`; // Use share URL for social previews
-  const productImage = product.image_url || DEFAULT_OG_IMAGE;
+  const shareUrl = `${SHARE_BASE_URL}/${product.id}`;
+  const allImages = product.image_urls && product.image_urls.length > 0 
+    ? product.image_urls 
+    : product.image_url ? [product.image_url] : [DEFAULT_OG_IMAGE];
+  const productImage = allImages[0];
   const categoryName = product.categories?.name || 'Custom Products';
 
   // Generate JSON-LD structured data for the product
@@ -217,9 +220,10 @@ const ProductDetail = () => {
     "@context": "https://schema.org",
     "@type": "Product",
     "name": product.name,
-    "description": product.description || `Custom ${product.name} from Graphic Wala`,
-    "image": productImage,
+    "description": product.description || `Custom ${product.name} from Graphic Wala - Buy Online`,
+    "image": allImages,
     "url": productUrl,
+    "sku": product.id,
     "brand": {
       "@type": "Brand",
       "name": BUSINESS_NAME
@@ -227,7 +231,7 @@ const ProductDetail = () => {
     "category": categoryName,
     "offers": {
       "@type": "Offer",
-      "price": product.price,
+      "price": product.sale_price && product.sale_end && new Date(product.sale_end) > new Date() ? product.sale_price : product.price,
       "priceCurrency": "INR",
       "availability": product.stock_quantity > 0 
         ? "https://schema.org/InStock" 
@@ -240,11 +244,23 @@ const ProductDetail = () => {
         "@type": "OfferShippingDetails",
         "shippingDestination": {
           "@type": "DefinedRegion",
-          "addressRegion": "Bihar",
           "addressCountry": "IN"
         }
-      }
+      },
+      "url": productUrl
     }
+  };
+
+  // BreadcrumbList JSON-LD
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE_URL },
+      { "@type": "ListItem", "position": 2, "name": "Products", "item": `${SITE_URL}/products` },
+      ...(product.categories ? [{ "@type": "ListItem", "position": 3, "name": categoryName, "item": `${SITE_URL}/products?category=${encodeURIComponent(categoryName)}` }] : []),
+      { "@type": "ListItem", "position": product.categories ? 4 : 3, "name": product.name, "item": productUrl }
+    ]
   };
 
   return (
@@ -288,6 +304,9 @@ const ProductDetail = () => {
         {/* JSON-LD Structured Data */}
         <script type="application/ld+json">
           {JSON.stringify(productJsonLd)}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify(breadcrumbJsonLd)}
         </script>
       </Helmet>
 
