@@ -1,7 +1,7 @@
 import { Instagram, ExternalLink, Heart, MessageCircle as CommentIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const INSTAGRAM_HANDLE = 'graphicwala_official';
+const INSTAGRAM_HANDLE = 'graphicwala.shop';
 const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE}`;
 
 const posts = [
