@@ -1,0 +1,86 @@
+import { useEffect, useState } from "react";
+
+const SplashScreen = ({ onFinish }: { onFinish: () => void }) => {
+  const [phase, setPhase] = useState<"enter" | "hold" | "exit">("enter");
+
+  useEffect(() => {
+    const holdTimer = setTimeout(() => setPhase("hold"), 100);
+    const exitTimer = setTimeout(() => setPhase("exit"), 1800);
+    const doneTimer = setTimeout(onFinish, 2400);
+    return () => {
+      clearTimeout(holdTimer);
+      clearTimeout(exitTimer);
+      clearTimeout(doneTimer);
+    };
+  }, [onFinish]);
+
+  return (
+    <div
+      className={`fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[hsl(0,84%,50%)] transition-opacity duration-500 ${
+        phase === "exit" ? "opacity-0 scale-105" : "opacity-100 scale-100"
+      }`}
+      style={{ transition: "opacity 0.5s ease, transform 0.5s ease" }}
+    >
+      {/* Pulsing ring */}
+      <div className="relative flex items-center justify-center">
+        <div
+          className={`absolute w-40 h-40 rounded-full border-4 border-white/30 ${
+            phase !== "exit" ? "animate-ping" : ""
+          }`}
+          style={{ animationDuration: "1.5s" }}
+        />
+        <div
+          className={`absolute w-48 h-48 rounded-full border-2 border-white/10 ${
+            phase !== "exit" ? "animate-ping" : ""
+          }`}
+          style={{ animationDuration: "2s", animationDelay: "0.3s" }}
+        />
+
+        {/* Logo */}
+        <img
+          src="/images/logo-circle.png"
+          alt="Graphic Wala"
+          className={`w-32 h-32 rounded-full object-cover shadow-2xl transition-all duration-700 ${
+            phase === "enter"
+              ? "scale-0 rotate-[-180deg] opacity-0"
+              : "scale-100 rotate-0 opacity-100"
+          }`}
+          style={{ transitionTimingFunction: "cubic-bezier(0.34, 1.56, 0.64, 1)" }}
+        />
+      </div>
+
+      {/* Tagline */}
+      <p
+        className={`mt-8 text-white/90 text-sm font-outfit tracking-[0.3em] uppercase transition-all duration-500 delay-300 ${
+          phase === "enter" ? "opacity-0 translate-y-4" : phase === "exit" ? "opacity-0 -translate-y-2" : "opacity-100 translate-y-0"
+        }`}
+      >
+        डिज़ाइन की नई पहचान
+      </p>
+
+      {/* Loading dots */}
+      <div className="mt-6 flex gap-2">
+        {[0, 1, 2].map((i) => (
+          <div
+            key={i}
+            className="w-2 h-2 rounded-full bg-white/80"
+            style={{
+              animation: phase !== "exit" ? "splash-bounce 1s ease-in-out infinite" : "none",
+              animationDelay: `${i * 0.15}s`,
+              opacity: phase === "exit" ? 0 : undefined,
+            }}
+          />
+        ))}
+      </div>
+
+      <style>{`
+        @keyframes splash-bounce {
+          0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+          40% { transform: scale(1.2); opacity: 1; }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default SplashScreen;
