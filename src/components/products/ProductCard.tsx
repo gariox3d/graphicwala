@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Zap } from 'lucide-react';
+import { ShoppingCart, Zap, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Product, UploadField } from '@/lib/types';
 import FlashSaleBadge from './FlashSaleBadge';
@@ -207,6 +207,16 @@ const ProductCard = ({ product }: ProductCardProps) => {
               Buy
             </Button>
           </div>
+          <a
+            href={`https://wa.me/916207142994?text=${encodeURIComponent(`Hi, I want to get "${product.name}" photo edited/designed professionally. Please help!`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-1.5 text-xs font-semibold text-green-700 bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg py-1.5 px-2 transition-colors"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <MessageCircle className="h-3.5 w-3.5" />
+            📸 Photo Edit Karwayein – WhatsApp Karein
+          </a>
         </div>
       </div>
     </div>
