@@ -54,24 +54,21 @@ const AdminStorage = () => {
   const [selectedFiles, setSelectedFiles] = useState<Set<string>>(new Set());
   const [bucketCounts, setBucketCounts] = useState<Record<string, number>>({});
   const [bucketSizes, setBucketSizes] = useState<Record<string, number>>({});
-  const [signedPreviewUrls, setSignedPreviewUrls] = useState<Record<string, string>>({});
 
-  const listAllFiles = async (bucketId: string, folder: string = ''): Promise<{ name: string; id: string; created_at: string; metadata: Record<string, any> | null; fullPath: string }[]> => {
+  const listAllFiles = async (bucketId: string, folder: string = ''): Promise<StorageFile[]> => {
     const { data, error } = await supabase.storage.from(bucketId).list(folder, {
       limit: 500,
       sortBy: { column: 'created_at', order: 'desc' },
     });
     if (error || !data) return [];
     
-    const results: { name: string; id: string; created_at: string; metadata: Record<string, any> | null; fullPath: string }[] = [];
+    const results: StorageFile[] = [];
     
     for (const item of data) {
       if (item.name === '.emptyFolderPlaceholder') continue;
       const fullPath = folder ? `${folder}/${item.name}` : item.name;
       
-      // Supabase folders have id = null, files always have an id
       if (!item.id) {
-        // It's a folder — recurse into it
         const subFiles = await listAllFiles(bucketId, fullPath);
         results.push(...subFiles);
       } else {
@@ -84,37 +81,13 @@ const AdminStorage = () => {
   const fetchFiles = async (bucketId: string) => {
     setLoading(true);
     setSelectedFiles(new Set());
-    setSignedPreviewUrls({});
 
     try {
       const allFiles = await listAllFiles(bucketId);
-      setFiles(allFiles as any);
-
-      const imagePaths = allFiles
-        .filter((file) => isImageFile(file.name, file.metadata?.mimetype))
-        .map((file) => file.fullPath);
-
-      if (imagePaths.length > 0) {
-        const previewMap: Record<string, string> = {};
-        const batchSize = 100;
-
-        for (let i = 0; i < imagePaths.length; i += batchSize) {
-          const batch = imagePaths.slice(i, i + batchSize);
-          const { data } = await supabase.storage.from(bucketId).createSignedUrls(batch, 60 * 60);
-
-          data?.forEach((entry, index) => {
-            if (entry?.signedUrl) {
-              previewMap[batch[index]] = entry.signedUrl;
-            }
-          });
-        }
-
-        setSignedPreviewUrls(previewMap);
-      }
+      setFiles(allFiles);
     } catch (err: any) {
       toast.error('Files load nahi ho paye: ' + err.message);
       setFiles([]);
-      setSignedPreviewUrls({});
     } finally {
       setLoading(false);
     }
@@ -182,13 +155,9 @@ const AdminStorage = () => {
     }
   };
 
-  const getPublicUrl = (filePath: string) => {
-    const { data } = supabase.storage.from(activeBucket).getPublicUrl(filePath);
+  const getPublicUrl = (filePath: string, bucket?: string) => {
+    const { data } = supabase.storage.from(bucket || activeBucket).getPublicUrl(filePath);
     return data.publicUrl;
-  };
-
-  const getFilePreviewUrl = (file: StorageFile) => {
-    return signedPreviewUrls[file.fullPath] || getPublicUrl(file.fullPath);
   };
 
   const totalSize = files.reduce((sum, f) => sum + (f.metadata?.size || 0), 0);
@@ -299,7 +268,7 @@ const AdminStorage = () => {
                       {files.map((file) => {
                         const isImage = isImageFile(file.name, file.metadata?.mimetype);
                         const isSelected = selectedFiles.has(file.fullPath);
-                        const previewUrl = getFilePreviewUrl(file);
+                        const previewUrl = getPublicUrl(file.fullPath);
 
                         return (
                           <div
@@ -324,12 +293,6 @@ const AdminStorage = () => {
                                   alt={file.name}
                                   className="w-full h-full object-cover"
                                   loading="lazy"
-                                  onError={(e) => {
-                                    const fallback = getPublicUrl(file.fullPath);
-                                    if (e.currentTarget.src !== fallback) {
-                                      e.currentTarget.src = fallback;
-                                    }
-                                  }}
                                 />
                               ) : (
                                 <div className="text-center p-2">

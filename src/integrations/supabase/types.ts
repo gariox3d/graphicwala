@@ -1109,7 +1109,10 @@ export type Database = {
           email: string
           full_name: string
           last_upload_at: string
+          latest_product_id: string
+          latest_product_name: string
           phone: string
+          uploaded_products: string
           user_id: string
         }[]
       }
