@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sofiya & Wasid - Wedding Invitation</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom Styles -->
+    <style>
+        body {
+            font-family: 'Playfair Display', serif;
+            overflow-x: hidden;
+            background-color: #fff0f5; /* Lavender Blush */
+        }
+        .font-great-vibes {
+            font-family: 'Great Vibes', cursive;
+        }
+        
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #ffe4e6;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ec4899;
+            border-radius: 4px;
+        }
+
+        /* Pulse Animation for Heart */
+        @keyframes heartPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        .animate-heart {
+            animation: heartPulse 1.5s infinite;
+        }
+
+        /* Rotating Flower Animation */
+        @keyframes rotate-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-rotate-slow {
+            animation: rotate-slow 20s linear infinite;
+        }
+
+        /* Falling Petals Animation */
+        .petal {
+            position: fixed;
+            top: -10%;
+            z-index: 0; /* Behind content */
+            user-select: none;
+            pointer-events: none;
+            animation-name: fall;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+        }
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg) translateX(0); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(360deg) translateX(50px); opacity: 0; }
+        }
+
+        /* Glassmorphism Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Decorative Corners */
+        .corner-flower {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            pointer-events: none;
+            opacity: 0.6;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Petal Container -->
+    <div id="petals-container"></div>
+
+    <!-- Audio Element -->
+    <audio id="bgMusic" loop>
+        <source src="https://www.graphicwala.com/assets_mp3_helo.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- POPUP SECTION (Entry) -->
+    <div id="popup" class="fixed inset-0 bg-pink-50 flex items-center justify-center z-50 p-4 transition-all duration-1000 ease-in-out">
+        <div class="bg-white/90 backdrop-blur-sm p-8 rounded-[3rem] shadow-2xl max-w-md w-full text-center border-4 border-pink-200 relative overflow-hidden transform transition-transform duration-500 hover:scale-105">
+            <!-- Decorative corner inside popup -->
+            <div class="absolute top-[-20px] left-[-20px] text-pink-200 text-6xl opacity-50"><i class="fas fa-certificate animate-rotate-slow"></i></div>
+            <div class="absolute bottom-[-20px] right-[-20px] text-pink-200 text-6xl opacity-50"><i class="fas fa-certificate animate-rotate-slow"></i></div>
+
+            <div class="mb-6 flex justify-center">
+                <div class="relative">
+                    <i class="fas fa-heart text-pink-500 text-6xl animate-heart drop-shadow-lg"></i>
+                    <i class="fas fa-heart text-pink-300 text-3xl absolute -top-2 -right-4 animate-bounce"></i>
+                </div>
+            </div>
+            <h2 class="text-4xl font-bold text-gray-800 mb-2 font-great-vibes text-shadow-sm">Wedding Invitation</h2>
+            <p class="text-gray-600 mb-8 font-serif italic">Sofiya & Wasid</p>
+            
+            <div class="mb-6 group">
+                <input
+                    type="text"
+                    id="guestNameInput"
+                    class="w-full bg-pink-50 border-2 border-pink-100 rounded-full py-3 px-6 text-center text-gray-700 leading-tight focus:outline-none focus:border-pink-400 focus:bg-white transition-all duration-300 shadow-inner"
+                    placeholder="Enter Your Name..."
+                />
+            </div>
+            
+            <button
+                onclick="enterWebsite()"
+                class="w-full bg-gradient-to-r from-pink-400 to-pink-600 hover:from-pink-500 hover:to-pink-700 text-white font-bold py-3 px-6 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center gap-2"
+            >
+                <span>Open Invitation</span> <i class="fas fa-envelope-open-text"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN WEBSITE CONTENT (Hidden initially) -->
+    <div id="mainContent" class="hidden opacity-0 transition-opacity duration-1000 overflow-hidden">
+        
+        <!-- Music Toggle Button -->
+        <button onclick="toggleMusic()" class="fixed bottom-6 right-6 z-50 bg-white/90 backdrop-blur-md p-4 rounded-full shadow-2xl border-2 border-pink-300 text-pink-600 hover:bg-pink-50 transition-all duration-300 hover:scale-110 group">
+            <span class="absolute -top-1 -right-1 flex h-3 w-3">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-3 w-3 bg-pink-500"></span>
+            </span>
+            <i id="musicIcon" class="fas fa-volume-up text-xl group-hover:animate-pulse"></i>
+        </button>
+
+        <!-- Hero Header -->
+        <header class="relative min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden">
+            <!-- Background Image with Overlay -->
+            <div class="absolute inset-0 z-[-1]">
+                <img src="https://images.unsplash.com/photo-1519225421980-715cb0202128?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" alt="Background" class="w-full h-full object-cover opacity-30 fixed top-0 left-0">
+                <div class="absolute inset-0 bg-gradient-to-b from-pink-50/90 via-white/60 to-pink-50/90"></div>
+            </div>
+
+            <!-- Floating Floral Elements -->
+            <div class="absolute top-0 left-0 text-pink-200 opacity-60 text-9xl animate-rotate-slow z-0 transform -translate-x-1/2 -translate-y-1/2"><i class="fas fa-certificate"></i></div>
+            <div class="absolute bottom-0 right-0 text-pink-200 opacity-60 text-9xl animate-rotate-slow z-0 transform translate-x-1/2 translate-y-1/2"><i class="fas fa-certificate"></i></div>
+            
+            <div class="relative z-10 w-full max-w-4xl mx-auto py-12">
+                
+                <div data-aos="fade-down" data-aos-duration="1500" class="mb-8">
+                   
+                    <p class="text-xl md:text-2xl text-gray-700 italic font-serif">In the Name of "Allah" the Most Beneficent & Merciful</p>
+                </div>
+
+                <div data-aos="zoom-in" data-aos-duration="2000" class="glass-card rounded-xl p-6 mb-8 inline-block mx-auto border-t-4 border-pink-400">
+                    <p class="text-lg md:text-xl text-gray-700 font-bold mb-1">Mrs. & Mr. Md. Zakir</p>
+                    <p class="text-sm text-gray-500">Request the pleasure of your presence</p>
+                </div>
+
+                <div class="relative py-8">
+                    <h1 data-aos="fade-right" data-aos-duration="2000" class="text-7xl md:text-9xl text-pink-600 font-great-vibes drop-shadow-md hover:scale-105 transition-transform duration-500 cursor-default">
+                        Sofiya Parween
+                    </h1>
+                    
+                    <div data-aos="zoom-in" data-aos-delay="500" class="my-4 flex items-center justify-center gap-4">
+                        <div class="h-[1px] w-12 bg-gray-400"></div>
+                        <div class="w-12 h-12 rounded-full border-2 border-pink-400 flex items-center justify-center bg-white shadow-md z-10">
+                            <i class="fas fa-heart text-pink-500 text-xl animate-pulse"></i>
+                        </div>
+                        <div class="h-[1px] w-12 bg-gray-400"></div>
+                    </div>
+
+                    <h1 data-aos="fade-left" data-aos-duration="2000" class="text-7xl md:text-9xl text-pink-600 font-great-vibes drop-shadow-md hover:scale-105 transition-transform duration-500 cursor-default">
+                        Md. Wasid
+                    </h1>
+                </div>
+
+                <!-- Personalized Welcome -->
+                <div data-aos="fade-up" data-aos-delay="1000" data-aos-duration="1500" class="mt-12">
+                    <div class="bg-white/80 backdrop-blur-md py-6 px-10 rounded-[2rem] shadow-xl inline-block border border-pink-100 transform hover:translate-y-[-5px] transition-all duration-300">
+                        <p class="text-pink-500 text-sm font-bold uppercase tracking-[0.2em] mb-2">Special Invitation For</p>
+                        <p id="displayGuestName" class="text-4xl text-gray-800 font-playfair font-bold capitalize bg-clip-text text-transparent bg-gradient-to-r from-pink-600 to-purple-600">Guest</p>
+						
+						
+						<p style="font-size:28px;font-weight:bold;text-align:center;background:linear-gradient(to right,#db2777,#9333ea);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:updown 1.2s infinite alternate;">⬇ Scroll Down ⬇</p><style>@keyframes updown{from{transform:translateY(0)}to{transform:translateY(8px)}}</style>
+
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Quote Section -->
+        <section class="py-20 px-4 relative">
+            <div class="max-w-3xl mx-auto text-center" data-aos="zoom-in-up" data-aos-duration="1500">
+                <i class="fas fa-quote-left text-4xl text-pink-200 mb-6 block"></i>
+                <p class="text-3xl md:text-5xl text-gray-700 font-great-vibes mb-6 leading-relaxed">
+                    "And He created mates for you from yourselves."
+                </p>
+                <p class="text-gray-500 font-serif tracking-widest uppercase text-sm">— Surah An-Nur (24:32)</p>
+                <div class="w-24 h-1 bg-gradient-to-r from-transparent via-pink-400 to-transparent mx-auto mt-8"></div>
+            </div>
+        </section>
+
+        <!-- Countdown Section -->
+        <section class="py-16 bg-gradient-to-r from-pink-500 to-pink-600 text-white relative overflow-hidden shadow-inner">
+            <!-- Decorative Patterns -->
+            <div class="absolute top-0 left-0 w-full h-full opacity-10" style="background-image: url('https://www.transparenttextures.com/patterns/cubes.png');"></div>
+            
+            <div class="max-w-4xl mx-auto text-center relative z-10">
+                <h2 data-aos="fade-down" class="text-4xl font-playfair mb-10">Save The Date</h2>
+                <div id="countdown" class="flex flex-wrap justify-center gap-6">
+                    <!-- Countdown items injected by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Events Timeline -->
+        <section class="py-24 px-4 max-w-6xl mx-auto relative">
+            <h2 data-aos="fade-up" class="text-5xl md:text-6xl text-center text-pink-600 font-great-vibes mb-20 drop-shadow-sm">Wedding Ceremonies</h2>
+            
+            <div class="space-y-16 relative">
+                <!-- Vertical Line -->
+                <div class="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-pink-200 -translate-x-1/2 z-0"></div>
+
+                <!-- Event 1 -->
+                <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8 group">
+                    <div class="md:w-5/12 text-center md:text-right order-2 md:order-1" data-aos="fade-right" data-aos-duration="1200">
+                        <div class="glass-card p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform group-hover:-translate-y-2 border-l-4 border-pink-400">
+                            <h3 class="text-2xl font-bold text-pink-600 mb-2">Quran Khawani & Milad</h3>
+                            <p class="text-gray-600 mb-4 font-semibold">Friday, 27th March 2026</p>
+                            <div class="flex items-center justify-center md:justify-end gap-2 text-gray-500">
+                                <i class="far fa-clock text-pink-400"></i> <span>07:00 AM</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-12 h-12 bg-pink-500 rounded-full border-4 border-white shadow-lg flex items-center justify-center text-white z-10 order-1 md:order-2 shrink-0 animate-bounce">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="md:w-5/12 text-center md:text-left order-3 md:order-3" data-aos="fade-left" data-aos-duration="1200" data-aos-delay="200">
+                         <div class="glass-card p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform group-hover:-translate-y-2 border-r-4 border-yellow-400">
+                            <h3 class="text-2xl font-bold text-yellow-600 mb-2">Rasm-e-Haldi</h3>
+                            <p class="text-gray-600 mb-4 font-semibold">Friday, 27th March 2026</p>
+                            <div class="flex items-center justify-center md:justify-start gap-2 text-gray-500">
+                                <i class="far fa-clock text-yellow-400"></i> <span>04:00 PM</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event 2 (Main) -->
+                <div class="relative z-10 flex flex-col items-center justify-center gap-8">
+                    <div class="w-full max-w-3xl glass-card rounded-3xl overflow-hidden shadow-2xl border-t-8 border-pink-600 transform transition-transform duration-500 hover:scale-[1.02]" data-aos="zoom-in-up" data-aos-duration="1500">
+                        <div class="bg-gradient-to-r from-pink-600 to-purple-600 text-white p-6 text-center relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-full h-full opacity-20 bg-[url('https://www.transparenttextures.com/patterns/diamond-upholstery.png')]"></div>
+                            <h3 class="text-3xl font-playfair font-bold relative z-10">The Big Day</h3>
+                            <p class="text-pink-100 relative z-10">Sunday, 29th March 2026</p>
+                        </div>
+                        <div class="p-8 md:p-12 grid md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-pink-100">
+                            <div class="group">
+                                <div class="w-16 h-16 mx-auto bg-pink-50 text-pink-500 rounded-full flex items-center justify-center mb-4 shadow-inner group-hover:bg-pink-500 group-hover:text-white transition-colors duration-300">
+                                    <i class="fas fa-utensils text-2xl"></i>
+                                </div>
+                                <h4 class="font-bold text-lg mb-1">Dawat-e-Taam</h4>
+                                <p class="text-sm text-gray-500">07:00 PM Onwards</p>
+                            </div>
+                            <div class="group">
+                                <div class="w-16 h-16 mx-auto bg-pink-50 text-pink-500 rounded-full flex items-center justify-center mb-4 shadow-inner group-hover:bg-pink-500 group-hover:text-white transition-colors duration-300">
+                                    <i class="fas fa-music text-2xl"></i>
+                                </div>
+                                <h4 class="font-bold text-lg mb-1">Arrival of Barat</h4>
+                                <p class="text-sm text-gray-500">09:00 PM</p>
+                            </div>
+                            <div class="group">
+                                <div class="w-16 h-16 mx-auto bg-pink-50 text-pink-500 rounded-full flex items-center justify-center mb-4 shadow-inner group-hover:bg-pink-500 group-hover:text-white transition-colors duration-300">
+                                    <i class="fas fa-heart text-2xl animate-heart"></i>
+                                </div>
+                                <h4 class="font-bold text-lg mb-1">Nikah</h4>
+                                <p class="text-sm text-gray-500">10:00 PM</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event 3 -->
+                <div class="relative z-10 flex flex-col md:flex-row items-center justify-center gap-8">
+                     <div class="md:w-6/12" data-aos="fade-up" data-aos-duration="1200">
+                        <div class="glass-card p-8 rounded-2xl shadow-lg text-center hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border-b-4 border-blue-400">
+                            <div class="w-14 h-14 bg-blue-50 text-blue-500 rounded-full mx-auto flex items-center justify-center mb-4">
+                                <i class="fas fa-car-side text-2xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-blue-600 mb-2">Rukhsati</h3>
+                            <p class="text-gray-600 mb-2 font-semibold">Monday, 30th March 2026</p>
+                            <p class="text-gray-500"><i class="far fa-clock mr-1"></i> 07:00 AM</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Venue Section -->
+        <section class="py-20 px-4">
+            <div class="max-w-4xl mx-auto glass-card p-10 rounded-[3rem] shadow-2xl text-center relative overflow-hidden" data-aos="flip-up" data-aos-duration="1500">
+                <div class="absolute -left-10 -top-10 w-40 h-40 bg-pink-200 rounded-full blur-3xl opacity-50"></div>
+                <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-purple-200 rounded-full blur-3xl opacity-50"></div>
+                
+                <div class="relative z-10">
+                    <div class="inline-block p-4 rounded-full bg-pink-50 mb-6 animate-bounce">
+                        <i class="fas fa-map-marked-alt text-5xl text-pink-500"></i>
+                    </div>
+                    <h2 class="text-4xl font-bold text-gray-800 mb-2 font-playfair">Venue</h2>
+                    <h3 class="text-3xl text-pink-600 font-bold mb-4 font-great-vibes">Zubaida Banquet</h3>
+                    <p class="text-gray-600 text-xl mb-8">Choudhary Mohalla, Katihar</p>
+                    
+                    <a 
+                        href="https://www.google.com/maps/search/?api=1&query=Zubaida+Banquet+Katihar" 
+                        target="_blank"
+                        class="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-900 text-white px-8 py-4 rounded-full transition-all duration-300 transform hover:scale-110 shadow-xl"
+                    >
+                        <span>Navigate Location</span> <i class="fas fa-location-arrow"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Kids Message -->
+        <section class="py-16 px-4 text-center">
+            <div class="max-w-2xl mx-auto bg-yellow-50/80 backdrop-blur-sm border-2 border-yellow-200 p-10 rounded-[2rem] shadow-lg relative overflow-hidden transform hover:rotate-1 transition-transform duration-500" data-aos="zoom-in">
+                <div class="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-yellow-300 via-yellow-400 to-yellow-300"></div>
+                
+                <i class="fas fa-star text-yellow-400 text-4xl mb-4 animate-spin-slow"></i>
+                <h3 class="text-3xl font-bold text-gray-800 mb-6 font-great-vibes">Masoom Guzarish</h3>
+                
+                <p class="text-2xl text-gray-700 italic font-medium leading-relaxed mb-6 font-playfair">
+                    "Meli Aapi Ki Shadi Me Jalool Se Jalool Aana"
+                </p>
+                
+                <div class="flex flex-wrap justify-center gap-2 mt-4">
+                    <span class="px-3 py-1 bg-white rounded-full shadow-sm text-sm text-pink-500 font-bold">Zafrin</span>
+                    <span class="px-3 py-1 bg-white rounded-full shadow-sm text-sm text-pink-500 font-bold">Anam</span>
+                    <span class="px-3 py-1 bg-white rounded-full shadow-sm text-sm text-pink-500 font-bold">Rahnuma</span>
+                    <span class="px-3 py-1 bg-white rounded-full shadow-sm text-sm text-pink-500 font-bold">Mayesha</span>
+                    <span class="px-3 py-1 bg-white rounded-full shadow-sm text-sm text-pink-500 font-bold">Shayema</span>
+                    <span class="px-3 py-1 bg-white rounded-full shadow-sm text-sm text-pink-500 font-bold">Shad Ali</span>
+                    <span class="px-3 py-1 bg-white rounded-full shadow-sm text-sm text-pink-500 font-bold">Alisha</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-gray-900 text-pink-100 pt-16 pb-8 px-4 text-center relative overflow-hidden">
+            <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')] opacity-30"></div>
+            
+            <div class="max-w-5xl mx-auto relative z-10">
+                <div class="grid md:grid-cols-2 gap-12 mb-16 text-left md:text-center">
+                    <div data-aos="fade-right">
+                        <div class="inline-block border-b-2 border-pink-500 pb-2 mb-6">
+                            <h4 class="text-2xl font-bold text-white font-playfair">Groom's Family</h4>
+                        </div>
+                        <p class="text-lg text-gray-300 mb-1">S/o Janab Md. Harun Sb.</p>
+                        <p class="text-gray-400 font-light"><i class="fas fa-home mr-2 text-pink-600"></i> At-Partreli, Dehariya Bhatta, Katihar</p>
+                    </div>
+                    <div class="mb-6">
+                            <p class="text-pink-400 text-xs font-bold uppercase tracking-widest mb-1">With Best Compliments From</p>
+                            <p class="font-bold text-2xl text-white mb-1">Md. Zakir</p>
+                            <p class="text-gray-400 text-sm">At.- Hussainabad, Choudhary Mohalla, Katihar</p>
+                        </div>
+
+                        <div>
+                            <p class="text-pink-400 text-xs font-bold uppercase tracking-widest mb-1">R.S.V.P.</p>
+                            <p class="text-gray-300 text-lg">Md. Sarfraz, Md. Ismail</p>
+                            <p class="text-gray-500 italic mt-2">& All Relatives & Friends</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="pt-8 border-t border-gray-800 flex flex-col items-center gap-3">
+                    <div class="flex items-center gap-2 bg-gray-800 px-6 py-2 rounded-full shadow-inner">
+                        <span class="text-gray-400 text-sm">Designed with</span>
+                        <i class="fas fa-heart text-red-500 animate-pulse"></i>
+                        <span class="text-gray-400 text-sm">by</span>
+                        <span class="font-bold text-white tracking-wide">GraphicWala</span>
+                    </div>
+                    <p class="text-xs text-gray-500">Nasirganj, Katihar | Premium Printing & Designing</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- AOS Animation Script -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <!-- Main Logic -->
+    <script>
+        // --- 1. Animation Initialization ---
+        AOS.init({
+            once: false, // Animation repeats on scroll up/down
+            mirror: true,
+            offset: 100,
+            duration: 1000,
+            easing: 'ease-out-cubic',
+        });
+
+        // --- 2. Falling Petals Effect ---
+        function createPetal() {
+            const petalContainer = document.getElementById('petals-container');
+            const petal = document.createElement('div');
+            petal.classList.add('petal');
+            
+            // Randomize petal look
+            const size = Math.random() * 15 + 10; // 10px to 25px
+            petal.style.width = `${size}px`;
+            petal.style.height = `${size}px`;
+            petal.style.background = Math.random() > 0.5 ? '#fbcfe8' : '#f9a8d4'; // Light pink variants
+            petal.style.borderRadius = `${Math.random() * 100}% ${Math.random() * 100}% 0 100%`;
+            petal.style.opacity = Math.random() * 0.5 + 0.3;
+            
+            // Randomize position and animation
+            petal.style.left = `${Math.random() * 100}vw`;
+            const duration = Math.random() * 5 + 5; // 5s to 10s
+            petal.style.animationDuration = `${duration}s`;
+            petal.style.animationDelay = `${Math.random() * 5}s`;
+            
+            petalContainer.appendChild(petal);
+            
+            // Cleanup
+            setTimeout(() => {
+                petal.remove();
+            }, duration * 1000);
+        }
+
+        // Create petals continuously
+        setInterval(createPetal, 300);
+
+
+        // --- 3. Entry & Music Logic ---
+        const audio = document.getElementById('bgMusic');
+        let isPlaying = false;
+
+        function enterWebsite() {
+            const nameInput = document.getElementById('guestNameInput');
+            const name = nameInput.value.trim();
+
+            if (name) {
+                // Set name
+                document.getElementById('displayGuestName').innerText = name;
+
+                // Hide Popup with animation
+                const popup = document.getElementById('popup');
+                popup.style.transform = 'scale(1.1)';
+                popup.style.opacity = '0';
+                
+                setTimeout(() => {
+                    popup.style.display = 'none';
+                    
+                    // Show Main Content
+                    const mainContent = document.getElementById('mainContent');
+                    mainContent.classList.remove('hidden');
+                    
+                    setTimeout(() => {
+                        mainContent.style.opacity = '1';
+                        AOS.refresh(); // Refresh animations for visible content
+                    }, 100);
+
+                    // Play Audio
+                    playAudio();
+                }, 800);
+            } else {
+                nameInput.classList.add('ring-4', 'ring-red-300', 'animate-pulse');
+                setTimeout(() => nameInput.classList.remove('ring-4', 'ring-red-300', 'animate-pulse'), 500);
+            }
+        }
+
+        // Allow 'Enter' key to submit
+        document.getElementById('guestNameInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                enterWebsite();
+            }
+        });
+
+        function playAudio() {
+            audio.volume = 0.5;
+            audio.play().then(() => {
+                isPlaying = true;
+                updateMusicIcon();
+            }).catch(error => {
+                console.log("Audio auto-play prevented:", error);
+                isPlaying = false;
+                updateMusicIcon();
+            });
+        }
+
+        function toggleMusic() {
+            if (isPlaying) {
+                audio.pause();
+            } else {
+                audio.play();
+            }
+            isPlaying = !isPlaying;
+            updateMusicIcon();
+        }
+
+        function updateMusicIcon() {
+            const icon = document.getElementById('musicIcon');
+            if (isPlaying) {
+                icon.classList.remove('fa-volume-mute');
+                icon.classList.add('fa-volume-up');
+            } else {
+                icon.classList.remove('fa-volume-up');
+                icon.classList.add('fa-volume-mute');
+            }
+        }
+
+        // --- 4. Countdown Logic ---
+        const targetDate = new Date("2026-03-29T22:00:00").getTime();
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const difference = targetDate - now;
+
+            const countdownContainer = document.getElementById('countdown');
+            
+            if (difference < 0) {
+                countdownContainer.innerHTML = '<span class="text-4xl font-bold animate-bounce">Happening Now!</span>';
+                return;
+            }
+
+            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+            const timeBox = (val, label) => `
+                <div class="glass-card rounded-xl p-4 w-24 md:w-28 text-center transform hover:scale-110 transition duration-300 border border-white/40 shadow-lg group">
+                    <div class="text-3xl md:text-4xl font-bold font-playfair mb-1 group-hover:text-pink-200 transition-colors">${val < 10 ? '0' + val : val}</div>
+                    <div class="text-[10px] md:text-xs uppercase tracking-widest opacity-90">${label}</div>
+                </div>
+            `;
+
+            countdownContainer.innerHTML = 
+                timeBox(days, 'Days') +
+                timeBox(hours, 'Hours') +
+                timeBox(minutes, 'Mins') +
+                timeBox(seconds, 'Secs');
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+    </script>
+</body>
+</html>
