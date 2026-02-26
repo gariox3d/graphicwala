@@ -33,6 +33,23 @@ const toProxyUrl = (url: string) => {
   return `${window.location.origin}/api/supabase/${pathWithQuery}`;
 };
 
+const toProxyStorageAssetUrl = (value: string) => {
+  if (typeof window === 'undefined') return value;
+
+  try {
+    const parsed = new URL(value);
+    const isStorageObjectPath = parsed.pathname.startsWith('/storage/v1/object/');
+
+    if (parsed.host !== SUPABASE_HOST || !isStorageObjectPath) {
+      return value;
+    }
+
+    return `${window.location.origin}/api/supabase${parsed.pathname}${parsed.search}`;
+  } catch {
+    return value;
+  }
+};
+
 const withTimeoutSignal = (request: Request, timeoutMs: number) => {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
@@ -93,6 +110,68 @@ const isHtmlResponse = (response: Response) => {
   return contentType.includes('text/html');
 };
 
+const rewriteStorageUrls = (value: unknown): unknown => {
+  if (typeof value === 'string') {
+    return toProxyStorageAssetUrl(value);
+  }
+
+  if (Array.isArray(value)) {
+    let changed = false;
+    const mapped = value.map((item) => {
+      const rewritten = rewriteStorageUrls(item);
+      if (rewritten !== item) changed = true;
+      return rewritten;
+    });
+
+    return changed ? mapped : value;
+  }
+
+  if (value && typeof value === 'object') {
+    const record = value as Record<string, unknown>;
+    let changed = false;
+    const rewrittenRecord: Record<string, unknown> = {};
+
+    for (const [key, entry] of Object.entries(record)) {
+      const rewritten = rewriteStorageUrls(entry);
+      if (rewritten !== entry) changed = true;
+      rewrittenRecord[key] = rewritten;
+    }
+
+    return changed ? rewrittenRecord : value;
+  }
+
+  return value;
+};
+
+const maybeRewriteStorageUrlsInResponse = async (response: Response) => {
+  if (typeof window === 'undefined') return response;
+
+  const contentType = response.headers.get('content-type')?.toLowerCase() || '';
+  if (!contentType.includes('application/json')) return response;
+
+  if (!response.url.includes('/rest/v1/')) return response;
+
+  try {
+    const payload = await response.clone().json();
+    const rewrittenPayload = rewriteStorageUrls(payload);
+
+    if (rewrittenPayload === payload) {
+      return response;
+    }
+
+    const headers = new Headers(response.headers);
+    headers.delete('content-length');
+
+    return new Response(JSON.stringify(rewrittenPayload), {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
+  } catch {
+    return response;
+  }
+};
+
 const tryProxyFetch = async (request: Request) => {
   if (typeof window === 'undefined') {
     return null;
@@ -106,7 +185,7 @@ const tryProxyFetch = async (request: Request) => {
       return null;
     }
 
-    return proxyResponse;
+    return await maybeRewriteStorageUrlsInResponse(proxyResponse);
   } catch {
     return null;
   }
@@ -131,7 +210,7 @@ const resilientFetch: typeof fetch = async (input, init) => {
       throw new Error('Unexpected HTML response from Supabase endpoint');
     }
 
-    return directResponse;
+    return await maybeRewriteStorageUrlsInResponse(directResponse);
   } catch (directError) {
     const proxyFallbackResponse = await tryProxyFetch(request);
     if (proxyFallbackResponse) {
