@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { ShoppingCart, Search, Copy, Check, MessageCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
+import { normalizeIndianPhoneForWhatsApp } from '@/lib/phone';
 
 interface AbandonedCustomer {
   user_id: string;
@@ -110,65 +111,71 @@ const AdminAbandonedCarts = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {filtered.map((c, i) => (
-                      <tr key={c.user_id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
-                        <td className="p-4 text-muted-foreground">{i + 1}</td>
-                        <td className="p-4 font-medium">{c.full_name || '—'}</td>
-                        <td className="p-4">{c.phone || '—'}</td>
-                        <td className="p-4">{c.email || '—'}</td>
-                        <td className="p-4">
-                          <span className="bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 px-2 py-0.5 rounded-full text-xs font-semibold">
-                            {c.cart_items_count} items
-                          </span>
-                        </td>
-                        <td className="p-4 text-muted-foreground text-xs">
-                          {c.last_upload_at ? formatDistanceToNow(new Date(c.last_upload_at), { addSuffix: true }) : '—'}
-                        </td>
-                        <td className="p-4">
-                          <div className="flex gap-2">
-                            {c.phone && (
-                              <>
+                    {filtered.map((c, i) => {
+                      const whatsappPhone = normalizeIndianPhoneForWhatsApp(c.phone);
+
+                      return (
+                        <tr key={c.user_id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
+                          <td className="p-4 text-muted-foreground">{i + 1}</td>
+                          <td className="p-4 font-medium">{c.full_name || '—'}</td>
+                          <td className="p-4">{c.phone || '—'}</td>
+                          <td className="p-4">{c.email || '—'}</td>
+                          <td className="p-4">
+                            <span className="bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 px-2 py-0.5 rounded-full text-xs font-semibold">
+                              {c.cart_items_count} items
+                            </span>
+                          </td>
+                          <td className="p-4 text-muted-foreground text-xs">
+                            {c.last_upload_at ? formatDistanceToNow(new Date(c.last_upload_at), { addSuffix: true }) : '—'}
+                          </td>
+                          <td className="p-4">
+                            <div className="flex gap-2">
+                              {c.phone && (
+                                <>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="h-8 text-xs"
+                                    onClick={() => copy(c.phone, `ph-${c.user_id}`)}
+                                  >
+                                    {copiedIdx === `ph-${c.user_id}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                                    <span className="ml-1">Phone</span>
+                                  </Button>
+                                  {whatsappPhone && (
+                                    <Button
+                                      size="sm"
+                                      variant="default"
+                                      className="h-8 text-xs bg-green-600 hover:bg-green-700"
+                                      asChild
+                                    >
+                                      <a
+                                        href={`https://wa.me/${whatsappPhone}?text=${encodeURIComponent('Hi! Aapne hamare store pe design upload kiya tha. Kya main aapki koi help kar sakta hun? 😊')}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                      >
+                                        <MessageCircle className="h-3 w-3 mr-1" />
+                                        WhatsApp
+                                      </a>
+                                    </Button>
+                                  )}
+                                </>
+                              )}
+                              {c.email && (
                                 <Button
                                   size="sm"
                                   variant="outline"
                                   className="h-8 text-xs"
-                                  onClick={() => copy(c.phone, `ph-${c.user_id}`)}
+                                  onClick={() => copy(c.email, `em-${c.user_id}`)}
                                 >
-                                  {copiedIdx === `ph-${c.user_id}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-                                  <span className="ml-1">Phone</span>
+                                  {copiedIdx === `em-${c.user_id}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                                  <span className="ml-1">Email</span>
                                 </Button>
-                                <Button
-                                  size="sm"
-                                  variant="default"
-                                  className="h-8 text-xs bg-green-600 hover:bg-green-700"
-                                  asChild
-                                >
-                                  <a
-                                    href={`https://wa.me/${c.phone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent('Hi! Aapne hamare store pe design upload kiya tha. Kya main aapki koi help kar sakta hun? 😊')}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                  >
-                                    <MessageCircle className="h-3 w-3 mr-1" />
-                                    WhatsApp
-                                  </a>
-                                </Button>
-                              </>
-                            )}
-                            {c.email && (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="h-8 text-xs"
-                                onClick={() => copy(c.email, `em-${c.user_id}`)}
-                              >
-                                {copiedIdx === `em-${c.user_id}` ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-                                <span className="ml-1">Email</span>
-                              </Button>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>

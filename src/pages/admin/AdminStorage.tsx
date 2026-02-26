@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Trash2, Image, RefreshCw, HardDrive, Download } from 'lucide-react';
+import { Trash2, Image, RefreshCw, HardDrive } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -43,6 +43,10 @@ function formatSize(bytes: number) {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
 }
 
+function isImageFile(name: string, mimetype?: string | null) {
+  return Boolean(mimetype?.startsWith('image/')) || /\.(jpg|jpeg|png|webp|gif|svg|bmp|avif)$/i.test(name);
+}
+
 const AdminStorage = () => {
   const [activeBucket, setActiveBucket] = useState(BUCKETS[0].id);
   const [files, setFiles] = useState<StorageFile[]>([]);
@@ -50,6 +54,7 @@ const AdminStorage = () => {
   const [selectedFiles, setSelectedFiles] = useState<Set<string>>(new Set());
   const [bucketCounts, setBucketCounts] = useState<Record<string, number>>({});
   const [bucketSizes, setBucketSizes] = useState<Record<string, number>>({});
+  const [signedPreviewUrls, setSignedPreviewUrls] = useState<Record<string, string>>({});
 
   const listAllFiles = async (bucketId: string, folder: string = ''): Promise<{ name: string; id: string; created_at: string; metadata: Record<string, any> | null; fullPath: string }[]> => {
     const { data, error } = await supabase.storage.from(bucketId).list(folder, {
@@ -79,12 +84,37 @@ const AdminStorage = () => {
   const fetchFiles = async (bucketId: string) => {
     setLoading(true);
     setSelectedFiles(new Set());
+    setSignedPreviewUrls({});
+
     try {
       const allFiles = await listAllFiles(bucketId);
       setFiles(allFiles as any);
+
+      const imagePaths = allFiles
+        .filter((file) => isImageFile(file.name, file.metadata?.mimetype))
+        .map((file) => file.fullPath);
+
+      if (imagePaths.length > 0) {
+        const previewMap: Record<string, string> = {};
+        const batchSize = 100;
+
+        for (let i = 0; i < imagePaths.length; i += batchSize) {
+          const batch = imagePaths.slice(i, i + batchSize);
+          const { data } = await supabase.storage.from(bucketId).createSignedUrls(batch, 60 * 60);
+
+          data?.forEach((entry, index) => {
+            if (entry?.signedUrl) {
+              previewMap[batch[index]] = entry.signedUrl;
+            }
+          });
+        }
+
+        setSignedPreviewUrls(previewMap);
+      }
     } catch (err: any) {
       toast.error('Files load nahi ho paye: ' + err.message);
       setFiles([]);
+      setSignedPreviewUrls({});
     } finally {
       setLoading(false);
     }
@@ -155,6 +185,10 @@ const AdminStorage = () => {
   const getPublicUrl = (filePath: string) => {
     const { data } = supabase.storage.from(activeBucket).getPublicUrl(filePath);
     return data.publicUrl;
+  };
+
+  const getFilePreviewUrl = (file: StorageFile) => {
+    return signedPreviewUrls[file.fullPath] || getPublicUrl(file.fullPath);
   };
 
   const totalSize = files.reduce((sum, f) => sum + (f.metadata?.size || 0), 0);
@@ -263,8 +297,10 @@ const AdminStorage = () => {
                   ) : (
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
                       {files.map((file) => {
-                        const isImage = (file.metadata?.mimetype?.startsWith('image/') ?? false) || /\.(jpg|jpeg|png|webp|gif|svg|bmp|avif)$/i.test(file.name);
+                        const isImage = isImageFile(file.name, file.metadata?.mimetype);
                         const isSelected = selectedFiles.has(file.fullPath);
+                        const previewUrl = getFilePreviewUrl(file);
+
                         return (
                           <div
                             key={file.fullPath}
@@ -284,10 +320,16 @@ const AdminStorage = () => {
                             <div className="aspect-square bg-muted flex items-center justify-center overflow-hidden">
                               {isImage ? (
                                 <img
-                                  src={getPublicUrl(file.fullPath)}
+                                  src={previewUrl}
                                   alt={file.name}
                                   className="w-full h-full object-cover"
                                   loading="lazy"
+                                  onError={(e) => {
+                                    const fallback = getPublicUrl(file.fullPath);
+                                    if (e.currentTarget.src !== fallback) {
+                                      e.currentTarget.src = fallback;
+                                    }
+                                  }}
                                 />
                               ) : (
                                 <div className="text-center p-2">

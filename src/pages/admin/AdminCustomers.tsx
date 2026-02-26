@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Users, Search, Copy, Check } from 'lucide-react';
 import { toast } from 'sonner';
+import { normalizeIndianPhoneForWhatsApp } from '@/lib/phone';
 
 interface CustomerInfo {
   name: string;
@@ -117,56 +118,60 @@ const AdminCustomers = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {filtered.map((c, i) => (
-                      <tr key={i} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
-                        <td className="p-4 text-muted-foreground">{i + 1}</td>
-                        <td className="p-4 font-medium">{c.name || '—'}</td>
-                        <td className="p-4">{c.phone || '—'}</td>
-                        <td className="p-4">{c.email || '—'}</td>
-                        <td className="p-4">
-                          <div className="flex gap-2">
-                            {c.phone && (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="h-8 text-xs"
-                                onClick={() => copyToClipboard(c.phone, i)}
-                              >
-                                {copiedIdx === i ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-                                <span className="ml-1">Phone</span>
-                              </Button>
-                            )}
-                            {c.email && (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="h-8 text-xs"
-                                onClick={() => copyToClipboard(c.email, i + 10000)}
-                              >
-                                {copiedIdx === i + 10000 ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-                                <span className="ml-1">Email</span>
-                              </Button>
-                            )}
-                            {c.phone && (
-                              <Button
-                                size="sm"
-                                variant="default"
-                                className="h-8 text-xs bg-green-600 hover:bg-green-700"
-                                asChild
-                              >
-                                <a
-                                  href={`https://wa.me/${c.phone.replace(/[^0-9]/g, '')}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
+                    {filtered.map((c, i) => {
+                      const whatsappPhone = normalizeIndianPhoneForWhatsApp(c.phone);
+
+                      return (
+                        <tr key={i} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
+                          <td className="p-4 text-muted-foreground">{i + 1}</td>
+                          <td className="p-4 font-medium">{c.name || '—'}</td>
+                          <td className="p-4">{c.phone || '—'}</td>
+                          <td className="p-4">{c.email || '—'}</td>
+                          <td className="p-4">
+                            <div className="flex gap-2">
+                              {c.phone && (
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 text-xs"
+                                  onClick={() => copyToClipboard(c.phone, i)}
                                 >
-                                  WhatsApp
-                                </a>
-                              </Button>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                                  {copiedIdx === i ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                                  <span className="ml-1">Phone</span>
+                                </Button>
+                              )}
+                              {c.email && (
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 text-xs"
+                                  onClick={() => copyToClipboard(c.email, i + 10000)}
+                                >
+                                  {copiedIdx === i + 10000 ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                                  <span className="ml-1">Email</span>
+                                </Button>
+                              )}
+                              {whatsappPhone && (
+                                <Button
+                                  size="sm"
+                                  variant="default"
+                                  className="h-8 text-xs bg-green-600 hover:bg-green-700"
+                                  asChild
+                                >
+                                  <a
+                                    href={`https://wa.me/${whatsappPhone}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  >
+                                    WhatsApp
+                                  </a>
+                                </Button>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>

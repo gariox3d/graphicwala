@@ -1,6 +1,7 @@
 import { MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { WHATSAPP_NUMBER, BUSINESS_NAME } from '@/lib/types';
+import { normalizeIndianPhoneForWhatsApp } from '@/lib/phone';
 
 interface WhatsAppButtonProps {
   message?: string;
@@ -17,7 +18,7 @@ const WhatsAppButton = ({
   className = '',
   showText = true,
 }: WhatsAppButtonProps) => {
-  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`;
+  const whatsappUrl = `https://wa.me/${normalizeIndianPhoneForWhatsApp(WHATSAPP_NUMBER)}?text=${encodeURIComponent(message)}`;
 
   if (variant === 'floating') {
     return (
