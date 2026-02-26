@@ -215,7 +215,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
             onClick={(e) => e.stopPropagation()}
           >
             <MessageCircle className="h-3.5 w-3.5" />
-            📸 Photo Edit Karwayein – WhatsApp Karein
+            ✨ Need Photo Editing? Chat with Us!
           </a>
         </div>
       </div>
