@@ -65,14 +65,24 @@ const SpinWheel = () => {
       ctx.lineWidth = 2;
       ctx.stroke();
 
-      // Text
+      // Text - flip for bottom half so it's always readable
       ctx.save();
       ctx.translate(center, center);
-      ctx.rotate(startAngle + segAngle / 2);
-      ctx.textAlign = 'right';
-      ctx.fillStyle = seg.textColor;
-      ctx.font = 'bold 13px sans-serif';
-      ctx.fillText(seg.label, radius - 16, 5);
+      const midAngle = startAngle + segAngle / 2;
+      const isBottom = midAngle > Math.PI / 2 && midAngle < (3 * Math.PI) / 2;
+      if (isBottom) {
+        ctx.rotate(midAngle + Math.PI);
+        ctx.textAlign = 'left';
+        ctx.fillStyle = seg.textColor;
+        ctx.font = 'bold 13px sans-serif';
+        ctx.fillText(seg.label, -(radius - 16), 5);
+      } else {
+        ctx.rotate(midAngle);
+        ctx.textAlign = 'right';
+        ctx.fillStyle = seg.textColor;
+        ctx.font = 'bold 13px sans-serif';
+        ctx.fillText(seg.label, radius - 16, 5);
+      }
       ctx.restore();
     });
 
