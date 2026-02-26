@@ -4,8 +4,10 @@ import type { Database } from '@/integrations/supabase/types';
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-const MAX_DIRECT_RETRIES = 2;
+const MAX_DIRECT_RETRIES = 1;
 const MAX_PROXY_RETRIES = 1;
+const DIRECT_TIMEOUT_MS = 3500;
+const PROXY_TIMEOUT_MS = 5000;
 
 const SUPABASE_HOST = (() => {
   try {
@@ -31,17 +33,41 @@ const toProxyUrl = (url: string) => {
   return `${window.location.origin}/api/supabase/${pathWithQuery}`;
 };
 
-const fetchWithRetry = async (request: Request, retries: number) => {
+const withTimeoutSignal = (request: Request, timeoutMs: number) => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  if (request.signal.aborted) {
+    controller.abort();
+  } else {
+    request.signal.addEventListener('abort', () => controller.abort(), { once: true });
+  }
+
+  const timeoutRequest = new Request(request, {
+    signal: controller.signal,
+  });
+
+  return {
+    timeoutRequest,
+    cleanup: () => clearTimeout(timeoutId),
+  };
+};
+
+const fetchWithRetry = async (request: Request, retries: number, timeoutMs: number) => {
   let lastError: unknown = null;
 
   for (let attempt = 0; attempt <= retries; attempt++) {
+    const { timeoutRequest, cleanup } = withTimeoutSignal(request.clone(), timeoutMs);
+
     try {
-      return await fetch(request.clone());
+      return await fetch(timeoutRequest);
     } catch (error) {
       lastError = error;
       if (attempt < retries) {
         await sleep(250 * (attempt + 1));
       }
+    } finally {
+      cleanup();
     }
   }
 
@@ -67,6 +93,25 @@ const isHtmlResponse = (response: Response) => {
   return contentType.includes('text/html');
 };
 
+const tryProxyFetch = async (request: Request) => {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  try {
+    const proxyRequest = await createProxyRequest(request);
+    const proxyResponse = await fetchWithRetry(proxyRequest, MAX_PROXY_RETRIES, PROXY_TIMEOUT_MS);
+
+    if (isHtmlResponse(proxyResponse)) {
+      return null;
+    }
+
+    return proxyResponse;
+  } catch {
+    return null;
+  }
+};
+
 const resilientFetch: typeof fetch = async (input, init) => {
   const request = new Request(input, init);
 
@@ -74,25 +119,26 @@ const resilientFetch: typeof fetch = async (input, init) => {
     return fetch(request);
   }
 
+  const proxyFirstResponse = await tryProxyFetch(request);
+  if (proxyFirstResponse) {
+    return proxyFirstResponse;
+  }
+
   try {
-    return await fetchWithRetry(request, MAX_DIRECT_RETRIES);
-  } catch (primaryError) {
-    if (typeof window === 'undefined') {
-      throw primaryError;
+    const directResponse = await fetchWithRetry(request, MAX_DIRECT_RETRIES, DIRECT_TIMEOUT_MS);
+
+    if (isHtmlResponse(directResponse)) {
+      throw new Error('Unexpected HTML response from Supabase endpoint');
     }
 
-    try {
-      const proxyRequest = await createProxyRequest(request);
-      const proxyResponse = await fetchWithRetry(proxyRequest, MAX_PROXY_RETRIES);
-
-      if (isHtmlResponse(proxyResponse)) {
-        throw new Error('Proxy route unavailable');
-      }
-
-      return proxyResponse;
-    } catch {
-      throw primaryError;
+    return directResponse;
+  } catch (directError) {
+    const proxyFallbackResponse = await tryProxyFetch(request);
+    if (proxyFallbackResponse) {
+      return proxyFallbackResponse;
     }
+
+    throw directError;
   }
 };
 
