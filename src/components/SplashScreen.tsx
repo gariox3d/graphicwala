@@ -55,7 +55,7 @@ const SplashScreen = ({ onFinish }: { onFinish: () => void }) => {
           phase === "enter" ? "opacity-0 translate-y-4" : phase === "exit" ? "opacity-0 -translate-y-2" : "opacity-100 translate-y-0"
         }`}
       >
-        डिज़ाइन की नई पहचान
+        Your Design, Our Craft
       </p>
 
       {/* Loading dots */}
