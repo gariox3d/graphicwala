@@ -263,7 +263,7 @@ const AdminStorage = () => {
                   ) : (
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
                       {files.map((file) => {
-                        const isImage = file.metadata?.mimetype?.startsWith('image/');
+                        const isImage = (file.metadata?.mimetype?.startsWith('image/') ?? false) || /\.(jpg|jpeg|png|webp|gif|svg|bmp|avif)$/i.test(file.name);
                         const isSelected = selectedFiles.has(file.fullPath);
                         return (
                           <div
