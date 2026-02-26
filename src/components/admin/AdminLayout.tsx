@@ -23,12 +23,13 @@ import {
   Moon,
   Volume2,
   VolumeX,
-    Megaphone,
-    Coins,
-    BarChart3,
-    HardDrive,
-    Layers
-  } from 'lucide-react';
+  Megaphone,
+  Coins,
+  BarChart3,
+  HardDrive,
+  Layers,
+  ShoppingCart as CartIcon
+} from 'lucide-react';
 import { useState } from 'react';
 
 interface AdminLayoutProps {
@@ -116,6 +117,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
     { path: '/admin/storage', label: 'Storage Manager', icon: HardDrive },
     { path: '/admin/before-after', label: 'Before/After', icon: Layers },
+    { path: '/admin/abandoned-carts', label: 'Abandoned Carts', icon: CartIcon },
   ];
 
   const handleSignOut = async () => {

@@ -1102,6 +1102,17 @@ export type Database = {
         }
         Returns: undefined
       }
+      get_abandoned_cart_customers: {
+        Args: never
+        Returns: {
+          cart_items_count: number
+          email: string
+          full_name: string
+          last_upload_at: string
+          phone: string
+          user_id: string
+        }[]
+      }
       get_all_customers: {
         Args: never
         Returns: {
