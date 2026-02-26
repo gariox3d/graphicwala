@@ -63,17 +63,12 @@ const AdminStorage = () => {
     for (const item of data) {
       if (item.name === '.emptyFolderPlaceholder') continue;
       const fullPath = folder ? `${folder}/${item.name}` : item.name;
-      // If no metadata, it's likely a folder — recurse into it
-      if (!item.metadata || (item.metadata && !(item.metadata as any).mimetype && !(item.metadata as any).size)) {
+      
+      // Supabase folders have id = null, files always have an id
+      if (!item.id) {
+        // It's a folder — recurse into it
         const subFiles = await listAllFiles(bucketId, fullPath);
-        if (subFiles.length > 0) {
-          results.push(...subFiles);
-        } else {
-          // It might be a real file with no metadata
-          if (item.id) {
-            results.push({ ...item, fullPath, metadata: item.metadata as Record<string, any> | null } as any);
-          }
-        }
+        results.push(...subFiles);
       } else {
         results.push({ ...item, fullPath, metadata: item.metadata as Record<string, any> | null } as any);
       }
