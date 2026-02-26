@@ -16,7 +16,26 @@ interface AbandonedCustomer {
   email: string;
   cart_items_count: number;
   last_upload_at: string;
+  latest_product_id: string | null;
+  latest_product_name: string | null;
+  uploaded_products: string | null;
 }
+
+const SITE_URL = 'https://graphicwala.lovable.app';
+
+const buildWhatsAppMessage = (c: AbandonedCustomer) => {
+  const name = c.full_name && c.full_name !== 'Unknown' ? c.full_name : '';
+  const greeting = name ? `Hi ${name}! 👋` : 'Hi! 👋';
+
+  if (c.uploaded_products) {
+    const productLink = c.latest_product_id
+      ? `\n🔗 ${SITE_URL}/product/${c.latest_product_id}`
+      : '';
+    return `${greeting}\n\nAapne hamare store pe *${c.uploaded_products}* ke liye design upload kiya tha. Kya aap order complete karna chahenge? 😊\n\nHum aapki help kar sakte hain — koi bhi sawaal ho toh poochiye!${productLink}\n\n— Graphic Wala Team`;
+  }
+
+  return `${greeting}\n\nAapne hamare store pe design upload kiya tha. Kya aap order complete karna chahenge? 😊\n\nHum aapki help kar sakte hain!\n\n— Graphic Wala Team`;
+};
 
 const AdminAbandonedCarts = () => {
   const [customers, setCustomers] = useState<AbandonedCustomer[]>([]);
@@ -46,7 +65,7 @@ const AdminAbandonedCarts = () => {
 
   const filtered = customers.filter(c => {
     const q = search.toLowerCase();
-    return c.full_name.toLowerCase().includes(q) || c.phone.includes(q) || c.email.toLowerCase().includes(q);
+    return c.full_name.toLowerCase().includes(q) || c.phone.includes(q) || c.email.toLowerCase().includes(q) || (c.uploaded_products || '').toLowerCase().includes(q);
   });
 
   const copy = (text: string, key: string) => {
@@ -65,14 +84,14 @@ const AdminAbandonedCarts = () => {
             Abandoned Carts
           </h1>
           <p className="text-muted-foreground mt-1">
-            Customers jinhone design upload kiya lekin order nahi kiya — inko message karo!
+            Customers jinhone design upload kiya lekin order nahi kiya — inko product ke saath personalized message bhejo!
           </p>
         </div>
 
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Search by name, phone or email..."
+            placeholder="Search by name, phone, email or product..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-10"
@@ -105,7 +124,8 @@ const AdminAbandonedCarts = () => {
                       <th className="text-left p-4 font-semibold">Name</th>
                       <th className="text-left p-4 font-semibold">Phone</th>
                       <th className="text-left p-4 font-semibold">Email</th>
-                      <th className="text-left p-4 font-semibold">Cart Items</th>
+                      <th className="text-left p-4 font-semibold">Products</th>
+                      <th className="text-left p-4 font-semibold">Uploads</th>
                       <th className="text-left p-4 font-semibold">Last Upload</th>
                       <th className="text-left p-4 font-semibold">Actions</th>
                     </tr>
@@ -113,6 +133,7 @@ const AdminAbandonedCarts = () => {
                   <tbody>
                     {filtered.map((c, i) => {
                       const whatsappPhone = normalizeIndianPhoneForWhatsApp(c.phone);
+                      const whatsappMsg = buildWhatsAppMessage(c);
 
                       return (
                         <tr key={c.user_id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
@@ -121,8 +142,17 @@ const AdminAbandonedCarts = () => {
                           <td className="p-4">{c.phone || '—'}</td>
                           <td className="p-4">{c.email || '—'}</td>
                           <td className="p-4">
+                            {c.uploaded_products ? (
+                              <span className="text-xs bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 px-2 py-1 rounded-full font-medium">
+                                {c.uploaded_products}
+                              </span>
+                            ) : (
+                              <span className="text-xs text-muted-foreground">—</span>
+                            )}
+                          </td>
+                          <td className="p-4">
                             <span className="bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 px-2 py-0.5 rounded-full text-xs font-semibold">
-                              {c.cart_items_count} items
+                              {c.cart_items_count} files
                             </span>
                           </td>
                           <td className="p-4 text-muted-foreground text-xs">
@@ -149,7 +179,7 @@ const AdminAbandonedCarts = () => {
                                       asChild
                                     >
                                       <a
-                                        href={`https://wa.me/${whatsappPhone}?text=${encodeURIComponent('Hi! Aapne hamare store pe design upload kiya tha. Kya main aapki koi help kar sakta hun? 😊')}`}
+                                        href={`https://wa.me/${whatsappPhone}?text=${encodeURIComponent(whatsappMsg)}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                       >
