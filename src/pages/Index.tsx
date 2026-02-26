@@ -19,7 +19,7 @@ import FlashSaleBanner from '@/components/products/FlashSaleBanner';
 import AdBanner from '@/components/ads/AdBanner';
 import TestimonialsSection from '@/components/TestimonialsSection';
 import StatsCounter from '@/components/StatsCounter';
-import SpinWheel from '@/components/SpinWheel';
+
 import InstagramSection from '@/components/InstagramSection';
 import { supabase } from '@/integrations/supabase/client';
 import { Product, Category, WHATSAPP_NUMBER, BUSINESS_NAME } from '@/lib/types';
@@ -385,8 +385,6 @@ const Index = () => {
 
       <Footer />
 
-      {/* Spin & Win Wheel */}
-      <SpinWheel />
     </div>
   );
 };
