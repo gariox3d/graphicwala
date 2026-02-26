@@ -71,7 +71,7 @@ serve(async (req) => {
           xml += `    <image:image>
       <image:loc>${escapeXml(img)}</image:loc>
       <image:title>${escapeXml(product.name)} - Graphic Wala</image:title>
-      <image:caption>${escapeXml(product.name)}${product.categories?.name ? ` - ${product.categories.name}` : ""} | Buy Online from Graphic Wala</image:caption>
+      <image:caption>${escapeXml(product.name)}${Array.isArray(product.categories) && product.categories.length > 0 ? ` - ${product.categories[0].name}` : ""} | Buy Online from Graphic Wala</image:caption>
     </image:image>
 `;
         }

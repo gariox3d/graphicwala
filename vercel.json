@@ -24,6 +24,10 @@
       "destination": "https://haeggvlmnfapopmyuaya.supabase.co/:path*"
     },
     {
+      "source": "/sofiya-weds-wasid",
+      "destination": "/sofiya-weds-wasid/index.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
