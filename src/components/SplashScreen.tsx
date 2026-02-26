@@ -16,7 +16,7 @@ const SplashScreen = ({ onFinish }: { onFinish: () => void }) => {
 
   return (
     <div
-      className={`fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[hsl(0,84%,50%)] transition-opacity duration-500 ${
+      className={`fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white transition-opacity duration-500 ${
         phase === "exit" ? "opacity-0 scale-105" : "opacity-100 scale-100"
       }`}
       style={{ transition: "opacity 0.5s ease, transform 0.5s ease" }}
@@ -24,13 +24,13 @@ const SplashScreen = ({ onFinish }: { onFinish: () => void }) => {
       {/* Pulsing ring */}
       <div className="relative flex items-center justify-center">
         <div
-          className={`absolute w-40 h-40 rounded-full border-4 border-white/30 ${
+          className={`absolute w-40 h-40 rounded-full border-4 border-primary/30 ${
             phase !== "exit" ? "animate-ping" : ""
           }`}
           style={{ animationDuration: "1.5s" }}
         />
         <div
-          className={`absolute w-48 h-48 rounded-full border-2 border-white/10 ${
+          className={`absolute w-48 h-48 rounded-full border-2 border-primary/10 ${
             phase !== "exit" ? "animate-ping" : ""
           }`}
           style={{ animationDuration: "2s", animationDelay: "0.3s" }}
@@ -51,7 +51,7 @@ const SplashScreen = ({ onFinish }: { onFinish: () => void }) => {
 
       {/* Tagline */}
       <p
-        className={`mt-8 text-white/90 text-sm font-outfit tracking-[0.3em] uppercase transition-all duration-500 delay-300 ${
+        className={`mt-8 text-foreground/70 text-sm font-outfit tracking-[0.3em] uppercase transition-all duration-500 delay-300 ${
           phase === "enter" ? "opacity-0 translate-y-4" : phase === "exit" ? "opacity-0 -translate-y-2" : "opacity-100 translate-y-0"
         }`}
       >
@@ -63,7 +63,7 @@ const SplashScreen = ({ onFinish }: { onFinish: () => void }) => {
         {[0, 1, 2].map((i) => (
           <div
             key={i}
-            className="w-2 h-2 rounded-full bg-white/80"
+            className="w-2 h-2 rounded-full bg-primary/80"
             style={{
               animation: phase !== "exit" ? "splash-bounce 1s ease-in-out infinite" : "none",
               animationDelay: `${i * 0.15}s`,
