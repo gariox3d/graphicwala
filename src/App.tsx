@@ -38,6 +38,7 @@ import NotFound from "./pages/NotFound";
 import ShareRedirect from "./pages/ShareRedirect";
 import Wishlist from "./pages/Wishlist";
 import AIAssistant from "./pages/AIAssistant";
+import Sale from "./pages/Sale";
 import ScrollToTop from "./components/ScrollToTop";
 import AdminGuard from "./components/admin/AdminGuard";
 import WelcomeBackPopup from "./components/WelcomeBackPopup";
@@ -80,6 +81,7 @@ const App = () => {
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/ai-assistant" element={<AIAssistant />} />
+                <Route path="/sale" element={<Sale />} />
                 {/* Admin Routes - Protected by AdminGuard */}
                 <Route path="/admin" element={<AdminGuard><AdminDashboard /></AdminGuard>} />
                 <Route path="/admin/products" element={<AdminGuard><AdminProducts /></AdminGuard>} />
