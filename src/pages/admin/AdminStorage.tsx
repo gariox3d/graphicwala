@@ -156,7 +156,18 @@ const AdminStorage = () => {
   };
 
   const getPublicUrl = (filePath: string, bucket?: string) => {
-    const { data } = supabase.storage.from(bucket || activeBucket).getPublicUrl(filePath);
+    const bucketId = bucket || activeBucket;
+    const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+
+    if (projectId) {
+      const encodedPath = filePath
+        .split('/')
+        .map((segment) => encodeURIComponent(segment))
+        .join('/');
+      return `https://${projectId}.supabase.co/storage/v1/object/public/${bucketId}/${encodedPath}`;
+    }
+
+    const { data } = supabase.storage.from(bucketId).getPublicUrl(filePath);
     return data.publicUrl;
   };
 
