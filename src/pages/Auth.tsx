@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
-import { Info, Mail, Lock, User, ArrowLeft } from 'lucide-react';
+import { Info, Mail, Lock, User, ArrowLeft, Phone, Eye, EyeOff } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { supabase } from '@/integrations/supabase/client';
@@ -25,6 +25,9 @@ const Auth = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const { user, signIn, signUp, loading: authLoading } = useAuth();
 
@@ -69,7 +72,12 @@ const Auth = () => {
           setLoading(false);
           return;
         }
-        const { error } = await signUp(email, password, fullName);
+        if (mode === 'signup' && !/^[6-9]\d{9}$/.test(phone)) {
+          toast({ title: 'Invalid Phone Number', description: 'Please enter a valid 10-digit Indian mobile number', variant: 'destructive' });
+          setLoading(false);
+          return;
+        }
+        const { error } = await signUp(email, password, fullName, phone);
         if (error) {
           const friendlyMessage = getFriendlyErrorMessage(error.message);
           toast({ title: 'Sign Up Failed', description: friendlyMessage, variant: 'destructive' });
@@ -239,14 +247,22 @@ const Auth = () => {
           <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             id="password"
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             placeholder="Enter new password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="pl-10"
+            className="pl-10 pr-10"
             required
             minLength={6}
           />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+            tabIndex={-1}
+          >
+            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
         </div>
         <p className="text-xs text-muted-foreground">Minimum 6 characters</p>
       </div>
@@ -257,14 +273,22 @@ const Auth = () => {
           <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             id="confirmPassword"
-            type="password"
+            type={showConfirmPassword ? 'text' : 'password'}
             placeholder="Confirm new password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="pl-10"
+            className="pl-10 pr-10"
             required
             minLength={6}
           />
+          <button
+            type="button"
+            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+            tabIndex={-1}
+          >
+            {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
         </div>
       </div>
 
@@ -285,20 +309,39 @@ const Auth = () => {
     <div className="space-y-4">
       <form onSubmit={handleSubmit} className="space-y-4">
         {mode === 'signup' && (
-          <div className="space-y-2">
-            <Label htmlFor="fullName" className="text-sm font-medium">Full Name</Label>
-            <div className="relative">
-              <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                id="fullName"
-                placeholder="Enter your full name"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                className="pl-10"
-                required
-              />
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="fullName" className="text-sm font-medium">Full Name</Label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="fullName"
+                  placeholder="Enter your full name"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="pl-10"
+                  required
+                />
+              </div>
             </div>
-          </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="phone" className="text-sm font-medium">Phone Number</Label>
+              <div className="relative">
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="phone"
+                  type="tel"
+                  placeholder="10-digit mobile number"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                  className="pl-10"
+                  required
+                  maxLength={10}
+                />
+              </div>
+            </div>
+          </>
         )}
 
         <div className="space-y-2">
@@ -334,14 +377,22 @@ const Auth = () => {
             <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               id="password"
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="pl-10"
+              className="pl-10 pr-10"
               required
               minLength={6}
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+              tabIndex={-1}
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
           </div>
         </div>
 
