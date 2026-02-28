@@ -2,6 +2,7 @@ import { MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { WHATSAPP_NUMBER, BUSINESS_NAME } from '@/lib/types';
 import { normalizeIndianPhoneForWhatsApp } from '@/lib/phone';
+import { cn } from '@/lib/utils';
 
 interface WhatsAppButtonProps {
   message?: string;
@@ -26,7 +27,10 @@ const WhatsAppButton = ({
         href={whatsappUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className={`fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-full shadow-lg transition-all hover:scale-105 ${className}`}
+        className={cn(
+          "fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-full shadow-lg transition-all hover:scale-105",
+          className
+        )}
       >
         <MessageCircle className="h-6 w-6" />
         {showText && <span className="font-medium hidden sm:inline">Chat on WhatsApp</span>}
@@ -39,7 +43,7 @@ const WhatsAppButton = ({
       asChild
       variant={variant === 'default' ? 'default' : variant}
       size={size}
-      className={`bg-green-500 hover:bg-green-600 text-white ${className}`}
+      className={cn("bg-green-500 hover:bg-green-600 text-white", className)}
     >
       <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
         <MessageCircle className="h-4 w-4" />
@@ -50,3 +54,4 @@ const WhatsAppButton = ({
 };
 
 export default WhatsAppButton;
+
