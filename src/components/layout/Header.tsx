@@ -125,21 +125,22 @@ const Header = () => {
           )}
         </div>
 
-        {/* Mobile Menu Button */}
-        <button
-          className="md:hidden p-2"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+        {/* Mobile Search + Menu */}
+        <div className="md:hidden flex items-center gap-2">
+          <SearchBar onNavigate={() => setIsMenuOpen(false)} />
+          <button
+            className="p-2"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="md:hidden border-t border-border bg-background animate-slide-down">
           <nav className="container py-4 flex flex-col gap-4">
-            {/* Mobile Search */}
-            <SearchBar onNavigate={() => setIsMenuOpen(false)} />
             
             {navLinks.map((link) => (
               <Link
