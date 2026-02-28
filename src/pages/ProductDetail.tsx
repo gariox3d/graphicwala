@@ -506,7 +506,7 @@ const ProductDetail = () => {
       <BackToTopButton />
 
       {/* Floating WhatsApp Button */}
-      <WhatsAppButton variant="floating" showText={false} />
+      <WhatsAppButton variant="floating" showText={false} className="bottom-28 right-4 md:bottom-6 md:right-6" />
 
       {/* Login Prompt Dialog */}
       <LoginPromptDialog 
