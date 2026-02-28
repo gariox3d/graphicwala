@@ -125,16 +125,18 @@ const Header = () => {
           )}
         </div>
 
-        {/* Mobile Search + Menu */}
-        <div className="md:hidden flex items-center gap-2">
-          <SearchBar onNavigate={() => setIsMenuOpen(false)} />
-          <button
-            className="p-2"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
-        </div>
+        {/* Mobile Menu Button */}
+        <button
+          className="md:hidden p-2"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
+          {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        </button>
+      </div>
+
+      {/* Mobile Search Bar - below header row */}
+      <div className="md:hidden container pb-2 animate-fade-in">
+        <SearchBar onNavigate={() => setIsMenuOpen(false)} />
       </div>
 
       {/* Mobile Menu */}

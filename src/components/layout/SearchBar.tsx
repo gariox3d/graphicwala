@@ -67,7 +67,7 @@ const SearchBar = ({ onNavigate }: { onNavigate?: () => void }) => {
   };
 
   return (
-    <div ref={containerRef} className="relative w-full max-w-xs">
+    <div ref={containerRef} className="relative w-full md:max-w-xs">
       <div className="relative">
         <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
