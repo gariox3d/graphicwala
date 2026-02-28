@@ -7,7 +7,7 @@ import ProductCard from '@/components/products/ProductCard';
 import { supabase } from '@/integrations/supabase/client';
 import { Product, Category } from '@/lib/types';
 import { Button } from '@/components/ui/button';
-import BackToTopButton from '@/components/BackToTopButton';
+
 
 const Products = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -147,7 +147,7 @@ const Products = () => {
         </div>
       </main>
       <Footer />
-      <BackToTopButton />
+      
     </div>
   );
 };
