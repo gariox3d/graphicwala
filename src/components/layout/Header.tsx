@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
 import { WHATSAPP_NUMBER, PHONE_NUMBER, BUSINESS_NAME } from '@/lib/types';
 import logoImage from '@/assets/logo.png';
+import SearchBar from './SearchBar';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -42,7 +43,7 @@ const Header = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden md:flex items-center gap-6">
           {navLinks.map((link) => (
             <Link
               key={link.path}
@@ -54,6 +55,7 @@ const Header = () => {
               {link.name}
             </Link>
           ))}
+          <SearchBar />
         </nav>
 
         {/* Desktop Actions */}
@@ -136,6 +138,9 @@ const Header = () => {
       {isMenuOpen && (
         <div className="md:hidden border-t border-border bg-background animate-slide-down">
           <nav className="container py-4 flex flex-col gap-4">
+            {/* Mobile Search */}
+            <SearchBar onNavigate={() => setIsMenuOpen(false)} />
+            
             {navLinks.map((link) => (
               <Link
                 key={link.path}
