@@ -7,6 +7,7 @@ import ProductCard from '@/components/products/ProductCard';
 import { supabase } from '@/integrations/supabase/client';
 import { Product, Category } from '@/lib/types';
 import { Button } from '@/components/ui/button';
+import BackToTopButton from '@/components/BackToTopButton';
 
 const Products = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -112,10 +113,25 @@ const Products = () => {
       <main className="flex-1 py-8" ref={productsRef}>
         <div className="container">
           <h1 className="text-3xl md:text-4xl font-bold mb-8">Our Products</h1>
-          <div className="flex flex-wrap gap-2 mb-8">
-            <Button variant={!selectedCategory ? 'hero' : 'outline'} size="sm" onClick={() => handleCategoryChange()}>All</Button>
+          <div className="flex gap-2 mb-8 overflow-x-auto pb-2 scrollbar-hide">
+            <Button 
+              variant={!selectedCategory ? 'hero' : 'outline'} 
+              size="sm" 
+              className="shrink-0 rounded-full transition-all duration-200"
+              onClick={() => handleCategoryChange()}
+            >
+              All
+            </Button>
             {categories.map((cat) => (
-              <Button key={cat.id} variant={selectedCategory === cat.name ? 'hero' : 'outline'} size="sm" onClick={() => handleCategoryChange(cat.name)}>{cat.name}</Button>
+              <Button 
+                key={cat.id} 
+                variant={selectedCategory === cat.name ? 'hero' : 'outline'} 
+                size="sm" 
+                className="shrink-0 rounded-full transition-all duration-200"
+                onClick={() => handleCategoryChange(cat.name)}
+              >
+                {cat.name}
+              </Button>
             ))}
           </div>
           {loading ? (
@@ -131,6 +147,7 @@ const Products = () => {
         </div>
       </main>
       <Footer />
+      <BackToTopButton />
     </div>
   );
 };
