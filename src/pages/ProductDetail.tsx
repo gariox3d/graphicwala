@@ -25,6 +25,8 @@ import DeliveryCountdown from '@/components/products/DeliveryCountdown';
 import ReturnPolicy from '@/components/ReturnPolicy';
 import RecentlyViewedProducts from '@/components/products/RecentlyViewedProducts';
 import SimilarProducts from '@/components/products/SimilarProducts';
+import StickyAddToCart from '@/components/products/StickyAddToCart';
+import BackToTopButton from '@/components/BackToTopButton';
 import WishlistButton from '@/components/products/WishlistButton';
 import FlashSaleBadge from '@/components/products/FlashSaleBadge';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
@@ -497,6 +499,12 @@ const ProductDetail = () => {
       </main>
       <Footer />
       
+      {/* Sticky Add to Cart - Mobile */}
+      <StickyAddToCart product={product} onAddToCart={handleAddToCart} onBuyNow={handleBuyNow} />
+
+      {/* Back to Top */}
+      <BackToTopButton />
+
       {/* Floating WhatsApp Button */}
       <WhatsAppButton variant="floating" showText={false} />
 
