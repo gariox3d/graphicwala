@@ -24,6 +24,7 @@ import ProductImageGallery from '@/components/products/ProductImageGallery';
 import DeliveryCountdown from '@/components/products/DeliveryCountdown';
 import ReturnPolicy from '@/components/ReturnPolicy';
 import RecentlyViewedProducts from '@/components/products/RecentlyViewedProducts';
+import SimilarProducts from '@/components/products/SimilarProducts';
 import WishlistButton from '@/components/products/WishlistButton';
 import FlashSaleBadge from '@/components/products/FlashSaleBadge';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
@@ -485,6 +486,9 @@ const ProductDetail = () => {
           <Separator className="my-12" />
           <ProductReviews productId={product.id} productName={product.name} />
         </div>
+
+        {/* Similar Products */}
+        <SimilarProducts currentProductId={product.id} categoryId={product.category_id} />
 
         {/* Recently Viewed Products */}
         {viewedIds.length > 1 && (
