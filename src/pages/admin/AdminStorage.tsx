@@ -178,12 +178,75 @@ const AdminStorage = () => {
     fetchAllCounts();
   }, [activeBucket]);
 
+  // Clean up database references for deleted storage files
+  const cleanupDbReferences = async (bucketId: string, filePaths: string[]) => {
+    try {
+      for (const filePath of filePaths) {
+        // Build possible public URL patterns to match in DB
+        const encodedPath = filePath.split('/').map(s => encodeURIComponent(s)).join('/');
+        const directUrl = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/${bucketId}/${filePath}`;
+        const encodedUrl = `${import.meta.env.VITE_SUPABASE_URL}/storage/v1/object/public/${bucketId}/${encodedPath}`;
+
+        if (bucketId === 'product-images') {
+          // Clean image_url field
+          await supabase.from('products').update({ image_url: null }).or(`image_url.eq.${directUrl},image_url.eq.${encodedUrl}`);
+          
+          // Clean image_urls jsonb array - fetch products that might contain this URL
+          const { data: products } = await supabase.from('products').select('id, image_urls').not('image_urls', 'is', null);
+          if (products) {
+            for (const product of products) {
+              const urls = product.image_urls as string[] | null;
+              if (urls && Array.isArray(urls)) {
+                const filtered = urls.filter(u => u !== directUrl && u !== encodedUrl && !u.includes(`/${bucketId}/${filePath}`));
+                if (filtered.length !== urls.length) {
+                  await supabase.from('products').update({ 
+                    image_urls: filtered,
+                    image_url: filtered.length > 0 ? filtered[0] : null 
+                  }).eq('id', product.id);
+                }
+              }
+            }
+          }
+        } else if (bucketId === 'customer-designs') {
+          // Clean order_items design URLs
+          await supabase.from('order_items').update({ front_design_url: null }).or(`front_design_url.like.%${filePath}%`);
+          await supabase.from('order_items').update({ back_design_url: null }).or(`back_design_url.like.%${filePath}%`);
+          // Clean order_item_uploads
+          await supabase.from('order_item_uploads').delete().like('file_url', `%${filePath}%`);
+          // Clean cart_item_uploads
+          await supabase.from('cart_item_uploads').delete().like('file_url', `%${filePath}%`);
+        } else if (bucketId === 'customer-gallery') {
+          await supabase.from('customer_gallery').delete().or(`image_url.like.%${filePath}%`);
+        } else if (bucketId === 'review-images') {
+          // Clean review_images jsonb arrays
+          const { data: reviews } = await supabase.from('reviews').select('id, review_images').not('review_images', 'is', null);
+          if (reviews) {
+            for (const review of reviews) {
+              const imgs = review.review_images as string[] | null;
+              if (imgs && Array.isArray(imgs)) {
+                const filtered = imgs.filter(u => !u.includes(filePath));
+                if (filtered.length !== imgs.length) {
+                  await supabase.from('reviews').update({ review_images: filtered }).eq('id', review.id);
+                }
+              }
+            }
+          }
+        } else if (bucketId === 'ad-images') {
+          await supabase.from('custom_ads').delete().or(`image_url.like.%${filePath}%`);
+        }
+      }
+    } catch (err) {
+      console.error('DB cleanup error:', err);
+    }
+  };
+
   const deleteFile = async (fileName: string) => {
     const { error } = await supabase.storage.from(activeBucket).remove([fileName]);
     if (error) {
       toast.error('Delete failed: ' + error.message);
     } else {
-      toast.success('File deleted!');
+      await cleanupDbReferences(activeBucket, [fileName]);
+      toast.success('File deleted permanently!');
       fetchFiles(activeBucket);
       fetchAllCounts();
     }
@@ -196,7 +259,8 @@ const AdminStorage = () => {
     if (error) {
       toast.error('Delete failed: ' + error.message);
     } else {
-      toast.success(`${filesToDelete.length} files deleted!`);
+      await cleanupDbReferences(activeBucket, filesToDelete);
+      toast.success(`${filesToDelete.length} files permanently deleted!`);
       setSelectedFiles(new Set());
       fetchFiles(activeBucket);
       fetchAllCounts();
