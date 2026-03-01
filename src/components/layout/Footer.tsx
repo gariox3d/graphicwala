@@ -72,6 +72,16 @@ const Footer = () => {
                   Terms & Conditions
                 </Link>
               </li>
+              <li>
+                <Link to="/shipping-policy" className="text-background/70 hover:text-primary text-sm transition-colors">
+                  Shipping Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/refund-policy" className="text-background/70 hover:text-primary text-sm transition-colors">
+                  Refund Policy
+                </Link>
+              </li>
             </ul>
           </div>
 
