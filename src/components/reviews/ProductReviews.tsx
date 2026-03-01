@@ -72,44 +72,8 @@ const ProductReviews = ({ productId, productName }: ProductReviewsProps) => {
     fetchReviews();
   }, [productId, user]);
 
-  // Generate review structured data for SEO
-  const reviewSchema = reviews.length > 0 ? {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    "name": productName,
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": averageRating.toString(),
-      "reviewCount": reviews.length.toString(),
-      "bestRating": "5",
-      "worstRating": "1"
-    },
-    "review": reviews.slice(0, 5).map((review) => ({
-      "@type": "Review",
-      "author": {
-        "@type": "Person",
-        "name": review.user_name
-      },
-      "datePublished": review.created_at.split('T')[0],
-      "reviewRating": {
-        "@type": "Rating",
-        "ratingValue": review.rating.toString(),
-        "bestRating": "5",
-        "worstRating": "1"
-      },
-      "reviewBody": review.comment
-    }))
-  } : null;
-
   return (
     <div className="space-y-6">
-      {/* SEO Structured Data */}
-      {reviewSchema && (
-        <script type="application/ld+json">
-          {JSON.stringify(reviewSchema)}
-        </script>
-      )}
-
       {/* Rating Summary */}
       <Card>
         <CardHeader>
