@@ -93,15 +93,17 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
-        <img
-          src={validImages[selectedIndex]}
-          alt={`${productName} - Image ${selectedIndex + 1}`}
-          className={cn(
-            "w-full h-full object-cover transition-opacity duration-300",
-            isTransitioning ? "opacity-70" : "opacity-100"
-          )}
-          loading="lazy"
-        />
+        <div className="w-full h-full bg-white flex items-center justify-center">
+          <img
+            src={validImages[selectedIndex]}
+            alt={`${productName} - Image ${selectedIndex + 1}`}
+            className={cn(
+              "max-w-full max-h-full object-contain transition-opacity duration-300",
+              isTransitioning ? "opacity-70" : "opacity-100"
+            )}
+            loading="lazy"
+          />
+        </div>
         
         {/* Navigation arrows (only show if more than 1 image) */}
         {validImages.length > 1 && (
@@ -148,12 +150,14 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
               )}
               aria-label={`View image ${index + 1}`}
             >
-              <img
-                src={url}
-                alt={`${productName} thumbnail ${index + 1}`}
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
+              <div className="w-full h-full bg-white flex items-center justify-center">
+                <img
+                  src={url}
+                  alt={`${productName} thumbnail ${index + 1}`}
+                  className="max-w-full max-h-full object-contain"
+                  loading="lazy"
+                />
+              </div>
             </button>
           ))}
         </div>
