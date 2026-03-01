@@ -62,6 +62,16 @@ const Footer = () => {
                   My Orders
                 </Link>
               </li>
+              <li>
+                <Link to="/privacy-policy" className="text-background/70 hover:text-primary text-sm transition-colors">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/terms-and-conditions" className="text-background/70 hover:text-primary text-sm transition-colors">
+                  Terms & Conditions
+                </Link>
+              </li>
             </ul>
           </div>
 
