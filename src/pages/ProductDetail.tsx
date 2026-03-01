@@ -59,6 +59,7 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const { addToCart } = useCart();
   const [designUrls, setDesignUrls] = useState<Record<string, string>>({});
+  const [reviewStats, setReviewStats] = useState<{ avg: number; count: number; reviews: any[] }>({ avg: 0, count: 0, reviews: [] });
   
   // Get delivery charge from admin settings (default to 0 if not set)
   const deliveryCharge = settings?.default_delivery_charge ?? 0;
@@ -94,6 +95,24 @@ const ProductDetail = () => {
   useEffect(() => {
     if (id) addToRecentlyViewed(id);
   }, [id, addToRecentlyViewed]);
+
+  // Fetch review stats for JSON-LD
+  useEffect(() => {
+    if (!id) return;
+    const fetchReviewStats = async () => {
+      const { data } = await supabase
+        .from('reviews')
+        .select('rating, user_name, comment, created_at')
+        .eq('product_id', id)
+        .order('created_at', { ascending: false })
+        .limit(5);
+      if (data && data.length > 0) {
+        const avg = Math.round((data.reduce((s, r) => s + r.rating, 0) / data.length) * 10) / 10;
+        setReviewStats({ avg, count: data.length, reviews: data });
+      }
+    };
+    fetchReviewStats();
+  }, [id]);
 
   // Load existing designs from session storage
   useEffect(() => {
@@ -251,7 +270,23 @@ const ProductDetail = () => {
         }
       },
       "url": productUrl
-    }
+    },
+    ...(reviewStats.count > 0 ? {
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": reviewStats.avg.toString(),
+        "reviewCount": reviewStats.count.toString(),
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "review": reviewStats.reviews.map(r => ({
+        "@type": "Review",
+        "author": { "@type": "Person", "name": r.user_name },
+        "datePublished": r.created_at.split('T')[0],
+        "reviewRating": { "@type": "Rating", "ratingValue": r.rating.toString(), "bestRating": "5", "worstRating": "1" },
+        "reviewBody": r.comment
+      }))
+    } : {})
   };
 
   // BreadcrumbList JSON-LD
