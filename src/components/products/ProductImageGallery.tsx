@@ -17,16 +17,6 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
   // Filter out empty URLs and ensure we have valid images
   const validImages = images.filter(url => url && url.trim() !== '');
   
-  // If no images, show placeholder
-  if (validImages.length === 0) {
-    return (
-      <div className="aspect-square rounded-xl overflow-hidden bg-muted flex items-center justify-center">
-        <span className="text-6xl font-bold text-muted-foreground/30">
-          {productName.charAt(0)}
-        </span>
-      </div>
-    );
-  }
 
   const handleImageChange = (index: number) => {
     if (index === selectedIndex || isTransitioning) return;
@@ -36,11 +26,13 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
   };
 
   const goToPrevious = () => {
+    if (validImages.length <= 1) return;
     const newIndex = selectedIndex === 0 ? validImages.length - 1 : selectedIndex - 1;
     handleImageChange(newIndex);
   };
 
   const goToNext = () => {
+    if (validImages.length <= 1) return;
     const newIndex = selectedIndex === validImages.length - 1 ? 0 : selectedIndex + 1;
     handleImageChange(newIndex);
   };
@@ -70,9 +62,17 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
     }
   };
 
+  useEffect(() => {
+    if (selectedIndex > validImages.length - 1) {
+      setSelectedIndex(0);
+    }
+  }, [selectedIndex, validImages.length]);
+
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (validImages.length <= 1) return;
+
       if (e.key === 'ArrowLeft') {
         goToPrevious();
       } else if (e.key === 'ArrowRight') {
@@ -82,7 +82,18 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedIndex]);
+  }, [selectedIndex, validImages.length]);
+
+  // If no images, show placeholder
+  if (validImages.length === 0) {
+    return (
+      <div className="aspect-square rounded-xl overflow-hidden bg-muted flex items-center justify-center">
+        <span className="text-6xl font-bold text-muted-foreground/30">
+          {productName.charAt(0)}
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
