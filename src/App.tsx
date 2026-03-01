@@ -41,6 +41,8 @@ import AIAssistant from "./pages/AIAssistant";
 import Sale from "./pages/Sale";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsAndConditions from "./pages/TermsAndConditions";
+import ShippingPolicy from "./pages/ShippingPolicy";
+import RefundPolicy from "./pages/RefundPolicy";
 import ScrollToTop from "./components/ScrollToTop";
 import AdminGuard from "./components/admin/AdminGuard";
 import WelcomeBackPopup from "./components/WelcomeBackPopup";
@@ -86,6 +88,8 @@ const App = () => {
                 <Route path="/sale" element={<Sale />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+                <Route path="/shipping-policy" element={<ShippingPolicy />} />
+                <Route path="/refund-policy" element={<RefundPolicy />} />
                 {/* Admin Routes - Protected by AdminGuard */}
                 <Route path="/admin" element={<AdminGuard><AdminDashboard /></AdminGuard>} />
                 <Route path="/admin/products" element={<AdminGuard><AdminProducts /></AdminGuard>} />
