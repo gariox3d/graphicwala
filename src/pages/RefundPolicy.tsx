@@ -76,7 +76,7 @@ const RefundPolicy = () => {
               <a href={`https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, '')}`} className="text-primary underline" target="_blank" rel="noopener noreferrer">
                 {PHONE_NUMBER}
               </a>{' '}
-              or email us at <span className="text-primary">hello@graphicwala.com</span>.
+              or email us at <span className="text-primary">graphicwalaktr@gmail.com</span>.
             </p>
           </section>
         </div>
