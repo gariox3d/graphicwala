@@ -61,8 +61,8 @@ const ProductDetail = () => {
   const [designUrls, setDesignUrls] = useState<Record<string, string>>({});
   const [reviewStats, setReviewStats] = useState<{ avg: number; count: number; reviews: any[] }>({ avg: 0, count: 0, reviews: [] });
   
-  // Get delivery charge from admin settings (default to 0 if not set)
-  const deliveryCharge = settings?.default_delivery_charge ?? 0;
+  // Get delivery charge from product-level setting only
+  const deliveryCharge = product?.delivery_charge ?? 0;
 
   useEffect(() => {
     const fetchProduct = async () => {

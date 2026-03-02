@@ -45,11 +45,16 @@ const Checkout = () => {
   const { settings } = useStoreSettings();
   const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
 
-  // Calculate delivery charge - use admin-configured charge
+  // Calculate delivery charge from product-level charges only
   const calculateDeliveryCharge = useCallback(() => {
     if (deliveryMethod === 'store_pickup') return 0;
-    return settings?.default_delivery_charge || 0;
-  }, [deliveryMethod, settings?.default_delivery_charge]);
+    let totalDelivery = 0;
+    cartItems.forEach(item => {
+      const product = item.products as Product & { delivery_charge?: number | null };
+      totalDelivery += (product?.delivery_charge || 0);
+    });
+    return totalDelivery;
+  }, [deliveryMethod, cartItems]);
 
   const deliveryCharge = calculateDeliveryCharge();
   const couponDiscount = appliedCoupon?.discountAmount || 0;

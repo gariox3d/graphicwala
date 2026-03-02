@@ -28,8 +28,7 @@ const ShippingEstimator = ({
 
   // Notify parent of shipping info when settings load
   if (settings && onShippingCalculated) {
-    const charge = settings.default_delivery_charge || 0;
-    onShippingCalculated(charge, 7, calculateDeliveryDate());
+    onShippingCalculated(0, 7, calculateDeliveryDate());
   }
 
   if (loading) {
@@ -75,17 +74,7 @@ const ShippingEstimator = ({
             <span className="font-semibold">{mainDeliveryText}</span>
           </div>
 
-          {/* Delivery charge info */}
-          {settings?.default_delivery_charge !== undefined && (
-            <div className="flex items-center gap-2 text-sm">
-              <Package className="h-4 w-4 text-muted-foreground" />
-              <span>
-                Shipping: {settings.default_delivery_charge > 0 
-                  ? `₹${settings.default_delivery_charge}` 
-                  : 'Free'}
-              </span>
-            </div>
-          )}
+          {/* Delivery charge shown at product level */}
 
           {/* Disclaimer text */}
           {showDisclaimer && disclaimerLines.length > 0 && (
