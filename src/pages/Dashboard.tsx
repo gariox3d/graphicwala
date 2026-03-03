@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { User, Package, Eye, ShoppingBag, Edit2, Save, X, Loader2, MapPin, Phone, Heart } from 'lucide-react';
+import { User, Package, Eye, ShoppingBag, Edit2, Save, X, Loader2, MapPin, Phone, Heart, Truck, Store } from 'lucide-react';
 import { toast } from 'sonner';
 import OrderTimeline from '@/components/OrderTimeline';
 import ReferralSection from '@/components/ReferralSection';
@@ -26,6 +26,8 @@ interface Order {
   shipping_city: string;
   shipping_state: string;
   shipping_pincode: string;
+  delivery_method?: string | null;
+  delivery_charge?: number | null;
 }
 
 const Dashboard = () => {
@@ -305,6 +307,21 @@ const Dashboard = () => {
                                   day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit',
                                 })}
                               </p>
+
+                              {/* Delivery Method Badge */}
+                              <div className="mt-1">
+                                {order.delivery_method === 'store_pickup' ? (
+                                  <Badge variant="outline" className="bg-orange-100 text-orange-700 border-orange-200 gap-1 text-xs">
+                                    <Store className="h-3 w-3" />
+                                    Store Pickup
+                                  </Badge>
+                                ) : (
+                                  <Badge variant="outline" className="bg-blue-100 text-blue-700 border-blue-200 gap-1 text-xs">
+                                    <Truck className="h-3 w-3" />
+                                    Home Delivery
+                                  </Badge>
+                                )}
+                              </div>
                               
                               {/* Live Order Tracking Timeline */}
                               <OrderTimeline currentStatus={order.status} />

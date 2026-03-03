@@ -22,7 +22,7 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
-import { Search, ShoppingCart, Eye, Package, MapPin, CreditCard, User, Image, Download, Trash2 } from 'lucide-react';
+import { Search, ShoppingCart, Eye, Package, MapPin, CreditCard, User, Image, Download, Trash2, Truck, Store } from 'lucide-react';
 
 interface OrderWithProfile extends Order {
   profiles?: { full_name: string | null };
@@ -302,12 +302,13 @@ const AdminOrders = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Order ID</TableHead>
-                    <TableHead>Customer</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Payment</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                     <TableHead>Customer</TableHead>
+                     <TableHead>Delivery</TableHead>
+                     <TableHead>Amount</TableHead>
+                     <TableHead>Payment</TableHead>
+                     <TableHead>Status</TableHead>
+                     <TableHead>Date</TableHead>
+                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -317,6 +318,19 @@ const AdminOrders = () => {
                       <TableCell>
                         <p className="font-medium">{order.customer_name || order.profiles?.full_name || 'Unknown'}</p>
                         <p className="text-sm text-muted-foreground">{order.shipping_phone}</p>
+                      </TableCell>
+                      <TableCell>
+                        {order.delivery_method === 'store_pickup' ? (
+                          <Badge variant="outline" className="bg-orange-100 text-orange-700 border-orange-200 gap-1">
+                            <Store className="h-3 w-3" />
+                            Pickup
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="bg-blue-100 text-blue-700 border-blue-200 gap-1">
+                            <Truck className="h-3 w-3" />
+                            Delivery
+                          </Badge>
+                        )}
                       </TableCell>
                       <TableCell className="font-semibold">₹{Number(order.total_amount).toLocaleString()}</TableCell>
                       <TableCell>
@@ -407,9 +421,39 @@ const AdminOrders = () => {
                 </div>
               </div>
 
+              {/* Delivery Method Badge */}
               <div className="space-y-2">
                 <h4 className="font-semibold flex items-center gap-2">
-                  <MapPin className="h-4 w-4" />Shipping Address
+                  {selectedOrder.delivery_method === 'store_pickup' ? (
+                    <><Store className="h-4 w-4" />Delivery Method</>
+                  ) : (
+                    <><Truck className="h-4 w-4" />Delivery Method</>
+                  )}
+                </h4>
+                <div className={`p-4 rounded-lg border-2 ${selectedOrder.delivery_method === 'store_pickup' ? 'bg-orange-50 border-orange-200' : 'bg-blue-50 border-blue-200'}`}>
+                  {selectedOrder.delivery_method === 'store_pickup' ? (
+                    <div className="flex items-center gap-2">
+                      <Store className="h-5 w-5 text-orange-600" />
+                      <span className="font-semibold text-orange-700 text-lg">🏪 Store Pickup</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <Truck className="h-5 w-5 text-blue-600" />
+                      <span className="font-semibold text-blue-700 text-lg">🚚 Home Delivery</span>
+                    </div>
+                  )}
+                  {selectedOrder.delivery_charge != null && Number(selectedOrder.delivery_charge) > 0 && (
+                    <p className="text-sm mt-1 text-muted-foreground">Delivery Charge: ₹{Number(selectedOrder.delivery_charge).toLocaleString()}</p>
+                  )}
+                  {selectedOrder.estimated_delivery_date && (
+                    <p className="text-sm mt-1 text-muted-foreground">Est. Delivery: {new Date(selectedOrder.estimated_delivery_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <h4 className="font-semibold flex items-center gap-2">
+                  <MapPin className="h-4 w-4" />{selectedOrder.delivery_method === 'store_pickup' ? 'Customer Address' : 'Shipping Address'}
                 </h4>
                 <div className="bg-muted p-4 rounded-lg">
                   <p>{selectedOrder.shipping_address}</p>
