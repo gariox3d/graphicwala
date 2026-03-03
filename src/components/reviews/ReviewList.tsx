@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Textarea } from '@/components/ui/textarea';
 import StarRating from './StarRating';
 import { formatDistanceToNow } from 'date-fns';
-import { Trash2, MessageSquare, Heart, Send, X, Store } from 'lucide-react';
+import { Trash2, MessageSquare, Heart, Send, X } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   AlertDialog,
@@ -269,9 +269,11 @@ const ReviewList = ({ reviews, loading, onReviewDeleted }: ReviewListProps) => {
                 {review.admin_reply && (
                   <div className="mt-3 ml-2 pl-3 border-l-2 border-primary/30 bg-primary/5 rounded-r-lg p-3">
                     <div className="flex items-center gap-2 mb-1.5">
-                      <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
-                        <Store className="h-3.5 w-3.5 text-primary-foreground" />
-                      </div>
+                      <img 
+                        src="/images/logo-circle.png" 
+                        alt="Graphic Wala" 
+                        className="w-6 h-6 rounded-full object-cover"
+                      />
                       <span className="font-semibold text-sm">Graphic Wala</span>
                       <span className="text-[10px] bg-primary/15 text-primary font-medium px-1.5 py-0.5 rounded-full">
                         Owner
