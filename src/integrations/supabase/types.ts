@@ -913,6 +913,9 @@ export type Database = {
       }
       reviews: {
         Row: {
+          admin_loved: boolean | null
+          admin_reply: string | null
+          admin_reply_at: string | null
           comment: string
           created_at: string
           id: string
@@ -924,6 +927,9 @@ export type Database = {
           user_name: string
         }
         Insert: {
+          admin_loved?: boolean | null
+          admin_reply?: string | null
+          admin_reply_at?: string | null
           comment: string
           created_at?: string
           id?: string
@@ -935,6 +941,9 @@ export type Database = {
           user_name: string
         }
         Update: {
+          admin_loved?: boolean | null
+          admin_reply?: string | null
+          admin_reply_at?: string | null
           comment?: string
           created_at?: string
           id?: string
