@@ -27,19 +27,19 @@ const OrderTimeline = ({ currentStatus }: OrderTimelineProps) => {
   const currentIndex = ORDER_STEPS.findIndex(s => s.key === currentStatus);
 
   return (
-    <div className="mt-3">
-      <div className="flex items-center gap-0.5 overflow-x-auto pb-1">
+    <div className="mt-3 overflow-hidden">
+      <div className="flex items-center justify-between pb-1">
         {ORDER_STEPS.map((step, index) => {
           const isCompleted = index < currentIndex;
           const isCurrent = index === currentIndex;
           const Icon = step.icon;
 
           return (
-            <div key={step.key} className="flex items-center">
-              <div className="flex flex-col items-center min-w-[48px]">
+            <div key={step.key} className="flex items-center flex-1 last:flex-none">
+              <div className="flex flex-col items-center min-w-0 w-full">
                 <div
                   className={cn(
-                    "w-7 h-7 rounded-full flex items-center justify-center transition-all duration-500 border-2",
+                    "w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center transition-all duration-500 border-2 shrink-0",
                     isCompleted
                       ? "bg-green-500 border-green-500 text-white"
                       : isCurrent
@@ -55,7 +55,7 @@ const OrderTimeline = ({ currentStatus }: OrderTimelineProps) => {
                 </div>
                 <span
                   className={cn(
-                    "text-[10px] mt-1 text-center leading-tight whitespace-nowrap",
+                    "text-[9px] sm:text-[10px] mt-1 text-center leading-tight truncate w-full px-0.5",
                     isCompleted
                       ? "text-green-600 font-medium"
                       : isCurrent
@@ -69,7 +69,7 @@ const OrderTimeline = ({ currentStatus }: OrderTimelineProps) => {
               {index < ORDER_STEPS.length - 1 && (
                 <div
                   className={cn(
-                    "h-0.5 w-4 sm:w-6 mt-[-14px] transition-all duration-500",
+                    "h-0.5 flex-1 min-w-1 mt-[-14px] transition-all duration-500",
                     index < currentIndex
                       ? "bg-green-500"
                       : "bg-muted-foreground/20"
