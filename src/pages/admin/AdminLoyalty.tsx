@@ -6,8 +6,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Coins, Save, Loader2, Users, TrendingUp } from 'lucide-react';
+import { Coins, Save, Loader2, Users, TrendingUp, Plus, Minus, Send } from 'lucide-react';
 
 interface LoyaltySettings {
   id: string;
@@ -28,17 +29,33 @@ interface LoyaltyStats {
   total_points_redeemed: number;
 }
 
+interface CustomerOption {
+  user_id: string;
+  full_name: string;
+  email: string;
+  phone: string;
+}
+
 const AdminLoyalty = () => {
   const [settings, setSettings] = useState<LoyaltySettings | null>(null);
   const [stats, setStats] = useState<LoyaltyStats>({ total_users: 0, total_points_earned: 0, total_points_redeemed: 0 });
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  // Manual points state
+  const [customers, setCustomers] = useState<CustomerOption[]>([]);
+  const [selectedCustomer, setSelectedCustomer] = useState('');
+  const [pointsAmount, setPointsAmount] = useState('');
+  const [pointsType, setPointsType] = useState<'earned' | 'redeemed'>('earned');
+  const [pointsDescription, setPointsDescription] = useState('');
+  const [sendingPoints, setSendingPoints] = useState(false);
+
   useEffect(() => {
     const fetchData = async () => {
-      const [settingsRes, balancesRes] = await Promise.all([
+      const [settingsRes, balancesRes, customersRes] = await Promise.all([
         supabase.from('loyalty_settings').select('*').eq('id', 'default').single(),
         supabase.from('loyalty_balances').select('*'),
+        supabase.rpc('get_all_customers'),
       ]);
 
       if (settingsRes.data) setSettings(settingsRes.data as unknown as LoyaltySettings);
@@ -50,6 +67,7 @@ const AdminLoyalty = () => {
           total_points_redeemed: balances.reduce((s, b) => s + (b.total_redeemed || 0), 0),
         });
       }
+      if (customersRes.data) setCustomers(customersRes.data as CustomerOption[]);
       setLoading(false);
     };
     fetchData();
@@ -76,6 +94,47 @@ const AdminLoyalty = () => {
     if (error) toast.error('Failed to save settings');
     else toast.success('Loyalty settings saved!');
     setSaving(false);
+  };
+
+  const handleSendPoints = async () => {
+    if (!selectedCustomer) { toast.error('Please select a customer'); return; }
+    const pts = parseInt(pointsAmount);
+    if (!pts || pts <= 0) { toast.error('Enter a valid points amount'); return; }
+    if (!pointsDescription.trim()) { toast.error('Enter a description/reason'); return; }
+
+    setSendingPoints(true);
+    try {
+      const { error } = await supabase.rpc('add_loyalty_points', {
+        p_user_id: selectedCustomer,
+        p_points: pts,
+        p_type: pointsType,
+        p_source: 'admin_manual',
+        p_description: pointsDescription.trim(),
+      });
+
+      if (error) throw error;
+
+      const customer = customers.find(c => c.user_id === selectedCustomer);
+      toast.success(`${pointsType === 'earned' ? 'Added' : 'Deducted'} ${pts} points ${pointsType === 'earned' ? 'to' : 'from'} ${customer?.full_name || 'customer'}`);
+      setSelectedCustomer('');
+      setPointsAmount('');
+      setPointsDescription('');
+
+      // Refresh stats
+      const { data: balancesData } = await supabase.from('loyalty_balances').select('*');
+      if (balancesData) {
+        const balances = balancesData as any[];
+        setStats({
+          total_users: balances.length,
+          total_points_earned: balances.reduce((s, b) => s + (b.total_earned || 0), 0),
+          total_points_redeemed: balances.reduce((s, b) => s + (b.total_redeemed || 0), 0),
+        });
+      }
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to send points');
+    } finally {
+      setSendingPoints(false);
+    }
   };
 
   if (loading) {
@@ -142,6 +201,72 @@ const AdminLoyalty = () => {
           </Card>
         </div>
 
+        {/* Manual Points Grant */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Send className="h-5 w-5 text-primary" />
+              Manual Points — Give or Deduct
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="space-y-2">
+                <Label>Customer</Label>
+                <Select value={selectedCustomer} onValueChange={setSelectedCustomer}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select customer" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {customers.map((c) => (
+                      <SelectItem key={c.user_id} value={c.user_id}>
+                        {c.full_name || c.email || c.phone || 'Unknown'}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Action</Label>
+                <Select value={pointsType} onValueChange={(v) => setPointsType(v as 'earned' | 'redeemed')}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="earned">
+                      <span className="flex items-center gap-1"><Plus className="h-3 w-3 text-green-600" /> Add Points</span>
+                    </SelectItem>
+                    <SelectItem value="redeemed">
+                      <span className="flex items-center gap-1"><Minus className="h-3 w-3 text-red-500" /> Deduct Points</span>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Points</Label>
+                <Input
+                  type="number"
+                  placeholder="e.g. 100"
+                  value={pointsAmount}
+                  onChange={(e) => setPointsAmount(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Reason</Label>
+                <Input
+                  placeholder="e.g. Bonus reward"
+                  value={pointsDescription}
+                  onChange={(e) => setPointsDescription(e.target.value)}
+                />
+              </div>
+            </div>
+            <Button onClick={handleSendPoints} disabled={sendingPoints} className="w-full sm:w-auto">
+              {sendingPoints ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Send className="h-4 w-4 mr-2" />}
+              {pointsType === 'earned' ? 'Give Points' : 'Deduct Points'}
+            </Button>
+          </CardContent>
+        </Card>
+
         {/* Settings */}
         {settings && (
           <Card>
@@ -162,45 +287,24 @@ const AdminLoyalty = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="space-y-2">
                   <Label>Points per ₹1 Spent</Label>
-                  <Input
-                    type="number"
-                    value={settings.points_per_rupee}
-                    onChange={(e) => setSettings({ ...settings, points_per_rupee: Number(e.target.value) })}
-                  />
+                  <Input type="number" value={settings.points_per_rupee} onChange={(e) => setSettings({ ...settings, points_per_rupee: Number(e.target.value) })} />
                 </div>
                 <div className="space-y-2">
                   <Label>Point Value (₹)</Label>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    value={settings.points_value_rupees}
-                    onChange={(e) => setSettings({ ...settings, points_value_rupees: Number(e.target.value) })}
-                  />
+                  <Input type="number" step="0.01" value={settings.points_value_rupees} onChange={(e) => setSettings({ ...settings, points_value_rupees: Number(e.target.value) })} />
                   <p className="text-xs text-muted-foreground">1 point = ₹{settings.points_value_rupees}</p>
                 </div>
                 <div className="space-y-2">
                   <Label>Min Points to Redeem</Label>
-                  <Input
-                    type="number"
-                    value={settings.min_redeem_points}
-                    onChange={(e) => setSettings({ ...settings, min_redeem_points: Number(e.target.value) })}
-                  />
+                  <Input type="number" value={settings.min_redeem_points} onChange={(e) => setSettings({ ...settings, min_redeem_points: Number(e.target.value) })} />
                 </div>
                 <div className="space-y-2">
                   <Label>Signup Bonus Points</Label>
-                  <Input
-                    type="number"
-                    value={settings.signup_bonus}
-                    onChange={(e) => setSettings({ ...settings, signup_bonus: Number(e.target.value) })}
-                  />
+                  <Input type="number" value={settings.signup_bonus} onChange={(e) => setSettings({ ...settings, signup_bonus: Number(e.target.value) })} />
                 </div>
                 <div className="space-y-2">
                   <Label>Review Bonus Points</Label>
-                  <Input
-                    type="number"
-                    value={settings.review_bonus}
-                    onChange={(e) => setSettings({ ...settings, review_bonus: Number(e.target.value) })}
-                  />
+                  <Input type="number" value={settings.review_bonus} onChange={(e) => setSettings({ ...settings, review_bonus: Number(e.target.value) })} />
                 </div>
               </div>
 
@@ -209,27 +313,15 @@ const AdminLoyalty = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label>🥈 Silver Threshold</Label>
-                    <Input
-                      type="number"
-                      value={settings.silver_threshold}
-                      onChange={(e) => setSettings({ ...settings, silver_threshold: Number(e.target.value) })}
-                    />
+                    <Input type="number" value={settings.silver_threshold} onChange={(e) => setSettings({ ...settings, silver_threshold: Number(e.target.value) })} />
                   </div>
                   <div className="space-y-2">
                     <Label>🥇 Gold Threshold</Label>
-                    <Input
-                      type="number"
-                      value={settings.gold_threshold}
-                      onChange={(e) => setSettings({ ...settings, gold_threshold: Number(e.target.value) })}
-                    />
+                    <Input type="number" value={settings.gold_threshold} onChange={(e) => setSettings({ ...settings, gold_threshold: Number(e.target.value) })} />
                   </div>
                   <div className="space-y-2">
                     <Label>💎 Platinum Threshold</Label>
-                    <Input
-                      type="number"
-                      value={settings.platinum_threshold}
-                      onChange={(e) => setSettings({ ...settings, platinum_threshold: Number(e.target.value) })}
-                    />
+                    <Input type="number" value={settings.platinum_threshold} onChange={(e) => setSettings({ ...settings, platinum_threshold: Number(e.target.value) })} />
                   </div>
                 </div>
               </div>
