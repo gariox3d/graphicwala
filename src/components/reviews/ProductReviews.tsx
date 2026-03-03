@@ -36,7 +36,7 @@ const ProductReviews = ({ productId, productName }: ProductReviewsProps) => {
       // Only select necessary columns - exclude user_id from public queries for privacy
       const { data, error } = await supabase
         .from('reviews')
-        .select('id, product_id, user_name, rating, comment, created_at, updated_at, user_id, review_images')
+        .select('id, product_id, user_name, rating, comment, created_at, updated_at, user_id, review_images, admin_reply, admin_reply_at, admin_loved')
         .eq('product_id', productId)
         .order('created_at', { ascending: false });
 
