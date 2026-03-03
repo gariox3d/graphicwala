@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
-import { Product, UploadField } from '@/lib/types';
+import { Product, UploadField, getEffectivePrice } from '@/lib/types';
 import DesignUpload from '@/components/DesignUpload';
 import PriceBreakdown from '@/components/PriceBreakdown';
 import DeliveryInfoBanner from '@/components/DeliveryInfoBanner';
@@ -195,7 +195,12 @@ const Cart = () => {
                             <div className="flex justify-between items-start">
                               <div>
                                 <h3 className="font-semibold">{product?.name}</h3>
-                                <p className="text-primary font-bold">₹{product?.price?.toFixed(2)}</p>
+                                <div className="flex items-center gap-2">
+                                  <p className="text-primary font-bold">₹{getEffectivePrice(product).toFixed(2)}</p>
+                                  {product && getEffectivePrice(product) < product.price && (
+                                    <p className="text-xs text-muted-foreground line-through">₹{product.price.toFixed(2)}</p>
+                                  )}
+                                </div>
                               </div>
                               <Button
                                 variant="ghost"

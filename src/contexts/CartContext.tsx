@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './AuthContext';
-import { CartItem, Product } from '@/lib/types';
+import { CartItem, Product, getEffectivePrice } from '@/lib/types';
 import { toast } from '@/hooks/use-toast';
 
 interface CartContextType {
@@ -128,7 +128,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const cartTotal = cartItems.reduce((sum, item) => {
-    const price = (item.products as Product)?.price || 0;
+    const price = getEffectivePrice(item.products as Product);
     return sum + price * item.quantity;
   }, 0);
 

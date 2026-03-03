@@ -125,6 +125,22 @@ export interface Profile {
   updated_at: string;
 }
 
+// Helper: get effective price considering active sale
+export const getEffectivePrice = (product: Product | undefined | null): number => {
+  if (!product) return 0;
+  const now = Date.now();
+  if (
+    product.sale_price != null &&
+    product.sale_start &&
+    product.sale_end &&
+    new Date(product.sale_start).getTime() <= now &&
+    new Date(product.sale_end).getTime() >= now
+  ) {
+    return product.sale_price;
+  }
+  return product.price;
+};
+
 // Constants
 export const WHATSAPP_NUMBER = '+916207142994';
 export const PHONE_NUMBER = '+916207142994';
