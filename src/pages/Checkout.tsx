@@ -21,7 +21,7 @@ import PhotoPrivacyNotice from '@/components/PhotoPrivacyNotice';
 import ReturnPolicy from '@/components/ReturnPolicy';
 import DeliveryCountdown, { calculateEstimatedDeliveryDate } from '@/components/products/DeliveryCountdown';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
-import { Product } from '@/lib/types';
+import { Product, getEffectivePrice } from '@/lib/types';
 import { toast } from 'sonner';
 import { Loader2, ShoppingBag, MapPin, CreditCard, Image, AlertCircle, Truck, Store, Package, CheckCircle2, Plus, Minus, Trash2 } from 'lucide-react';
 
@@ -237,7 +237,7 @@ const Checkout = () => {
         return {
           product_id: item.product_id,
           product_name: item.products?.name || 'Unknown Product',
-          product_price: item.products?.price || 0,
+          product_price: getEffectivePrice(item.products as Product),
           quantity: item.quantity,
           front_design_url: designs['front'] || null,
           back_design_url: designs['back'] || null,
@@ -626,7 +626,10 @@ const Checkout = () => {
                           <div className="flex-1 min-w-0">
                             <h4 className="font-medium truncate">{item.products?.name}</h4>
                             <p className="text-sm text-muted-foreground">
-                              ₹{item.products?.price?.toLocaleString()} each
+                              ₹{getEffectivePrice(item.products as Product).toLocaleString()} each
+                              {item.products && getEffectivePrice(item.products as Product) < item.products.price && (
+                                <span className="line-through ml-1 text-xs">₹{item.products.price.toLocaleString()}</span>
+                              )}
                             </p>
                             {hasDesign && (
                               <div className="flex items-center gap-1 mt-1 text-xs text-green-600">
@@ -665,10 +668,7 @@ const Checkout = () => {
                             </div>
                           </div>
                           <p className="font-semibold whitespace-nowrap">
-                            ₹
-                            {(
-                              (item.products?.price || 0) * item.quantity
-                            ).toLocaleString()}
+                            ₹{(getEffectivePrice(item.products as Product) * item.quantity).toLocaleString()}
                           </p>
                         </div>
                       );
