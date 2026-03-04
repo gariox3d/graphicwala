@@ -96,6 +96,27 @@ const ReferralSection = () => {
           </div>
         </div>
 
+        {/* Recent Referral Activity */}
+        {rewards.length > 0 && (
+          <>
+            <Separator />
+            <div className="space-y-2">
+              <p className="text-xs font-semibold uppercase text-muted-foreground">Recent Referrals</p>
+              {rewards.slice(0, 5).map((r) => (
+                <div key={r.id} className="flex items-center justify-between text-sm bg-muted/30 rounded-lg px-3 py-2">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="h-3.5 w-3.5 text-green-500 shrink-0" />
+                    <span className="text-xs text-muted-foreground">
+                      {r.status === 'completed' ? 'Completed' : 'Pending'}
+                    </span>
+                  </div>
+                  <span className="text-xs font-semibold text-green-600">+₹{r.referrer_reward}</span>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
         {/* Tip */}
         <div className="bg-green-50 dark:bg-green-950/30 rounded-lg p-3 border border-green-200 dark:border-green-800">
           <p className="text-xs font-semibold text-green-700 dark:text-green-400 mb-1">💡 Pro Tip</p>
