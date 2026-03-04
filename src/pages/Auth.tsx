@@ -17,9 +17,10 @@ const Auth = () => {
   const navigate = useNavigate();
   const isSignUp = searchParams.get('mode') === 'signup';
   const isReset = searchParams.get('type') === 'recovery';
+  const refCode = searchParams.get('ref') || '';
   
   const [mode, setMode] = useState<AuthMode>(
-    isReset ? 'reset-password' : isSignUp ? 'signup' : 'login'
+    isReset ? 'reset-password' : (isSignUp || refCode) ? 'signup' : 'login'
   );
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -77,7 +78,7 @@ const Auth = () => {
           setLoading(false);
           return;
         }
-        const { error } = await signUp(email, password, fullName, phone);
+        const { error } = await signUp(email, password, fullName, phone, refCode || undefined);
         if (error) {
           const friendlyMessage = getFriendlyErrorMessage(error.message);
           toast({ title: 'Sign Up Failed', description: friendlyMessage, variant: 'destructive' });
@@ -310,6 +311,15 @@ const Auth = () => {
       <form onSubmit={handleSubmit} className="space-y-4">
         {mode === 'signup' && (
           <>
+            {refCode && (
+              <div className="flex items-center gap-2 p-3 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg">
+                <span className="text-lg">🎁</span>
+                <div>
+                  <p className="text-sm font-medium text-green-700 dark:text-green-400">Referral Code Applied!</p>
+                  <p className="text-xs text-green-600 dark:text-green-400">You'll get ₹50 bonus points on signup</p>
+                </div>
+              </div>
+            )}
             <div className="space-y-2">
               <Label htmlFor="fullName" className="text-sm font-medium">Full Name</Label>
               <div className="relative">
