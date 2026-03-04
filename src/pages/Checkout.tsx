@@ -16,6 +16,7 @@ import Footer from '@/components/layout/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import PriceBreakdown from '@/components/PriceBreakdown';
 import SupportContact from '@/components/SupportContact';
+import LoyaltyRedeemCheckout from '@/components/loyalty/LoyaltyRedeemCheckout';
 import DeliveryInfoBanner from '@/components/DeliveryInfoBanner';
 import PhotoPrivacyNotice from '@/components/PhotoPrivacyNotice';
 import ReturnPolicy from '@/components/ReturnPolicy';
@@ -44,6 +45,8 @@ const Checkout = () => {
   const [deliveryMethod, setDeliveryMethod] = useState<'home_delivery' | 'store_pickup'>('home_delivery');
   const { settings } = useStoreSettings();
   const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
+  const [loyaltyDiscount, setLoyaltyDiscount] = useState(0);
+  const [loyaltyApplied, setLoyaltyApplied] = useState(false);
 
   // Calculate delivery charge from product-level charges only
   const calculateDeliveryCharge = useCallback(() => {
@@ -76,7 +79,7 @@ const Checkout = () => {
     return Math.round(discount * 100) / 100;
   })();
 
-  const totalPayable = Math.max(0, cartTotal + deliveryCharge - couponDiscount - bulkDiscount);
+  const totalPayable = Math.max(0, cartTotal + deliveryCharge - couponDiscount - bulkDiscount - loyaltyDiscount);
   
   const [formData, setFormData] = useState({
     fullName: profile?.full_name || '',
@@ -703,6 +706,7 @@ const Checkout = () => {
                     couponDiscount={couponDiscount}
                     couponCode={appliedCoupon?.code}
                     bulkDiscount={bulkDiscount}
+                    loyaltyDiscount={loyaltyDiscount}
                   />
 
                   {bulkDiscount > 0 && (
@@ -716,6 +720,19 @@ const Checkout = () => {
                     orderTotal={cartTotal}
                     onApply={setAppliedCoupon}
                     appliedCoupon={appliedCoupon}
+                  />
+
+                  {/* Loyalty Points Redeem */}
+                  <LoyaltyRedeemCheckout
+                    onApply={(discount) => {
+                      setLoyaltyDiscount(discount);
+                      setLoyaltyApplied(true);
+                    }}
+                    onRemove={() => {
+                      setLoyaltyDiscount(0);
+                      setLoyaltyApplied(false);
+                    }}
+                    applied={loyaltyApplied}
                   />
 
                   {/* Delivery Countdown & Estimate */}
