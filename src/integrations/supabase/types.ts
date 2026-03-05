@@ -964,6 +964,42 @@ export type Database = {
           },
         ]
       }
+      store_pickup_earnings: {
+        Row: {
+          amount: number
+          created_at: string
+          created_by: string
+          customer_name: string
+          customer_phone: string | null
+          id: string
+          items_description: string
+          notes: string | null
+          payment_method: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          created_by: string
+          customer_name: string
+          customer_phone?: string | null
+          id?: string
+          items_description: string
+          notes?: string | null
+          payment_method?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          created_by?: string
+          customer_name?: string
+          customer_phone?: string | null
+          id?: string
+          items_description?: string
+          notes?: string | null
+          payment_method?: string
+        }
+        Relationships: []
+      }
       store_settings: {
         Row: {
           announcement_enabled: boolean | null
@@ -1111,6 +1147,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      admin_delete_user: { Args: { p_user_id: string }; Returns: undefined }
       get_abandoned_cart_customers: {
         Args: never
         Returns: {

@@ -102,7 +102,7 @@ const ReviewImageUpload = ({ userId, images, onImagesChange, maxImages = 3 }: Re
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*"
+            accept="image/jpeg,image/png"
             multiple
             onChange={handleUpload}
             className="hidden"

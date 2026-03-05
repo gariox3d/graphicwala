@@ -24,7 +24,7 @@ interface DesignUploadProps {
 }
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'application/pdf'];
+const ALLOWED_TYPES = ['image/jpeg', 'image/png'];
 
 const DesignUpload = ({
   productId,
@@ -52,7 +52,7 @@ const DesignUpload = ({
   }, [existingDesigns]);
 
   const validateFile = (file: File): string | null => {
-    if (!ALLOWED_TYPES.includes(file.type)) return 'Please upload JPG, PNG, or PDF files only';
+    if (!ALLOWED_TYPES.includes(file.type)) return 'Only JPG and PNG images are allowed';
     if (file.size > MAX_FILE_SIZE) return 'File size must be less than 10MB';
     return null;
   };
@@ -185,7 +185,7 @@ const DesignUpload = ({
                   <input 
                     type="file" 
                     id={`upload-${field.id}`} 
-                    accept=".jpg,.jpeg,.png,.pdf" 
+                    accept=".jpg,.jpeg,.png" 
                     className="hidden"
                     onChange={(e) => { 
                       const file = e.target.files?.[0]; 
@@ -218,7 +218,7 @@ const DesignUpload = ({
                       <>
                         <Upload className="h-6 w-6 text-muted-foreground mb-2" />
                         <span className="text-sm text-muted-foreground">Click to upload</span>
-                        <span className="text-xs text-muted-foreground">JPG, PNG, PDF (max 10MB)</span>
+                        <span className="text-xs text-muted-foreground">JPG, PNG only (max 10MB)</span>
                       </>
                     )}
                   </div>

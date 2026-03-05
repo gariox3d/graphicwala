@@ -1,7 +1,7 @@
 import { useReferral } from '@/hooks/useReferral';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Gift, Copy, Share2, Users, IndianRupee, Loader2, CheckCircle, ArrowRight } from 'lucide-react';
+import { Gift, Copy, Share2, Users, Star, Loader2, CheckCircle, ArrowRight } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 
 const ReferralSection = () => {
@@ -24,12 +24,12 @@ const ReferralSection = () => {
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-lg">
           <Gift className="h-5 w-5 text-primary" />
-          Refer & Earn ₹50
+          Refer & Earn Points
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-sm text-muted-foreground">
-          Share your referral code with friends. They get ₹50 off on their first order, and you earn ₹50 too! 🎁
+          Share your referral code with friends. Both of you earn <strong>100 bonus points</strong> that can be redeemed as discount! 🎁
         </p>
 
         {/* Referral Code Display */}
@@ -69,9 +69,9 @@ const ReferralSection = () => {
             <p className="text-[11px] text-muted-foreground">Referrals</p>
           </div>
           <div className="bg-card rounded-lg p-3 text-center border">
-            <IndianRupee className="h-4 w-4 mx-auto mb-1 text-green-600" />
-            <p className="text-xl font-bold text-green-600">₹{referralCode.total_earnings}</p>
-            <p className="text-[11px] text-muted-foreground">Earned</p>
+            <Star className="h-4 w-4 mx-auto mb-1 text-amber-500" />
+            <p className="text-xl font-bold text-amber-600">{referralCode.total_earnings}</p>
+            <p className="text-[11px] text-muted-foreground">Points Earned</p>
           </div>
         </div>
 
@@ -87,11 +87,11 @@ const ReferralSection = () => {
             </div>
             <div className="flex items-start gap-2.5">
               <div className="flex items-center justify-center h-5 w-5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold shrink-0 mt-0.5">2</div>
-              <p className="text-xs text-muted-foreground"><strong className="text-foreground">Friend signs up</strong> using your code and gets ₹50 off on first order</p>
+              <p className="text-xs text-muted-foreground"><strong className="text-foreground">Friend signs up</strong> using your code and gets <strong>100 bonus points</strong></p>
             </div>
             <div className="flex items-start gap-2.5">
               <div className="flex items-center justify-center h-5 w-5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold shrink-0 mt-0.5">3</div>
-              <p className="text-xs text-muted-foreground"><strong className="text-foreground">You earn ₹50</strong> automatically when they complete their first order</p>
+              <p className="text-xs text-muted-foreground"><strong className="text-foreground">You earn 100 points</strong> too! Use points as discount on checkout</p>
             </div>
           </div>
         </div>
@@ -110,7 +110,7 @@ const ReferralSection = () => {
                       {r.status === 'completed' ? 'Completed' : 'Pending'}
                     </span>
                   </div>
-                  <span className="text-xs font-semibold text-green-600">+₹{r.referrer_reward}</span>
+                  <span className="text-xs font-semibold text-amber-600">+{r.referrer_reward} pts</span>
                 </div>
               ))}
             </div>
