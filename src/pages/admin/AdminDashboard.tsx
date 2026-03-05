@@ -13,7 +13,8 @@ import {
   TrendingUp,
   Clock,
   CheckCircle,
-  XCircle
+  XCircle,
+  Store
 } from 'lucide-react';
 
 interface DashboardStats {
@@ -25,6 +26,8 @@ interface DashboardStats {
   completedOrders: number;
   cancelledOrders: number;
   recentOrders: any[];
+  pickupEarnings: number;
+  pickupEarningsToday: number;
 }
 
 const AdminDashboard = () => {
@@ -39,6 +42,8 @@ const AdminDashboard = () => {
     completedOrders: 0,
     cancelledOrders: 0,
     recentOrders: [],
+    pickupEarnings: 0,
+    pickupEarningsToday: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -54,19 +59,18 @@ const AdminDashboard = () => {
 
       try {
         // Fetch orders count and revenue
-        const { data: orders } = await supabase
-          .from('orders')
-          .select('id, total_amount, status, created_at, payment_status');
+        const [{ data: orders }, { count: productsCount }, { count: usersCount }, { data: pickupData }] = await Promise.all([
+          supabase.from('orders').select('id, total_amount, status, created_at, payment_status'),
+          supabase.from('products').select('*', { count: 'exact', head: true }),
+          supabase.from('profiles').select('*', { count: 'exact', head: true }),
+          supabase.from('store_pickup_earnings').select('amount, created_at'),
+        ]);
 
-        // Fetch products count
-        const { count: productsCount } = await supabase
-          .from('products')
-          .select('*', { count: 'exact', head: true });
-
-        // Fetch profiles count
-        const { count: usersCount } = await supabase
-          .from('profiles')
-          .select('*', { count: 'exact', head: true });
+        const today = new Date().toISOString().slice(0, 10);
+        const pickupEarnings = (pickupData || []).reduce((s: number, e: any) => s + Number(e.amount), 0);
+        const pickupEarningsToday = (pickupData || [])
+          .filter((e: any) => e.created_at?.slice(0, 10) === today)
+          .reduce((s: number, e: any) => s + Number(e.amount), 0);
 
         if (orders) {
           const paidOrders = orders.filter(o => o.payment_status === 'paid');
@@ -75,10 +79,9 @@ const AdminDashboard = () => {
           const completedOrders = orders.filter(o => o.status === 'completed' || o.status === 'delivered').length;
           const cancelledOrders = orders.filter(o => o.status === 'cancelled').length;
 
-          // Get recent orders
           const { data: recentOrders } = await supabase
             .from('orders')
-            .select('*, profiles!orders_user_id_fkey(full_name)')
+            .select('*')
             .order('created_at', { ascending: false })
             .limit(5);
 
@@ -91,6 +94,8 @@ const AdminDashboard = () => {
             completedOrders,
             cancelledOrders,
             recentOrders: recentOrders || [],
+            pickupEarnings,
+            pickupEarningsToday,
           });
         }
       } catch (error) {
@@ -119,14 +124,40 @@ const AdminDashboard = () => {
     return null;
   }
 
+  const combinedRevenue = stats.totalRevenue + stats.pickupEarnings;
+
   const statCards = [
     {
-      title: 'Total Revenue',
-      value: `₹${stats.totalRevenue.toLocaleString()}`,
+      title: 'Total Revenue (Combined)',
+      value: `₹${combinedRevenue.toLocaleString()}`,
       icon: IndianRupee,
       color: 'text-green-600',
       bg: 'bg-green-50',
     },
+    {
+      title: 'Online Revenue',
+      value: `₹${stats.totalRevenue.toLocaleString()}`,
+      icon: ShoppingCart,
+      color: 'text-blue-600',
+      bg: 'bg-blue-50',
+    },
+    {
+      title: 'Pickup Earnings',
+      value: `₹${stats.pickupEarnings.toLocaleString()}`,
+      icon: Store,
+      color: 'text-emerald-600',
+      bg: 'bg-emerald-50',
+    },
+    {
+      title: 'Today Pickup',
+      value: `₹${stats.pickupEarningsToday.toLocaleString()}`,
+      icon: Store,
+      color: 'text-teal-600',
+      bg: 'bg-teal-50',
+    },
+  ];
+
+  const statCards2 = [
     {
       title: 'Total Orders',
       value: stats.totalOrders,
@@ -183,7 +214,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Main Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           {statCards.map((stat) => (
             <Card key={stat.title} className="hover:shadow-lg transition-shadow">
               <CardContent className="pt-6">
@@ -191,6 +222,25 @@ const AdminDashboard = () => {
                   <div>
                     <p className="text-sm text-muted-foreground">{stat.title}</p>
                     <p className="text-3xl font-bold mt-1">{stat.value}</p>
+                  </div>
+                  <div className={`p-3 rounded-full ${stat.bg}`}>
+                    <stat.icon className={`h-6 w-6 ${stat.color}`} />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* Secondary Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {statCards2.map((stat) => (
+            <Card key={stat.title} className="hover:shadow-lg transition-shadow">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">{stat.title}</p>
+                    <p className="text-2xl font-bold mt-1">{stat.value}</p>
                   </div>
                   <div className={`p-3 rounded-full ${stat.bg}`}>
                     <stat.icon className={`h-6 w-6 ${stat.color}`} />

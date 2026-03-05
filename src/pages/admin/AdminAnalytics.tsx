@@ -9,7 +9,7 @@ import {
 } from 'recharts';
 import {
   TrendingUp, TrendingDown, IndianRupee, ShoppingCart,
-  Users, Package, Calendar, ArrowUpRight
+  Users, Package, Calendar, ArrowUpRight, Store
 } from 'lucide-react';
 import { format, subDays, startOfDay, parseISO, isAfter } from 'date-fns';
 
@@ -28,22 +28,25 @@ const AdminAnalytics = () => {
   const [orderItems, setOrderItems] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
   const [profiles, setProfiles] = useState<any[]>([]);
+  const [pickupEarnings, setPickupEarnings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState<TimeRange>('30d');
 
   useEffect(() => {
     const fetchAll = async () => {
       setLoading(true);
-      const [ordersRes, itemsRes, productsRes, profilesRes] = await Promise.all([
+      const [ordersRes, itemsRes, productsRes, profilesRes, pickupRes] = await Promise.all([
         supabase.from('orders').select('*').eq('payment_status', 'paid'),
         supabase.from('order_items').select('*'),
         supabase.from('products').select('id, name, price, image_url, is_active'),
         supabase.from('profiles').select('user_id, created_at'),
+        supabase.from('store_pickup_earnings').select('amount, created_at'),
       ]);
       setOrders(ordersRes.data || []);
       setOrderItems(itemsRes.data || []);
       setProducts(productsRes.data || []);
       setProfiles(profilesRes.data || []);
+      setPickupEarnings(pickupRes.data || []);
       setLoading(false);
     };
     fetchAll();
@@ -56,13 +59,20 @@ const AdminAnalytics = () => {
     return orders.filter(o => isAfter(parseISO(o.created_at), cutoff));
   }, [orders, timeRange]);
 
+  const filteredPickup = useMemo(() => {
+    if (timeRange === 'all') return pickupEarnings;
+    const days = timeRange === '7d' ? 7 : timeRange === '30d' ? 30 : 90;
+    const cutoff = startOfDay(subDays(new Date(), days));
+    return pickupEarnings.filter(e => isAfter(parseISO(e.created_at), cutoff));
+  }, [pickupEarnings, timeRange]);
+
   // Revenue & order trends (daily)
   const dailyTrends = useMemo(() => {
     const days = timeRange === '7d' ? 7 : timeRange === '30d' ? 30 : timeRange === '90d' ? 90 : 60;
-    const map: Record<string, { date: string; revenue: number; orders: number }> = {};
+    const map: Record<string, { date: string; revenue: number; pickup: number; orders: number }> = {};
     for (let i = days - 1; i >= 0; i--) {
       const d = format(subDays(new Date(), i), 'yyyy-MM-dd');
-      map[d] = { date: d, revenue: 0, orders: 0 };
+      map[d] = { date: d, revenue: 0, pickup: 0, orders: 0 };
     }
     filteredOrders.forEach(o => {
       const d = format(parseISO(o.created_at), 'yyyy-MM-dd');
@@ -71,11 +81,18 @@ const AdminAnalytics = () => {
         map[d].orders += 1;
       }
     });
+    filteredPickup.forEach(e => {
+      const d = format(parseISO(e.created_at), 'yyyy-MM-dd');
+      if (map[d]) {
+        map[d].pickup += Number(e.amount);
+      }
+    });
     return Object.values(map).map(v => ({
       ...v,
+      total: v.revenue + v.pickup,
       label: format(parseISO(v.date), 'dd MMM'),
     }));
-  }, [filteredOrders, timeRange]);
+  }, [filteredOrders, filteredPickup, timeRange]);
 
   // Top products by quantity sold
   const topProducts = useMemo(() => {
@@ -124,6 +141,8 @@ const AdminAnalytics = () => {
 
   // Summary metrics
   const totalRevenue = filteredOrders.reduce((s, o) => s + Number(o.total_amount), 0);
+  const totalPickup = filteredPickup.reduce((s, e) => s + Number(e.amount), 0);
+  const combinedRevenue = totalRevenue + totalPickup;
   const totalOrders = filteredOrders.length;
   const avgOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
   const totalItemsSold = useMemo(() => {
@@ -165,10 +184,11 @@ const AdminAnalytics = () => {
         </div>
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
           {[
-            { label: 'Revenue', value: `₹${totalRevenue.toLocaleString()}`, icon: IndianRupee, accent: 'text-green-600' },
-            { label: 'Orders', value: totalOrders, icon: ShoppingCart, accent: 'text-blue-600' },
+            { label: 'Combined Revenue', value: `₹${combinedRevenue.toLocaleString()}`, icon: IndianRupee, accent: 'text-green-600' },
+            { label: 'Online Revenue', value: `₹${totalRevenue.toLocaleString()}`, icon: ShoppingCart, accent: 'text-blue-600' },
+            { label: 'Pickup Earnings', value: `₹${totalPickup.toLocaleString()}`, icon: Store, accent: 'text-emerald-600' },
             { label: 'Avg. Order', value: `₹${Math.round(avgOrderValue).toLocaleString()}`, icon: TrendingUp, accent: 'text-purple-600' },
             { label: 'Items Sold', value: totalItemsSold, icon: Package, accent: 'text-orange-600' },
           ].map(kpi => (
@@ -203,6 +223,10 @@ const AdminAnalytics = () => {
                       <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
                       <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                     </linearGradient>
+                    <linearGradient id="colorPickup" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                    </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                   <XAxis dataKey="label" tick={{ fontSize: 11 }} stroke="hsl(var(--muted-foreground))" />
@@ -214,9 +238,11 @@ const AdminAnalytics = () => {
                       borderRadius: '8px',
                       fontSize: 13,
                     }}
-                    formatter={(value: number) => [`₹${value.toLocaleString()}`, 'Revenue']}
+                    formatter={(value: number, name: string) => [`₹${value.toLocaleString()}`, name === 'revenue' ? 'Online' : name === 'pickup' ? 'Pickup' : 'Total']}
                   />
-                  <Area type="monotone" dataKey="revenue" stroke="hsl(var(--primary))" fill="url(#colorRevenue)" strokeWidth={2} />
+                  <Legend />
+                  <Area type="monotone" dataKey="revenue" name="Online" stroke="hsl(var(--primary))" fill="url(#colorRevenue)" strokeWidth={2} />
+                  <Area type="monotone" dataKey="pickup" name="Pickup" stroke="#10b981" fill="url(#colorPickup)" strokeWidth={2} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
