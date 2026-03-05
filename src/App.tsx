@@ -14,6 +14,7 @@ import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminStorage from "./pages/admin/AdminStorage";
 import AdminBeforeAfter from "./pages/admin/AdminBeforeAfter";
 import AdminAbandonedCarts from "./pages/admin/AdminAbandonedCarts";
+import AdminPickupEarnings from "./pages/admin/AdminPickupEarnings";
 import Index from "./pages/Index";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
@@ -109,6 +110,7 @@ const App = () => {
                 <Route path="/admin/storage" element={<AdminGuard><AdminStorage /></AdminGuard>} />
                 <Route path="/admin/before-after" element={<AdminGuard><AdminBeforeAfter /></AdminGuard>} />
                 <Route path="/admin/abandoned-carts" element={<AdminGuard><AdminAbandonedCarts /></AdminGuard>} />
+                <Route path="/admin/pickup-earnings" element={<AdminGuard><AdminPickupEarnings /></AdminGuard>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>

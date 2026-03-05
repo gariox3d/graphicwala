@@ -28,7 +28,8 @@ import {
   BarChart3,
   HardDrive,
   Layers,
-  ShoppingCart as CartIcon
+  ShoppingCart as CartIcon,
+  Store
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -118,6 +119,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/storage', label: 'Storage Manager', icon: HardDrive },
     { path: '/admin/before-after', label: 'Before/After', icon: Layers },
     { path: '/admin/abandoned-carts', label: 'Abandoned Carts', icon: CartIcon },
+    { path: '/admin/pickup-earnings', label: 'Pickup Earnings', icon: Store },
   ];
 
   const handleSignOut = async () => {
