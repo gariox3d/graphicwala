@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import AdminLayout from '@/components/admin/AdminLayout';
@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
+import { useAdminDraftState } from '@/hooks/useAdminDraftState';
 import { toast } from 'sonner';
 import { Loader2, Settings, Truck, Store, Megaphone, Shield, Phone, Percent } from 'lucide-react';
 
@@ -17,8 +18,8 @@ const AdminSettings = () => {
   const navigate = useNavigate();
   const { settings, loading, updateSettings } = useStoreSettings();
   const [saving, setSaving] = useState(false);
-  
-  const [formData, setFormData] = useState({
+
+  const createInitialFormData = useCallback(() => ({
     default_delivery_charge: 50,
     store_pickup_enabled: true,
     pickup_address: 'Graphic Wala Shop, Main Road',
@@ -33,7 +34,14 @@ const AdminSettings = () => {
     bulk_discount_enabled: false,
     bulk_discount_min_qty: 2,
     bulk_discount_percent: 10,
-  });
+  }), []);
+
+  const {
+    state: formData,
+    setState: setFormData,
+    initializeFromServer,
+    clearDraft,
+  } = useAdminDraftState('admin:settings:draft:v1', createInitialFormData);
 
   useEffect(() => {
     if (!authLoading && (!user || !isAdmin)) {
@@ -43,7 +51,7 @@ const AdminSettings = () => {
 
   useEffect(() => {
     if (settings) {
-      setFormData({
+      initializeFromServer({
         default_delivery_charge: settings.default_delivery_charge,
         store_pickup_enabled: settings.store_pickup_enabled,
         pickup_address: settings.pickup_address,
@@ -59,7 +67,7 @@ const AdminSettings = () => {
         bulk_discount_percent: settings.bulk_discount_percent ?? 10,
       });
     }
-  }, [settings]);
+  }, [settings, initializeFromServer]);
 
   const handleSave = async () => {
     setSaving(true);
