@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import AdminLayout from '@/components/admin/AdminLayout';
@@ -10,6 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { useFestivalSettings } from '@/hooks/useFestivalSettings';
+import { useAdminDraftState } from '@/hooks/useAdminDraftState';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import {
@@ -27,7 +28,7 @@ const AdminFestivalTheme = () => {
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const [form, setForm] = useState({
+  const createInitialForm = useCallback(() => ({
     is_enabled: false,
     start_date: '',
     end_date: '',
@@ -36,7 +37,14 @@ const AdminFestivalTheme = () => {
     auto_enable_by_date: false,
     banner_image_url: '',
     primary_color_override: '#d4a017',
-  });
+  }), []);
+
+  const {
+    state: form,
+    setState: setForm,
+    initializeFromServer,
+    clearDraft,
+  } = useAdminDraftState('admin:festival-theme:draft:v1', createInitialForm);
 
   useEffect(() => {
     if (!authLoading && (!user || !isAdmin)) navigate('/auth');
@@ -44,7 +52,7 @@ const AdminFestivalTheme = () => {
 
   useEffect(() => {
     if (settings) {
-      setForm({
+      initializeFromServer({
         is_enabled: settings.is_enabled,
         start_date: settings.start_date || '',
         end_date: settings.end_date || '',
@@ -55,7 +63,7 @@ const AdminFestivalTheme = () => {
         primary_color_override: settings.primary_color_override || '#d4a017',
       });
     }
-  }, [settings]);
+  }, [settings, initializeFromServer]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -71,6 +79,7 @@ const AdminFestivalTheme = () => {
     });
 
     if (result.success) {
+      clearDraft();
       if (form.is_enabled) {
         toast.success('🌙 Ramadan Theme Activated Successfully!', {
           description: 'The festival theme is now live on your store.',

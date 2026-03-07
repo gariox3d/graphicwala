@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, type SetStateAction } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -22,6 +22,34 @@ import { toast } from 'sonner';
 import { Loader2, ArrowLeft, Plus, Trash2, Image, Truck, Clock, IndianRupee, Scale, Ruler, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import MultiImageUpload from '@/components/admin/MultiImageUpload';
+import { useAdminDraftState } from '@/hooks/useAdminDraftState';
+
+type ProductFormData = {
+  name: string;
+  description: string;
+  price: string;
+  category_id: string;
+  stock_quantity: string;
+  is_active: boolean;
+  customization_enabled: boolean;
+  delivery_charge: string;
+  cutoff_time: string;
+  enable_delivery: boolean;
+  weight_kg: string;
+  length_cm: string;
+  breadth_cm: string;
+  height_cm: string;
+  flash_sale_enabled: boolean;
+  sale_price: string;
+  sale_start: string;
+  sale_end: string;
+};
+
+type ProductFormDraft = {
+  formData: ProductFormData;
+  uploadConfig: UploadField[];
+  productImages: string[];
+};
 
 const ProductForm = () => {
   const { id } = useParams<{ id: string }>();
@@ -31,9 +59,8 @@ const ProductForm = () => {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [productImages, setProductImages] = useState<string[]>([]);
-  
-  const [formData, setFormData] = useState({
+
+  const createInitialFormData = useCallback((): ProductFormData => ({
     name: '',
     description: '',
     price: '',
@@ -54,9 +81,55 @@ const ProductForm = () => {
     sale_price: '',
     sale_start: '',
     sale_end: '',
-  });
+  }), []);
 
-  const [uploadConfig, setUploadConfig] = useState<UploadField[]>([]);
+  const createInitialDraft = useCallback((): ProductFormDraft => ({
+    formData: createInitialFormData(),
+    uploadConfig: [],
+    productImages: [],
+  }), [createInitialFormData]);
+
+  const {
+    state: draft,
+    setState: setDraft,
+    initializeFromServer,
+    clearDraft,
+  } = useAdminDraftState(
+    `admin:product-form:draft:${id || 'new'}`,
+    createInitialDraft,
+  );
+
+  const { formData, uploadConfig, productImages } = draft;
+
+  const setFormData = useCallback((nextState: SetStateAction<ProductFormData>) => {
+    setDraft((previousDraft) => ({
+      ...previousDraft,
+      formData:
+        typeof nextState === 'function'
+          ? (nextState as (value: ProductFormData) => ProductFormData)(previousDraft.formData)
+          : nextState,
+    }));
+  }, [setDraft]);
+
+  const setUploadConfig = useCallback((nextState: SetStateAction<UploadField[]>) => {
+    setDraft((previousDraft) => ({
+      ...previousDraft,
+      uploadConfig:
+        typeof nextState === 'function'
+          ? (nextState as (value: UploadField[]) => UploadField[])(previousDraft.uploadConfig)
+          : nextState,
+    }));
+  }, [setDraft]);
+
+  const setProductImages = useCallback((nextState: SetStateAction<string[]>) => {
+    setDraft((previousDraft) => ({
+      ...previousDraft,
+      productImages:
+        typeof nextState === 'function'
+          ? (nextState as (value: string[]) => string[])(previousDraft.productImages)
+          : nextState,
+    }));
+  }, [setDraft]);
 
   useEffect(() => {
     if (!authLoading && (!user || !isAdmin)) {
@@ -91,7 +164,7 @@ const ProductForm = () => {
           return;
         }
 
-        setFormData({
+        const nextFormData: ProductFormData = {
           name: product.name,
           description: product.description || '',
           price: product.price.toString(),
@@ -112,20 +185,23 @@ const ProductForm = () => {
           sale_price: product.sale_price?.toString() || '',
           sale_start: product.sale_start ? new Date(product.sale_start).toISOString().slice(0, 16) : '',
           sale_end: product.sale_end ? new Date(product.sale_end).toISOString().slice(0, 16) : '',
-        });
-        
+        };
+
         // Load images - check image_urls first, then fallback to image_url
         const imageUrls = product.image_urls as string[] | null;
-        if (imageUrls && Array.isArray(imageUrls) && imageUrls.length > 0) {
-          setProductImages(imageUrls);
-        } else if (product.image_url) {
-          setProductImages([product.image_url]);
-        }
-        
+        const nextProductImages =
+          imageUrls && Array.isArray(imageUrls) && imageUrls.length > 0
+            ? imageUrls
+            : product.image_url
+              ? [product.image_url]
+              : [];
+
         // Parse upload_config
         const config = product.upload_config as unknown as UploadField[] | null;
+        let nextUploadConfig: UploadField[] = [];
+
         if (config && Array.isArray(config) && config.length > 0) {
-          setUploadConfig(config);
+          nextUploadConfig = config;
         } else if (product.customization_enabled) {
           // Migrate old format to new format
           const legacyConfig: UploadField[] = [];
@@ -135,10 +211,14 @@ const ProductForm = () => {
           if (product.back_upload_enabled) {
             legacyConfig.push({ id: 'back', label: 'Back Design', required: false });
           }
-          if (legacyConfig.length > 0) {
-            setUploadConfig(legacyConfig);
-          }
+          nextUploadConfig = legacyConfig;
         }
+
+        initializeFromServer({
+          formData: nextFormData,
+          productImages: nextProductImages,
+          uploadConfig: nextUploadConfig,
+        });
       }
 
       setLoading(false);
@@ -147,7 +227,7 @@ const ProductForm = () => {
     if (isAdmin) {
       fetchData();
     }
-  }, [isAdmin, id, isEditing, navigate]);
+  }, [isAdmin, id, isEditing, navigate, initializeFromServer]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -241,6 +321,7 @@ const ProductForm = () => {
         toast.success('Product created successfully');
       }
 
+      clearDraft();
       navigate('/admin/products');
     } catch (error: any) {
       console.error('Save error:', error);
