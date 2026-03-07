@@ -79,6 +79,7 @@ const AdminFestivalTheme = () => {
     });
 
     if (result.success) {
+      clearDraft();
       if (form.is_enabled) {
         toast.success('🌙 Ramadan Theme Activated Successfully!', {
           description: 'The festival theme is now live on your store.',
