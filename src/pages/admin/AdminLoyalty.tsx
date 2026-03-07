@@ -66,7 +66,7 @@ const AdminLoyalty = () => {
         supabase.rpc('get_all_customers'),
       ]);
 
-      if (settingsRes.data) setSettings(settingsRes.data as unknown as LoyaltySettings);
+      if (settingsRes.data) initializeFromServer(settingsRes.data as unknown as LoyaltySettings);
       if (balancesRes.data) {
         const balances = balancesRes.data as any[];
         setStats({
@@ -100,7 +100,10 @@ const AdminLoyalty = () => {
       .eq('id', 'default');
 
     if (error) toast.error('Failed to save settings');
-    else toast.success('Loyalty settings saved!');
+    else {
+      clearDraft();
+      toast.success('Loyalty settings saved!');
+    }
     setSaving(false);
   };
 
