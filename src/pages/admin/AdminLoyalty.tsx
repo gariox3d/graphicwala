@@ -79,7 +79,7 @@ const AdminLoyalty = () => {
       setLoading(false);
     };
     fetchData();
-  }, []);
+  }, [initializeFromServer]);
 
   const handleSave = async () => {
     if (!settings) return;
