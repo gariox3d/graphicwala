@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,6 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { Coins, Save, Loader2, Users, TrendingUp, Plus, Minus, Send } from 'lucide-react';
+import { useAdminDraftState } from '@/hooks/useAdminDraftState';
 
 interface LoyaltySettings {
   id: string;
@@ -37,7 +38,14 @@ interface CustomerOption {
 }
 
 const AdminLoyalty = () => {
-  const [settings, setSettings] = useState<LoyaltySettings | null>(null);
+  const createInitialSettings = useCallback((): LoyaltySettings | null => null, []);
+  const {
+    state: settings,
+    setState: setSettings,
+    initializeFromServer,
+    clearDraft,
+  } = useAdminDraftState<LoyaltySettings | null>('admin:loyalty-settings:draft:v1', createInitialSettings);
+
   const [stats, setStats] = useState<LoyaltyStats>({ total_users: 0, total_points_earned: 0, total_points_redeemed: 0 });
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
