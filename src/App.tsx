@@ -54,8 +54,13 @@ import { useState, useCallback } from "react";
 const queryClient = new QueryClient();
 
 const App = () => {
-  const [showSplash, setShowSplash] = useState(true);
-  const handleSplashFinish = useCallback(() => setShowSplash(false), []);
+  const [showSplash, setShowSplash] = useState(() => {
+    return !sessionStorage.getItem('splash_shown');
+  });
+  const handleSplashFinish = useCallback(() => {
+    sessionStorage.setItem('splash_shown', '1');
+    setShowSplash(false);
+  }, []);
 
   return (
     <>
