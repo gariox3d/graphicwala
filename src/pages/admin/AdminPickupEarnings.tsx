@@ -91,7 +91,8 @@ const AdminPickupEarnings = () => {
       } as any);
       if (error) throw error;
       toast.success('Earning record added!');
-      setForm({ customer_name: '', customer_phone: '', items_description: '', amount: '', payment_method: 'cash', notes: '' });
+      clearDraft();
+      replaceForm(createInitialForm());
       setShowForm(false);
       fetchEarnings();
     } catch (err: any) {
