@@ -227,7 +227,7 @@ const ProductForm = () => {
     if (isAdmin) {
       fetchData();
     }
-  }, [isAdmin, id, isEditing, navigate]);
+  }, [isAdmin, id, isEditing, navigate, initializeFromServer]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
