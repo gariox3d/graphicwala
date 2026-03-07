@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import AdminLayout from '@/components/admin/AdminLayout';
@@ -18,6 +18,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
+import { useAdminDraftState } from '@/hooks/useAdminDraftState';
 
 interface PickupEarning {
   id: string;
@@ -39,15 +40,21 @@ const AdminPickupEarnings = () => {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  // Form state
-  const [form, setForm] = useState({
+  const createInitialForm = useCallback(() => ({
     customer_name: '',
     customer_phone: '',
     items_description: '',
     amount: '',
     payment_method: 'cash',
     notes: '',
-  });
+  }), []);
+
+  const {
+    state: form,
+    setState: setForm,
+    replaceState: replaceForm,
+    clearDraft,
+  } = useAdminDraftState('admin:pickup-earnings:draft:v1', createInitialForm);
 
   const fetchEarnings = async () => {
     const { data, error } = await supabase
