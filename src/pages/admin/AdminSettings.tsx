@@ -73,6 +73,7 @@ const AdminSettings = () => {
     setSaving(true);
     const result = await updateSettings(formData);
     if (result.success) {
+      clearDraft();
       toast.success('Settings saved successfully');
     } else {
       toast.error('Failed to save settings');
