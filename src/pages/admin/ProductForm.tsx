@@ -164,7 +164,7 @@ const ProductForm = () => {
           return;
         }
 
-        setFormData({
+        const nextFormData: ProductFormData = {
           name: product.name,
           description: product.description || '',
           price: product.price.toString(),
@@ -185,20 +185,23 @@ const ProductForm = () => {
           sale_price: product.sale_price?.toString() || '',
           sale_start: product.sale_start ? new Date(product.sale_start).toISOString().slice(0, 16) : '',
           sale_end: product.sale_end ? new Date(product.sale_end).toISOString().slice(0, 16) : '',
-        });
-        
+        };
+
         // Load images - check image_urls first, then fallback to image_url
         const imageUrls = product.image_urls as string[] | null;
-        if (imageUrls && Array.isArray(imageUrls) && imageUrls.length > 0) {
-          setProductImages(imageUrls);
-        } else if (product.image_url) {
-          setProductImages([product.image_url]);
-        }
-        
+        const nextProductImages =
+          imageUrls && Array.isArray(imageUrls) && imageUrls.length > 0
+            ? imageUrls
+            : product.image_url
+              ? [product.image_url]
+              : [];
+
         // Parse upload_config
         const config = product.upload_config as unknown as UploadField[] | null;
+        let nextUploadConfig: UploadField[] = [];
+
         if (config && Array.isArray(config) && config.length > 0) {
-          setUploadConfig(config);
+          nextUploadConfig = config;
         } else if (product.customization_enabled) {
           // Migrate old format to new format
           const legacyConfig: UploadField[] = [];
@@ -208,10 +211,14 @@ const ProductForm = () => {
           if (product.back_upload_enabled) {
             legacyConfig.push({ id: 'back', label: 'Back Design', required: false });
           }
-          if (legacyConfig.length > 0) {
-            setUploadConfig(legacyConfig);
-          }
+          nextUploadConfig = legacyConfig;
         }
+
+        initializeFromServer({
+          formData: nextFormData,
+          productImages: nextProductImages,
+          uploadConfig: nextUploadConfig,
+        });
       }
 
       setLoading(false);
