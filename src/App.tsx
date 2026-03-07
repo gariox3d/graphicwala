@@ -55,10 +55,10 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const [showSplash, setShowSplash] = useState(() => {
-    return !sessionStorage.getItem('splash_shown');
+    return !localStorage.getItem('splash_shown');
   });
   const handleSplashFinish = useCallback(() => {
-    sessionStorage.setItem('splash_shown', '1');
+    localStorage.setItem('splash_shown', '1');
     setShowSplash(false);
   }, []);
 
