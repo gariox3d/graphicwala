@@ -321,6 +321,7 @@ const ProductForm = () => {
         toast.success('Product created successfully');
       }
 
+      clearDraft();
       navigate('/admin/products');
     } catch (error: any) {
       console.error('Save error:', error);
