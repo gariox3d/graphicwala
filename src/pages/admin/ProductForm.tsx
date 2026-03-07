@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, type SetStateAction } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -22,6 +22,34 @@ import { toast } from 'sonner';
 import { Loader2, ArrowLeft, Plus, Trash2, Image, Truck, Clock, IndianRupee, Scale, Ruler, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import MultiImageUpload from '@/components/admin/MultiImageUpload';
+import { useAdminDraftState } from '@/hooks/useAdminDraftState';
+
+type ProductFormData = {
+  name: string;
+  description: string;
+  price: string;
+  category_id: string;
+  stock_quantity: string;
+  is_active: boolean;
+  customization_enabled: boolean;
+  delivery_charge: string;
+  cutoff_time: string;
+  enable_delivery: boolean;
+  weight_kg: string;
+  length_cm: string;
+  breadth_cm: string;
+  height_cm: string;
+  flash_sale_enabled: boolean;
+  sale_price: string;
+  sale_start: string;
+  sale_end: string;
+};
+
+type ProductFormDraft = {
+  formData: ProductFormData;
+  uploadConfig: UploadField[];
+  productImages: string[];
+};
 
 const ProductForm = () => {
   const { id } = useParams<{ id: string }>();
@@ -31,9 +59,8 @@ const ProductForm = () => {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [productImages, setProductImages] = useState<string[]>([]);
-  
-  const [formData, setFormData] = useState({
+
+  const createInitialFormData = useCallback((): ProductFormData => ({
     name: '',
     description: '',
     price: '',
@@ -54,9 +81,55 @@ const ProductForm = () => {
     sale_price: '',
     sale_start: '',
     sale_end: '',
-  });
+  }), []);
 
-  const [uploadConfig, setUploadConfig] = useState<UploadField[]>([]);
+  const createInitialDraft = useCallback((): ProductFormDraft => ({
+    formData: createInitialFormData(),
+    uploadConfig: [],
+    productImages: [],
+  }), [createInitialFormData]);
+
+  const {
+    state: draft,
+    setState: setDraft,
+    initializeFromServer,
+    clearDraft,
+  } = useAdminDraftState(
+    `admin:product-form:draft:${id || 'new'}`,
+    createInitialDraft,
+  );
+
+  const { formData, uploadConfig, productImages } = draft;
+
+  const setFormData = useCallback((nextState: SetStateAction<ProductFormData>) => {
+    setDraft((previousDraft) => ({
+      ...previousDraft,
+      formData:
+        typeof nextState === 'function'
+          ? (nextState as (value: ProductFormData) => ProductFormData)(previousDraft.formData)
+          : nextState,
+    }));
+  }, [setDraft]);
+
+  const setUploadConfig = useCallback((nextState: SetStateAction<UploadField[]>) => {
+    setDraft((previousDraft) => ({
+      ...previousDraft,
+      uploadConfig:
+        typeof nextState === 'function'
+          ? (nextState as (value: UploadField[]) => UploadField[])(previousDraft.uploadConfig)
+          : nextState,
+    }));
+  }, [setDraft]);
+
+  const setProductImages = useCallback((nextState: SetStateAction<string[]>) => {
+    setDraft((previousDraft) => ({
+      ...previousDraft,
+      productImages:
+        typeof nextState === 'function'
+          ? (nextState as (value: string[]) => string[])(previousDraft.productImages)
+          : nextState,
+    }));
+  }, [setDraft]);
 
   useEffect(() => {
     if (!authLoading && (!user || !isAdmin)) {
