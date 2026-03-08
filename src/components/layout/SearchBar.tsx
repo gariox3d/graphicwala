@@ -102,6 +102,7 @@ const SearchBar = ({ onNavigate }: { onNavigate?: () => void }) => {
                     src={product.image_url}
                     alt={product.name}
                     className="h-10 w-10 rounded object-cover flex-shrink-0"
+                    loading="lazy"
                   />
                 ) : (
                   <div className="h-10 w-10 rounded bg-muted flex-shrink-0" />
