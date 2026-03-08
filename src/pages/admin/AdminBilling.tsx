@@ -288,7 +288,7 @@ const AdminBilling = () => {
                     </div>
                     <div className="col-span-5">
                       {idx === 0 && <Label className="text-xs">Product / Service</Label>}
-                      <ProductCombobox
+                      <ProductSearchSelect
                         value={item.name}
                         options={productOptions}
                         onChange={(name, price) => {
