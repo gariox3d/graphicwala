@@ -11,7 +11,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Plus, Trash2, Download, FileText, Eye, Search } from 'lucide-react';
+import { Plus, Trash2, Download, FileText, Eye } from 'lucide-react';
 
 interface BillItem {
   id: string;
@@ -52,74 +52,34 @@ const ProductSearchSelect = ({
   options: ProductOption[];
   onChange: (name: string, price?: number) => void;
 }) => {
-  const [open, setOpen] = useState(false);
-  const [search, setSearch] = useState('');
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const filtered = options.filter(o =>
-    o.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const selectedProduct = options.find(option => option.name === value);
 
   return (
-    <div className="relative">
-      <div className="relative">
-        <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          ref={inputRef}
-          placeholder="Search product..."
-          value={open ? search : value || ''}
-          onFocus={() => {
-            setOpen(true);
-            setSearch('');
-          }}
-          onChange={e => {
-            setSearch(e.target.value);
-            if (!open) setOpen(true);
-          }}
-          onBlur={() => {
-            setTimeout(() => setOpen(false), 200);
-          }}
-          className="pl-8"
-        />
-      </div>
-      {open && (
-        <div className="absolute z-50 top-full left-0 w-full mt-1 bg-popover border rounded-md shadow-lg max-h-60 overflow-y-auto">
-          {filtered.map(product => (
-            <button
-              key={product.id}
-              type="button"
-              className="w-full text-left px-3 py-2 text-sm hover:bg-accent flex justify-between items-center"
-              onMouseDown={e => {
-                e.preventDefault();
-                onChange(product.name, product.price);
-                setSearch('');
-                setOpen(false);
-              }}
-            >
-              <span className="truncate">{product.name}</span>
-              <span className="text-xs text-muted-foreground ml-2 shrink-0">₹{product.price.toLocaleString()}</span>
-            </button>
-          ))}
-          {filtered.length === 0 && search.trim() && (
-            <button
-              type="button"
-              className="w-full text-left px-3 py-2 text-sm hover:bg-accent text-muted-foreground"
-              onMouseDown={e => {
-                e.preventDefault();
-                onChange(search);
-                setSearch('');
-                setOpen(false);
-              }}
-            >
-              Use "<span className="text-foreground font-medium">{search}</span>" as custom item
-            </button>
-          )}
-          {filtered.length === 0 && !search.trim() && (
-            <div className="px-3 py-2 text-sm text-muted-foreground">Type to search...</div>
-          )}
-        </div>
-      )}
-    </div>
+    <Select
+      value={selectedProduct?.id ?? 'none'}
+      onValueChange={(selectedId) => {
+        if (selectedId === 'none') {
+          onChange('', 0);
+          return;
+        }
+
+        const product = options.find(option => option.id === selectedId);
+        if (!product) return;
+        onChange(product.name, product.price);
+      }}
+    >
+      <SelectTrigger className="h-10">
+        <SelectValue placeholder="Select product..." />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="none">Select product...</SelectItem>
+        {options.map((product) => (
+          <SelectItem key={product.id} value={product.id}>
+            {product.name} (₹{product.price.toLocaleString()})
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 };
 
@@ -142,11 +102,15 @@ const AdminBilling = () => {
   const [productOptions, setProductOptions] = useState<ProductOption[]>([]);
   useEffect(() => {
     const fetchProducts = async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('products')
         .select('id, name, price, sale_price')
-        .eq('is_active', true)
         .order('name');
+      if (error) {
+        toast.error('Products load nahi hue, page refresh karke try karein');
+        return;
+      }
+
       if (data) {
         setProductOptions(data.map(p => ({
           id: p.id,
