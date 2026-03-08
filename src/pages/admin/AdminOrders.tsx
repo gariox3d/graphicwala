@@ -457,6 +457,29 @@ const AdminOrders = () => {
                   </p>
                   <p><strong>Phone:</strong> {selectedOrder.shipping_phone}</p>
                   {selectedOrder.email && <p><strong>Email:</strong> {selectedOrder.email}</p>}
+                  
+                  {/* WhatsApp Quick Actions */}
+                  <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t">
+                    {Object.entries(WHATSAPP_STATUS_MESSAGES).map(([status, msgFn]) => {
+                      const customerName = selectedOrder.customer_name || selectedOrder.profiles?.full_name || 'Customer';
+                      const shortId = selectedOrder.id.slice(0, 8).toUpperCase();
+                      const message = msgFn(customerName, shortId, Number(selectedOrder.total_amount));
+                      const url = getWhatsAppLink(selectedOrder.shipping_phone, message);
+                      const isCurrentStatus = selectedOrder.status === status;
+                      return (
+                        <Button
+                          key={status}
+                          size="sm"
+                          variant={isCurrentStatus ? "default" : "outline"}
+                          className={`gap-1 text-xs capitalize ${isCurrentStatus ? 'bg-green-600 hover:bg-green-700 text-white' : ''}`}
+                          onClick={() => window.open(url, '_blank')}
+                        >
+                          <MessageCircle className="h-3 w-3" />
+                          {status}
+                        </Button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
 
