@@ -11,7 +11,8 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Plus, Trash2, Download, FileText, Eye, MessageCircle } from 'lucide-react';
+import { Plus, Trash2, Download, FileText, Eye, MessageCircle, IndianRupee, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { normalizeIndianPhoneForWhatsApp } from '@/lib/phone';
 
 interface BillItem {
