@@ -143,7 +143,7 @@ const AdminBilling = () => {
   };
 
   const updateItem = (id: string, field: keyof BillItem, value: string | number) => {
-    setItems(items.map(i => i.id === id ? { ...i, [field]: value } : i));
+    setItems(prevItems => prevItems.map(i => i.id === id ? { ...i, [field]: value } : i));
   };
 
   const subtotal = items.reduce((sum, i) => sum + i.quantity * i.rate, 0);
