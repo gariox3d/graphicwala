@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import AdminLayout from '@/components/admin/AdminLayout';
+import DailySalesSummary from '@/components/admin/DailySalesSummary';
 import { 
   Package, 
   ShoppingCart, 
@@ -212,6 +213,9 @@ const AdminDashboard = () => {
           <h1 className="text-3xl font-bold">Dashboard</h1>
           <p className="text-muted-foreground mt-1">Welcome back! Here's your store overview.</p>
         </div>
+
+        {/* Daily Sales Summary */}
+        <DailySalesSummary />
 
         {/* Main Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
