@@ -741,6 +741,32 @@ const BillTemplate = ({
         </div>
       </div>
 
+      {/* Payment Status Badge */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'flex-end',
+        marginBottom: isHalf ? '8px' : '14px',
+      }}>
+        <div style={{
+          padding: isHalf ? '6px 16px' : '8px 24px',
+          borderRadius: '6px',
+          fontWeight: 700,
+          fontSize: isHalf ? '12px' : '14px',
+          textTransform: 'uppercase',
+          letterSpacing: '1px',
+          ...(paymentStatus === 'paid'
+            ? { background: '#D1FAE5', color: '#065F46', border: '2px solid #6EE7B7' }
+            : paymentStatus === 'partial'
+            ? { background: '#FEF3C7', color: '#92400E', border: '2px solid #FCD34D' }
+            : { background: '#FEE2E2', color: '#991B1B', border: '2px solid #FCA5A5' }
+          ),
+        }}>
+          {paymentStatus === 'paid' && '✅ PAID'}
+          {paymentStatus === 'partial' && `⏳ PARTIAL — Paid: ${fmt(amountPaid)} | Due: ${fmt(grandTotal - amountPaid)}`}
+          {paymentStatus === 'unpaid' && `❌ UNPAID — Due: ${fmt(grandTotal)}`}
+        </div>
+      </div>
+
       {/* Notes */}
       {notes && (
         <div style={{
