@@ -215,12 +215,6 @@ const AdminBilling = () => {
   }
   if (!isAdmin) return null;
 
-  const formatCurrency = (amount: number) =>
-    new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(amount);
-
-  const formattedDate = new Date(billDate).toLocaleDateString('en-IN', {
-    day: 'numeric', month: 'long', year: 'numeric',
-  });
 
   return (
     <>
