@@ -131,6 +131,7 @@ const AdminBilling = () => {
   const [billDate, setBillDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [billType, setBillType] = useState<'estimate' | 'invoice'>('invoice');
   const [pageSize, setPageSize] = useState<'a4' | 'a4-half'>('a4');
+  const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('portrait');
 
   // Customer
   const [customerName, setCustomerName] = useState('');
