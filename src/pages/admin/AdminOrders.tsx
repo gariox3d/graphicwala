@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Order, ORDER_STATUSES } from '@/lib/types';
+import { normalizeIndianPhoneForWhatsApp } from '@/lib/phone';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,7 +23,7 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
-import { Search, ShoppingCart, Eye, Package, MapPin, CreditCard, User, Image, Download, Trash2, Truck, Store } from 'lucide-react';
+import { Search, ShoppingCart, Eye, Package, MapPin, CreditCard, User, Image, Download, Trash2, Truck, Store, MessageCircle } from 'lucide-react';
 
 interface OrderWithProfile extends Order {
   profiles?: { full_name: string | null };
@@ -48,6 +49,26 @@ interface OrderItemWithUploads {
   design_approval_status?: string | null;
   uploads?: OrderItemUpload[];
 }
+
+const WHATSAPP_STATUS_MESSAGES: Record<string, (name: string, orderId: string, amount: number) => string> = {
+  designing: (name, orderId, amount) =>
+    `🎨 *Graphic Wala - Design Update*\n\nHello ${name}! 👋\n\nAapka order *#${orderId}* (₹${amount.toLocaleString()}) ka design work shuru ho gaya hai! Humari creative team aapke liye kuch khaas bana rahi hai.\n\nThoda wait karein, jaldi update milega! ✨`,
+  approved: (name, orderId, amount) =>
+    `✅ *Graphic Wala - Design Approved*\n\nHello ${name}! 👋\n\nGreat news! Aapka order *#${orderId}* (₹${amount.toLocaleString()}) ka design approve ho gaya hai! Ab production mein jayega.\n\nThank you for choosing Graphic Wala! 🙏`,
+  printing: (name, orderId, amount) =>
+    `🖨️ *Graphic Wala - Printing Started*\n\nHello ${name}! 👋\n\nAapka order *#${orderId}* (₹${amount.toLocaleString()}) ab printing mein hai! Premium quality materials se aapka design print ho raha hai.\n\nJaldi ready hoga! 💪`,
+  shipped: (name, orderId, amount) =>
+    `🚚 *Graphic Wala - Order Shipped*\n\nHello ${name}! 👋\n\nAapka order *#${orderId}* (₹${amount.toLocaleString()}) ship ho gaya hai! Jaldi aap tak pahunchega.\n\nDelivery ka wait karein! 📦✨`,
+  completed: (name, orderId, amount) =>
+    `🎉 *Graphic Wala - Order Delivered*\n\nHello ${name}! 👋\n\nAapka order *#${orderId}* (₹${amount.toLocaleString()}) successfully deliver ho gaya hai!\n\nHumein umeed hai aapko pasand aayega. Agar koi dikkat ho toh hume batayein! ❤️\n\nThank you for choosing Graphic Wala! 🙏`,
+  cancelled: (name, orderId, amount) =>
+    `❌ *Graphic Wala - Order Cancelled*\n\nHello ${name}! 👋\n\nAapka order *#${orderId}* (₹${amount.toLocaleString()}) cancel kar diya gaya hai.\n\nAgar koi sawal ho toh hume WhatsApp pe message karein. Hum madad ke liye hamesha tayyar hain! 🙏`,
+};
+
+const getWhatsAppLink = (phone: string, message: string) => {
+  const normalizedPhone = normalizeIndianPhoneForWhatsApp(phone);
+  return `https://wa.me/${normalizedPhone}?text=${encodeURIComponent(message)}`;
+};
 
 const AdminOrders = () => {
   const { user, isAdmin, loading: authLoading } = useAuth();
@@ -103,11 +124,29 @@ const AdminOrders = () => {
     if (error) {
       toast.error('Failed to update order status');
     } else {
+      const order = orders.find(o => o.id === orderId);
       setOrders(orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
       toast.success('Order status updated');
       
       // Trigger status email (async, don't block UI)
       sendStatusEmail(orderId, newStatus);
+
+      // Show WhatsApp notification toast
+      if (order && WHATSAPP_STATUS_MESSAGES[newStatus]) {
+        const customerName = order.customer_name || order.profiles?.full_name || 'Customer';
+        const shortId = orderId.slice(0, 8).toUpperCase();
+        const message = WHATSAPP_STATUS_MESSAGES[newStatus](customerName, shortId, Number(order.total_amount));
+        const whatsappUrl = getWhatsAppLink(order.shipping_phone, message);
+        
+        toast('📱 WhatsApp Update भेजें?', {
+          description: `${customerName} को ${newStatus} update भेजें`,
+          duration: 15000,
+          action: {
+            label: 'WhatsApp भेजें',
+            onClick: () => window.open(whatsappUrl, '_blank'),
+          },
+        });
+      }
     }
   };
 
@@ -358,6 +397,21 @@ const AdminOrders = () => {
                           <Button variant="ghost" size="icon" onClick={() => viewOrderDetails(order)}>
                             <Eye className="h-4 w-4" />
                           </Button>
+                          {WHATSAPP_STATUS_MESSAGES[order.status] && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                              onClick={() => {
+                                const name = order.customer_name || order.profiles?.full_name || 'Customer';
+                                const msg = WHATSAPP_STATUS_MESSAGES[order.status](name, order.id.slice(0, 8).toUpperCase(), Number(order.total_amount));
+                                window.open(getWhatsAppLink(order.shipping_phone, msg), '_blank');
+                              }}
+                              title="WhatsApp Update भेजें"
+                            >
+                              <MessageCircle className="h-4 w-4" />
+                            </Button>
+                          )}
                           {order.status === 'cancelled' && (
                             <Button
                               variant="ghost"
@@ -418,6 +472,29 @@ const AdminOrders = () => {
                   </p>
                   <p><strong>Phone:</strong> {selectedOrder.shipping_phone}</p>
                   {selectedOrder.email && <p><strong>Email:</strong> {selectedOrder.email}</p>}
+                  
+                  {/* WhatsApp Quick Actions */}
+                  <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t">
+                    {Object.entries(WHATSAPP_STATUS_MESSAGES).map(([status, msgFn]) => {
+                      const customerName = selectedOrder.customer_name || selectedOrder.profiles?.full_name || 'Customer';
+                      const shortId = selectedOrder.id.slice(0, 8).toUpperCase();
+                      const message = msgFn(customerName, shortId, Number(selectedOrder.total_amount));
+                      const url = getWhatsAppLink(selectedOrder.shipping_phone, message);
+                      const isCurrentStatus = selectedOrder.status === status;
+                      return (
+                        <Button
+                          key={status}
+                          size="sm"
+                          variant={isCurrentStatus ? "default" : "outline"}
+                          className={`gap-1 text-xs capitalize ${isCurrentStatus ? 'bg-green-600 hover:bg-green-700 text-white' : ''}`}
+                          onClick={() => window.open(url, '_blank')}
+                        >
+                          <MessageCircle className="h-3 w-3" />
+                          {status}
+                        </Button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
 
