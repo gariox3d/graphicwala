@@ -29,7 +29,8 @@ import {
   HardDrive,
   Layers,
   ShoppingCart as CartIcon,
-  Store
+  Store,
+  FileText
 } from 'lucide-react';
 import { useState } from 'react';
 
