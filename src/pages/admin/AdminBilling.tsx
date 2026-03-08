@@ -106,6 +106,11 @@ const AdminBilling = () => {
         .from('products')
         .select('id, name, price, sale_price')
         .order('name');
+      if (error) {
+        toast.error('Products load nahi hue, page refresh karke try karein');
+        return;
+      }
+
       if (data) {
         setProductOptions(data.map(p => ({
           id: p.id,
