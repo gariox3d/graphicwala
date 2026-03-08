@@ -43,7 +43,7 @@ interface ProductOption {
   name: string;
   price: number;
 }
-const ProductCombobox = ({
+const ProductSearchSelect = ({
   value,
   options,
   onChange,
@@ -54,63 +54,72 @@ const ProductCombobox = ({
 }) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const filtered = options.filter(o =>
     o.name.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          className="w-full justify-between h-10 font-normal text-left"
-        >
-          <span className="truncate">{value || 'Select product...'}</span>
-          <ChevronsUpDown className="ml-1 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[300px] p-0" align="start">
-        <Command>
-          <CommandInput
-            placeholder="Search or type custom..."
-            value={search}
-            onValueChange={setSearch}
-          />
-          <CommandList>
-            <CommandEmpty>
-              <button
-                className="w-full text-left px-3 py-2 text-sm hover:bg-accent rounded"
-                onClick={() => {
-                  onChange(search);
-                  setOpen(false);
-                  setSearch('');
-                }}
-              >
-                Use "{search}" as custom item
-              </button>
-            </CommandEmpty>
-            <CommandGroup heading="Products">
-              {filtered.map(product => (
-                <CommandItem
-                  key={product.id}
-                  value={product.name}
-                  onSelect={() => {
-                    onChange(product.name, product.price);
-                    setOpen(false);
-                    setSearch('');
-                  }}
-                >
-                  <span className="flex-1 truncate">{product.name}</span>
-                  <span className="text-xs text-muted-foreground ml-2">₹{product.price.toLocaleString()}</span>
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+    <div className="relative">
+      <div className="relative">
+        <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          ref={inputRef}
+          placeholder="Search product..."
+          value={open ? search : value || ''}
+          onFocus={() => {
+            setOpen(true);
+            setSearch('');
+          }}
+          onChange={e => {
+            setSearch(e.target.value);
+            if (!open) setOpen(true);
+          }}
+          onBlur={() => {
+            setTimeout(() => setOpen(false), 200);
+          }}
+          className="pl-8"
+        />
+      </div>
+      {open && (
+        <div className="absolute z-50 top-full left-0 w-full mt-1 bg-popover border rounded-md shadow-lg max-h-60 overflow-y-auto">
+          {filtered.map(product => (
+            <button
+              key={product.id}
+              type="button"
+              className="w-full text-left px-3 py-2 text-sm hover:bg-accent flex justify-between items-center"
+              onMouseDown={e => {
+                e.preventDefault();
+                onChange(product.name, product.price);
+                setSearch('');
+                setOpen(false);
+              }}
+            >
+              <span className="truncate">{product.name}</span>
+              <span className="text-xs text-muted-foreground ml-2 shrink-0">₹{product.price.toLocaleString()}</span>
+            </button>
+          ))}
+          {filtered.length === 0 && search.trim() && (
+            <button
+              type="button"
+              className="w-full text-left px-3 py-2 text-sm hover:bg-accent text-muted-foreground"
+              onMouseDown={e => {
+                e.preventDefault();
+                onChange(search);
+                setSearch('');
+                setOpen(false);
+              }}
+            >
+              Use "<span className="text-foreground font-medium">{search}</span>" as custom item
+            </button>
+          )}
+          {filtered.length === 0 && !search.trim() && (
+            <div className="px-3 py-2 text-sm text-muted-foreground">Type to search...</div>
+          )}
+        </div>
+      )}
+    </div>
   );
 };
 
