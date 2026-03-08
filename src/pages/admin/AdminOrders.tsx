@@ -50,19 +50,19 @@ interface OrderItemWithUploads {
   uploads?: OrderItemUpload[];
 }
 
-const WHATSAPP_STATUS_MESSAGES: Record<string, (name: string, orderId: string, amount: number) => string> = {
-  designing: (name, orderId, amount) =>
-    `🎨 *Graphic Wala - Design Update*\n\nHello ${name}! 👋\n\nYour order *#${orderId}* (₹${amount.toLocaleString()}) is now being designed! Our creative team is crafting something special just for you.\n\nWe'll update you soon! ✨`,
-  approved: (name, orderId, amount) =>
-    `✅ *Graphic Wala - Design Approved*\n\nHello ${name}! 👋\n\nGreat news! Your order *#${orderId}* (₹${amount.toLocaleString()}) design has been approved and is now heading to production.\n\nThank you for choosing Graphic Wala! 🙏`,
-  printing: (name, orderId, amount) =>
-    `🖨️ *Graphic Wala - Printing Started*\n\nHello ${name}! 👋\n\nYour order *#${orderId}* (₹${amount.toLocaleString()}) is now in production! We're printing your design with premium quality materials.\n\nIt'll be ready soon! 💪`,
-  shipped: (name, orderId, amount) =>
-    `🚚 *Graphic Wala - Order Shipped*\n\nHello ${name}! 👋\n\nYour order *#${orderId}* (₹${amount.toLocaleString()}) has been shipped! It's on its way to you.\n\nYou'll receive it shortly! 📦✨`,
-  completed: (name, orderId, amount) =>
-    `🎉 *Graphic Wala - Order Delivered*\n\nHello ${name}! 👋\n\nYour order *#${orderId}* (₹${amount.toLocaleString()}) has been successfully delivered!\n\nWe hope you love it. If you have any issues, feel free to reach out! ❤️\n\nThank you for choosing Graphic Wala! 🙏`,
-  cancelled: (name, orderId, amount) =>
-    `❌ *Graphic Wala - Order Cancelled*\n\nHello ${name}! 👋\n\nYour order *#${orderId}* (₹${amount.toLocaleString()}) has been cancelled.\n\nIf you have any questions, please message us on WhatsApp. We're always here to help! 🙏`,
+const WHATSAPP_STATUS_MESSAGES: Record<string, (name: string, orderId: string, amount: number, products: string) => string> = {
+  designing: (name, orderId, amount, products) =>
+    `🎨 *Graphic Wala - Design Update*\n\nHello ${name}! 👋\n\nYour order *#${orderId}* (₹${amount.toLocaleString()}) is now being designed!\n\n📦 *Items:* ${products}\n\nOur creative team is crafting something special just for you. We'll update you soon! ✨`,
+  approved: (name, orderId, amount, products) =>
+    `✅ *Graphic Wala - Design Approved*\n\nHello ${name}! 👋\n\nGreat news! Your order *#${orderId}* (₹${amount.toLocaleString()}) design has been approved!\n\n📦 *Items:* ${products}\n\nIt's now heading to production. Thank you for choosing Graphic Wala! 🙏`,
+  printing: (name, orderId, amount, products) =>
+    `🖨️ *Graphic Wala - Printing Started*\n\nHello ${name}! 👋\n\nYour order *#${orderId}* (₹${amount.toLocaleString()}) is now in production!\n\n📦 *Items:* ${products}\n\nWe're printing your design with premium quality materials. It'll be ready soon! 💪`,
+  shipped: (name, orderId, amount, products) =>
+    `🚚 *Graphic Wala - Order Shipped*\n\nHello ${name}! 👋\n\nYour order *#${orderId}* (₹${amount.toLocaleString()}) has been shipped!\n\n📦 *Items:* ${products}\n\nIt's on its way to you. You'll receive it shortly! 📦✨`,
+  completed: (name, orderId, amount, products) =>
+    `🎉 *Graphic Wala - Order Delivered*\n\nHello ${name}! 👋\n\nYour order *#${orderId}* (₹${amount.toLocaleString()}) has been successfully delivered!\n\n📦 *Items:* ${products}\n\nWe hope you love it. If you have any issues, feel free to reach out! ❤️\n\nThank you for choosing Graphic Wala! 🙏`,
+  cancelled: (name, orderId, amount, products) =>
+    `❌ *Graphic Wala - Order Cancelled*\n\nHello ${name}! 👋\n\nYour order *#${orderId}* (₹${amount.toLocaleString()}) has been cancelled.\n\n📦 *Items:* ${products}\n\nIf you have any questions, please message us on WhatsApp. We're always here to help! 🙏`,
 };
 
 const getWhatsAppLink = (phone: string, message: string) => {
@@ -119,6 +119,15 @@ const AdminOrders = () => {
     if (isAdmin) fetchOrders();
   }, [isAdmin]);
 
+  const fetchOrderProductNames = async (orderId: string): Promise<string> => {
+    const { data } = await supabase
+      .from('order_items')
+      .select('product_name, quantity')
+      .eq('order_id', orderId);
+    if (!data || data.length === 0) return 'Your products';
+    return data.map(i => `${i.product_name}${i.quantity > 1 ? ` x${i.quantity}` : ''}`).join(', ');
+  };
+
   const handleStatusChange = async (orderId: string, newStatus: string) => {
     const { error } = await supabase.from('orders').update({ status: newStatus }).eq('id', orderId);
     if (error) {
@@ -135,7 +144,8 @@ const AdminOrders = () => {
       if (order && WHATSAPP_STATUS_MESSAGES[newStatus]) {
         const customerName = order.customer_name || order.profiles?.full_name || 'Customer';
         const shortId = orderId.slice(0, 8).toUpperCase();
-        const message = WHATSAPP_STATUS_MESSAGES[newStatus](customerName, shortId, Number(order.total_amount));
+        const products = await fetchOrderProductNames(orderId);
+        const message = WHATSAPP_STATUS_MESSAGES[newStatus](customerName, shortId, Number(order.total_amount), products);
         const whatsappUrl = getWhatsAppLink(order.shipping_phone, message);
         
         toast('📱 WhatsApp Update भेजें?', {
@@ -402,9 +412,10 @@ const AdminOrders = () => {
                               variant="ghost"
                               size="icon"
                               className="text-green-600 hover:text-green-700 hover:bg-green-50"
-                              onClick={() => {
+                              onClick={async () => {
                                 const name = order.customer_name || order.profiles?.full_name || 'Customer';
-                                const msg = WHATSAPP_STATUS_MESSAGES[order.status](name, order.id.slice(0, 8).toUpperCase(), Number(order.total_amount));
+                                const products = await fetchOrderProductNames(order.id);
+                                const msg = WHATSAPP_STATUS_MESSAGES[order.status](name, order.id.slice(0, 8).toUpperCase(), Number(order.total_amount), products);
                                 window.open(getWhatsAppLink(order.shipping_phone, msg), '_blank');
                               }}
                               title="WhatsApp Update भेजें"
@@ -478,7 +489,8 @@ const AdminOrders = () => {
                     {Object.entries(WHATSAPP_STATUS_MESSAGES).map(([status, msgFn]) => {
                       const customerName = selectedOrder.customer_name || selectedOrder.profiles?.full_name || 'Customer';
                       const shortId = selectedOrder.id.slice(0, 8).toUpperCase();
-                      const message = msgFn(customerName, shortId, Number(selectedOrder.total_amount));
+                      const productsList = orderItems.map(i => `${i.product_name}${i.quantity > 1 ? ` x${i.quantity}` : ''}`).join(', ') || 'Your products';
+                      const message = msgFn(customerName, shortId, Number(selectedOrder.total_amount), productsList);
                       const url = getWhatsAppLink(selectedOrder.shipping_phone, message);
                       const isCurrentStatus = selectedOrder.status === status;
                       return (
