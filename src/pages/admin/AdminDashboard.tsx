@@ -214,6 +214,9 @@ const AdminDashboard = () => {
           <p className="text-muted-foreground mt-1">Welcome back! Here's your store overview.</p>
         </div>
 
+        {/* Daily Sales Summary */}
+        <DailySalesSummary />
+
         {/* Main Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           {statCards.map((stat) => (
