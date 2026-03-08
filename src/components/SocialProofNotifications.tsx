@@ -79,7 +79,7 @@ const SocialProofNotifications = () => {
           : firstName + '***';
         setCurrentNotif({
           type: 'order',
-          text: `${maskedName} ne abhi order kiya`,
+          text: `${maskedName} just placed an order`,
           subtext: `📍 ${order.shipping_city} • ${getTimeAgo(order.created_at)}`,
         });
       } else {
