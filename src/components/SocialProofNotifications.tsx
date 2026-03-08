@@ -76,9 +76,14 @@ const SocialProofNotifications = () => {
         const maskedName = firstName.length > 2 
           ? firstName.slice(0, 2) + '***' 
           : firstName + '***';
+        const productShort = order.product_name 
+          ? order.product_name.length > 25 ? order.product_name.slice(0, 25) + '…' : order.product_name
+          : '';
         setCurrentNotif({
           type: 'order',
-          text: `${maskedName} just placed an order`,
+          text: productShort 
+            ? `${maskedName} just ordered ${productShort}`
+            : `${maskedName} just placed an order`,
           subtext: `📍 ${order.shipping_city} • ${getTimeAgo(order.created_at)}`,
         });
       } else {
