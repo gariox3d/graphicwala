@@ -21,8 +21,7 @@ const SocialProofNotifications = () => {
   const [dismissed, setDismissed] = useState(false);
   const [notifIndex, setNotifIndex] = useState(0);
 
-  // Don't render if disabled
-  if (!settingsLoading && !settings?.social_proof_enabled) return null;
+  const enabled = !settingsLoading && settings?.social_proof_enabled;
 
   // Fetch recent paid orders
   useEffect(() => {
