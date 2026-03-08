@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import AdminLayout from '@/components/admin/AdminLayout';
+import DailySalesSummary from '@/components/admin/DailySalesSummary';
 import { 
   Package, 
   ShoppingCart, 
