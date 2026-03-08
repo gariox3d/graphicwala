@@ -1,5 +1,6 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,8 +10,14 @@ import { Textarea } from '@/components/ui/textarea';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
+import {
+  Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList,
+} from '@/components/ui/command';
+import {
+  Popover, PopoverContent, PopoverTrigger,
+} from '@/components/ui/popover';
 import { toast } from 'sonner';
-import { Plus, Trash2, Download, FileText, Eye } from 'lucide-react';
+import { Plus, Trash2, Download, FileText, Eye, ChevronsUpDown } from 'lucide-react';
 
 interface BillItem {
   id: string;
@@ -37,6 +44,81 @@ const generateBillNumber = () => {
   const r = Math.floor(1000 + Math.random() * 9000);
   return `GW-${y}${m}${d}-${r}`;
 };
+interface ProductOption {
+  id: string;
+  name: string;
+  price: number;
+}
+const ProductCombobox = ({
+  value,
+  options,
+  onChange,
+}: {
+  value: string;
+  options: ProductOption[];
+  onChange: (name: string, price?: number) => void;
+}) => {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState('');
+
+  const filtered = options.filter(o =>
+    o.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          className="w-full justify-between h-10 font-normal text-left"
+        >
+          <span className="truncate">{value || 'Select product...'}</span>
+          <ChevronsUpDown className="ml-1 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[300px] p-0" align="start">
+        <Command>
+          <CommandInput
+            placeholder="Search or type custom..."
+            value={search}
+            onValueChange={setSearch}
+          />
+          <CommandList>
+            <CommandEmpty>
+              <button
+                className="w-full text-left px-3 py-2 text-sm hover:bg-accent rounded"
+                onClick={() => {
+                  onChange(search);
+                  setOpen(false);
+                  setSearch('');
+                }}
+              >
+                Use "{search}" as custom item
+              </button>
+            </CommandEmpty>
+            <CommandGroup heading="Products">
+              {filtered.map(product => (
+                <CommandItem
+                  key={product.id}
+                  value={product.name}
+                  onSelect={() => {
+                    onChange(product.name, product.price);
+                    setOpen(false);
+                    setSearch('');
+                  }}
+                >
+                  <span className="flex-1 truncate">{product.name}</span>
+                  <span className="text-xs text-muted-foreground ml-2">₹{product.price.toLocaleString()}</span>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+};
 
 const AdminBilling = () => {
   const { isAdmin, loading: authLoading } = useAuth();
@@ -51,6 +133,26 @@ const AdminBilling = () => {
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerAddress, setCustomerAddress] = useState('');
+
+  // Products from DB
+  const [productOptions, setProductOptions] = useState<ProductOption[]>([]);
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const { data } = await supabase
+        .from('products')
+        .select('id, name, price, sale_price')
+        .eq('is_active', true)
+        .order('name');
+      if (data) {
+        setProductOptions(data.map(p => ({
+          id: p.id,
+          name: p.name,
+          price: p.sale_price ? Number(p.sale_price) : Number(p.price),
+        })));
+      }
+    };
+    fetchProducts();
+  }, []);
 
   // Items
   const [items, setItems] = useState<BillItem[]>([
@@ -182,10 +284,13 @@ const AdminBilling = () => {
                     </div>
                     <div className="col-span-5">
                       {idx === 0 && <Label className="text-xs">Product / Service</Label>}
-                      <Input
-                        placeholder="Item name"
+                      <ProductCombobox
                         value={item.name}
-                        onChange={e => updateItem(item.id, 'name', e.target.value)}
+                        options={productOptions}
+                        onChange={(name, price) => {
+                          updateItem(item.id, 'name', name);
+                          if (price !== undefined) updateItem(item.id, 'rate', price);
+                        }}
                       />
                     </div>
                     <div className="col-span-2">
@@ -321,7 +426,7 @@ const AdminBilling = () => {
         <style>{`
           @media print {
             @page {
-              size: A4;
+              size: A4 portrait;
               margin: ${pageSize === 'a4' ? '12mm 15mm' : '8mm 15mm'};
             }
             body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
