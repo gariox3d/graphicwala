@@ -9,6 +9,7 @@ const TermsAndConditions = () => {
       <Helmet>
         <title>Terms & Conditions – {BUSINESS_NAME}</title>
         <meta name="description" content={`Terms and conditions for using ${BUSINESS_NAME}. Read about orders, payments, returns, and more.`} />
+        <link rel="canonical" href="https://graphicwala.com/terms-and-conditions" />
       </Helmet>
       <Header />
       <main className="container py-10 max-w-3xl mx-auto">

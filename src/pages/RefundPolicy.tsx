@@ -9,6 +9,7 @@ const RefundPolicy = () => {
       <Helmet>
         <title>Refund Policy – {BUSINESS_NAME}</title>
         <meta name="description" content={`Refund and return policy for ${BUSINESS_NAME}. Learn about replacements, refund timelines, and how to report damaged products.`} />
+        <link rel="canonical" href="https://graphicwala.com/refund-policy" />
       </Helmet>
       <Header />
       <main className="container py-10 max-w-3xl mx-auto">

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Navigate, Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { Heart, ShoppingBag } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
@@ -49,6 +50,11 @@ const Wishlist = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>My Wishlist | Graphic Wala</title>
+        <meta name="description" content="Your saved products from Graphic Wala. Custom photo frames, PVC cards & personalized gifts." />
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
       <Header />
       <main className="flex-1 py-8 md:py-12">
         <div className="container">

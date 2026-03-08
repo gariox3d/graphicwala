@@ -131,7 +131,7 @@ const ReviewForm = ({ productId, existingReview, onReviewSubmitted }: ReviewForm
           {existingReview.review_images && existingReview.review_images.length > 0 && (
             <div className="flex gap-2 mt-2 flex-wrap">
               {existingReview.review_images.map((url, i) => (
-                <img key={i} src={url} alt={`Review photo ${i + 1}`} className="w-16 h-16 rounded-lg object-cover border border-border" />
+                <img key={i} src={url} alt={`Review photo ${i + 1}`} className="w-16 h-16 rounded-lg object-cover border border-border" loading="lazy" />
               ))}
             </div>
           )}
