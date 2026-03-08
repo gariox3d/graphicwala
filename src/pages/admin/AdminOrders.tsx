@@ -397,6 +397,21 @@ const AdminOrders = () => {
                           <Button variant="ghost" size="icon" onClick={() => viewOrderDetails(order)}>
                             <Eye className="h-4 w-4" />
                           </Button>
+                          {WHATSAPP_STATUS_MESSAGES[order.status] && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                              onClick={() => {
+                                const name = order.customer_name || order.profiles?.full_name || 'Customer';
+                                const msg = WHATSAPP_STATUS_MESSAGES[order.status](name, order.id.slice(0, 8).toUpperCase(), Number(order.total_amount));
+                                window.open(getWhatsAppLink(order.shipping_phone, msg), '_blank');
+                              }}
+                              title="WhatsApp Update भेजें"
+                            >
+                              <MessageCircle className="h-4 w-4" />
+                            </Button>
+                          )}
                           {order.status === 'cancelled' && (
                             <Button
                               variant="ghost"
