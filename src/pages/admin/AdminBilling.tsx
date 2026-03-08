@@ -437,7 +437,7 @@ const AdminBilling = () => {
         <style>{`
           @media print {
             @page {
-              size: A4 portrait;
+              size: A4 ${orientation};
               margin: ${pageSize === 'a4' ? '12mm 15mm' : '8mm 15mm'};
             }
             body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
