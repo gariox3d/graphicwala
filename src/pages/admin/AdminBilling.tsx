@@ -381,6 +381,13 @@ const AdminBilling = () => {
                       <SelectItem value="a4-half">A4 Half Page</SelectItem>
                     </SelectContent>
                   </Select>
+                  <Select value={orientation} onValueChange={(v: 'portrait' | 'landscape') => setOrientation(v)}>
+                    <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="portrait">Portrait</SelectItem>
+                      <SelectItem value="landscape">Landscape</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <Button variant="outline" onClick={() => setShowPreview(!showPreview)}>
                     <Eye className="h-4 w-4 mr-2" />
                     {showPreview ? 'Hide Preview' : 'Show Preview'}
