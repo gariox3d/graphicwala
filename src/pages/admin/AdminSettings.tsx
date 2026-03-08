@@ -34,6 +34,7 @@ const AdminSettings = () => {
     bulk_discount_enabled: false,
     bulk_discount_min_qty: 2,
     bulk_discount_percent: 10,
+    social_proof_enabled: false,
   }), []);
 
   const {
