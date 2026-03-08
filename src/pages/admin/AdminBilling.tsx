@@ -94,6 +94,8 @@ const AdminBilling = () => {
   const [billType, setBillType] = useState<'estimate' | 'invoice'>('invoice');
   const [pageSize, setPageSize] = useState<'a4' | 'a4-half'>('a4');
   const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('portrait');
+  const [paymentStatus, setPaymentStatus] = useState<'unpaid' | 'partial' | 'paid'>('unpaid');
+  const [amountPaid, setAmountPaid] = useState(0);
 
   // Customer
   const [customerName, setCustomerName] = useState('');
