@@ -553,11 +553,13 @@ interface BillTemplateProps {
   grandTotal: number;
   notes: string;
   pageSize: 'a4' | 'a4-half';
+  paymentStatus: 'unpaid' | 'partial' | 'paid';
+  amountPaid: number;
 }
 
 const BillTemplate = ({
   billNumber, billDate, billType, customerName, customerPhone, customerAddress,
-  items, subtotal, discount, grandTotal, notes, pageSize,
+  items, subtotal, discount, grandTotal, notes, pageSize, paymentStatus, amountPaid,
 }: BillTemplateProps) => {
   const isHalf = pageSize === 'a4-half';
   const fmt = (n: number) =>
