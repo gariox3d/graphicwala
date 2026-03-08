@@ -66,6 +66,7 @@ const AdminSettings = () => {
         bulk_discount_enabled: settings.bulk_discount_enabled ?? false,
         bulk_discount_min_qty: settings.bulk_discount_min_qty ?? 2,
         bulk_discount_percent: settings.bulk_discount_percent ?? 10,
+        social_proof_enabled: (settings as any).social_proof_enabled ?? false,
       });
     }
   }, [settings, initializeFromServer]);
