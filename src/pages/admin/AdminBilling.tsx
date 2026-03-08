@@ -102,10 +102,9 @@ const AdminBilling = () => {
   const [productOptions, setProductOptions] = useState<ProductOption[]>([]);
   useEffect(() => {
     const fetchProducts = async () => {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('products')
         .select('id, name, price, sale_price')
-        .eq('is_active', true)
         .order('name');
       if (data) {
         setProductOptions(data.map(p => ({
