@@ -120,6 +120,11 @@ const Cart = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <Helmet>
+        <title>Shopping Cart | Graphic Wala</title>
+        <meta name="description" content="Review your cart and checkout. Custom photo frames, PVC cards & personalized gifts from Graphic Wala." />
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
       <Header />
       <main className="flex-1 py-8">
         <div className="container">
