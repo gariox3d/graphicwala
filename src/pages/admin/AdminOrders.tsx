@@ -119,6 +119,15 @@ const AdminOrders = () => {
     if (isAdmin) fetchOrders();
   }, [isAdmin]);
 
+  const fetchOrderProductNames = async (orderId: string): Promise<string> => {
+    const { data } = await supabase
+      .from('order_items')
+      .select('product_name, quantity')
+      .eq('order_id', orderId);
+    if (!data || data.length === 0) return 'Your products';
+    return data.map(i => `${i.product_name}${i.quantity > 1 ? ` x${i.quantity}` : ''}`).join(', ');
+  };
+
   const handleStatusChange = async (orderId: string, newStatus: string) => {
     const { error } = await supabase.from('orders').update({ status: newStatus }).eq('id', orderId);
     if (error) {
@@ -135,7 +144,8 @@ const AdminOrders = () => {
       if (order && WHATSAPP_STATUS_MESSAGES[newStatus]) {
         const customerName = order.customer_name || order.profiles?.full_name || 'Customer';
         const shortId = orderId.slice(0, 8).toUpperCase();
-        const message = WHATSAPP_STATUS_MESSAGES[newStatus](customerName, shortId, Number(order.total_amount));
+        const products = await fetchOrderProductNames(orderId);
+        const message = WHATSAPP_STATUS_MESSAGES[newStatus](customerName, shortId, Number(order.total_amount), products);
         const whatsappUrl = getWhatsAppLink(order.shipping_phone, message);
         
         toast('📱 WhatsApp Update भेजें?', {
