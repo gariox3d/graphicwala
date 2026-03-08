@@ -11,7 +11,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Plus, Trash2, Download, FileText, Eye, Search } from 'lucide-react';
+import { Plus, Trash2, Download, FileText, Eye } from 'lucide-react';
 
 interface BillItem {
   id: string;
