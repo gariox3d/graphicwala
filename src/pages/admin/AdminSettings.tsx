@@ -395,6 +395,34 @@ const AdminSettings = () => {
             </CardContent>
           </Card>
 
+          {/* Social Proof Notifications */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Eye className="h-5 w-5 text-primary" />
+                Social Proof Notifications
+              </CardTitle>
+              <CardDescription>
+                Show live viewer count and recent order popups on homepage
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="social_proof_enabled">Enable Social Proof</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Shows popups like "5 people viewing" and "Ra*** just ordered..."
+                  </p>
+                </div>
+                <Switch
+                  id="social_proof_enabled"
+                  checked={formData.social_proof_enabled}
+                  onCheckedChange={(checked) => setFormData({ ...formData, social_proof_enabled: checked })}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
           <Button onClick={handleSave} disabled={saving} size="lg">
             {saving ? (
               <>
