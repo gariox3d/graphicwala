@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useStoreSettings } from '@/hooks/useStoreSettings';
 import { Eye, ShoppingBag, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
