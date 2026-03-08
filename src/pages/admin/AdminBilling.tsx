@@ -494,6 +494,8 @@ const AdminBilling = () => {
                         grandTotal={grandTotal}
                         notes={notes}
                         pageSize={pageSize}
+                        paymentStatus={paymentStatus}
+                        amountPaid={amountPaid}
                       />
                     </div>
                   </div>
@@ -528,6 +530,8 @@ const AdminBilling = () => {
           grandTotal={grandTotal}
           notes={notes}
           pageSize={pageSize}
+          paymentStatus={paymentStatus}
+          amountPaid={amountPaid}
         />
       </div>
     </>
