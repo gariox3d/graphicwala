@@ -50,19 +50,19 @@ interface OrderItemWithUploads {
   uploads?: OrderItemUpload[];
 }
 
-const WHATSAPP_STATUS_MESSAGES: Record<string, (name: string, orderId: string, amount: number) => string> = {
-  designing: (name, orderId, amount) =>
-    `🎨 *Graphic Wala - Design Update*\n\nHello ${name}! 👋\n\nYour order *#${orderId}* (₹${amount.toLocaleString()}) is now being designed! Our creative team is crafting something special just for you.\n\nWe'll update you soon! ✨`,
-  approved: (name, orderId, amount) =>
-    `✅ *Graphic Wala - Design Approved*\n\nHello ${name}! 👋\n\nGreat news! Your order *#${orderId}* (₹${amount.toLocaleString()}) design has been approved and is now heading to production.\n\nThank you for choosing Graphic Wala! 🙏`,
-  printing: (name, orderId, amount) =>
-    `🖨️ *Graphic Wala - Printing Started*\n\nHello ${name}! 👋\n\nYour order *#${orderId}* (₹${amount.toLocaleString()}) is now in production! We're printing your design with premium quality materials.\n\nIt'll be ready soon! 💪`,
-  shipped: (name, orderId, amount) =>
-    `🚚 *Graphic Wala - Order Shipped*\n\nHello ${name}! 👋\n\nYour order *#${orderId}* (₹${amount.toLocaleString()}) has been shipped! It's on its way to you.\n\nYou'll receive it shortly! 📦✨`,
-  completed: (name, orderId, amount) =>
-    `🎉 *Graphic Wala - Order Delivered*\n\nHello ${name}! 👋\n\nYour order *#${orderId}* (₹${amount.toLocaleString()}) has been successfully delivered!\n\nWe hope you love it. If you have any issues, feel free to reach out! ❤️\n\nThank you for choosing Graphic Wala! 🙏`,
-  cancelled: (name, orderId, amount) =>
-    `❌ *Graphic Wala - Order Cancelled*\n\nHello ${name}! 👋\n\nYour order *#${orderId}* (₹${amount.toLocaleString()}) has been cancelled.\n\nIf you have any questions, please message us on WhatsApp. We're always here to help! 🙏`,
+const WHATSAPP_STATUS_MESSAGES: Record<string, (name: string, orderId: string, amount: number, products: string) => string> = {
+  designing: (name, orderId, amount, products) =>
+    `🎨 *Graphic Wala - Design Update*\n\nHello ${name}! 👋\n\nYour order *#${orderId}* (₹${amount.toLocaleString()}) is now being designed!\n\n📦 *Items:* ${products}\n\nOur creative team is crafting something special just for you. We'll update you soon! ✨`,
+  approved: (name, orderId, amount, products) =>
+    `✅ *Graphic Wala - Design Approved*\n\nHello ${name}! 👋\n\nGreat news! Your order *#${orderId}* (₹${amount.toLocaleString()}) design has been approved!\n\n📦 *Items:* ${products}\n\nIt's now heading to production. Thank you for choosing Graphic Wala! 🙏`,
+  printing: (name, orderId, amount, products) =>
+    `🖨️ *Graphic Wala - Printing Started*\n\nHello ${name}! 👋\n\nYour order *#${orderId}* (₹${amount.toLocaleString()}) is now in production!\n\n📦 *Items:* ${products}\n\nWe're printing your design with premium quality materials. It'll be ready soon! 💪`,
+  shipped: (name, orderId, amount, products) =>
+    `🚚 *Graphic Wala - Order Shipped*\n\nHello ${name}! 👋\n\nYour order *#${orderId}* (₹${amount.toLocaleString()}) has been shipped!\n\n📦 *Items:* ${products}\n\nIt's on its way to you. You'll receive it shortly! 📦✨`,
+  completed: (name, orderId, amount, products) =>
+    `🎉 *Graphic Wala - Order Delivered*\n\nHello ${name}! 👋\n\nYour order *#${orderId}* (₹${amount.toLocaleString()}) has been successfully delivered!\n\n📦 *Items:* ${products}\n\nWe hope you love it. If you have any issues, feel free to reach out! ❤️\n\nThank you for choosing Graphic Wala! 🙏`,
+  cancelled: (name, orderId, amount, products) =>
+    `❌ *Graphic Wala - Order Cancelled*\n\nHello ${name}! 👋\n\nYour order *#${orderId}* (₹${amount.toLocaleString()}) has been cancelled.\n\n📦 *Items:* ${products}\n\nIf you have any questions, please message us on WhatsApp. We're always here to help! 🙏`,
 };
 
 const getWhatsAppLink = (phone: string, message: string) => {
