@@ -50,6 +50,26 @@ interface OrderItemWithUploads {
   uploads?: OrderItemUpload[];
 }
 
+const WHATSAPP_STATUS_MESSAGES: Record<string, (name: string, orderId: string, amount: number) => string> = {
+  designing: (name, orderId, amount) =>
+    `🎨 *Graphic Wala - Design Update*\n\nHello ${name}! 👋\n\nAapka order *#${orderId}* (₹${amount.toLocaleString()}) ka design work shuru ho gaya hai! Humari creative team aapke liye kuch khaas bana rahi hai.\n\nThoda wait karein, jaldi update milega! ✨`,
+  approved: (name, orderId, amount) =>
+    `✅ *Graphic Wala - Design Approved*\n\nHello ${name}! 👋\n\nGreat news! Aapka order *#${orderId}* (₹${amount.toLocaleString()}) ka design approve ho gaya hai! Ab production mein jayega.\n\nThank you for choosing Graphic Wala! 🙏`,
+  printing: (name, orderId, amount) =>
+    `🖨️ *Graphic Wala - Printing Started*\n\nHello ${name}! 👋\n\nAapka order *#${orderId}* (₹${amount.toLocaleString()}) ab printing mein hai! Premium quality materials se aapka design print ho raha hai.\n\nJaldi ready hoga! 💪`,
+  shipped: (name, orderId, amount) =>
+    `🚚 *Graphic Wala - Order Shipped*\n\nHello ${name}! 👋\n\nAapka order *#${orderId}* (₹${amount.toLocaleString()}) ship ho gaya hai! Jaldi aap tak pahunchega.\n\nDelivery ka wait karein! 📦✨`,
+  completed: (name, orderId, amount) =>
+    `🎉 *Graphic Wala - Order Delivered*\n\nHello ${name}! 👋\n\nAapka order *#${orderId}* (₹${amount.toLocaleString()}) successfully deliver ho gaya hai!\n\nHumein umeed hai aapko pasand aayega. Agar koi dikkat ho toh hume batayein! ❤️\n\nThank you for choosing Graphic Wala! 🙏`,
+  cancelled: (name, orderId, amount) =>
+    `❌ *Graphic Wala - Order Cancelled*\n\nHello ${name}! 👋\n\nAapka order *#${orderId}* (₹${amount.toLocaleString()}) cancel kar diya gaya hai.\n\nAgar koi sawal ho toh hume WhatsApp pe message karein. Hum madad ke liye hamesha tayyar hain! 🙏`,
+};
+
+const getWhatsAppLink = (phone: string, message: string) => {
+  const normalizedPhone = normalizeIndianPhoneForWhatsApp(phone);
+  return `https://wa.me/${normalizedPhone}?text=${encodeURIComponent(message)}`;
+};
+
 const AdminOrders = () => {
   const { user, isAdmin, loading: authLoading } = useAuth();
   const navigate = useNavigate();
