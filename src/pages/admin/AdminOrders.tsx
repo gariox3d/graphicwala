@@ -124,11 +124,29 @@ const AdminOrders = () => {
     if (error) {
       toast.error('Failed to update order status');
     } else {
+      const order = orders.find(o => o.id === orderId);
       setOrders(orders.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
       toast.success('Order status updated');
       
       // Trigger status email (async, don't block UI)
       sendStatusEmail(orderId, newStatus);
+
+      // Show WhatsApp notification toast
+      if (order && WHATSAPP_STATUS_MESSAGES[newStatus]) {
+        const customerName = order.customer_name || order.profiles?.full_name || 'Customer';
+        const shortId = orderId.slice(0, 8).toUpperCase();
+        const message = WHATSAPP_STATUS_MESSAGES[newStatus](customerName, shortId, Number(order.total_amount));
+        const whatsappUrl = getWhatsAppLink(order.shipping_phone, message);
+        
+        toast('📱 WhatsApp Update भेजें?', {
+          description: `${customerName} को ${newStatus} update भेजें`,
+          duration: 15000,
+          action: {
+            label: 'WhatsApp भेजें',
+            onClick: () => window.open(whatsappUrl, '_blank'),
+          },
+        });
+      }
     }
   };
 
