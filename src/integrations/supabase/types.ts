@@ -1018,6 +1018,7 @@ export type Database = {
           return_window_hours: number | null
           shiprocket_enabled: boolean | null
           shiprocket_fallback_message: string | null
+          social_proof_enabled: boolean | null
           store_pickup_enabled: boolean | null
           updated_at: string
           whatsapp_support_number: string | null
@@ -1039,6 +1040,7 @@ export type Database = {
           return_window_hours?: number | null
           shiprocket_enabled?: boolean | null
           shiprocket_fallback_message?: string | null
+          social_proof_enabled?: boolean | null
           store_pickup_enabled?: boolean | null
           updated_at?: string
           whatsapp_support_number?: string | null
@@ -1060,6 +1062,7 @@ export type Database = {
           return_window_hours?: number | null
           shiprocket_enabled?: boolean | null
           shiprocket_fallback_message?: string | null
+          social_proof_enabled?: boolean | null
           store_pickup_enabled?: boolean | null
           updated_at?: string
           whatsapp_support_number?: string | null

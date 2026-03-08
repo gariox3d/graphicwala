@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { useStoreSettings } from '@/hooks/useStoreSettings';
 import { Eye, ShoppingBag, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -13,11 +14,14 @@ interface RecentOrder {
 const INDIAN_CITIES = ['Mumbai', 'Delhi', 'Bangalore', 'Kolkata', 'Patna', 'Lucknow', 'Jaipur', 'Pune', 'Hyderabad', 'Chennai'];
 
 const SocialProofNotifications = () => {
+  const { settings, loading: settingsLoading } = useStoreSettings();
   const [visible, setVisible] = useState(false);
   const [currentNotif, setCurrentNotif] = useState<{ type: 'viewer' | 'order'; text: string; subtext?: string } | null>(null);
   const [recentOrders, setRecentOrders] = useState<RecentOrder[]>([]);
   const [dismissed, setDismissed] = useState(false);
   const [notifIndex, setNotifIndex] = useState(0);
+
+  const enabled = !settingsLoading && settings?.social_proof_enabled;
 
   // Fetch recent paid orders
   useEffect(() => {
@@ -115,7 +119,7 @@ const SocialProofNotifications = () => {
     };
   }, [dismissed, notifIndex, recentOrders, getViewerCount]);
 
-  if (dismissed) return null;
+  if (dismissed || !enabled) return null;
 
   return (
     <div className="fixed bottom-20 left-4 z-50 max-w-[320px] sm:bottom-6 sm:left-6">

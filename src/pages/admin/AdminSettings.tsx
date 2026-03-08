@@ -11,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
 import { useAdminDraftState } from '@/hooks/useAdminDraftState';
 import { toast } from 'sonner';
-import { Loader2, Settings, Truck, Store, Megaphone, Shield, Phone, Percent } from 'lucide-react';
+import { Loader2, Settings, Truck, Store, Megaphone, Shield, Phone, Percent, Eye } from 'lucide-react';
 
 const AdminSettings = () => {
   const { user, isAdmin, loading: authLoading } = useAuth();
@@ -34,6 +34,7 @@ const AdminSettings = () => {
     bulk_discount_enabled: false,
     bulk_discount_min_qty: 2,
     bulk_discount_percent: 10,
+    social_proof_enabled: false,
   }), []);
 
   const {
@@ -65,6 +66,7 @@ const AdminSettings = () => {
         bulk_discount_enabled: settings.bulk_discount_enabled ?? false,
         bulk_discount_min_qty: settings.bulk_discount_min_qty ?? 2,
         bulk_discount_percent: settings.bulk_discount_percent ?? 10,
+        social_proof_enabled: (settings as any).social_proof_enabled ?? false,
       });
     }
   }, [settings, initializeFromServer]);
@@ -390,6 +392,34 @@ const AdminSettings = () => {
                   </div>
                 </>
               )}
+            </CardContent>
+          </Card>
+
+          {/* Social Proof Notifications */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Eye className="h-5 w-5 text-primary" />
+                Social Proof Notifications
+              </CardTitle>
+              <CardDescription>
+                Show live viewer count and recent order popups on homepage
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="social_proof_enabled">Enable Social Proof</Label>
+                  <p className="text-sm text-muted-foreground">
+                    Shows popups like "5 people viewing" and "Ra*** just ordered..."
+                  </p>
+                </div>
+                <Switch
+                  id="social_proof_enabled"
+                  checked={formData.social_proof_enabled}
+                  onCheckedChange={(checked) => setFormData({ ...formData, social_proof_enabled: checked })}
+                />
+              </div>
             </CardContent>
           </Card>
 

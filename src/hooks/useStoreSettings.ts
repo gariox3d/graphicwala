@@ -18,6 +18,8 @@ export interface StoreSettings {
   bulk_discount_enabled: boolean;
   bulk_discount_min_qty: number;
   bulk_discount_percent: number;
+  // Social proof
+  social_proof_enabled: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -54,6 +56,7 @@ export const useStoreSettings = () => {
         bulk_discount_enabled: data.bulk_discount_enabled ?? false,
         bulk_discount_min_qty: data.bulk_discount_min_qty ?? 2,
         bulk_discount_percent: data.bulk_discount_percent ?? 10,
+        social_proof_enabled: (data as any).social_proof_enabled ?? false,
         created_at: data.created_at,
         updated_at: data.updated_at,
       });
@@ -76,6 +79,7 @@ export const useStoreSettings = () => {
         bulk_discount_enabled: false,
         bulk_discount_min_qty: 2,
         bulk_discount_percent: 10,
+        social_proof_enabled: false,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       });

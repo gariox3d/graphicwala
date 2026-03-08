@@ -1,0 +1,1 @@
+ALTER TABLE public.store_settings ADD COLUMN social_proof_enabled boolean DEFAULT false;
