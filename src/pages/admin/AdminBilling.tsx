@@ -64,6 +64,26 @@ const AdminBilling = () => {
   const [customerPhone, setCustomerPhone] = useState('');
   const [customerAddress, setCustomerAddress] = useState('');
 
+  // Products from DB
+  const [productOptions, setProductOptions] = useState<ProductOption[]>([]);
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const { data } = await supabase
+        .from('products')
+        .select('id, name, price, sale_price')
+        .eq('is_active', true)
+        .order('name');
+      if (data) {
+        setProductOptions(data.map(p => ({
+          id: p.id,
+          name: p.name,
+          price: p.sale_price ? Number(p.sale_price) : Number(p.price),
+        })));
+      }
+    };
+    fetchProducts();
+  }, []);
+
   // Items
   const [items, setItems] = useState<BillItem[]>([
     { id: crypto.randomUUID(), name: '', quantity: 1, rate: 0 },
