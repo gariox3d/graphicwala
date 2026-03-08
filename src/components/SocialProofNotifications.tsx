@@ -119,7 +119,7 @@ const SocialProofNotifications = () => {
     };
   }, [dismissed, notifIndex, recentOrders, getViewerCount]);
 
-  if (dismissed) return null;
+  if (dismissed || !enabled) return null;
 
   return (
     <div className="fixed bottom-20 left-4 z-50 max-w-[320px] sm:bottom-6 sm:left-6">
