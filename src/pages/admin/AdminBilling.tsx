@@ -11,7 +11,8 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Plus, Trash2, Download, FileText, Eye, MessageCircle } from 'lucide-react';
+import { Plus, Trash2, Download, FileText, Eye, MessageCircle, IndianRupee, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { normalizeIndianPhoneForWhatsApp } from '@/lib/phone';
 
 interface BillItem {
@@ -93,6 +94,8 @@ const AdminBilling = () => {
   const [billType, setBillType] = useState<'estimate' | 'invoice'>('invoice');
   const [pageSize, setPageSize] = useState<'a4' | 'a4-half'>('a4');
   const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('portrait');
+  const [paymentStatus, setPaymentStatus] = useState<'unpaid' | 'partial' | 'paid'>('unpaid');
+  const [amountPaid, setAmountPaid] = useState(0);
 
   // Customer
   const [customerName, setCustomerName] = useState('');
@@ -201,6 +204,13 @@ const AdminBilling = () => {
     message += `💰 Subtotal: ₹${subtotal.toLocaleString('en-IN')}\n`;
     if (discountAmount > 0) message += `🎁 Discount: -₹${discountAmount.toLocaleString('en-IN')}\n`;
     message += `\n🏷️ *Grand Total: ₹${grandTotal.toLocaleString('en-IN')}*\n`;
+    if (paymentStatus === 'paid') message += `✅ *Status: PAID*\n`;
+    else if (paymentStatus === 'partial') {
+      message += `⏳ *Paid: ₹${amountPaid.toLocaleString('en-IN')}*\n`;
+      message += `💸 *Due: ₹${(grandTotal - amountPaid).toLocaleString('en-IN')}*\n`;
+    } else {
+      message += `❌ *Status: UNPAID — ₹${grandTotal.toLocaleString('en-IN')} Due*\n`;
+    }
     if (notes.trim()) message += `\n📝 ${notes}\n`;
     message += `\n🌐 ${SHOP_INFO.website}\n📞 ${SHOP_INFO.phone}`;
 
@@ -208,7 +218,7 @@ const AdminBilling = () => {
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
     toast.success('WhatsApp pe bill share ho raha hai!');
-  }, [customerName, customerPhone, customerAddress, items, billNumber, billType, formattedDate, subtotal, discountAmount, grandTotal, notes]);
+  }, [customerName, customerPhone, customerAddress, items, billNumber, billType, formattedDate, subtotal, discountAmount, grandTotal, notes, paymentStatus, amountPaid]);
 
   if (authLoading) {
     return <AdminLayout><div className="flex items-center justify-center h-64"><div className="animate-pulse">Loading...</div></div></AdminLayout>;
@@ -273,7 +283,59 @@ const AdminBilling = () => {
                 </div>
                 <div className="sm:col-span-2">
                   <Label>Address</Label>
-                  <Textarea placeholder="Customer address" value={customerAddress} onChange={e => setCustomerAddress(e.target.value)} rows={2} />
+                  <Textarea placeholder="House/Shop No, Street, Locality, City, State - PIN" value={customerAddress} onChange={e => setCustomerAddress(e.target.value)} rows={2} />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Payment Status */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <IndianRupee className="h-5 w-5 text-primary" />
+                  Payment Status
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <Label>Status</Label>
+                  <Select value={paymentStatus} onValueChange={(v: 'unpaid' | 'partial' | 'paid') => setPaymentStatus(v)}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="unpaid">❌ Unpaid</SelectItem>
+                      <SelectItem value="partial">⏳ Partial Paid</SelectItem>
+                      <SelectItem value="paid">✅ Fully Paid</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                {paymentStatus === 'partial' && (
+                  <div>
+                    <Label>Amount Paid (₹)</Label>
+                    <Input
+                      type="number"
+                      min={0}
+                      value={amountPaid}
+                      onChange={e => setAmountPaid(parseFloat(e.target.value) || 0)}
+                      placeholder="Kitna diya hai"
+                    />
+                  </div>
+                )}
+                <div className="flex items-end">
+                  {paymentStatus === 'paid' && (
+                    <Badge className="bg-green-100 text-green-800 border-green-300 text-sm px-3 py-1.5">
+                      <CheckCircle2 className="h-4 w-4 mr-1" /> Fully Paid
+                    </Badge>
+                  )}
+                  {paymentStatus === 'partial' && (
+                    <Badge className="bg-yellow-100 text-yellow-800 border-yellow-300 text-sm px-3 py-1.5">
+                      <Clock className="h-4 w-4 mr-1" /> Partial — ₹{(grandTotal - amountPaid).toLocaleString('en-IN')} Due
+                    </Badge>
+                  )}
+                  {paymentStatus === 'unpaid' && (
+                    <Badge className="bg-red-100 text-red-800 border-red-300 text-sm px-3 py-1.5">
+                      <AlertCircle className="h-4 w-4 mr-1" /> Unpaid — ₹{grandTotal.toLocaleString('en-IN')} Due
+                    </Badge>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -432,6 +494,8 @@ const AdminBilling = () => {
                         grandTotal={grandTotal}
                         notes={notes}
                         pageSize={pageSize}
+                        paymentStatus={paymentStatus}
+                        amountPaid={amountPaid}
                       />
                     </div>
                   </div>
@@ -466,6 +530,8 @@ const AdminBilling = () => {
           grandTotal={grandTotal}
           notes={notes}
           pageSize={pageSize}
+          paymentStatus={paymentStatus}
+          amountPaid={amountPaid}
         />
       </div>
     </>
@@ -487,11 +553,13 @@ interface BillTemplateProps {
   grandTotal: number;
   notes: string;
   pageSize: 'a4' | 'a4-half';
+  paymentStatus: 'unpaid' | 'partial' | 'paid';
+  amountPaid: number;
 }
 
 const BillTemplate = ({
   billNumber, billDate, billType, customerName, customerPhone, customerAddress,
-  items, subtotal, discount, grandTotal, notes, pageSize,
+  items, subtotal, discount, grandTotal, notes, pageSize, paymentStatus, amountPaid,
 }: BillTemplateProps) => {
   const isHalf = pageSize === 'a4-half';
   const fmt = (n: number) =>
@@ -670,6 +738,32 @@ const BillTemplate = ({
             <span>Grand Total</span>
             <span style={{ color: '#E11D48' }}>{fmt(grandTotal)}</span>
           </div>
+        </div>
+      </div>
+
+      {/* Payment Status Badge */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'flex-end',
+        marginBottom: isHalf ? '8px' : '14px',
+      }}>
+        <div style={{
+          padding: isHalf ? '6px 16px' : '8px 24px',
+          borderRadius: '6px',
+          fontWeight: 700,
+          fontSize: isHalf ? '12px' : '14px',
+          textTransform: 'uppercase',
+          letterSpacing: '1px',
+          ...(paymentStatus === 'paid'
+            ? { background: '#D1FAE5', color: '#065F46', border: '2px solid #6EE7B7' }
+            : paymentStatus === 'partial'
+            ? { background: '#FEF3C7', color: '#92400E', border: '2px solid #FCD34D' }
+            : { background: '#FEE2E2', color: '#991B1B', border: '2px solid #FCA5A5' }
+          ),
+        }}>
+          {paymentStatus === 'paid' && '✅ PAID'}
+          {paymentStatus === 'partial' && `⏳ PARTIAL — Paid: ${fmt(amountPaid)} | Due: ${fmt(grandTotal - amountPaid)}`}
+          {paymentStatus === 'unpaid' && `❌ UNPAID — Due: ${fmt(grandTotal)}`}
         </div>
       </div>
 
