@@ -44,6 +44,11 @@ const generateBillNumber = () => {
   const r = Math.floor(1000 + Math.random() * 9000);
   return `GW-${y}${m}${d}-${r}`;
 };
+interface ProductOption {
+  id: string;
+  name: string;
+  price: number;
+}
 
 const AdminBilling = () => {
   const { isAdmin, loading: authLoading } = useAuth();
