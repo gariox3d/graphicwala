@@ -385,7 +385,7 @@ const Index = () => {
       </main>
 
       <Footer />
-
+      <SocialProofNotifications />
     </div>
   );
 };
