@@ -489,7 +489,8 @@ const AdminOrders = () => {
                     {Object.entries(WHATSAPP_STATUS_MESSAGES).map(([status, msgFn]) => {
                       const customerName = selectedOrder.customer_name || selectedOrder.profiles?.full_name || 'Customer';
                       const shortId = selectedOrder.id.slice(0, 8).toUpperCase();
-                      const message = msgFn(customerName, shortId, Number(selectedOrder.total_amount));
+                      const productsList = orderItems.map(i => `${i.product_name}${i.quantity > 1 ? ` x${i.quantity}` : ''}`).join(', ') || 'Your products';
+                      const message = msgFn(customerName, shortId, Number(selectedOrder.total_amount), productsList);
                       const url = getWhatsAppLink(selectedOrder.shipping_phone, message);
                       const isCurrentStatus = selectedOrder.status === status;
                       return (
