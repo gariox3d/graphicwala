@@ -85,7 +85,7 @@ const SocialProofNotifications = () => {
       } else {
         setCurrentNotif({
           type: 'viewer',
-          text: `🔥 ${getViewerCount()} log abhi yeh page dekh rahe hain`,
+          text: `🔥 ${getViewerCount()} people are viewing this page right now`,
         });
       }
 
