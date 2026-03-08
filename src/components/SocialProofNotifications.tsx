@@ -52,10 +52,10 @@ const SocialProofNotifications = () => {
   const getTimeAgo = (dateStr: string) => {
     const diff = Date.now() - new Date(dateStr).getTime();
     const mins = Math.floor(diff / 60000);
-    if (mins < 60) return `${mins} min pehle`;
+    if (mins < 60) return `${mins} min ago`;
     const hrs = Math.floor(mins / 60);
-    if (hrs < 24) return `${hrs} ghante pehle`;
-    return `${Math.floor(hrs / 24)} din pehle`;
+    if (hrs < 24) return `${hrs} hours ago`;
+    return `${Math.floor(hrs / 24)} days ago`;
   };
 
   // Cycle notifications
