@@ -151,6 +151,13 @@ const AdminBilling = () => {
   const discountAmount = discount;
   const grandTotal = Math.max(0, subtotal - discountAmount);
 
+  const formatCurrency = (amount: number) =>
+    new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(amount);
+
+  const formattedDate = new Date(billDate).toLocaleDateString('en-IN', {
+    day: 'numeric', month: 'long', year: 'numeric',
+  });
+
   const handleDownloadPDF = useCallback(() => {
     if (!customerName.trim()) {
       toast.error('Please enter customer name');
