@@ -56,6 +56,7 @@ export const useStoreSettings = () => {
         bulk_discount_enabled: data.bulk_discount_enabled ?? false,
         bulk_discount_min_qty: data.bulk_discount_min_qty ?? 2,
         bulk_discount_percent: data.bulk_discount_percent ?? 10,
+        social_proof_enabled: (data as any).social_proof_enabled ?? false,
         created_at: data.created_at,
         updated_at: data.updated_at,
       });
