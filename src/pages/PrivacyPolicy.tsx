@@ -9,6 +9,7 @@ const PrivacyPolicy = () => {
       <Helmet>
         <title>Privacy Policy – {BUSINESS_NAME}</title>
         <meta name="description" content={`Read the privacy policy of ${BUSINESS_NAME}. Learn how we collect, use, and protect your personal information.`} />
+        <link rel="canonical" href="https://graphicwala.com/privacy-policy" />
       </Helmet>
       <Header />
       <main className="container py-10 max-w-3xl mx-auto">
