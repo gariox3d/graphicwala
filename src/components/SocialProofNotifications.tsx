@@ -14,11 +14,15 @@ interface RecentOrder {
 const INDIAN_CITIES = ['Mumbai', 'Delhi', 'Bangalore', 'Kolkata', 'Patna', 'Lucknow', 'Jaipur', 'Pune', 'Hyderabad', 'Chennai'];
 
 const SocialProofNotifications = () => {
+  const { settings, loading: settingsLoading } = useStoreSettings();
   const [visible, setVisible] = useState(false);
   const [currentNotif, setCurrentNotif] = useState<{ type: 'viewer' | 'order'; text: string; subtext?: string } | null>(null);
   const [recentOrders, setRecentOrders] = useState<RecentOrder[]>([]);
   const [dismissed, setDismissed] = useState(false);
   const [notifIndex, setNotifIndex] = useState(0);
+
+  // Don't render if disabled
+  if (!settingsLoading && !settings?.social_proof_enabled) return null;
 
   // Fetch recent paid orders
   useEffect(() => {
