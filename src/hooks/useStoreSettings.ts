@@ -18,6 +18,8 @@ export interface StoreSettings {
   bulk_discount_enabled: boolean;
   bulk_discount_min_qty: number;
   bulk_discount_percent: number;
+  // Social proof
+  social_proof_enabled: boolean;
   created_at: string;
   updated_at: string;
 }
