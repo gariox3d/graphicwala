@@ -214,10 +214,13 @@ const AdminBilling = () => {
                     </div>
                     <div className="col-span-5">
                       {idx === 0 && <Label className="text-xs">Product / Service</Label>}
-                      <Input
-                        placeholder="Item name"
+                      <ProductCombobox
                         value={item.name}
-                        onChange={e => updateItem(item.id, 'name', e.target.value)}
+                        options={productOptions}
+                        onChange={(name, price) => {
+                          updateItem(item.id, 'name', name);
+                          if (price !== undefined) updateItem(item.id, 'rate', price);
+                        }}
                       />
                     </div>
                     <div className="col-span-2">
