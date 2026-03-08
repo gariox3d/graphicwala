@@ -11,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
 import { useAdminDraftState } from '@/hooks/useAdminDraftState';
 import { toast } from 'sonner';
-import { Loader2, Settings, Truck, Store, Megaphone, Shield, Phone, Percent } from 'lucide-react';
+import { Loader2, Settings, Truck, Store, Megaphone, Shield, Phone, Percent, Eye } from 'lucide-react';
 
 const AdminSettings = () => {
   const { user, isAdmin, loading: authLoading } = useAuth();
