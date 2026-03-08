@@ -204,6 +204,13 @@ const AdminBilling = () => {
     message += `💰 Subtotal: ₹${subtotal.toLocaleString('en-IN')}\n`;
     if (discountAmount > 0) message += `🎁 Discount: -₹${discountAmount.toLocaleString('en-IN')}\n`;
     message += `\n🏷️ *Grand Total: ₹${grandTotal.toLocaleString('en-IN')}*\n`;
+    if (paymentStatus === 'paid') message += `✅ *Status: PAID*\n`;
+    else if (paymentStatus === 'partial') {
+      message += `⏳ *Paid: ₹${amountPaid.toLocaleString('en-IN')}*\n`;
+      message += `💸 *Due: ₹${(grandTotal - amountPaid).toLocaleString('en-IN')}*\n`;
+    } else {
+      message += `❌ *Status: UNPAID — ₹${grandTotal.toLocaleString('en-IN')} Due*\n`;
+    }
     if (notes.trim()) message += `\n📝 ${notes}\n`;
     message += `\n🌐 ${SHOP_INFO.website}\n📞 ${SHOP_INFO.phone}`;
 
@@ -211,7 +218,7 @@ const AdminBilling = () => {
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
     toast.success('WhatsApp pe bill share ho raha hai!');
-  }, [customerName, customerPhone, customerAddress, items, billNumber, billType, formattedDate, subtotal, discountAmount, grandTotal, notes]);
+  }, [customerName, customerPhone, customerAddress, items, billNumber, billType, formattedDate, subtotal, discountAmount, grandTotal, notes, paymentStatus, amountPaid]);
 
   if (authLoading) {
     return <AdminLayout><div className="flex items-center justify-center h-64"><div className="animate-pulse">Loading...</div></div></AdminLayout>;
