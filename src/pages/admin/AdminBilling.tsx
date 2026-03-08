@@ -49,6 +49,76 @@ interface ProductOption {
   name: string;
   price: number;
 }
+const ProductCombobox = ({
+  value,
+  options,
+  onChange,
+}: {
+  value: string;
+  options: ProductOption[];
+  onChange: (name: string, price?: number) => void;
+}) => {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState('');
+
+  const filtered = options.filter(o =>
+    o.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          className="w-full justify-between h-10 font-normal text-left"
+        >
+          <span className="truncate">{value || 'Select product...'}</span>
+          <ChevronsUpDown className="ml-1 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[300px] p-0" align="start">
+        <Command>
+          <CommandInput
+            placeholder="Search or type custom..."
+            value={search}
+            onValueChange={setSearch}
+          />
+          <CommandList>
+            <CommandEmpty>
+              <button
+                className="w-full text-left px-3 py-2 text-sm hover:bg-accent rounded"
+                onClick={() => {
+                  onChange(search);
+                  setOpen(false);
+                  setSearch('');
+                }}
+              >
+                Use "{search}" as custom item
+              </button>
+            </CommandEmpty>
+            <CommandGroup heading="Products">
+              {filtered.map(product => (
+                <CommandItem
+                  key={product.id}
+                  value={product.name}
+                  onSelect={() => {
+                    onChange(product.name, product.price);
+                    setOpen(false);
+                    setSearch('');
+                  }}
+                >
+                  <span className="flex-1 truncate">{product.name}</span>
+                  <span className="text-xs text-muted-foreground ml-2">₹{product.price.toLocaleString()}</span>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+};
 
 const AdminBilling = () => {
   const { isAdmin, loading: authLoading } = useAuth();
