@@ -398,6 +398,13 @@ const AdminBilling = () => {
                     <Download className="h-4 w-4" />
                     Download PDF
                   </Button>
+                  <Button
+                    onClick={handleWhatsAppShare}
+                    className="gap-2 bg-green-600 hover:bg-green-700 text-white"
+                  >
+                    <MessageCircle className="h-4 w-4" />
+                    WhatsApp Share
+                  </Button>
                 </div>
               </CardContent>
             </Card>
