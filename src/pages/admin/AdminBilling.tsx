@@ -22,10 +22,10 @@ interface BillItem {
 const SHOP_INFO = {
   name: 'Graphic Wala',
   tagline: 'Premium Printing & Design Studio',
-  address: 'Purnia, Bihar - 854105',
+  address: 'Nasirganj, Katihar, Bihar - 854105',
   phone: '+91 6207142994',
-  email: 'support@graphicwala.com',
-  website: 'graphicwala.lovable.app',
+  email: 'graphicwalaktr@gmail.com',
+  website: 'graphicwala.com',
   gst: '',
 };
 
