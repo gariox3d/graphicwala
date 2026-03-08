@@ -117,6 +117,7 @@ const App = () => {
                 <Route path="/admin/before-after" element={<AdminGuard><AdminBeforeAfter /></AdminGuard>} />
                 <Route path="/admin/abandoned-carts" element={<AdminGuard><AdminAbandonedCarts /></AdminGuard>} />
                 <Route path="/admin/pickup-earnings" element={<AdminGuard><AdminPickupEarnings /></AdminGuard>} />
+                <Route path="/admin/billing" element={<AdminGuard><AdminBilling /></AdminGuard>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
