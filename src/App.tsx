@@ -14,6 +14,7 @@ import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminStorage from "./pages/admin/AdminStorage";
 import AdminBeforeAfter from "./pages/admin/AdminBeforeAfter";
 import AdminAbandonedCarts from "./pages/admin/AdminAbandonedCarts";
+import AdminBilling from "./pages/admin/AdminBilling";
 import AdminPickupEarnings from "./pages/admin/AdminPickupEarnings";
 import Index from "./pages/Index";
 import Products from "./pages/Products";
