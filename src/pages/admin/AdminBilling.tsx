@@ -276,7 +276,59 @@ const AdminBilling = () => {
                 </div>
                 <div className="sm:col-span-2">
                   <Label>Address</Label>
-                  <Textarea placeholder="Customer address" value={customerAddress} onChange={e => setCustomerAddress(e.target.value)} rows={2} />
+                  <Textarea placeholder="House/Shop No, Street, Locality, City, State - PIN" value={customerAddress} onChange={e => setCustomerAddress(e.target.value)} rows={2} />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Payment Status */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <IndianRupee className="h-5 w-5 text-primary" />
+                  Payment Status
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <Label>Status</Label>
+                  <Select value={paymentStatus} onValueChange={(v: 'unpaid' | 'partial' | 'paid') => setPaymentStatus(v)}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="unpaid">❌ Unpaid</SelectItem>
+                      <SelectItem value="partial">⏳ Partial Paid</SelectItem>
+                      <SelectItem value="paid">✅ Fully Paid</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                {paymentStatus === 'partial' && (
+                  <div>
+                    <Label>Amount Paid (₹)</Label>
+                    <Input
+                      type="number"
+                      min={0}
+                      value={amountPaid}
+                      onChange={e => setAmountPaid(parseFloat(e.target.value) || 0)}
+                      placeholder="Kitna diya hai"
+                    />
+                  </div>
+                )}
+                <div className="flex items-end">
+                  {paymentStatus === 'paid' && (
+                    <Badge className="bg-green-100 text-green-800 border-green-300 text-sm px-3 py-1.5">
+                      <CheckCircle2 className="h-4 w-4 mr-1" /> Fully Paid
+                    </Badge>
+                  )}
+                  {paymentStatus === 'partial' && (
+                    <Badge className="bg-yellow-100 text-yellow-800 border-yellow-300 text-sm px-3 py-1.5">
+                      <Clock className="h-4 w-4 mr-1" /> Partial — ₹{(grandTotal - amountPaid).toLocaleString('en-IN')} Due
+                    </Badge>
+                  )}
+                  {paymentStatus === 'unpaid' && (
+                    <Badge className="bg-red-100 text-red-800 border-red-300 text-sm px-3 py-1.5">
+                      <AlertCircle className="h-4 w-4 mr-1" /> Unpaid — ₹{grandTotal.toLocaleString('en-IN')} Due
+                    </Badge>
+                  )}
                 </div>
               </CardContent>
             </Card>
