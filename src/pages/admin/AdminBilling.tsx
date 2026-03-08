@@ -166,6 +166,43 @@ const AdminBilling = () => {
     }, 300);
   }, [customerName, items]);
 
+  const handleWhatsAppShare = useCallback(() => {
+    if (!customerPhone.trim()) {
+      toast.error('Customer ka phone number daalna zaroori hai WhatsApp share ke liye');
+      return;
+    }
+    const validItems = items.filter(i => i.name.trim());
+    if (validItems.length === 0) {
+      toast.error('Please add at least one item');
+      return;
+    }
+
+    const itemLines = validItems.map((item, idx) =>
+      `${idx + 1}. ${item.name} × ${item.quantity} = ₹${(item.quantity * item.rate).toLocaleString('en-IN')}`
+    ).join('\n');
+
+    const billTypeLabel = billType === 'invoice' ? 'Invoice' : 'Estimate';
+
+    let message = `🧾 *${SHOP_INFO.name} — ${billTypeLabel}*\n`;
+    message += `📋 Bill No: ${billNumber}\n`;
+    message += `📅 Date: ${formattedDate}\n\n`;
+    message += `👤 *Customer:* ${customerName}\n`;
+    if (customerAddress.trim()) message += `📍 ${customerAddress}\n`;
+    message += `\n━━━━━━━━━━━━━━━━\n`;
+    message += `📦 *Items:*\n${itemLines}\n`;
+    message += `━━━━━━━━━━━━━━━━\n`;
+    message += `💰 Subtotal: ₹${subtotal.toLocaleString('en-IN')}\n`;
+    if (discountAmount > 0) message += `🎁 Discount: -₹${discountAmount.toLocaleString('en-IN')}\n`;
+    message += `\n🏷️ *Grand Total: ₹${grandTotal.toLocaleString('en-IN')}*\n`;
+    if (notes.trim()) message += `\n📝 ${notes}\n`;
+    message += `\n🌐 ${SHOP_INFO.website}\n📞 ${SHOP_INFO.phone}`;
+
+    const phone = normalizeIndianPhoneForWhatsApp(customerPhone);
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
+    toast.success('WhatsApp pe bill share ho raha hai!');
+  }, [customerName, customerPhone, customerAddress, items, billNumber, billType, formattedDate, subtotal, discountAmount, grandTotal, notes]);
+
   if (authLoading) {
     return <AdminLayout><div className="flex items-center justify-center h-64"><div className="animate-pulse">Loading...</div></div></AdminLayout>;
   }
