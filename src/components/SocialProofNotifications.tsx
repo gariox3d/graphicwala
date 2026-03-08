@@ -24,17 +24,16 @@ const SocialProofNotifications = () => {
     const fetchRecentOrders = async () => {
       const { data } = await supabase
         .from('orders')
-        .select('customer_name, shipping_city, created_at')
+        .select('customer_name, shipping_city, created_at, order_items(product_name)')
         .eq('payment_status', 'paid')
         .order('created_at', { ascending: false })
         .limit(10);
 
       if (data && data.length > 0) {
-        // Get product names for these orders
         const orders: RecentOrder[] = data.map((o: any) => ({
           customer_name: o.customer_name || 'Someone',
           shipping_city: o.shipping_city || INDIAN_CITIES[Math.floor(Math.random() * INDIAN_CITIES.length)],
-          product_name: '',
+          product_name: o.order_items?.[0]?.product_name || '',
           created_at: o.created_at,
         }));
         setRecentOrders(orders);
