@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Order, ORDER_STATUSES } from '@/lib/types';
+import { normalizeIndianPhoneForWhatsApp } from '@/lib/phone';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,7 +23,7 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
-import { Search, ShoppingCart, Eye, Package, MapPin, CreditCard, User, Image, Download, Trash2, Truck, Store } from 'lucide-react';
+import { Search, ShoppingCart, Eye, Package, MapPin, CreditCard, User, Image, Download, Trash2, Truck, Store, MessageCircle } from 'lucide-react';
 
 interface OrderWithProfile extends Order {
   profiles?: { full_name: string | null };
