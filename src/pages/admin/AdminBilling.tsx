@@ -10,14 +10,8 @@ import { Textarea } from '@/components/ui/textarea';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
-import {
-  Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList,
-} from '@/components/ui/command';
-import {
-  Popover, PopoverContent, PopoverTrigger,
-} from '@/components/ui/popover';
 import { toast } from 'sonner';
-import { Plus, Trash2, Download, FileText, Eye, ChevronsUpDown } from 'lucide-react';
+import { Plus, Trash2, Download, FileText, Eye, Search } from 'lucide-react';
 
 interface BillItem {
   id: string;
@@ -49,7 +43,7 @@ interface ProductOption {
   name: string;
   price: number;
 }
-const ProductCombobox = ({
+const ProductSearchSelect = ({
   value,
   options,
   onChange,
@@ -60,63 +54,72 @@ const ProductCombobox = ({
 }) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const filtered = options.filter(o =>
     o.name.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          className="w-full justify-between h-10 font-normal text-left"
-        >
-          <span className="truncate">{value || 'Select product...'}</span>
-          <ChevronsUpDown className="ml-1 h-4 w-4 shrink-0 opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[300px] p-0" align="start">
-        <Command>
-          <CommandInput
-            placeholder="Search or type custom..."
-            value={search}
-            onValueChange={setSearch}
-          />
-          <CommandList>
-            <CommandEmpty>
-              <button
-                className="w-full text-left px-3 py-2 text-sm hover:bg-accent rounded"
-                onClick={() => {
-                  onChange(search);
-                  setOpen(false);
-                  setSearch('');
-                }}
-              >
-                Use "{search}" as custom item
-              </button>
-            </CommandEmpty>
-            <CommandGroup heading="Products">
-              {filtered.map(product => (
-                <CommandItem
-                  key={product.id}
-                  value={product.name}
-                  onSelect={() => {
-                    onChange(product.name, product.price);
-                    setOpen(false);
-                    setSearch('');
-                  }}
-                >
-                  <span className="flex-1 truncate">{product.name}</span>
-                  <span className="text-xs text-muted-foreground ml-2">₹{product.price.toLocaleString()}</span>
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+    <div className="relative">
+      <div className="relative">
+        <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          ref={inputRef}
+          placeholder="Search product..."
+          value={open ? search : value || ''}
+          onFocus={() => {
+            setOpen(true);
+            setSearch('');
+          }}
+          onChange={e => {
+            setSearch(e.target.value);
+            if (!open) setOpen(true);
+          }}
+          onBlur={() => {
+            setTimeout(() => setOpen(false), 200);
+          }}
+          className="pl-8"
+        />
+      </div>
+      {open && (
+        <div className="absolute z-50 top-full left-0 w-full mt-1 bg-popover border rounded-md shadow-lg max-h-60 overflow-y-auto">
+          {filtered.map(product => (
+            <button
+              key={product.id}
+              type="button"
+              className="w-full text-left px-3 py-2 text-sm hover:bg-accent flex justify-between items-center"
+              onMouseDown={e => {
+                e.preventDefault();
+                onChange(product.name, product.price);
+                setSearch('');
+                setOpen(false);
+              }}
+            >
+              <span className="truncate">{product.name}</span>
+              <span className="text-xs text-muted-foreground ml-2 shrink-0">₹{product.price.toLocaleString()}</span>
+            </button>
+          ))}
+          {filtered.length === 0 && search.trim() && (
+            <button
+              type="button"
+              className="w-full text-left px-3 py-2 text-sm hover:bg-accent text-muted-foreground"
+              onMouseDown={e => {
+                e.preventDefault();
+                onChange(search);
+                setSearch('');
+                setOpen(false);
+              }}
+            >
+              Use "<span className="text-foreground font-medium">{search}</span>" as custom item
+            </button>
+          )}
+          {filtered.length === 0 && !search.trim() && (
+            <div className="px-3 py-2 text-sm text-muted-foreground">Type to search...</div>
+          )}
+        </div>
+      )}
+    </div>
   );
 };
 
@@ -128,6 +131,7 @@ const AdminBilling = () => {
   const [billDate, setBillDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [billType, setBillType] = useState<'estimate' | 'invoice'>('invoice');
   const [pageSize, setPageSize] = useState<'a4' | 'a4-half'>('a4');
+  const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('portrait');
 
   // Customer
   const [customerName, setCustomerName] = useState('');
@@ -284,7 +288,7 @@ const AdminBilling = () => {
                     </div>
                     <div className="col-span-5">
                       {idx === 0 && <Label className="text-xs">Product / Service</Label>}
-                      <ProductCombobox
+                      <ProductSearchSelect
                         value={item.name}
                         options={productOptions}
                         onChange={(name, price) => {
@@ -377,6 +381,13 @@ const AdminBilling = () => {
                       <SelectItem value="a4-half">A4 Half Page</SelectItem>
                     </SelectContent>
                   </Select>
+                  <Select value={orientation} onValueChange={(v: 'portrait' | 'landscape') => setOrientation(v)}>
+                    <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="portrait">Portrait</SelectItem>
+                      <SelectItem value="landscape">Landscape</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <Button variant="outline" onClick={() => setShowPreview(!showPreview)}>
                     <Eye className="h-4 w-4 mr-2" />
                     {showPreview ? 'Hide Preview' : 'Show Preview'}
@@ -426,7 +437,7 @@ const AdminBilling = () => {
         <style>{`
           @media print {
             @page {
-              size: A4 portrait;
+              size: A4 ${orientation};
               margin: ${pageSize === 'a4' ? '12mm 15mm' : '8mm 15mm'};
             }
             body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
