@@ -568,15 +568,15 @@ const Checkout = () => {
                     }}
                     className="space-y-4"
                   >
-                    <div className={`flex items-start space-x-3 p-4 border rounded-lg ${deliveryMethod === 'home_delivery' ? 'border-primary bg-primary/5' : ''}`}>
-                      <RadioGroupItem value="home_delivery" id="home_delivery" className="mt-1" />
-                      <div className="flex-1">
+                    <div className={`flex items-start gap-3 p-3 sm:p-4 border rounded-lg ${deliveryMethod === 'home_delivery' ? 'border-primary bg-primary/5' : ''}`}>
+                      <RadioGroupItem value="home_delivery" id="home_delivery" className="mt-1 shrink-0" />
+                      <div className="flex-1 min-w-0">
                         <Label htmlFor="home_delivery" className="font-medium flex items-center gap-2 cursor-pointer">
-                          <Truck className="h-4 w-4" />
+                          <Truck className="h-4 w-4 shrink-0" />
                           Home Delivery
                         </Label>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          Delivery charge: {deliveryCharge > 0 ? `₹${deliveryCharge.toLocaleString()}` : 'Free'} • 5-7 working days
+                        <p className="text-xs sm:text-sm text-muted-foreground mt-1 break-words">
+                          Delivery: {deliveryCharge > 0 ? `₹${deliveryCharge.toLocaleString()}` : 'Free'} • 5-7 working days
                         </p>
                       </div>
                     </div>
