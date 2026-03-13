@@ -673,7 +673,7 @@ const Checkout = () => {
                               </button>
                             </div>
                           </div>
-                          <p className="font-semibold whitespace-nowrap">
+                          <p className="font-semibold text-right">
                             ₹{(getEffectivePrice(item.products as Product) * item.quantity).toLocaleString()}
                           </p>
                         </div>

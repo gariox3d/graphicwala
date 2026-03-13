@@ -152,7 +152,7 @@ const Footer = () => {
             </ul>
 
             {/* WhatsApp & Call Buttons */}
-            <div className="flex gap-2 mt-6">
+            <div className="flex flex-wrap gap-2 mt-6">
               <a
                 href={whatsappUrl}
                 target="_blank"

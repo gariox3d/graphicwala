@@ -38,7 +38,7 @@ const SupportContact = ({ variant = 'full', message, className = '' }: SupportCo
 
   if (variant === 'compact') {
     return (
-      <div className={`flex items-center gap-3 ${className}`}>
+      <div className={`flex flex-wrap items-center gap-3 ${className}`}>
         <WhatsAppButton
           message={defaultMessage}
           size="sm"
