@@ -620,15 +620,15 @@ const Checkout = () => {
                       const hasDesign = designs?.front || designs?.back;
 
                       return (
-                        <div key={item.id} className="flex gap-4 items-start">
+                      <div key={item.id} className="flex gap-3 items-start">
                           <img
                             src={item.products?.image_url || '/placeholder.svg'}
                             alt={item.products?.name}
-                            className="w-16 h-16 object-cover rounded-lg border"
+                            className="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-lg border shrink-0"
                           />
                           <div className="flex-1 min-w-0">
-                            <h4 className="font-medium truncate">{item.products?.name}</h4>
-                            <p className="text-sm text-muted-foreground">
+                            <h4 className="font-medium text-sm sm:text-base truncate">{item.products?.name}</h4>
+                            <p className="text-xs sm:text-sm text-muted-foreground">
                               ₹{getEffectivePrice(item.products as Product).toLocaleString()} each
                               {item.products && getEffectivePrice(item.products as Product) < item.products.price && (
                                 <span className="line-through ml-1 text-xs">₹{item.products.price.toLocaleString()}</span>
