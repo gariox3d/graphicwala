@@ -389,13 +389,13 @@ const Checkout = () => {
   });
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-background overflow-x-hidden">
       <Header />
-      <main className="flex-1 py-8 md:py-12">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <h1 className="text-3xl md:text-4xl font-bold mb-8">Checkout</h1>
+      <main className="flex-1 py-6 md:py-12">
+        <div className="w-full max-w-6xl mx-auto px-3 sm:px-4 md:px-6 overflow-hidden">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 md:mb-8">Checkout</h1>
 
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid lg:grid-cols-3 gap-6 md:gap-8">
             {/* Shipping Form */}
             <div className="lg:col-span-2 space-y-6">
               {/* Missing Designs Warning */}
