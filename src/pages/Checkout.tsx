@@ -598,9 +598,12 @@ const Checkout = () => {
                   </RadioGroup>
 
                   <div className="mt-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
-                    <p className="text-sm text-destructive font-medium">
-                      💳 Cash on Delivery is not available. All orders must be prepaid.
-                    </p>
+                    <div className="flex items-start gap-2 min-w-0">
+                      <span className="shrink-0 mt-0.5">💳</span>
+                      <p className="text-xs sm:text-sm text-destructive font-medium leading-snug break-words">
+                        Cash on Delivery is not available. All orders must be prepaid.
+                      </p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
