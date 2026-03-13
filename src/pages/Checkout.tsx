@@ -389,10 +389,10 @@ const Checkout = () => {
   });
 
   return (
-    <div className="min-h-screen flex flex-col bg-background overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-background">
       <Header />
       <main className="flex-1 py-6 md:py-12">
-        <div className="w-full max-w-6xl mx-auto px-3 sm:px-4 md:px-6 overflow-hidden">
+        <div className="w-full max-w-6xl mx-auto px-3 sm:px-4 md:px-6">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 md:mb-8">Checkout</h1>
 
           <div className="grid lg:grid-cols-3 gap-6 md:gap-8">
@@ -589,7 +589,7 @@ const Checkout = () => {
                             <Store className="h-4 w-4 shrink-0" />
                             Store Pickup (Free)
                           </Label>
-                          <p className="text-xs sm:text-sm text-muted-foreground mt-1 break-words">
+                          <p className="text-xs sm:text-sm text-muted-foreground mt-1 break-words leading-snug">
                             Collect from: {settings?.pickup_address || 'Graphic Wala Shop'}
                           </p>
                         </div>
@@ -598,9 +598,12 @@ const Checkout = () => {
                   </RadioGroup>
 
                   <div className="mt-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
-                    <p className="text-sm text-destructive font-medium">
-                      💳 Cash on Delivery is not available. All orders must be prepaid.
-                    </p>
+                    <div className="flex items-start gap-2 min-w-0">
+                      <span className="shrink-0 mt-0.5">💳</span>
+                      <p className="text-xs sm:text-sm text-destructive font-medium leading-snug break-words">
+                        Cash on Delivery is not available. All orders must be prepaid.
+                      </p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
