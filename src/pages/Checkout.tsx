@@ -389,13 +389,13 @@ const Checkout = () => {
   });
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-background overflow-x-hidden">
       <Header />
-      <main className="flex-1 py-8 md:py-12">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <h1 className="text-3xl md:text-4xl font-bold mb-8">Checkout</h1>
+      <main className="flex-1 py-6 md:py-12">
+        <div className="w-full max-w-6xl mx-auto px-3 sm:px-4 md:px-6 overflow-hidden">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 md:mb-8">Checkout</h1>
 
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid lg:grid-cols-3 gap-6 md:gap-8">
             {/* Shipping Form */}
             <div className="lg:col-span-2 space-y-6">
               {/* Missing Designs Warning */}
@@ -568,28 +568,28 @@ const Checkout = () => {
                     }}
                     className="space-y-4"
                   >
-                    <div className={`flex items-start space-x-3 p-4 border rounded-lg ${deliveryMethod === 'home_delivery' ? 'border-primary bg-primary/5' : ''}`}>
-                      <RadioGroupItem value="home_delivery" id="home_delivery" className="mt-1" />
-                      <div className="flex-1">
+                    <div className={`flex items-start gap-3 p-3 sm:p-4 border rounded-lg ${deliveryMethod === 'home_delivery' ? 'border-primary bg-primary/5' : ''}`}>
+                      <RadioGroupItem value="home_delivery" id="home_delivery" className="mt-1 shrink-0" />
+                      <div className="flex-1 min-w-0">
                         <Label htmlFor="home_delivery" className="font-medium flex items-center gap-2 cursor-pointer">
-                          <Truck className="h-4 w-4" />
+                          <Truck className="h-4 w-4 shrink-0" />
                           Home Delivery
                         </Label>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          Delivery charge: {deliveryCharge > 0 ? `₹${deliveryCharge.toLocaleString()}` : 'Free'} • 5-7 working days
+                        <p className="text-xs sm:text-sm text-muted-foreground mt-1 break-words">
+                          Delivery: {deliveryCharge > 0 ? `₹${deliveryCharge.toLocaleString()}` : 'Free'} • 5-7 working days
                         </p>
                       </div>
                     </div>
                     
                     {settings?.store_pickup_enabled && (
-                      <div className={`flex items-start space-x-3 p-4 border rounded-lg ${deliveryMethod === 'store_pickup' ? 'border-primary bg-primary/5' : ''}`}>
-                        <RadioGroupItem value="store_pickup" id="store_pickup" className="mt-1" />
-                        <div className="flex-1">
+                      <div className={`flex items-start gap-3 p-3 sm:p-4 border rounded-lg ${deliveryMethod === 'store_pickup' ? 'border-primary bg-primary/5' : ''}`}>
+                        <RadioGroupItem value="store_pickup" id="store_pickup" className="mt-1 shrink-0" />
+                        <div className="flex-1 min-w-0">
                           <Label htmlFor="store_pickup" className="font-medium flex items-center gap-2 cursor-pointer">
-                            <Store className="h-4 w-4" />
+                            <Store className="h-4 w-4 shrink-0" />
                             Store Pickup (Free)
                           </Label>
-                          <p className="text-sm text-muted-foreground mt-1">
+                          <p className="text-xs sm:text-sm text-muted-foreground mt-1 break-words">
                             Collect from: {settings?.pickup_address || 'Graphic Wala Shop'}
                           </p>
                         </div>
@@ -620,15 +620,15 @@ const Checkout = () => {
                       const hasDesign = designs?.front || designs?.back;
 
                       return (
-                        <div key={item.id} className="flex gap-4 items-start">
+                      <div key={item.id} className="flex gap-3 items-start">
                           <img
                             src={item.products?.image_url || '/placeholder.svg'}
                             alt={item.products?.name}
-                            className="w-16 h-16 object-cover rounded-lg border"
+                            className="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-lg border shrink-0"
                           />
                           <div className="flex-1 min-w-0">
-                            <h4 className="font-medium truncate">{item.products?.name}</h4>
-                            <p className="text-sm text-muted-foreground">
+                            <h4 className="font-medium text-sm sm:text-base truncate">{item.products?.name}</h4>
+                            <p className="text-xs sm:text-sm text-muted-foreground">
                               ₹{getEffectivePrice(item.products as Product).toLocaleString()} each
                               {item.products && getEffectivePrice(item.products as Product) < item.products.price && (
                                 <span className="line-through ml-1 text-xs">₹{item.products.price.toLocaleString()}</span>
@@ -689,15 +689,15 @@ const Checkout = () => {
             </div>
 
             {/* Order Summary */}
-            <div>
-              <Card className="sticky top-24">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <CreditCard className="h-5 w-5 text-primary" />
+            <div className="min-w-0">
+              <Card className="lg:sticky lg:top-24">
+                <CardHeader className="pb-3 sm:pb-6">
+                  <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                    <CreditCard className="h-5 w-5 text-primary shrink-0" />
                     Order Summary
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-3 sm:space-y-4 pt-0">
                   <PriceBreakdown
                     productTotal={cartTotal}
                     deliveryCharge={deliveryMethod === 'home_delivery' ? deliveryCharge : 0}
@@ -710,7 +710,7 @@ const Checkout = () => {
                   />
 
                   {bulkDiscount > 0 && (
-                    <div className="bg-green-50 dark:bg-green-950/30 p-3 rounded-lg text-sm text-green-700 dark:text-green-300">
+                    <div className="bg-green-50 dark:bg-green-950/30 p-3 rounded-lg text-xs sm:text-sm text-green-700 dark:text-green-300 break-words">
                       🎉 Bulk discount of ₹{bulkDiscount.toLocaleString()} applied! Buy {settings?.bulk_discount_min_qty}+ of same product to save {settings?.bulk_discount_percent}%
                     </div>
                   )}
