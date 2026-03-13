@@ -582,14 +582,14 @@ const Checkout = () => {
                     </div>
                     
                     {settings?.store_pickup_enabled && (
-                      <div className={`flex items-start space-x-3 p-4 border rounded-lg ${deliveryMethod === 'store_pickup' ? 'border-primary bg-primary/5' : ''}`}>
-                        <RadioGroupItem value="store_pickup" id="store_pickup" className="mt-1" />
-                        <div className="flex-1">
+                      <div className={`flex items-start gap-3 p-3 sm:p-4 border rounded-lg ${deliveryMethod === 'store_pickup' ? 'border-primary bg-primary/5' : ''}`}>
+                        <RadioGroupItem value="store_pickup" id="store_pickup" className="mt-1 shrink-0" />
+                        <div className="flex-1 min-w-0">
                           <Label htmlFor="store_pickup" className="font-medium flex items-center gap-2 cursor-pointer">
-                            <Store className="h-4 w-4" />
+                            <Store className="h-4 w-4 shrink-0" />
                             Store Pickup (Free)
                           </Label>
-                          <p className="text-sm text-muted-foreground mt-1">
+                          <p className="text-xs sm:text-sm text-muted-foreground mt-1 break-words">
                             Collect from: {settings?.pickup_address || 'Graphic Wala Shop'}
                           </p>
                         </div>
