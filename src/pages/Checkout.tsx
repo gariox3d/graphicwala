@@ -397,7 +397,7 @@ const Checkout = () => {
 
           <div className="grid lg:grid-cols-3 gap-6 md:gap-8">
             {/* Shipping Form */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className="lg:col-span-2 min-w-0 space-y-6">
               {/* Missing Designs Warning */}
               {missingDesigns.length > 0 && (
                 <Card className="border-destructive bg-destructive/5">

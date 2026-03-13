@@ -141,9 +141,9 @@ const Footer = () => {
                   {PHONE_NUMBER}
                 </a>
               </li>
-              <li className="flex items-center gap-3 text-background/70 text-sm">
-                <Mail className="h-4 w-4 text-primary" />
-                graphicwalaktr@gmail.com
+              <li className="flex items-center gap-3 text-background/70 text-sm min-w-0">
+                <Mail className="h-4 w-4 text-primary shrink-0" />
+                <span className="break-all">graphicwalaktr@gmail.com</span>
               </li>
               <li className="flex items-start gap-3 text-background/70 text-sm">
                 <MapPin className="h-4 w-4 text-primary mt-0.5" />
