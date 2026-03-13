@@ -689,15 +689,15 @@ const Checkout = () => {
             </div>
 
             {/* Order Summary */}
-            <div>
-              <Card className="sticky top-24">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <CreditCard className="h-5 w-5 text-primary" />
+            <div className="min-w-0">
+              <Card className="lg:sticky lg:top-24">
+                <CardHeader className="pb-3 sm:pb-6">
+                  <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+                    <CreditCard className="h-5 w-5 text-primary shrink-0" />
                     Order Summary
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-3 sm:space-y-4 pt-0">
                   <PriceBreakdown
                     productTotal={cartTotal}
                     deliveryCharge={deliveryMethod === 'home_delivery' ? deliveryCharge : 0}
