@@ -589,7 +589,7 @@ const Checkout = () => {
                             <Store className="h-4 w-4 shrink-0" />
                             Store Pickup (Free)
                           </Label>
-                          <p className="text-xs sm:text-sm text-muted-foreground mt-1 break-words">
+                          <p className="text-xs sm:text-sm text-muted-foreground mt-1 break-words leading-snug">
                             Collect from: {settings?.pickup_address || 'Graphic Wala Shop'}
                           </p>
                         </div>
