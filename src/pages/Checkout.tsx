@@ -710,7 +710,7 @@ const Checkout = () => {
                   />
 
                   {bulkDiscount > 0 && (
-                    <div className="bg-green-50 dark:bg-green-950/30 p-3 rounded-lg text-sm text-green-700 dark:text-green-300">
+                    <div className="bg-green-50 dark:bg-green-950/30 p-3 rounded-lg text-xs sm:text-sm text-green-700 dark:text-green-300 break-words">
                       🎉 Bulk discount of ₹{bulkDiscount.toLocaleString()} applied! Buy {settings?.bulk_discount_min_qty}+ of same product to save {settings?.bulk_discount_percent}%
                     </div>
                   )}
