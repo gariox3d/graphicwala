@@ -66,6 +66,7 @@ export const useAdminDraftState = <T,>(
       });
 
       setHasDirtyDraft(true);
+      hasDirtyDraftRef.current = true;
     },
     [key],
   );
