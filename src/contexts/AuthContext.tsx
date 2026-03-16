@@ -78,7 +78,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setLoading(true);
+      // Don't set loading on token refresh — it unmounts admin forms and loses unsaved data
+      const isTokenRefresh = event === 'TOKEN_REFRESHED';
+      if (!isTokenRefresh) {
+        setLoading(true);
+      }
       setSession(session);
       setUser(session?.user ?? null);
 
@@ -91,14 +95,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 checkAdminRole(session.user.id),
               ]);
             } finally {
-              setLoading(false);
+              if (!isTokenRefresh) {
+                setLoading(false);
+              }
             }
           })();
         }, 0);
       } else {
         setProfile(null);
         setIsAdmin(false);
-        setLoading(false);
+        if (!isTokenRefresh) {
+          setLoading(false);
+        }
       }
     });
 
