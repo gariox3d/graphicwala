@@ -91,6 +91,7 @@ export const useAdminDraftState = <T,>(
       // Ignore localStorage removal errors
     }
     setHasDirtyDraft(false);
+    hasDirtyDraftRef.current = false;
   }, [key]);
 
   return {
