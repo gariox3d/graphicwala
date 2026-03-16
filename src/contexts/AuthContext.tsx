@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { Profile } from '@/lib/types';
@@ -23,10 +23,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const latestResolvedUserIdRef = useRef<string | null>(null);
 
   const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-  const fetchProfile = async (userId: string) => {
+  const fetchProfile = useCallback(async (userId: string) => {
     for (let attempt = 0; attempt < 3; attempt++) {
       try {
         const { data, error } = await supabase
@@ -47,9 +48,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         await wait(300 * (attempt + 1));
       }
     }
-  };
+  }, []);
 
-  const checkAdminRole = async (userId: string) => {
+  const checkAdminRole = useCallback(async (userId: string) => {
     for (let attempt = 0; attempt < 3; attempt++) {
       try {
         const { data, error } = await supabase
@@ -74,64 +75,71 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     return false;
-  };
+  }, []);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      // Don't set loading on token refresh — it unmounts admin forms and loses unsaved data
-      const isTokenRefresh = event === 'TOKEN_REFRESHED';
-      if (!isTokenRefresh) {
+    let isMounted = true;
+
+    const applySessionState = async (
+      nextSession: Session | null,
+      options?: { background?: boolean },
+    ) => {
+      const isBackground = options?.background ?? false;
+
+      if (!isBackground && isMounted) {
         setLoading(true);
       }
-      setSession(session);
-      setUser(session?.user ?? null);
 
-      if (session?.user) {
-        setTimeout(() => {
-          (async () => {
-            try {
-              await Promise.all([
-                fetchProfile(session.user.id),
-                checkAdminRole(session.user.id),
-              ]);
-            } finally {
-              if (!isTokenRefresh) {
-                setLoading(false);
-              }
-            }
-          })();
-        }, 0);
-      } else {
-        setProfile(null);
-        setIsAdmin(false);
-        if (!isTokenRefresh) {
-          setLoading(false);
+      if (!isMounted) return;
+
+      setSession(nextSession);
+      setUser(nextSession?.user ?? null);
+      latestResolvedUserIdRef.current = nextSession?.user?.id ?? null;
+
+      if (nextSession?.user) {
+        try {
+          await Promise.all([
+            fetchProfile(nextSession.user.id),
+            checkAdminRole(nextSession.user.id),
+          ]);
+        } finally {
+          if (!isBackground && isMounted) {
+            setLoading(false);
+          }
         }
+        return;
       }
+
+      setProfile(null);
+      setIsAdmin(false);
+
+      if (!isBackground && isMounted) {
+        setLoading(false);
+      }
+    };
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, nextSession) => {
+      const nextUserId = nextSession?.user?.id ?? null;
+      const sameUserSession = !!nextUserId && nextUserId === latestResolvedUserIdRef.current;
+      const isBackgroundAuthEvent =
+        event === 'TOKEN_REFRESHED' ||
+        ((event === 'SIGNED_IN' || event === 'USER_UPDATED') && sameUserSession);
+
+      setTimeout(() => {
+        void applySessionState(nextSession, { background: isBackgroundAuthEvent });
+      }, 0);
     });
 
     (async () => {
-      setLoading(true);
-      const { data: { session } } = await supabase.auth.getSession();
-      setSession(session);
-      setUser(session?.user ?? null);
-
-      if (session?.user) {
-        try {
-          await Promise.all([
-            fetchProfile(session.user.id),
-            checkAdminRole(session.user.id),
-          ]);
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        setLoading(false);
-      }
+      const { data: { session: nextSession } } = await supabase.auth.getSession();
+      await applySessionState(nextSession);
     })();
 
-    return () => subscription.unsubscribe();
-  }, []);
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
+  }, [checkAdminRole, fetchProfile]);
 
   const signUp = async (email: string, password: string, fullName: string, phone?: string, referralCode?: string) => {
     const redirectUrl = `${window.location.origin}/`;
@@ -162,11 +170,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { error: error as Error | null };
   };
 
-
   const signOut = async () => {
     await supabase.auth.signOut();
     setProfile(null);
     setIsAdmin(false);
+    latestResolvedUserIdRef.current = null;
   };
 
   const refreshProfile = async () => {

@@ -6,41 +6,73 @@ interface DraftPayload<T> {
   updatedAt: number;
 }
 
+interface DraftInitialization<T> {
+  hasDirtyDraft: boolean;
+  value: T;
+}
+
 const isDraftPayload = <T,>(value: unknown): value is DraftPayload<T> => {
   if (!value || typeof value !== "object") return false;
   const draft = value as Partial<DraftPayload<T>>;
   return typeof draft.dirty === "boolean" && "value" in draft;
 };
 
+const resolveDraftInitialization = <T,>(
+  key: string,
+  createInitialValue: () => T,
+): DraftInitialization<T> => {
+  const fallbackValue = createInitialValue();
+
+  if (typeof window === "undefined") {
+    return {
+      value: fallbackValue,
+      hasDirtyDraft: false,
+    };
+  }
+
+  try {
+    const storedDraft = window.localStorage.getItem(key);
+    if (storedDraft) {
+      const parsedDraft = JSON.parse(storedDraft) as unknown;
+      if (isDraftPayload<T>(parsedDraft) && parsedDraft.dirty) {
+        return {
+          value: parsedDraft.value,
+          hasDirtyDraft: true,
+        };
+      }
+    }
+  } catch {
+    // Ignore malformed draft payload
+  }
+
+  return {
+    value: fallbackValue,
+    hasDirtyDraft: false,
+  };
+};
+
 export const useAdminDraftState = <T,>(
   key: string,
   createInitialValue: () => T,
 ) => {
-  const [state, setInternalState] = useState<T>(() => createInitialValue());
-  const [hasDirtyDraft, setHasDirtyDraft] = useState(false);
-  const hasDirtyDraftRef = useRef(false);
+  const initialDraftRef = useRef<DraftInitialization<T> | null>(null);
+
+  if (initialDraftRef.current === null) {
+    initialDraftRef.current = resolveDraftInitialization(key, createInitialValue);
+  }
+
+  const [state, setInternalState] = useState<T>(() => initialDraftRef.current!.value);
+  const [hasDirtyDraft, setHasDirtyDraft] = useState(
+    () => initialDraftRef.current!.hasDirtyDraft,
+  );
+  const hasDirtyDraftRef = useRef(initialDraftRef.current.hasDirtyDraft);
 
   useEffect(() => {
-    const fallbackValue = createInitialValue();
-
-    try {
-      const storedDraft = localStorage.getItem(key);
-      if (storedDraft) {
-        const parsedDraft = JSON.parse(storedDraft) as unknown;
-        if (isDraftPayload<T>(parsedDraft) && parsedDraft.dirty) {
-          setInternalState(parsedDraft.value);
-          setHasDirtyDraft(true);
-          hasDirtyDraftRef.current = true;
-          return;
-        }
-      }
-    } catch {
-      // Ignore malformed draft payload
-    }
-
-    setInternalState(fallbackValue);
-    setHasDirtyDraft(false);
-    hasDirtyDraftRef.current = false;
+    const nextDraft = resolveDraftInitialization(key, createInitialValue);
+    initialDraftRef.current = nextDraft;
+    setInternalState(nextDraft.value);
+    setHasDirtyDraft(nextDraft.hasDirtyDraft);
+    hasDirtyDraftRef.current = nextDraft.hasDirtyDraft;
   }, [key, createInitialValue]);
 
   const setState = useCallback(
@@ -57,7 +89,7 @@ export const useAdminDraftState = <T,>(
             dirty: true,
             updatedAt: Date.now(),
           };
-          localStorage.setItem(key, JSON.stringify(payload));
+          window.localStorage.setItem(key, JSON.stringify(payload));
         } catch {
           // Ignore localStorage write errors
         }
@@ -73,7 +105,6 @@ export const useAdminDraftState = <T,>(
 
   const initializeFromServer = useCallback(
     (serverState: T) => {
-      // Use ref to avoid stale closure — draft may have been restored from localStorage
       if (hasDirtyDraftRef.current) return;
       setInternalState(serverState);
     },
@@ -86,7 +117,7 @@ export const useAdminDraftState = <T,>(
 
   const clearDraft = useCallback(() => {
     try {
-      localStorage.removeItem(key);
+      window.localStorage.removeItem(key);
     } catch {
       // Ignore localStorage removal errors
     }
