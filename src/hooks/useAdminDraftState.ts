@@ -30,6 +30,7 @@ export const useAdminDraftState = <T,>(
         if (isDraftPayload<T>(parsedDraft) && parsedDraft.dirty) {
           setInternalState(parsedDraft.value);
           setHasDirtyDraft(true);
+          hasDirtyDraftRef.current = true;
           return;
         }
       }
@@ -39,6 +40,7 @@ export const useAdminDraftState = <T,>(
 
     setInternalState(fallbackValue);
     setHasDirtyDraft(false);
+    hasDirtyDraftRef.current = false;
   }, [key, createInitialValue]);
 
   const setState = useCallback(
