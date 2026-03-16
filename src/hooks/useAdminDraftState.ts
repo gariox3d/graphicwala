@@ -18,6 +18,7 @@ export const useAdminDraftState = <T,>(
 ) => {
   const [state, setInternalState] = useState<T>(() => createInitialValue());
   const [hasDirtyDraft, setHasDirtyDraft] = useState(false);
+  const hasDirtyDraftRef = useRef(false);
 
   useEffect(() => {
     const fallbackValue = createInitialValue();
