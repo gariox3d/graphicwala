@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type SetStateAction } from "react";
+import { useCallback, useEffect, useRef, useState, type SetStateAction } from "react";
 
 interface DraftPayload<T> {
   value: T;
@@ -18,6 +18,7 @@ export const useAdminDraftState = <T,>(
 ) => {
   const [state, setInternalState] = useState<T>(() => createInitialValue());
   const [hasDirtyDraft, setHasDirtyDraft] = useState(false);
+  const hasDirtyDraftRef = useRef(false);
 
   useEffect(() => {
     const fallbackValue = createInitialValue();
@@ -29,6 +30,7 @@ export const useAdminDraftState = <T,>(
         if (isDraftPayload<T>(parsedDraft) && parsedDraft.dirty) {
           setInternalState(parsedDraft.value);
           setHasDirtyDraft(true);
+          hasDirtyDraftRef.current = true;
           return;
         }
       }
@@ -38,6 +40,7 @@ export const useAdminDraftState = <T,>(
 
     setInternalState(fallbackValue);
     setHasDirtyDraft(false);
+    hasDirtyDraftRef.current = false;
   }, [key, createInitialValue]);
 
   const setState = useCallback(
@@ -63,16 +66,18 @@ export const useAdminDraftState = <T,>(
       });
 
       setHasDirtyDraft(true);
+      hasDirtyDraftRef.current = true;
     },
     [key],
   );
 
   const initializeFromServer = useCallback(
     (serverState: T) => {
-      if (hasDirtyDraft) return;
+      // Use ref to avoid stale closure — draft may have been restored from localStorage
+      if (hasDirtyDraftRef.current) return;
       setInternalState(serverState);
     },
-    [hasDirtyDraft],
+    [],
   );
 
   const replaceState = useCallback((nextState: T) => {
@@ -86,6 +91,7 @@ export const useAdminDraftState = <T,>(
       // Ignore localStorage removal errors
     }
     setHasDirtyDraft(false);
+    hasDirtyDraftRef.current = false;
   }, [key]);
 
   return {
