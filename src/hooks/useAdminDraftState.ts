@@ -73,10 +73,11 @@ export const useAdminDraftState = <T,>(
 
   const initializeFromServer = useCallback(
     (serverState: T) => {
-      if (hasDirtyDraft) return;
+      // Use ref to avoid stale closure — draft may have been restored from localStorage
+      if (hasDirtyDraftRef.current) return;
       setInternalState(serverState);
     },
-    [hasDirtyDraft],
+    [],
   );
 
   const replaceState = useCallback((nextState: T) => {
