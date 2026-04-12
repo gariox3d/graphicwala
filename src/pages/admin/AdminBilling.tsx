@@ -374,7 +374,7 @@ const AdminBilling = () => {
                     </div>
                     <div className="col-span-5">
                       {idx === 0 && <Label className="text-xs">Product / Service</Label>}
-                      <ProductSearchSelect
+                      <ProductSearchInput
                         value={item.name}
                         options={productOptions}
                         onChange={(name, price) => {
