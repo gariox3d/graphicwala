@@ -45,7 +45,7 @@ interface ProductOption {
   name: string;
   price: number;
 }
-const ProductSearchSelect = ({
+const ProductSearchInput = ({
   value,
   options,
   onChange,
@@ -54,34 +54,55 @@ const ProductSearchSelect = ({
   options: ProductOption[];
   onChange: (name: string, price?: number) => void;
 }) => {
-  const selectedProduct = options.find(option => option.name === value);
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState(value);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => { setSearch(value); }, [value]);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const filtered = options.filter(o => o.name.toLowerCase().includes(search.toLowerCase())).slice(0, 8);
 
   return (
-    <Select
-      value={selectedProduct?.id ?? 'none'}
-      onValueChange={(selectedId) => {
-        if (selectedId === 'none') {
-          onChange('', 0);
-          return;
-        }
-
-        const product = options.find(option => option.id === selectedId);
-        if (!product) return;
-        onChange(product.name, product.price);
-      }}
-    >
-      <SelectTrigger className="h-10">
-        <SelectValue placeholder="Select product..." />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="none">Select product...</SelectItem>
-        {options.map((product) => (
-          <SelectItem key={product.id} value={product.id}>
-            {product.name} (₹{product.price.toLocaleString()})
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+    <div ref={wrapperRef} className="relative">
+      <Input
+        placeholder="Product / service naam likho..."
+        value={search}
+        onChange={e => {
+          setSearch(e.target.value);
+          onChange(e.target.value);
+          setOpen(true);
+        }}
+        onFocus={() => setOpen(true)}
+        className="h-10"
+      />
+      {open && search.length > 0 && filtered.length > 0 && (
+        <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-popover border rounded-md shadow-lg max-h-48 overflow-y-auto">
+          {filtered.map(p => (
+            <button
+              key={p.id}
+              type="button"
+              className="w-full text-left px-3 py-2 text-sm hover:bg-accent transition-colors flex justify-between"
+              onMouseDown={() => {
+                onChange(p.name, p.price);
+                setSearch(p.name);
+                setOpen(false);
+              }}
+            >
+              <span>{p.name}</span>
+              <span className="text-muted-foreground">₹{p.price.toLocaleString()}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   );
 };
 
