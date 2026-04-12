@@ -23,7 +23,7 @@ const Footer = () => {
               </span>
             </Link>
             <p className="text-background/70 text-sm leading-relaxed">
-              Your one-stop destination for premium printing products. Quality prints, delivered fast.
+              Graphic Wala (graphicwala.com) — India's trusted online store for custom photo frames, PVC cards, keychains & personalized gifts with All India home delivery.
             </p>
             <div className="flex gap-4 mt-6">
               <a href="#" className="text-background/70 hover:text-primary transition-colors">
