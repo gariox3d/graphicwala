@@ -108,18 +108,78 @@
       }
     </script>
 
+    <!-- Organization Schema - Brand Entity -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Graphic Wala",
+        "alternateName": ["Graphicwala", "GraphicWala", "graphic wala", "graphicwala.com"],
+        "url": "https://graphicwala.com",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://graphicwala.com/logo.png",
+          "width": 512,
+          "height": 512
+        },
+        "image": "https://graphicwala.com/og-square.png",
+        "description": "Graphic Wala (graphicwala.com) is India's trusted online store for custom photo frames, PVC cards, keychains & personalized gifts with All India home delivery.",
+        "foundingDate": "2020",
+        "founder": {
+          "@type": "Person",
+          "name": "Wasid Graphic Wala"
+        },
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Nasirganj, Sabji Mandi, Near Sarfaraz Art",
+          "addressLocality": "Katihar",
+          "addressRegion": "Bihar",
+          "postalCode": "854105",
+          "addressCountry": "IN"
+        },
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+916207142994",
+          "contactType": "customer service",
+          "availableLanguage": ["Hindi", "English"]
+        },
+        "sameAs": [
+          "https://wa.me/916207142994",
+          "https://graphicwala.com"
+        ]
+      }
+    </script>
+
     <!-- WebSite Schema for Sitelinks Search -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "WebSite",
         "name": "Graphic Wala",
+        "alternateName": ["Graphicwala", "GraphicWala"],
         "url": "https://graphicwala.com",
         "potentialAction": {
           "@type": "SearchAction",
-          "target": "https://graphicwala.com/products?category={search_term_string}",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://graphicwala.com/products?category={search_term_string}"
+          },
           "query-input": "required name=search_term_string"
         }
+      }
+    </script>
+
+    <!-- BreadcrumbList Schema -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://graphicwala.com/"},
+          {"@type": "ListItem", "position": 2, "name": "Products", "item": "https://graphicwala.com/products"},
+          {"@type": "ListItem", "position": 3, "name": "About Graphic Wala", "item": "https://graphicwala.com/about"},
+          {"@type": "ListItem", "position": 4, "name": "Contact", "item": "https://graphicwala.com/contact"}
+        ]
       }
     </script>
 
