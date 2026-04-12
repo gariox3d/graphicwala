@@ -335,8 +335,8 @@ const AdminBilling = () => {
                     <Input
                       type="number"
                       min={0}
-                      value={amountPaid}
-                      onChange={e => setAmountPaid(parseFloat(e.target.value) || 0)}
+                      value={amountPaid || ''}
+                      onChange={e => setAmountPaid(e.target.value === '' ? 0 : parseFloat(e.target.value) || 0)}
                       placeholder="Kitna diya hai"
                     />
                   </div>
@@ -388,8 +388,8 @@ const AdminBilling = () => {
                       <Input
                         type="number"
                         min={1}
-                        value={item.quantity}
-                        onChange={e => updateItem(item.id, 'quantity', parseInt(e.target.value) || 1)}
+                        value={item.quantity || ''}
+                        onChange={e => updateItem(item.id, 'quantity', e.target.value === '' ? 0 : parseInt(e.target.value) || 0)}
                       />
                     </div>
                     <div className="col-span-2">
@@ -397,8 +397,8 @@ const AdminBilling = () => {
                       <Input
                         type="number"
                         min={0}
-                        value={item.rate}
-                        onChange={e => updateItem(item.id, 'rate', parseFloat(e.target.value) || 0)}
+                        value={item.rate || ''}
+                        onChange={e => updateItem(item.id, 'rate', e.target.value === '' ? 0 : parseFloat(e.target.value) || 0)}
                       />
                     </div>
                     <div className="col-span-1 text-right font-semibold text-sm pt-1">
@@ -434,8 +434,8 @@ const AdminBilling = () => {
                     <Input
                       type="number"
                       min={0}
-                      value={discount}
-                      onChange={e => setDiscount(parseFloat(e.target.value) || 0)}
+                      value={discount || ''}
+                      onChange={e => setDiscount(e.target.value === '' ? 0 : parseFloat(e.target.value) || 0)}
                       className="w-24 h-8 text-right"
                     />
                   </div>
