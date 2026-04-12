@@ -139,6 +139,7 @@ const HeroSection = () => {
               animationDelay: '0.2s'
             }}
           >
+            <span className="block text-lg sm:text-xl md:text-2xl text-white/70 font-semibold mb-2">Graphic Wala</span>
             Personalized Gifts Made from
             <br />
             <span className="text-primary">Your Memories</span> 🎁

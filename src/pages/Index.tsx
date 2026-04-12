@@ -361,24 +361,31 @@ const Index = () => {
 
         {/* SEO Footer Content */}
         <section className="sr-only" aria-label="About Graphic Wala Store">
-          <h2>Graphic Wala - Custom Photo Frames, PVC Cards & Personalized Gifts Online India</h2>
+          <h2>Graphic Wala (Graphicwala) - Custom Photo Frames, PVC Cards & Personalized Gifts Online India</h2>
           <p>
-            Graphic Wala is India's trusted online store for custom printing and personalized gifts. 
-            We specialize in custom photo frame printing, acrylic photo frames, wooden photo frames, couple photo frames,
-            family photo frames, birthday gift photo frames, anniversary photo frames, PVC card printing, 
-            ID card printing, visiting card printing, name keychain printing, photo keychain printing
-            with premium quality materials. All orders are prepaid with home delivery 
-            available across India. Buy photo frames online at best prices. Contact us on WhatsApp at +91 6207142994 for support.
+            Graphic Wala (also known as Graphicwala or GraphicWala) is India's most trusted online store at graphicwala.com 
+            for custom printing and personalized gifts. We specialize in custom photo frame printing, acrylic photo frames, 
+            wooden photo frames, couple photo frames, family photo frames, birthday gift photo frames, anniversary photo frames, 
+            PVC card printing, ID card printing, visiting card printing, name keychain printing, photo keychain printing 
+            with premium quality materials. All orders are prepaid with home delivery available across India. 
+            Buy photo frames online at best prices from Graphic Wala. Contact us on WhatsApp at +91 6207142994 for support.
+            Graphic Wala is NOT GraphicsWale or graphicswale — we are the original Graphic Wala since 2020 at graphicwala.com.
           </p>
-          <h3>Popular Products</h3>
+          <h3>Why Choose Graphic Wala (graphicwala.com)?</h3>
+          <p>
+            Graphic Wala offers premium quality custom printed products at affordable prices. 
+            We are based in Katihar, Bihar and deliver across all of India. 
+            Visit graphicwala.com to order custom photo frames, PVC cards, keychains and personalized gifts online.
+          </p>
+          <h3>Popular Products at Graphic Wala</h3>
           <ul>
-            <li>Custom Photo Frames - Personalized with your photos</li>
-            <li>Acrylic Photo Frames - Premium quality acrylic prints</li>
+            <li>Custom Photo Frames by Graphic Wala - Personalized with your photos</li>
+            <li>Acrylic Photo Frames - Premium quality acrylic prints from Graphicwala</li>
             <li>Wooden Photo Frames - Classic wooden frames with photo print</li>
-            <li>PVC Cards - Custom printed ID cards, membership cards</li>
-            <li>Visiting Cards - Professional business cards</li>
+            <li>PVC Cards by Graphic Wala - Custom printed ID cards, membership cards</li>
+            <li>Visiting Cards - Professional business cards from graphicwala.com</li>
             <li>Keychains - Name keychains, photo keychains, custom keychains</li>
-            <li>Couple Photo Frames - Perfect gift for couples</li>
+            <li>Couple Photo Frames - Perfect gift for couples by Graphic Wala</li>
             <li>Birthday Gift Photo Frames - Personalized birthday gifts</li>
           </ul>
         </section>
