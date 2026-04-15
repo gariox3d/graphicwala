@@ -650,11 +650,11 @@ const BillTemplate = ({
         paddingBottom: compact ? '8px' : '14px',
         marginBottom: compact ? '10px' : '18px',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', whiteSpace: 'nowrap', flexShrink: 0 }}>
           <img
             src="/images/logo-circle.png"
             alt="Graphic Wala"
-            style={{ width: compact ? '40px' : '56px', height: compact ? '40px' : '56px', borderRadius: '50%' }}
+            style={{ width: compact ? '32px' : '48px', height: compact ? '32px' : '48px', borderRadius: '50%', flexShrink: 0 }}
             onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
           />
           <div>
