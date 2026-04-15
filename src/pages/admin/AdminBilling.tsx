@@ -635,10 +635,10 @@ const BillTemplate = ({
       style={{
         fontFamily: "'Segoe UI', Arial, sans-serif",
         color: '#111827',
-        fontSize: isHalf ? '11px' : '13px',
+        fontSize: compact ? '11px' : '13px',
         lineHeight: 1.5,
         maxWidth: '210mm',
-        minHeight: isHalf ? '148mm' : undefined,
+        minHeight: compact ? '148mm' : undefined,
       }}
     >
       {/* Header */}
@@ -647,19 +647,19 @@ const BillTemplate = ({
         justifyContent: 'space-between',
         alignItems: 'center',
         borderBottom: '3px solid #E11D48',
-        paddingBottom: isHalf ? '8px' : '14px',
-        marginBottom: isHalf ? '10px' : '18px',
+        paddingBottom: compact ? '8px' : '14px',
+        marginBottom: compact ? '10px' : '18px',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <img
             src="/images/logo-circle.png"
             alt="Graphic Wala"
-            style={{ width: isHalf ? '40px' : '56px', height: isHalf ? '40px' : '56px', borderRadius: '50%' }}
+            style={{ width: compact ? '40px' : '56px', height: compact ? '40px' : '56px', borderRadius: '50%' }}
             onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
           />
           <div>
             <h1 style={{
-              fontSize: isHalf ? '20px' : '28px',
+              fontSize: compact ? '20px' : '28px',
               fontWeight: 800,
               color: '#E11D48',
               margin: 0,
@@ -667,12 +667,12 @@ const BillTemplate = ({
             }}>
               {SHOP_INFO.name}
             </h1>
-            <p style={{ fontSize: isHalf ? '9px' : '11px', color: '#6B7280', margin: 0 }}>
+            <p style={{ fontSize: compact ? '9px' : '11px', color: '#6B7280', margin: 0 }}>
               {SHOP_INFO.tagline}
             </p>
           </div>
         </div>
-        <div style={{ textAlign: 'right', fontSize: isHalf ? '9px' : '11px', color: '#6B7280' }}>
+        <div style={{ textAlign: 'right', fontSize: compact ? '9px' : '11px', color: '#6B7280' }}>
           <p style={{ margin: '0 0 1px 0' }}>{SHOP_INFO.address}</p>
           <p style={{ margin: '0 0 1px 0' }}>📞 {SHOP_INFO.phone}</p>
           <p style={{ margin: '0 0 1px 0' }}>✉️ {SHOP_INFO.email}</p>
@@ -683,10 +683,10 @@ const BillTemplate = ({
       {/* Bill Title */}
       <div style={{
         textAlign: 'center',
-        marginBottom: isHalf ? '10px' : '16px',
+        marginBottom: compact ? '10px' : '16px',
       }}>
         <h2 style={{
-          fontSize: isHalf ? '16px' : '22px',
+          fontSize: compact ? '16px' : '22px',
           fontWeight: 700,
           textTransform: 'uppercase',
           letterSpacing: '2px',
@@ -694,7 +694,7 @@ const BillTemplate = ({
           margin: 0,
           background: '#FEF2F2',
           display: 'inline-block',
-          padding: isHalf ? '4px 20px' : '6px 28px',
+          padding: compact ? '4px 20px' : '6px 28px',
           borderRadius: '6px',
           border: '1px solid #FECACA',
         }}>
@@ -706,24 +706,24 @@ const BillTemplate = ({
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
-        marginBottom: isHalf ? '10px' : '16px',
+        marginBottom: compact ? '10px' : '16px',
         gap: '20px',
       }}>
         <div style={{
           flex: 1,
           background: '#F9FAFB',
-          padding: isHalf ? '8px 12px' : '12px 16px',
+          padding: compact ? '8px 12px' : '12px 16px',
           borderRadius: '8px',
           border: '1px solid #E5E7EB',
         }}>
           <p style={{ margin: '0 0 2px 0', fontSize: '10px', color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '1px' }}>Bill To</p>
-          <p style={{ margin: '0 0 2px 0', fontWeight: 700, fontSize: isHalf ? '14px' : '16px' }}>{customerName || '—'}</p>
+          <p style={{ margin: '0 0 2px 0', fontWeight: 700, fontSize: compact ? '14px' : '16px' }}>{customerName || '—'}</p>
           {customerPhone && <p style={{ margin: '0 0 2px 0', color: '#6B7280' }}>📞 {customerPhone}</p>}
           {customerAddress && <p style={{ margin: 0, color: '#6B7280' }}>{customerAddress}</p>}
         </div>
         <div style={{
           background: '#F9FAFB',
-          padding: isHalf ? '8px 12px' : '12px 16px',
+          padding: compact ? '8px 12px' : '12px 16px',
           borderRadius: '8px',
           border: '1px solid #E5E7EB',
           textAlign: 'right',
@@ -748,37 +748,37 @@ const BillTemplate = ({
       <table style={{
         width: '100%',
         borderCollapse: 'collapse',
-        marginBottom: isHalf ? '10px' : '16px',
+        marginBottom: compact ? '10px' : '16px',
       }}>
         <thead>
           <tr style={{ background: '#E11D48', color: '#FFFFFF' }}>
-            <th style={{ padding: isHalf ? '6px 8px' : '10px 12px', textAlign: 'left', borderRadius: '6px 0 0 0', fontWeight: 600, width: '40px' }}>#</th>
-            <th style={{ padding: isHalf ? '6px 8px' : '10px 12px', textAlign: 'left', fontWeight: 600 }}>Item / Description</th>
-            <th style={{ padding: isHalf ? '6px 8px' : '10px 12px', textAlign: 'center', fontWeight: 600, width: '60px' }}>Qty</th>
-            <th style={{ padding: isHalf ? '6px 8px' : '10px 12px', textAlign: 'right', fontWeight: 600, width: '100px' }}>Rate</th>
-            <th style={{ padding: isHalf ? '6px 8px' : '10px 12px', textAlign: 'right', borderRadius: '0 6px 0 0', fontWeight: 600, width: '110px' }}>Amount</th>
+            <th style={{ padding: compact ? '6px 8px' : '10px 12px', textAlign: 'left', borderRadius: '6px 0 0 0', fontWeight: 600, width: '40px' }}>#</th>
+            <th style={{ padding: compact ? '6px 8px' : '10px 12px', textAlign: 'left', fontWeight: 600 }}>Item / Description</th>
+            <th style={{ padding: compact ? '6px 8px' : '10px 12px', textAlign: 'center', fontWeight: 600, width: '60px' }}>Qty</th>
+            <th style={{ padding: compact ? '6px 8px' : '10px 12px', textAlign: 'right', fontWeight: 600, width: '100px' }}>Rate</th>
+            <th style={{ padding: compact ? '6px 8px' : '10px 12px', textAlign: 'right', borderRadius: '0 6px 0 0', fontWeight: 600, width: '110px' }}>Amount</th>
           </tr>
         </thead>
         <tbody>
           {items.map((item, idx) => (
             <tr key={item.id} style={{ borderBottom: '1px solid #E5E7EB', background: idx % 2 === 0 ? '#FFFFFF' : '#F9FAFB' }}>
-              <td style={{ padding: isHalf ? '5px 8px' : '8px 12px', color: '#9CA3AF' }}>{idx + 1}</td>
-              <td style={{ padding: isHalf ? '5px 8px' : '8px 12px', fontWeight: 500 }}>{item.name}</td>
-              <td style={{ padding: isHalf ? '5px 8px' : '8px 12px', textAlign: 'center' }}>{item.quantity}</td>
-              <td style={{ padding: isHalf ? '5px 8px' : '8px 12px', textAlign: 'right' }}>{fmt(item.rate)}</td>
-              <td style={{ padding: isHalf ? '5px 8px' : '8px 12px', textAlign: 'right', fontWeight: 600 }}>{fmt(item.quantity * item.rate)}</td>
+              <td style={{ padding: compact ? '5px 8px' : '8px 12px', color: '#9CA3AF' }}>{idx + 1}</td>
+              <td style={{ padding: compact ? '5px 8px' : '8px 12px', fontWeight: 500 }}>{item.name}</td>
+              <td style={{ padding: compact ? '5px 8px' : '8px 12px', textAlign: 'center' }}>{item.quantity}</td>
+              <td style={{ padding: compact ? '5px 8px' : '8px 12px', textAlign: 'right' }}>{fmt(item.rate)}</td>
+              <td style={{ padding: compact ? '5px 8px' : '8px 12px', textAlign: 'right', fontWeight: 600 }}>{fmt(item.quantity * item.rate)}</td>
             </tr>
           ))}
         </tbody>
       </table>
 
       {/* Totals */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: isHalf ? '10px' : '16px' }}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: compact ? '10px' : '16px' }}>
         <div style={{
           width: '240px',
           background: '#F9FAFB',
           borderRadius: '8px',
-          padding: isHalf ? '8px 12px' : '12px 16px',
+          padding: compact ? '8px 12px' : '12px 16px',
           border: '1px solid #E5E7EB',
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
@@ -797,7 +797,7 @@ const BillTemplate = ({
             borderTop: '2px solid #E11D48',
             paddingTop: '6px',
             marginTop: '4px',
-            fontSize: isHalf ? '14px' : '18px',
+            fontSize: compact ? '14px' : '18px',
             fontWeight: 700,
           }}>
             <span>Grand Total</span>
@@ -810,13 +810,13 @@ const BillTemplate = ({
       <div style={{
         display: 'flex',
         justifyContent: 'flex-end',
-        marginBottom: isHalf ? '8px' : '14px',
+        marginBottom: compact ? '8px' : '14px',
       }}>
         <div style={{
-          padding: isHalf ? '6px 16px' : '8px 24px',
+          padding: compact ? '6px 16px' : '8px 24px',
           borderRadius: '6px',
           fontWeight: 700,
-          fontSize: isHalf ? '12px' : '14px',
+          fontSize: compact ? '12px' : '14px',
           textTransform: 'uppercase',
           letterSpacing: '1px',
           ...(paymentStatus === 'paid'
@@ -838,9 +838,9 @@ const BillTemplate = ({
           background: '#FFFBEB',
           border: '1px solid #FDE68A',
           borderRadius: '6px',
-          padding: isHalf ? '6px 10px' : '10px 14px',
-          marginBottom: isHalf ? '8px' : '14px',
-          fontSize: isHalf ? '10px' : '11px',
+          padding: compact ? '6px 10px' : '10px 14px',
+          marginBottom: compact ? '8px' : '14px',
+          fontSize: compact ? '10px' : '11px',
           color: '#92400E',
         }}>
           <strong>Note:</strong> {notes}
@@ -850,7 +850,7 @@ const BillTemplate = ({
       {/* QR Code + Footer */}
       <div style={{
         borderTop: '2px solid #E5E7EB',
-        paddingTop: isHalf ? '8px' : '12px',
+        paddingTop: compact ? '8px' : '12px',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'flex-end',
@@ -860,11 +860,11 @@ const BillTemplate = ({
             <img
               src="/images/upi-qr.png"
               alt="UPI QR Code"
-              style={{ width: isHalf ? '64px' : '80px', height: isHalf ? '64px' : '80px', borderRadius: '4px' }}
+              style={{ width: compact ? '64px' : '80px', height: compact ? '64px' : '80px', borderRadius: '4px' }}
             />
             <p style={{ margin: '2px 0 0 0', fontSize: '8px', color: '#6B7280', textAlign: 'center' }}>Scan to Pay</p>
           </div>
-          <div style={{ fontSize: isHalf ? '9px' : '10px', color: '#9CA3AF' }}>
+          <div style={{ fontSize: compact ? '9px' : '10px', color: '#9CA3AF' }}>
             <p style={{ margin: '0 0 2px 0' }}>This is a computer generated {billType === 'estimate' ? 'estimate' : 'invoice'}.</p>
             <p style={{ margin: 0 }}>Thank you for your business! 🙏</p>
           </div>
@@ -875,7 +875,7 @@ const BillTemplate = ({
             paddingTop: '4px',
             minWidth: '140px',
             textAlign: 'center',
-            fontSize: isHalf ? '10px' : '12px',
+            fontSize: compact ? '10px' : '12px',
             fontWeight: 600,
           }}>
             Authorized Signature
