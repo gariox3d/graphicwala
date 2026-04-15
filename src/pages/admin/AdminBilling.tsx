@@ -11,7 +11,8 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Plus, Trash2, Download, FileText, Eye, MessageCircle, IndianRupee, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
+import { Plus, Trash2, Download, FileText, Eye, MessageCircle, IndianRupee, CheckCircle2, Clock, AlertCircle, Image } from 'lucide-react';
+import html2canvas from 'html2canvas';
 import { Badge } from '@/components/ui/badge';
 import { normalizeIndianPhoneForWhatsApp } from '@/lib/phone';
 
@@ -182,6 +183,8 @@ const AdminBilling = () => {
     day: 'numeric', month: 'long', year: 'numeric',
   });
 
+  const jpgRef = useRef<HTMLDivElement>(null);
+
   const handleDownloadPDF = useCallback(() => {
     if (!customerName.trim()) {
       toast.error('Please enter customer name');
@@ -196,6 +199,38 @@ const AdminBilling = () => {
       window.print();
     }, 300);
   }, [customerName, items]);
+
+  const handleDownloadJPG = useCallback(async () => {
+    if (!customerName.trim()) {
+      toast.error('Please enter customer name');
+      return;
+    }
+    if (items.every(i => !i.name.trim())) {
+      toast.error('Please add at least one item');
+      return;
+    }
+    setShowPreview(true);
+    await new Promise(r => setTimeout(r, 400));
+    const el = jpgRef.current;
+    if (!el) return;
+    try {
+      const canvas = await html2canvas(el, {
+        scale: 2,
+        backgroundColor: '#FFFFFF',
+        useCORS: true,
+        logging: false,
+        width: 420,
+        windowWidth: 420,
+      });
+      const link = document.createElement('a');
+      link.download = `${billNumber}-${customerName.replace(/\s+/g, '_')}.jpg`;
+      link.href = canvas.toDataURL('image/jpeg', 0.92);
+      link.click();
+      toast.success('JPG download ho gaya!');
+    } catch {
+      toast.error('JPG download mein error aaya');
+    }
+  }, [customerName, items, billNumber]);
 
   const handleWhatsAppShare = useCallback(() => {
     if (!customerPhone.trim()) {
@@ -480,7 +515,11 @@ const AdminBilling = () => {
                   </Button>
                   <Button onClick={handleDownloadPDF} className="gap-2">
                     <Download className="h-4 w-4" />
-                    Download PDF
+                    PDF
+                  </Button>
+                  <Button onClick={handleDownloadJPG} className="gap-2" variant="secondary">
+                    <Image className="h-4 w-4" />
+                    JPG Download
                   </Button>
                   <Button
                     onClick={handleWhatsAppShare}
@@ -501,7 +540,7 @@ const AdminBilling = () => {
                 </CardHeader>
                 <CardContent className="p-0">
                   <div className="bg-white p-4 overflow-auto">
-                    <div className="mx-auto" style={{ maxWidth: pageSize === 'a4' ? '210mm' : '210mm' }}>
+                    <div ref={jpgRef} className="mx-auto bg-white" style={{ width: '420px', padding: '16px' }}>
                       <BillTemplate
                         billNumber={billNumber}
                         billDate={formattedDate}
@@ -803,7 +842,7 @@ const BillTemplate = ({
         </div>
       )}
 
-      {/* Footer */}
+      {/* QR Code + Footer */}
       <div style={{
         borderTop: '2px solid #E5E7EB',
         paddingTop: isHalf ? '8px' : '12px',
@@ -811,9 +850,19 @@ const BillTemplate = ({
         justifyContent: 'space-between',
         alignItems: 'flex-end',
       }}>
-        <div style={{ fontSize: isHalf ? '9px' : '10px', color: '#9CA3AF' }}>
-          <p style={{ margin: '0 0 2px 0' }}>This is a computer generated {billType === 'estimate' ? 'estimate' : 'invoice'}.</p>
-          <p style={{ margin: 0 }}>Thank you for your business! 🙏</p>
+        <div style={{ display: 'flex', alignItems: 'flex-end', gap: '10px' }}>
+          <div>
+            <img
+              src="/images/upi-qr.png"
+              alt="UPI QR Code"
+              style={{ width: isHalf ? '64px' : '80px', height: isHalf ? '64px' : '80px', borderRadius: '4px' }}
+            />
+            <p style={{ margin: '2px 0 0 0', fontSize: '8px', color: '#6B7280', textAlign: 'center' }}>Scan to Pay</p>
+          </div>
+          <div style={{ fontSize: isHalf ? '9px' : '10px', color: '#9CA3AF' }}>
+            <p style={{ margin: '0 0 2px 0' }}>This is a computer generated {billType === 'estimate' ? 'estimate' : 'invoice'}.</p>
+            <p style={{ margin: 0 }}>Thank you for your business! 🙏</p>
+          </div>
         </div>
         <div style={{ textAlign: 'right' }}>
           <div style={{
