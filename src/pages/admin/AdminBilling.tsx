@@ -618,13 +618,15 @@ interface BillTemplateProps {
   pageSize: 'a4' | 'a4-half';
   paymentStatus: 'unpaid' | 'partial' | 'paid';
   amountPaid: number;
+  isJpg?: boolean;
 }
 
 const BillTemplate = ({
   billNumber, billDate, billType, customerName, customerPhone, customerAddress,
-  items, subtotal, discount, grandTotal, notes, pageSize, paymentStatus, amountPaid,
+  items, subtotal, discount, grandTotal, notes, pageSize, paymentStatus, amountPaid, isJpg,
 }: BillTemplateProps) => {
   const isHalf = pageSize === 'a4-half';
+  const compact = isJpg || isHalf;
   const fmt = (n: number) =>
     new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(n);
 
