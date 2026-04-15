@@ -635,10 +635,10 @@ const BillTemplate = ({
       style={{
         fontFamily: "'Segoe UI', Arial, sans-serif",
         color: '#111827',
-        fontSize: compact ? '11px' : '13px',
-        lineHeight: 1.5,
-        maxWidth: '210mm',
-        minHeight: compact ? '148mm' : undefined,
+        fontSize: compact ? '10px' : '13px',
+        lineHeight: 1.4,
+        maxWidth: isJpg ? '500px' : '210mm',
+        minHeight: isJpg ? '720px' : (compact ? '148mm' : undefined),
       }}
     >
       {/* Header */}
