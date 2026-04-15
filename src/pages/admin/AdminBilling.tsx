@@ -659,11 +659,12 @@ const BillTemplate = ({
           />
           <div>
             <h1 style={{
-              fontSize: compact ? '20px' : '28px',
+              fontSize: compact ? '18px' : '28px',
               fontWeight: 800,
               color: '#E11D48',
               margin: 0,
               letterSpacing: '-0.5px',
+              whiteSpace: 'nowrap',
             }}>
               {SHOP_INFO.name}
             </h1>
