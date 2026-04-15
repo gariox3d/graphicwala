@@ -842,7 +842,7 @@ const BillTemplate = ({
         </div>
       )}
 
-      {/* Footer */}
+      {/* QR Code + Footer */}
       <div style={{
         borderTop: '2px solid #E5E7EB',
         paddingTop: isHalf ? '8px' : '12px',
@@ -850,9 +850,19 @@ const BillTemplate = ({
         justifyContent: 'space-between',
         alignItems: 'flex-end',
       }}>
-        <div style={{ fontSize: isHalf ? '9px' : '10px', color: '#9CA3AF' }}>
-          <p style={{ margin: '0 0 2px 0' }}>This is a computer generated {billType === 'estimate' ? 'estimate' : 'invoice'}.</p>
-          <p style={{ margin: 0 }}>Thank you for your business! 🙏</p>
+        <div style={{ display: 'flex', alignItems: 'flex-end', gap: '10px' }}>
+          <div>
+            <img
+              src="/images/upi-qr.png"
+              alt="UPI QR Code"
+              style={{ width: isHalf ? '64px' : '80px', height: isHalf ? '64px' : '80px', borderRadius: '4px' }}
+            />
+            <p style={{ margin: '2px 0 0 0', fontSize: '8px', color: '#6B7280', textAlign: 'center' }}>Scan to Pay</p>
+          </div>
+          <div style={{ fontSize: isHalf ? '9px' : '10px', color: '#9CA3AF' }}>
+            <p style={{ margin: '0 0 2px 0' }}>This is a computer generated {billType === 'estimate' ? 'estimate' : 'invoice'}.</p>
+            <p style={{ margin: 0 }}>Thank you for your business! 🙏</p>
+          </div>
         </div>
         <div style={{ textAlign: 'right' }}>
           <div style={{
