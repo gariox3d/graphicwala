@@ -219,8 +219,10 @@ const AdminBilling = () => {
         backgroundColor: '#FFFFFF',
         useCORS: true,
         logging: false,
-        width: 420,
-        windowWidth: 420,
+        width: 500,
+        height: 750,
+        windowWidth: 500,
+        windowHeight: 750,
       });
       const link = document.createElement('a');
       link.download = `${billNumber}-${customerName.replace(/\s+/g, '_')}.jpg`;
@@ -540,8 +542,9 @@ const AdminBilling = () => {
                 </CardHeader>
                 <CardContent className="p-0">
                   <div className="bg-white p-4 overflow-auto">
-                    <div ref={jpgRef} className="mx-auto bg-white" style={{ width: '420px', padding: '16px' }}>
+                    <div ref={jpgRef} className="mx-auto bg-white" style={{ width: '500px', height: '750px', padding: '14px', overflow: 'hidden', boxSizing: 'border-box' }}>
                       <BillTemplate
+                        isJpg={true}
                         billNumber={billNumber}
                         billDate={formattedDate}
                         billType={billType}
