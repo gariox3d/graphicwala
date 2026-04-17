@@ -21,6 +21,7 @@ interface BillItem {
   name: string;
   quantity: number;
   rate: number;
+  rateInput: string;
 }
 
 const SHOP_INFO = {
@@ -150,17 +151,18 @@ const AdminBilling = () => {
 
   // Items
   const [items, setItems] = useState<BillItem[]>([
-    { id: crypto.randomUUID(), name: '', quantity: 1, rate: 0 },
+    { id: crypto.randomUUID(), name: '', quantity: 1, rate: 0, rateInput: '' },
   ]);
 
   // Extras
   const [discount, setDiscount] = useState(0);
+  const [discountInput, setDiscountInput] = useState('');
   const [notes, setNotes] = useState('');
 
   const [showPreview, setShowPreview] = useState(false);
 
   const addItem = () => {
-    setItems([...items, { id: crypto.randomUUID(), name: '', quantity: 1, rate: 0 }]);
+    setItems([...items, { id: crypto.randomUUID(), name: '', quantity: 1, rate: 0, rateInput: '' }]);
   };
 
   const removeItem = (id: string) => {
@@ -170,6 +172,13 @@ const AdminBilling = () => {
 
   const updateItem = (id: string, field: keyof BillItem, value: string | number) => {
     setItems(prevItems => prevItems.map(i => i.id === id ? { ...i, [field]: value } : i));
+  };
+
+  const updateItemRate = (id: string, rawValue: string) => {
+    // Allow only digits and one decimal point
+    const cleaned = rawValue.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
+    const num = cleaned === '' || cleaned === '.' ? 0 : parseFloat(cleaned);
+    setItems(prev => prev.map(i => i.id === id ? { ...i, rateInput: cleaned, rate: isNaN(num) ? 0 : num } : i));
   };
 
   const subtotal = items.reduce((sum, i) => sum + i.quantity * i.rate, 0);
@@ -219,14 +228,10 @@ const AdminBilling = () => {
         backgroundColor: '#FFFFFF',
         useCORS: true,
         logging: false,
-        width: 500,
-        height: 750,
-        windowWidth: 500,
-        windowHeight: 750,
       });
       const link = document.createElement('a');
       link.download = `${billNumber}-${customerName.replace(/\s+/g, '_')}.jpg`;
-      link.href = canvas.toDataURL('image/jpeg', 0.92);
+      link.href = canvas.toDataURL('image/jpeg', 0.95);
       link.click();
       toast.success('JPG download ho gaya!');
     } catch {
@@ -409,38 +414,31 @@ const AdminBilling = () => {
                     <div className="col-span-1 text-center text-sm font-medium text-muted-foreground pt-6">
                       {idx + 1}
                     </div>
-                    <div className="col-span-5">
+                    <div className="col-span-6">
                       {idx === 0 && <Label className="text-xs">Product / Service</Label>}
                       <ProductSearchInput
                         value={item.name}
                         options={productOptions}
                         onChange={(name, price) => {
-                          updateItem(item.id, 'name', name);
-                          if (price !== undefined) updateItem(item.id, 'rate', price);
+                          setItems(prev => prev.map(i => i.id === item.id
+                            ? { ...i, name, ...(price !== undefined ? { rate: price, rateInput: String(price) } : {}) }
+                            : i));
                         }}
                       />
                     </div>
-                    <div className="col-span-2">
-                      {idx === 0 && <Label className="text-xs">Qty</Label>}
+                    <div className="col-span-3">
+                      {idx === 0 && <Label className="text-xs">Amount (₹)</Label>}
                       <Input
-                        type="number"
-                        min={1}
-                        value={item.quantity || ''}
-                        onChange={e => updateItem(item.id, 'quantity', e.target.value === '' ? 0 : parseInt(e.target.value) || 0)}
-                      />
-                    </div>
-                    <div className="col-span-2">
-                      {idx === 0 && <Label className="text-xs">Rate (₹)</Label>}
-                      <Input
-                        type="number"
-                        min={0}
-                        value={item.rate || ''}
-                        onChange={e => updateItem(item.id, 'rate', e.target.value === '' ? 0 : parseFloat(e.target.value) || 0)}
+                        type="text"
+                        inputMode="decimal"
+                        placeholder="0"
+                        value={item.rateInput}
+                        onChange={e => updateItemRate(item.id, e.target.value)}
                       />
                     </div>
                     <div className="col-span-1 text-right font-semibold text-sm pt-1">
                       {idx === 0 && <Label className="text-xs block">&nbsp;</Label>}
-                      ₹{(item.quantity * item.rate).toLocaleString()}
+                      ₹{item.rate.toLocaleString()}
                     </div>
                     <div className="col-span-1">
                       {idx === 0 && <Label className="text-xs block">&nbsp;</Label>}
@@ -469,10 +467,16 @@ const AdminBilling = () => {
                   <div className="flex justify-between items-center text-sm gap-2">
                     <span>Discount (₹)</span>
                     <Input
-                      type="number"
-                      min={0}
-                      value={discount || ''}
-                      onChange={e => setDiscount(e.target.value === '' ? 0 : parseFloat(e.target.value) || 0)}
+                      type="text"
+                      inputMode="decimal"
+                      placeholder="0"
+                      value={discountInput}
+                      onChange={e => {
+                        const cleaned = e.target.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
+                        setDiscountInput(cleaned);
+                        const num = cleaned === '' || cleaned === '.' ? 0 : parseFloat(cleaned);
+                        setDiscount(isNaN(num) ? 0 : num);
+                      }}
                       className="w-24 h-8 text-right"
                     />
                   </div>
@@ -542,9 +546,8 @@ const AdminBilling = () => {
                 </CardHeader>
                 <CardContent className="p-0">
                   <div className="bg-white p-4 overflow-auto">
-                    <div ref={jpgRef} className="mx-auto bg-white" style={{ width: '500px', height: '750px', padding: '14px', overflow: 'hidden', boxSizing: 'border-box' }}>
+                    <div ref={jpgRef} className="mx-auto bg-white" style={{ width: '794px', padding: '40px', boxSizing: 'border-box' }}>
                       <BillTemplate
-                        isJpg={true}
                         billNumber={billNumber}
                         billDate={formattedDate}
                         billType={billType}
@@ -755,9 +758,7 @@ const BillTemplate = ({
           <tr style={{ background: '#E11D48', color: '#FFFFFF' }}>
             <th style={{ padding: compact ? '6px 8px' : '10px 12px', textAlign: 'left', borderRadius: '6px 0 0 0', fontWeight: 600, width: '40px' }}>#</th>
             <th style={{ padding: compact ? '6px 8px' : '10px 12px', textAlign: 'left', fontWeight: 600 }}>Item / Description</th>
-            <th style={{ padding: compact ? '6px 8px' : '10px 12px', textAlign: 'center', fontWeight: 600, width: '60px' }}>Qty</th>
-            <th style={{ padding: compact ? '6px 8px' : '10px 12px', textAlign: 'right', fontWeight: 600, width: '100px' }}>Rate</th>
-            <th style={{ padding: compact ? '6px 8px' : '10px 12px', textAlign: 'right', borderRadius: '0 6px 0 0', fontWeight: 600, width: '110px' }}>Amount</th>
+            <th style={{ padding: compact ? '6px 8px' : '10px 12px', textAlign: 'right', borderRadius: '0 6px 0 0', fontWeight: 600, width: '140px' }}>Amount</th>
           </tr>
         </thead>
         <tbody>
@@ -765,9 +766,7 @@ const BillTemplate = ({
             <tr key={item.id} style={{ borderBottom: '1px solid #E5E7EB', background: idx % 2 === 0 ? '#FFFFFF' : '#F9FAFB' }}>
               <td style={{ padding: compact ? '5px 8px' : '8px 12px', color: '#9CA3AF' }}>{idx + 1}</td>
               <td style={{ padding: compact ? '5px 8px' : '8px 12px', fontWeight: 500 }}>{item.name}</td>
-              <td style={{ padding: compact ? '5px 8px' : '8px 12px', textAlign: 'center' }}>{item.quantity}</td>
-              <td style={{ padding: compact ? '5px 8px' : '8px 12px', textAlign: 'right' }}>{fmt(item.rate)}</td>
-              <td style={{ padding: compact ? '5px 8px' : '8px 12px', textAlign: 'right', fontWeight: 600 }}>{fmt(item.quantity * item.rate)}</td>
+              <td style={{ padding: compact ? '5px 8px' : '8px 12px', textAlign: 'right', fontWeight: 600 }}>{fmt(item.rate)}</td>
             </tr>
           ))}
         </tbody>
