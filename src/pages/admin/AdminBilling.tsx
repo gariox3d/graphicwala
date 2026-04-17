@@ -471,10 +471,16 @@ const AdminBilling = () => {
                   <div className="flex justify-between items-center text-sm gap-2">
                     <span>Discount (₹)</span>
                     <Input
-                      type="number"
-                      min={0}
-                      value={discount || ''}
-                      onChange={e => setDiscount(e.target.value === '' ? 0 : parseFloat(e.target.value) || 0)}
+                      type="text"
+                      inputMode="decimal"
+                      placeholder="0"
+                      value={discountInput}
+                      onChange={e => {
+                        const cleaned = e.target.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
+                        setDiscountInput(cleaned);
+                        const num = cleaned === '' || cleaned === '.' ? 0 : parseFloat(cleaned);
+                        setDiscount(isNaN(num) ? 0 : num);
+                      }}
                       className="w-24 h-8 text-right"
                     />
                   </div>
