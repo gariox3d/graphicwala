@@ -418,38 +418,31 @@ const AdminBilling = () => {
                     <div className="col-span-1 text-center text-sm font-medium text-muted-foreground pt-6">
                       {idx + 1}
                     </div>
-                    <div className="col-span-5">
+                    <div className="col-span-6">
                       {idx === 0 && <Label className="text-xs">Product / Service</Label>}
                       <ProductSearchInput
                         value={item.name}
                         options={productOptions}
                         onChange={(name, price) => {
-                          updateItem(item.id, 'name', name);
-                          if (price !== undefined) updateItem(item.id, 'rate', price);
+                          setItems(prev => prev.map(i => i.id === item.id
+                            ? { ...i, name, ...(price !== undefined ? { rate: price, rateInput: String(price) } : {}) }
+                            : i));
                         }}
                       />
                     </div>
-                    <div className="col-span-2">
-                      {idx === 0 && <Label className="text-xs">Qty</Label>}
+                    <div className="col-span-3">
+                      {idx === 0 && <Label className="text-xs">Amount (₹)</Label>}
                       <Input
-                        type="number"
-                        min={1}
-                        value={item.quantity || ''}
-                        onChange={e => updateItem(item.id, 'quantity', e.target.value === '' ? 0 : parseInt(e.target.value) || 0)}
-                      />
-                    </div>
-                    <div className="col-span-2">
-                      {idx === 0 && <Label className="text-xs">Rate (₹)</Label>}
-                      <Input
-                        type="number"
-                        min={0}
-                        value={item.rate || ''}
-                        onChange={e => updateItem(item.id, 'rate', e.target.value === '' ? 0 : parseFloat(e.target.value) || 0)}
+                        type="text"
+                        inputMode="decimal"
+                        placeholder="0"
+                        value={item.rateInput}
+                        onChange={e => updateItemRate(item.id, e.target.value)}
                       />
                     </div>
                     <div className="col-span-1 text-right font-semibold text-sm pt-1">
                       {idx === 0 && <Label className="text-xs block">&nbsp;</Label>}
-                      ₹{(item.quantity * item.rate).toLocaleString()}
+                      ₹{item.rate.toLocaleString()}
                     </div>
                     <div className="col-span-1">
                       {idx === 0 && <Label className="text-xs block">&nbsp;</Label>}
