@@ -228,14 +228,10 @@ const AdminBilling = () => {
         backgroundColor: '#FFFFFF',
         useCORS: true,
         logging: false,
-        width: 500,
-        height: 750,
-        windowWidth: 500,
-        windowHeight: 750,
       });
       const link = document.createElement('a');
       link.download = `${billNumber}-${customerName.replace(/\s+/g, '_')}.jpg`;
-      link.href = canvas.toDataURL('image/jpeg', 0.92);
+      link.href = canvas.toDataURL('image/jpeg', 0.95);
       link.click();
       toast.success('JPG download ho gaya!');
     } catch {
