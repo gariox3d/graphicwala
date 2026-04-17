@@ -758,9 +758,7 @@ const BillTemplate = ({
           <tr style={{ background: '#E11D48', color: '#FFFFFF' }}>
             <th style={{ padding: compact ? '6px 8px' : '10px 12px', textAlign: 'left', borderRadius: '6px 0 0 0', fontWeight: 600, width: '40px' }}>#</th>
             <th style={{ padding: compact ? '6px 8px' : '10px 12px', textAlign: 'left', fontWeight: 600 }}>Item / Description</th>
-            <th style={{ padding: compact ? '6px 8px' : '10px 12px', textAlign: 'center', fontWeight: 600, width: '60px' }}>Qty</th>
-            <th style={{ padding: compact ? '6px 8px' : '10px 12px', textAlign: 'right', fontWeight: 600, width: '100px' }}>Rate</th>
-            <th style={{ padding: compact ? '6px 8px' : '10px 12px', textAlign: 'right', borderRadius: '0 6px 0 0', fontWeight: 600, width: '110px' }}>Amount</th>
+            <th style={{ padding: compact ? '6px 8px' : '10px 12px', textAlign: 'right', borderRadius: '0 6px 0 0', fontWeight: 600, width: '140px' }}>Amount</th>
           </tr>
         </thead>
         <tbody>
@@ -768,9 +766,7 @@ const BillTemplate = ({
             <tr key={item.id} style={{ borderBottom: '1px solid #E5E7EB', background: idx % 2 === 0 ? '#FFFFFF' : '#F9FAFB' }}>
               <td style={{ padding: compact ? '5px 8px' : '8px 12px', color: '#9CA3AF' }}>{idx + 1}</td>
               <td style={{ padding: compact ? '5px 8px' : '8px 12px', fontWeight: 500 }}>{item.name}</td>
-              <td style={{ padding: compact ? '5px 8px' : '8px 12px', textAlign: 'center' }}>{item.quantity}</td>
-              <td style={{ padding: compact ? '5px 8px' : '8px 12px', textAlign: 'right' }}>{fmt(item.rate)}</td>
-              <td style={{ padding: compact ? '5px 8px' : '8px 12px', textAlign: 'right', fontWeight: 600 }}>{fmt(item.quantity * item.rate)}</td>
+              <td style={{ padding: compact ? '5px 8px' : '8px 12px', textAlign: 'right', fontWeight: 600 }}>{fmt(item.rate)}</td>
             </tr>
           ))}
         </tbody>
