@@ -546,9 +546,8 @@ const AdminBilling = () => {
                 </CardHeader>
                 <CardContent className="p-0">
                   <div className="bg-white p-4 overflow-auto">
-                    <div ref={jpgRef} className="mx-auto bg-white" style={{ width: '500px', height: '750px', padding: '14px', overflow: 'hidden', boxSizing: 'border-box' }}>
+                    <div ref={jpgRef} className="mx-auto bg-white" style={{ width: '794px', padding: '40px', boxSizing: 'border-box' }}>
                       <BillTemplate
-                        isJpg={true}
                         billNumber={billNumber}
                         billDate={formattedDate}
                         billType={billType}
