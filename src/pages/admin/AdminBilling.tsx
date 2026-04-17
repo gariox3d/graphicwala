@@ -151,17 +151,18 @@ const AdminBilling = () => {
 
   // Items
   const [items, setItems] = useState<BillItem[]>([
-    { id: crypto.randomUUID(), name: '', quantity: 1, rate: 0 },
+    { id: crypto.randomUUID(), name: '', quantity: 1, rate: 0, rateInput: '' },
   ]);
 
   // Extras
   const [discount, setDiscount] = useState(0);
+  const [discountInput, setDiscountInput] = useState('');
   const [notes, setNotes] = useState('');
 
   const [showPreview, setShowPreview] = useState(false);
 
   const addItem = () => {
-    setItems([...items, { id: crypto.randomUUID(), name: '', quantity: 1, rate: 0 }]);
+    setItems([...items, { id: crypto.randomUUID(), name: '', quantity: 1, rate: 0, rateInput: '' }]);
   };
 
   const removeItem = (id: string) => {
@@ -171,6 +172,13 @@ const AdminBilling = () => {
 
   const updateItem = (id: string, field: keyof BillItem, value: string | number) => {
     setItems(prevItems => prevItems.map(i => i.id === id ? { ...i, [field]: value } : i));
+  };
+
+  const updateItemRate = (id: string, rawValue: string) => {
+    // Allow only digits and one decimal point
+    const cleaned = rawValue.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1');
+    const num = cleaned === '' || cleaned === '.' ? 0 : parseFloat(cleaned);
+    setItems(prev => prev.map(i => i.id === id ? { ...i, rateInput: cleaned, rate: isNaN(num) ? 0 : num } : i));
   };
 
   const subtotal = items.reduce((sum, i) => sum + i.quantity * i.rate, 0);
