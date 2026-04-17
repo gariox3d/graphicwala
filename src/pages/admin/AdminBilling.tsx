@@ -21,6 +21,7 @@ interface BillItem {
   name: string;
   quantity: number;
   rate: number;
+  rateInput: string;
 }
 
 const SHOP_INFO = {
