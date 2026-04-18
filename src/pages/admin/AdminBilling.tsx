@@ -311,6 +311,125 @@ const AdminBilling = () => {
     toast.success('WhatsApp pe bill share ho raha hai!');
   }, [customerName, customerPhone, customerAddress, items, billNumber, billType, formattedDate, subtotal, discountAmount, grandTotal, notes, paymentStatus, amountPaid]);
 
+  // ── Save / Load / Reset ──────────────────────────────────
+  const amountDue = Math.max(0, grandTotal - (paymentStatus === 'paid' ? grandTotal : paymentStatus === 'partial' ? amountPaid : 0));
+
+  const handleSaveBill = useCallback(async () => {
+    if (!user) { toast.error('Login required'); return; }
+    if (!customerName.trim()) { toast.error('Customer name daalo'); return; }
+    const validItems = items.filter(i => i.name.trim());
+    if (validItems.length === 0) { toast.error('Kam se kam ek item daalo'); return; }
+
+    setSaving(true);
+    try {
+      const payload = {
+        bill_number: billNumber,
+        bill_date: billDate,
+        bill_type: billType,
+        customer_name: customerName.trim(),
+        customer_phone: customerPhone.trim() || null,
+        customer_address: customerAddress.trim() || null,
+        items: validItems as any,
+        subtotal,
+        discount: discountAmount,
+        grand_total: grandTotal,
+        amount_paid: paymentStatus === 'paid' ? grandTotal : paymentStatus === 'partial' ? amountPaid : 0,
+        amount_due: amountDue,
+        payment_status: paymentStatus,
+        notes: notes.trim() || null,
+        created_by: user.id,
+      };
+
+      if (currentBillId) {
+        const { error } = await supabase.from('admin_bills').update(payload).eq('id', currentBillId);
+        if (error) throw error;
+        toast.success('Bill update ho gaya ✅');
+      } else {
+        const { data, error } = await supabase.from('admin_bills').insert(payload).select('id').single();
+        if (error) throw error;
+        if (data) setCurrentBillId(data.id);
+        toast.success('Bill save ho gaya ✅');
+      }
+    } catch (e: any) {
+      toast.error(e.message || 'Save mein error aaya');
+    } finally {
+      setSaving(false);
+    }
+  }, [user, customerName, customerPhone, customerAddress, items, billNumber, billDate, billType, subtotal, discountAmount, grandTotal, paymentStatus, amountPaid, amountDue, notes, currentBillId]);
+
+  const handleResetBill = useCallback(() => {
+    setCurrentBillId(null);
+    setBillNumber(generateBillNumber());
+    setBillDate(new Date().toISOString().split('T')[0]);
+    setBillType('invoice');
+    setCustomerName('');
+    setCustomerPhone('');
+    setCustomerAddress('');
+    setItems([{ id: crypto.randomUUID(), name: '', quantity: 1, rate: 0, rateInput: '' }]);
+    setDiscount(0);
+    setDiscountInput('');
+    setNotes('');
+    setPaymentStatus('unpaid');
+    setAmountPaid(0);
+    toast.success('Naya bill banane ke liye form reset ho gaya');
+  }, []);
+
+  const fetchSavedBills = useCallback(async () => {
+    setLoadingSaved(true);
+    try {
+      const { data, error } = await supabase
+        .from('admin_bills')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(200);
+      if (error) throw error;
+      setSavedBills((data || []) as any);
+    } catch (e: any) {
+      toast.error(e.message || 'Saved bills load nahi ho paye');
+    } finally {
+      setLoadingSaved(false);
+    }
+  }, []);
+
+  const handleOpenSaved = useCallback(() => {
+    setShowSavedDialog(true);
+    fetchSavedBills();
+  }, [fetchSavedBills]);
+
+  const handleLoadBill = useCallback((b: SavedBill) => {
+    setCurrentBillId(b.id);
+    setBillNumber(b.bill_number);
+    setBillDate(b.bill_date);
+    setBillType((b.bill_type as 'estimate' | 'invoice') || 'invoice');
+    setCustomerName(b.customer_name || '');
+    setCustomerPhone(b.customer_phone || '');
+    setCustomerAddress(b.customer_address || '');
+    const loadedItems: BillItem[] = Array.isArray(b.items) ? b.items.map((i: any) => ({
+      id: i.id || crypto.randomUUID(),
+      name: i.name || '',
+      quantity: i.quantity || 1,
+      rate: Number(i.rate) || 0,
+      rateInput: String(i.rate ?? ''),
+    })) : [];
+    setItems(loadedItems.length > 0 ? loadedItems : [{ id: crypto.randomUUID(), name: '', quantity: 1, rate: 0, rateInput: '' }]);
+    setDiscount(Number(b.discount) || 0);
+    setDiscountInput(b.discount ? String(b.discount) : '');
+    setNotes(b.notes || '');
+    setPaymentStatus((b.payment_status as any) || 'unpaid');
+    setAmountPaid(Number(b.amount_paid) || 0);
+    setShowSavedDialog(false);
+    toast.success(`Bill loaded: ${b.bill_number}`);
+  }, []);
+
+  const handleDeleteSaved = useCallback(async (id: string) => {
+    if (!confirm('Ye bill permanently delete kar dein?')) return;
+    const { error } = await supabase.from('admin_bills').delete().eq('id', id);
+    if (error) { toast.error('Delete fail hua'); return; }
+    setSavedBills(prev => prev.filter(b => b.id !== id));
+    if (currentBillId === id) handleResetBill();
+    toast.success('Delete ho gaya');
+  }, [currentBillId, handleResetBill]);
+
   if (authLoading) {
     return <AdminLayout><div className="flex items-center justify-center h-64"><div className="animate-pulse">Loading...</div></div></AdminLayout>;
   }
