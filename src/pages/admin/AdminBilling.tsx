@@ -631,6 +631,18 @@ const AdminBilling = () => {
                     <span>Grand Total</span>
                     <span className="text-primary">{formatCurrency(grandTotal)}</span>
                   </div>
+                  {paymentStatus !== 'paid' && amountDue > 0 && (
+                    <div className="flex justify-between text-lg font-bold border-2 border-destructive bg-destructive/10 rounded-md px-3 py-2 mt-2">
+                      <span className="text-destructive">💸 Due</span>
+                      <span className="text-destructive">{formatCurrency(amountDue)}</span>
+                    </div>
+                  )}
+                  {paymentStatus === 'partial' && amountPaid > 0 && (
+                    <div className="flex justify-between text-sm text-green-700 dark:text-green-500">
+                      <span>Paid</span>
+                      <span className="font-semibold">{formatCurrency(amountPaid)}</span>
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
