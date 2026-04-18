@@ -1071,6 +1071,36 @@ const BillTemplate = ({
             <span>Grand Total</span>
             <span style={{ color: '#E11D48' }}>{fmt(grandTotal)}</span>
           </div>
+          {paymentStatus === 'partial' && amountPaid > 0 && (
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              marginTop: '6px',
+              color: '#065F46',
+              fontWeight: 600,
+              fontSize: compact ? '11px' : '13px',
+            }}>
+              <span>Paid</span>
+              <span>{fmt(amountPaid)}</span>
+            </div>
+          )}
+          {paymentStatus !== 'paid' && (grandTotal - (paymentStatus === 'partial' ? amountPaid : 0)) > 0 && (
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              marginTop: '6px',
+              padding: compact ? '6px 8px' : '8px 12px',
+              background: '#FEE2E2',
+              border: '2px solid #DC2626',
+              borderRadius: '6px',
+              fontSize: compact ? '14px' : '18px',
+              fontWeight: 800,
+              color: '#991B1B',
+            }}>
+              <span>💸 DUE</span>
+              <span>{fmt(grandTotal - (paymentStatus === 'partial' ? amountPaid : 0))}</span>
+            </div>
+          )}
         </div>
       </div>
 
