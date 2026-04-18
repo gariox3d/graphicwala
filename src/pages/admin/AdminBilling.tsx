@@ -109,17 +109,44 @@ const ProductSearchInput = ({
   );
 };
 
+interface SavedBill {
+  id: string;
+  bill_number: string;
+  bill_date: string;
+  bill_type: string;
+  customer_name: string;
+  customer_phone: string | null;
+  customer_address: string | null;
+  items: BillItem[];
+  subtotal: number;
+  discount: number;
+  grand_total: number;
+  amount_paid: number;
+  amount_due: number;
+  payment_status: string;
+  notes: string | null;
+  created_at: string;
+}
+
 const AdminBilling = () => {
-  const { isAdmin, loading: authLoading } = useAuth();
+  const { isAdmin, loading: authLoading, user } = useAuth();
   const printRef = useRef<HTMLDivElement>(null);
 
-  const [billNumber] = useState(generateBillNumber);
+  const [billNumber, setBillNumber] = useState(generateBillNumber);
+  const [currentBillId, setCurrentBillId] = useState<string | null>(null);
   const [billDate, setBillDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [billType, setBillType] = useState<'estimate' | 'invoice'>('invoice');
   const [pageSize, setPageSize] = useState<'a4' | 'a4-half'>('a4');
   const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('portrait');
   const [paymentStatus, setPaymentStatus] = useState<'unpaid' | 'partial' | 'paid'>('unpaid');
   const [amountPaid, setAmountPaid] = useState(0);
+
+  // Saved bills
+  const [savedBills, setSavedBills] = useState<SavedBill[]>([]);
+  const [loadingSaved, setLoadingSaved] = useState(false);
+  const [showSavedDialog, setShowSavedDialog] = useState(false);
+  const [savedSearch, setSavedSearch] = useState('');
+  const [saving, setSaving] = useState(false);
 
   // Customer
   const [customerName, setCustomerName] = useState('');
