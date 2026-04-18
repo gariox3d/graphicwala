@@ -11,10 +11,11 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Plus, Trash2, Download, FileText, Eye, MessageCircle, IndianRupee, CheckCircle2, Clock, AlertCircle, Image } from 'lucide-react';
+import { Plus, Trash2, Download, FileText, Eye, MessageCircle, IndianRupee, CheckCircle2, Clock, AlertCircle, Image, Save, FolderOpen, Search, RefreshCw } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { Badge } from '@/components/ui/badge';
 import { normalizeIndianPhoneForWhatsApp } from '@/lib/phone';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 
 interface BillItem {
   id: string;
