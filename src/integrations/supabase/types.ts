@@ -14,6 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_bills: {
+        Row: {
+          amount_due: number
+          amount_paid: number
+          bill_date: string
+          bill_number: string
+          bill_type: string
+          created_at: string
+          created_by: string
+          customer_address: string | null
+          customer_name: string
+          customer_phone: string | null
+          discount: number
+          grand_total: number
+          id: string
+          items: Json
+          notes: string | null
+          payment_status: string
+          subtotal: number
+          updated_at: string
+        }
+        Insert: {
+          amount_due?: number
+          amount_paid?: number
+          bill_date?: string
+          bill_number: string
+          bill_type?: string
+          created_at?: string
+          created_by: string
+          customer_address?: string | null
+          customer_name: string
+          customer_phone?: string | null
+          discount?: number
+          grand_total?: number
+          id?: string
+          items?: Json
+          notes?: string | null
+          payment_status?: string
+          subtotal?: number
+          updated_at?: string
+        }
+        Update: {
+          amount_due?: number
+          amount_paid?: number
+          bill_date?: string
+          bill_number?: string
+          bill_type?: string
+          created_at?: string
+          created_by?: string
+          customer_address?: string | null
+          customer_name?: string
+          customer_phone?: string | null
+          discount?: number
+          grand_total?: number
+          id?: string
+          items?: Json
+          notes?: string | null
+          payment_status?: string
+          subtotal?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       before_after_showcase: {
         Row: {
           after_image_url: string
