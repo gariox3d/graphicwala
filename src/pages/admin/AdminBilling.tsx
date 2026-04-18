@@ -752,6 +752,94 @@ const AdminBilling = () => {
         </AdminLayout>
       </div>
 
+      {/* Saved Bills Dialog */}
+      <Dialog open={showSavedDialog} onOpenChange={setShowSavedDialog}>
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FolderOpen className="h-5 w-5" /> Saved Bills
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex items-center gap-2 mb-2">
+            <div className="relative flex-1">
+              <Search className="h-4 w-4 absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search by name, phone, or bill number..."
+                value={savedSearch}
+                onChange={e => setSavedSearch(e.target.value)}
+                className="pl-8"
+              />
+            </div>
+            <Button variant="outline" size="icon" onClick={fetchSavedBills} disabled={loadingSaved}>
+              <RefreshCw className={`h-4 w-4 ${loadingSaved ? 'animate-spin' : ''}`} />
+            </Button>
+          </div>
+          <div className="overflow-y-auto flex-1 space-y-2 pr-1">
+            {loadingSaved ? (
+              <div className="text-center py-8 text-muted-foreground">Loading...</div>
+            ) : savedBills.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">Koi saved bill nahi mila</div>
+            ) : (
+              savedBills
+                .filter(b => {
+                  const q = savedSearch.toLowerCase().trim();
+                  if (!q) return true;
+                  return (
+                    b.bill_number.toLowerCase().includes(q) ||
+                    b.customer_name.toLowerCase().includes(q) ||
+                    (b.customer_phone || '').toLowerCase().includes(q)
+                  );
+                })
+                .map(b => (
+                  <div key={b.id} className="border rounded-lg p-3 hover:bg-accent transition-colors">
+                    <div className="flex items-start justify-between gap-2 flex-wrap">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-mono text-xs text-primary font-bold">{b.bill_number}</span>
+                          <Badge
+                            variant="outline"
+                            className={
+                              b.payment_status === 'paid'
+                                ? 'bg-green-100 text-green-800 border-green-300'
+                                : b.payment_status === 'partial'
+                                ? 'bg-yellow-100 text-yellow-800 border-yellow-300'
+                                : 'bg-red-100 text-red-800 border-red-300'
+                            }
+                          >
+                            {b.payment_status.toUpperCase()}
+                          </Badge>
+                          <span className="text-xs text-muted-foreground">
+                            {new Date(b.bill_date).toLocaleDateString('en-IN')}
+                          </span>
+                        </div>
+                        <div className="font-semibold mt-1 truncate">{b.customer_name}</div>
+                        {b.customer_phone && (
+                          <div className="text-xs text-muted-foreground">📞 {b.customer_phone}</div>
+                        )}
+                        <div className="flex gap-3 mt-1 text-sm">
+                          <span>Total: <strong className="text-primary">₹{Number(b.grand_total).toLocaleString('en-IN')}</strong></span>
+                          {Number(b.amount_due) > 0 && (
+                            <span className="text-destructive">Due: <strong>₹{Number(b.amount_due).toLocaleString('en-IN')}</strong></span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex gap-2 shrink-0">
+                        <Button size="sm" onClick={() => handleLoadBill(b)}>Open</Button>
+                        <Button size="sm" variant="outline" className="text-destructive" onClick={() => handleDeleteSaved(b.id)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowSavedDialog(false)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Print-only bill */}
       <div className="hidden print:block" ref={printRef}>
         <style>{`
