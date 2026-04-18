@@ -694,6 +694,27 @@ const AdminBilling = () => {
                     WhatsApp Share
                   </Button>
                 </div>
+
+                {/* Save / Load / New row */}
+                <div className="flex flex-col sm:flex-row gap-3 border-t pt-4">
+                  <Button onClick={handleSaveBill} disabled={saving} className="gap-2">
+                    <Save className="h-4 w-4" />
+                    {saving ? 'Saving...' : currentBillId ? 'Update Bill' : 'Save Bill'}
+                  </Button>
+                  <Button onClick={handleOpenSaved} variant="outline" className="gap-2">
+                    <FolderOpen className="h-4 w-4" />
+                    Saved Bills
+                  </Button>
+                  <Button onClick={handleResetBill} variant="outline" className="gap-2">
+                    <Plus className="h-4 w-4" />
+                    New Bill
+                  </Button>
+                  {currentBillId && (
+                    <Badge variant="secondary" className="self-center">
+                      Editing saved bill
+                    </Badge>
+                  )}
+                </div>
               </CardContent>
             </Card>
 
