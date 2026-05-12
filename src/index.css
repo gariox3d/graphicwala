@@ -218,6 +218,40 @@
 }
 
 /* ============================================
+   VALENTINE THEME STYLES
+   ============================================ */
+.valentine-theme {
+  --primary: 330 81% 60%;
+  --primary-foreground: 0 0% 100%;
+  --accent: 330 81% 60%;
+  --ring: 330 81% 60%;
+  
+  --brand-red: 330 81% 60%;
+  --brand-red-dark: 330 81% 50%;
+  --brand-red-light: 330 81% 95%;
+
+  --gradient-primary: linear-gradient(135deg, hsl(330 81% 60%), hsl(330 81% 50%));
+  --shadow-brand-red: 0 10px 40px rgba(236, 72, 153, 0.25);
+}
+
+.valentine-theme body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.05;
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.5) 0%, rgba(255, 182, 193, 0.5) 100%);
+}
+
+@keyframes falling-heart {
+  0% { transform: translateY(-5vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.6; }
+  90% { opacity: 0.6; }
+  100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
+}
+
+/* ============================================
    RAMADAN / FESTIVAL THEME STYLES
    ============================================ */
 
