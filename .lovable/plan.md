@@ -1,42 +1,26 @@
+# Valentine's Day Theme Implementation Plan
 
+1. **Theme Setting Database setup**
+   - The `festival_settings` table already exists. We will use `theme_name = 'valentine'` to manage the setting (enabled, greeting, etc.).
 
-## Problem Analysis
+2. **Hook Creation (`src/hooks/useValentineSettings.ts`)**
+   - Create a duplicate of `useFestivalSettings.ts` specifically tailored for `valentine`. This separates concerns from Ramadan.
 
-User ko 3 cheezein fix karni hain:
-1. **JPG size galat hai** - "Lamba jyada ho gya" - currently 420px width with auto height, aspect ratio fixed nahi hai
-2. **2 x 3 portrait chahiye** - Standard photo print size (2:3 aspect ratio jaise 400x600px ya 500x750px)
-3. **Logo 1 line me chahiye** - "Graphic Wala" text wrap ho raha hoga chote container me
+3. **Global CSS Update (`src/index.css`)**
+   - Add `.valentine-theme` overrides for root variables (shifting the brand red/black to lovely pinks, soft reds, and rose tones).
+   - Add CSS keyframes for floating/falling hearts animations and smooth transitions.
 
-## Solution
+4. **Component Creation (`src/components/festival/ValentineThemeProvider.tsx`)**
+   - This component will check `useValentineSettings()`.
+   - If enabled, it adds the `.valentine-theme` class to `document.documentElement` and renders an overlay of floating CSS-based hearts across the site.
+   - It will also optionally display a greeting banner if configured.
 
-### 1. JPG Size Fix - 2:3 Portrait Ratio
-- **Width**: 500px (phone screen ke liye perfect)
-- **Height**: 750px (2:3 ratio maintain karne ke liye)
-- `html2canvas` ko fixed height bhi dena padega taaki auto-expand na ho
+5. **Admin Panel Page (`src/pages/admin/AdminValentineTheme.tsx`)**
+   - Create a new admin page specifically for toggling the Valentine's Day theme.
+   - It will use `useValentineSettings()` and `useAdminDraftState()` to manage the `is_enabled`, `greeting_text`, etc.
+   - It will have a visual preview mode and save button.
 
-### 2. Logo Single Line Fix
-- Header me `flex-shrink: 0` add karna padega logo ko
-- Shop name ka `whiteSpace: 'nowrap'` taaki "Graphic Wala" wrap na ho
-- Font size chota karna padega 2x3 size me fit karne ke liye
-
-### 3. Content Adjustment for Small Size
-- 2x3 size chota hai toh:
-  - Font sizes choti karni hain
-  - Padding/margins reduce karni hain
-  - Table rows compact karni hain
-  - QR code size choti karni hai
-
-### 4. Fixed Container for JPG
-- `jpgRef` container ko fixed 500x750px banana hai
-- Overflow handling add karna hai taaki content clip na ho
-
-## Files to Edit
-- `src/pages/admin/AdminBilling.tsx` - JPG generation logic aur BillTemplate styling
-
-## Changes Summary
-1. `handleDownloadJPG` me width: 500, height: 750 set karna
-2. `BillTemplate` ko `isJpg` prop dena taaki 2x3 ke liye alag compact styling ho
-3. Header me logo + name ko single line me force karna
-4. Font sizes, spacing choti karni for 2x3 format
-5. Add JPG size option in page size dropdown
-
+6. **Routing & App Integration (`src/App.tsx` & `src/components/admin/AdminLayout.tsx`)**
+   - Add the `<ValentineThemeProvider />` globally in `App.tsx`.
+   - Add the `/admin/valentine-theme` route to `App.tsx`.
+   - Add a navigation link to `AdminLayout.tsx` for the Valentine's theme dashboard.
