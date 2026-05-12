@@ -7,6 +7,8 @@ import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
 import RamadanThemeProvider from "@/components/festival/RamadanThemeProvider";
+import ValentineThemeProvider from "@/components/festival/ValentineThemeProvider";
+import AdminValentineTheme from "./pages/admin/AdminValentineTheme";
 import AdminFestivalTheme from "./pages/admin/AdminFestivalTheme";
 import AdminAds from "./pages/admin/AdminAds";
 import AdminLoyalty from "./pages/admin/AdminLoyalty";
@@ -74,6 +76,7 @@ const App = () => {
             <Toaster />
             <Sonner />
             <WelcomeBackPopup />
+            <ValentineThemeProvider />
             <RamadanThemeProvider />
             <AddressGate>
             <BrowserRouter>
@@ -110,6 +113,7 @@ const App = () => {
                 <Route path="/admin/customers" element={<AdminGuard><AdminCustomers /></AdminGuard>} />
                 <Route path="/admin/settings" element={<AdminGuard><AdminSettings /></AdminGuard>} />
                 <Route path="/admin/festival-theme" element={<AdminGuard><AdminFestivalTheme /></AdminGuard>} />
+                <Route path="/admin/valentine-theme" element={<AdminGuard><AdminValentineTheme /></AdminGuard>} />
                 <Route path="/admin/ads" element={<AdminGuard><AdminAds /></AdminGuard>} />
                 <Route path="/admin/loyalty" element={<AdminGuard><AdminLoyalty /></AdminGuard>} />
                 <Route path="/admin/analytics" element={<AdminGuard><AdminAnalytics /></AdminGuard>} />
