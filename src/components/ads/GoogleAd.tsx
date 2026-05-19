@@ -45,7 +45,10 @@ const GoogleAd = ({
   if (hide) return null;
 
   return (
-    <div className={`w-full my-6 flex justify-center ${className}`} aria-label="Advertisement">
+    <div className={`w-full my-6 flex flex-col items-center ${className}`} aria-label="Advertisement">
+      <div className="mb-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary text-xs font-semibold tracking-wide uppercase">
+        Ads by Google
+      </div>
       <ins
         ref={adRef as any}
         className="adsbygoogle"
