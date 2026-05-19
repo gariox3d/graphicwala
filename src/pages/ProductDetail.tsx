@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { ShoppingCart, ArrowLeft, Minus, Plus, Image, Zap, Heart } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import GoogleAd from '@/components/ads/GoogleAd';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -526,6 +527,11 @@ const ProductDetail = () => {
 
         {/* Similar Products */}
         <SimilarProducts currentProductId={product.id} categoryId={product.category_id} />
+
+        {/* Google Ad */}
+        <div className="container my-8">
+          <GoogleAd />
+        </div>
 
         {/* Recently Viewed Products */}
         {viewedIds.length > 1 && (
