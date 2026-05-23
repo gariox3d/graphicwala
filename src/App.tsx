@@ -18,6 +18,10 @@ import AdminBeforeAfter from "./pages/admin/AdminBeforeAfter";
 import AdminAbandonedCarts from "./pages/admin/AdminAbandonedCarts";
 import AdminBilling from "./pages/admin/AdminBilling";
 import AdminPickupEarnings from "./pages/admin/AdminPickupEarnings";
+import AdminInvites from "./pages/admin/AdminInvites";
+import Invites from "./pages/Invites";
+import InviteDetail from "./pages/InviteDetail";
+import InviteConfirmation from "./pages/InviteConfirmation";
 import Index from "./pages/Index";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
@@ -100,6 +104,9 @@ const App = () => {
                 <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
                 <Route path="/shipping-policy" element={<ShippingPolicy />} />
                 <Route path="/refund-policy" element={<RefundPolicy />} />
+                <Route path="/invites" element={<Invites />} />
+                <Route path="/invites/:id" element={<InviteDetail />} />
+                <Route path="/invite-confirmation/:orderId" element={<InviteConfirmation />} />
                 {/* Admin Routes - Protected by AdminGuard */}
                 <Route path="/admin" element={<AdminGuard><AdminDashboard /></AdminGuard>} />
                 <Route path="/admin/products" element={<AdminGuard><AdminProducts /></AdminGuard>} />
@@ -122,6 +129,7 @@ const App = () => {
                 <Route path="/admin/abandoned-carts" element={<AdminGuard><AdminAbandonedCarts /></AdminGuard>} />
                 <Route path="/admin/pickup-earnings" element={<AdminGuard><AdminPickupEarnings /></AdminGuard>} />
                 <Route path="/admin/billing" element={<AdminGuard><AdminBilling /></AdminGuard>} />
+                <Route path="/admin/invites" element={<AdminGuard><AdminInvites /></AdminGuard>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
