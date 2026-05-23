@@ -31,7 +31,8 @@ import {
   Layers,
   ShoppingCart as CartIcon,
   Store,
-  FileText
+  FileText,
+  Video
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -124,6 +125,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/abandoned-carts', label: 'Abandoned Carts', icon: CartIcon },
     { path: '/admin/pickup-earnings', label: 'Pickup Earnings', icon: Store },
     { path: '/admin/billing', label: 'Bill / Invoice', icon: FileText },
+    { path: '/admin/invites', label: 'Video Invites', icon: Video },
   ];
 
   const handleSignOut = async () => {
