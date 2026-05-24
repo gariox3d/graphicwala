@@ -107,6 +107,7 @@ const App = () => {
                 <Route path="/invites" element={<Invites />} />
                 <Route path="/invites/:id" element={<InviteDetail />} />
                 <Route path="/invite-confirmation/:orderId" element={<InviteConfirmation />} />
+                <Route path="/invites/confirmation/:orderId" element={<InviteConfirmation />} />
                 {/* Admin Routes - Protected by AdminGuard */}
                 <Route path="/admin" element={<AdminGuard><AdminDashboard /></AdminGuard>} />
                 <Route path="/admin/products" element={<AdminGuard><AdminProducts /></AdminGuard>} />
