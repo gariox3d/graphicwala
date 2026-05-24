@@ -33,7 +33,7 @@ import {
 type Category = {
   id: string; name: string; slug: string; description: string | null;
   icon_emoji: string; display_order: number; is_active: boolean;
-  form_schema?: CategoryFormSchema;
+  form_schema?: unknown;
 };
 type VideoRow = {
   id: string; category_id: string | null; title: string; description: string | null;
@@ -94,7 +94,7 @@ const CategoriesTab = () => {
   const load = async () => {
     setLoading(true);
     const { data } = await supabase.from("invite_categories").select("*").order("display_order");
-    setItems((data as Category[]) || []);
+    setItems((data as unknown as Category[]) || []);
     setLoading(false);
   };
   useEffect(() => { load(); }, []);
@@ -207,7 +207,7 @@ const VideosTab = () => {
       supabase.from("invite_categories").select("*").order("display_order"),
     ]);
     setItems((v.data as VideoRow[]) || []);
-    setCats((c.data as Category[]) || []);
+    setCats((c.data as unknown as Category[]) || []);
     setLoading(false);
   };
   useEffect(() => { load(); }, []);
