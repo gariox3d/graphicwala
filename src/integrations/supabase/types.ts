@@ -466,6 +466,7 @@ export type Database = {
           created_at: string
           description: string | null
           display_order: number
+          form_schema: Json
           icon_emoji: string | null
           id: string
           is_active: boolean
@@ -477,6 +478,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           display_order?: number
+          form_schema?: Json
           icon_emoji?: string | null
           id?: string
           is_active?: boolean
@@ -488,6 +490,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           display_order?: number
+          form_schema?: Json
           icon_emoji?: string | null
           id?: string
           is_active?: boolean
