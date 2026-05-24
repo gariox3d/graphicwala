@@ -21,10 +21,19 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { getYouTubeThumb } from "@/lib/inviteTemplates";
+import {
+  CategoryFormSchema,
+  CustomField,
+  CustomFieldType,
+  EventType,
+  emptyFormSchema,
+  newCustomField,
+} from "@/lib/inviteTemplates";
 
 type Category = {
   id: string; name: string; slug: string; description: string | null;
   icon_emoji: string; display_order: number; is_active: boolean;
+  form_schema?: CategoryFormSchema;
 };
 type VideoRow = {
   id: string; category_id: string | null; title: string; description: string | null;
@@ -69,7 +78,11 @@ const AdminInvites = () => {
 };
 
 /* ============ Categories Tab ============ */
-const emptyCat = { name: "", slug: "", description: "", icon_emoji: "🎉", display_order: 0, is_active: true };
+const emptyCat = {
+  name: "", slug: "", description: "", icon_emoji: "🎉",
+  display_order: 0, is_active: true,
+  form_schema: emptyFormSchema(),
+};
 
 const CategoriesTab = () => {
   const [items, setItems] = useState<Category[]>([]);
@@ -92,6 +105,7 @@ const CategoriesTab = () => {
     setForm({
       name: c.name, slug: c.slug, description: c.description || "",
       icon_emoji: c.icon_emoji || "🎉", display_order: c.display_order, is_active: c.is_active,
+      form_schema: (c.form_schema as CategoryFormSchema) || emptyFormSchema(),
     });
     setOpen(true);
   };
@@ -123,7 +137,7 @@ const CategoriesTab = () => {
           <DialogTrigger asChild>
             <Button onClick={openCreate}><Plus className="h-4 w-4 mr-1" /> Add Category</Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{editingId ? "Edit Category" : "New Category"}</DialogTitle>
             </DialogHeader>
@@ -134,6 +148,10 @@ const CategoriesTab = () => {
               <div><Label>Description</Label><Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
               <div><Label>Display Order</Label><Input type="number" value={form.display_order} onChange={(e) => setForm({ ...form, display_order: parseInt(e.target.value) || 0 })} /></div>
               <div className="flex items-center gap-2"><Switch checked={form.is_active} onCheckedChange={(v) => setForm({ ...form, is_active: v })} /><Label>Active</Label></div>
+              <FormSchemaEditor
+                schema={form.form_schema}
+                onChange={(s) => setForm({ ...form, form_schema: s })}
+              />
             </div>
             <DialogFooter><Button onClick={save}>Save</Button></DialogFooter>
           </DialogContent>
