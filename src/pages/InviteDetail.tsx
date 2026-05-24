@@ -22,6 +22,9 @@ import {
   getDefaultProgrammes,
   getYouTubeEmbed,
   newRsvp,
+  CustomField,
+  CategoryFormSchema,
+  emptyFormSchema,
 } from "@/lib/inviteTemplates";
 
 declare global {
@@ -44,6 +47,7 @@ const InviteDetail = () => {
     rsvp: [newRsvp()],
     compliments_from: "",
     special_instructions: "",
+    custom_fields: {},
   });
 
   useEffect(() => {
@@ -94,6 +98,11 @@ const InviteDetail = () => {
 
   const embedUrl = useMemo(() => (video ? getYouTubeEmbed(video.youtube_url) : null), [video]);
   const coupleMode = getCoupleMode(category?.slug);
+  const formSchema: CategoryFormSchema = (category?.form_schema as CategoryFormSchema) || emptyFormSchema();
+  const customFields: CustomField[] = formSchema[form.eventType] || [];
+
+  const setCustomField = (id: string, value: string) =>
+    setForm((f) => ({ ...f, custom_fields: { ...(f.custom_fields || {}), [id]: value } }));
 
   const updateRsvp = (id: string, field: "name" | "phone", value: string) =>
     setForm((f) => ({ ...f, rsvp: f.rsvp.map((r) => (r.id === id ? { ...r, [field]: value } : r)) }));
@@ -115,6 +124,11 @@ const InviteDetail = () => {
       return "Please enter a valid email";
     if (form.programmes.length === 0 || !form.programmes[0].name.trim())
       return "Please add at least one programme";
+    for (const cf of customFields) {
+      if (cf.required && !((form.custom_fields || {})[cf.id] || "").trim()) {
+        return `Please fill: ${cf.label}`;
+      }
+    }
     return null;
   };
 
