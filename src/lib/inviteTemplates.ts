@@ -15,6 +15,36 @@ export type RsvpItem = {
 
 export type EventType = "hindu" | "muslim" | "other";
 
+export type CustomFieldType = "text" | "textarea" | "date" | "time" | "number";
+
+export type CustomField = {
+  id: string;
+  label: string;
+  type: CustomFieldType;
+  placeholder?: string;
+  required?: boolean;
+};
+
+export type CategoryFormSchema = {
+  hindu: CustomField[];
+  muslim: CustomField[];
+  other: CustomField[];
+};
+
+export const emptyFormSchema = (): CategoryFormSchema => ({
+  hindu: [],
+  muslim: [],
+  other: [],
+});
+
+export const newCustomField = (label = ""): CustomField => ({
+  id: crypto.randomUUID(),
+  label,
+  type: "text",
+  placeholder: "",
+  required: false,
+});
+
 export type InviteFormData = {
   eventType: EventType;
   bride_name?: string;
@@ -26,6 +56,7 @@ export type InviteFormData = {
   rsvp: RsvpItem[];
   compliments_from: string;
   special_instructions: string;
+  custom_fields?: Record<string, string>;
 };
 
 export const newProgramme = (name = ""): ProgrammeItem => ({
