@@ -475,4 +475,140 @@ const OrdersTab = () => {
   );
 };
 
+/* ============ Form Schema Editor ============ */
+const EVENT_TYPES: EventType[] = ["hindu", "muslim", "other"];
+const FIELD_TYPES: { value: CustomFieldType; label: string }[] = [
+  { value: "text", label: "Text" },
+  { value: "textarea", label: "Long text" },
+  { value: "number", label: "Number" },
+  { value: "date", label: "Date" },
+  { value: "time", label: "Time" },
+];
+
+const normaliseSchema = (s: unknown): CategoryFormSchema => {
+  const base = emptyFormSchema();
+  if (!s || typeof s !== "object") return base;
+  const obj = s as any;
+  for (const t of EVENT_TYPES) {
+    if (Array.isArray(obj[t])) {
+      base[t] = obj[t].map((f: any) => ({
+        id: f?.id || crypto.randomUUID(),
+        label: String(f?.label || ""),
+        type: (FIELD_TYPES.find((ft) => ft.value === f?.type)?.value) || "text",
+        placeholder: f?.placeholder || "",
+        required: !!f?.required,
+      })) as CustomField[];
+    }
+  }
+  return base;
+};
+
+const FormSchemaEditor = ({
+  schema,
+  onChange,
+}: {
+  schema: unknown;
+  onChange: (s: CategoryFormSchema) => void;
+}) => {
+  const safe = normaliseSchema(schema);
+  const [activeTab, setActiveTab] = useState<EventType>("hindu");
+  const fields = safe[activeTab];
+
+  const updateFields = (next: CustomField[]) =>
+    onChange({ ...safe, [activeTab]: next });
+
+  const addField = () => updateFields([...fields, newCustomField()]);
+  const removeField = (id: string) => updateFields(fields.filter((f) => f.id !== id));
+  const updateField = (id: string, patch: Partial<CustomField>) =>
+    updateFields(fields.map((f) => (f.id === id ? { ...f, ...patch } : f)));
+
+  return (
+    <div className="border-t pt-4 mt-2">
+      <Label className="text-base font-semibold">Custom Form Fields per Style</Label>
+      <p className="text-xs text-muted-foreground mb-3">
+        Define extra fields (Bride/Groom father's name, address, etc.) the customer must fill.
+        Different fields for Hindu, Muslim, and Other ceremonies.
+      </p>
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as EventType)}>
+        <TabsList className="grid grid-cols-3">
+          {EVENT_TYPES.map((t) => (
+            <TabsTrigger key={t} value={t} className="capitalize">
+              {t === "other" ? "Other / Mixed" : t}
+              {safe[t].length > 0 && (
+                <Badge variant="secondary" className="ml-2 text-xs">{safe[t].length}</Badge>
+              )}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+        {EVENT_TYPES.map((t) => (
+          <TabsContent key={t} value={t} className="space-y-2 mt-3">
+            {safe[t].length === 0 && (
+              <p className="text-xs text-muted-foreground text-center py-3 border rounded bg-muted/30">
+                No custom fields yet for this style. Click "Add Field" below.
+              </p>
+            )}
+            {safe[t].map((f) => (
+              <div key={f.id} className="border rounded-lg p-3 bg-muted/30 space-y-2">
+                <div className="grid grid-cols-1 sm:grid-cols-[1fr_140px_auto] gap-2">
+                  <Input
+                    value={f.label}
+                    placeholder="Field label (e.g. Bride's Father Name)"
+                    onChange={(e) => updateField(f.id, { label: e.target.value })}
+                  />
+                  <Select
+                    value={f.type}
+                    onValueChange={(v) => updateField(f.id, { type: v as CustomFieldType })}
+                  >
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {FIELD_TYPES.map((ft) => (
+                        <SelectItem key={ft.value} value={ft.value}>{ft.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="ghost"
+                    className="text-destructive"
+                    onClick={() => removeField(f.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2 items-center">
+                  <Input
+                    value={f.placeholder || ""}
+                    placeholder="Placeholder / hint (optional)"
+                    onChange={(e) => updateField(f.id, { placeholder: e.target.value })}
+                  />
+                  <label className="flex items-center gap-2 text-sm whitespace-nowrap">
+                    <Switch
+                      checked={!!f.required}
+                      onCheckedChange={(v) => updateField(f.id, { required: v })}
+                    />
+                    Required
+                  </label>
+                </div>
+              </div>
+            ))}
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setActiveTab(t);
+                addField();
+              }}
+              className="w-full"
+            >
+              <Plus className="h-4 w-4 mr-1" /> Add Field for {t === "other" ? "Other" : t}
+            </Button>
+          </TabsContent>
+        ))}
+      </Tabs>
+    </div>
+  );
+};
+
 export default AdminInvites;
