@@ -389,6 +389,49 @@ const InviteDetail = () => {
               />
             </div>
 
+            {/* Custom Fields per event type */}
+            {customFields.length > 0 && (
+              <div className="bg-card border border-border rounded-xl p-4 md:p-6 space-y-4">
+                <div>
+                  <h2 className="font-bold text-lg">
+                    Additional Details
+                  </h2>
+                  <p className="text-xs text-muted-foreground capitalize">
+                    Fields specific to {form.eventType === "other" ? "your" : form.eventType} ceremony.
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {customFields.map((cf) => {
+                    const value = (form.custom_fields || {})[cf.id] || "";
+                    const colSpan = cf.type === "textarea" ? "sm:col-span-2" : "";
+                    return (
+                      <div key={cf.id} className={colSpan}>
+                        <Label>
+                          {cf.label}
+                          {cf.required && <span className="text-destructive"> *</span>}
+                        </Label>
+                        {cf.type === "textarea" ? (
+                          <Textarea
+                            value={value}
+                            onChange={(e) => setCustomField(cf.id, e.target.value)}
+                            placeholder={cf.placeholder || ""}
+                            rows={2}
+                          />
+                        ) : (
+                          <Input
+                            type={cf.type === "number" ? "number" : cf.type === "date" ? "date" : cf.type === "time" ? "time" : "text"}
+                            value={value}
+                            onChange={(e) => setCustomField(cf.id, e.target.value)}
+                            placeholder={cf.placeholder || ""}
+                          />
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* RSVP */}
             <div className="bg-card border border-border rounded-xl p-4 md:p-6 space-y-3">
               <h2 className="font-bold text-lg">RSVP Contacts (optional)</h2>
