@@ -21,7 +21,6 @@ import TestimonialsSection from '@/components/TestimonialsSection';
 import StatsCounter from '@/components/StatsCounter';
 
 import InstagramSection from '@/components/InstagramSection';
-import InvitesHomeSection from '@/components/invites/InvitesHomeSection';
 import SocialProofNotifications from '@/components/SocialProofNotifications';
 import { supabase } from '@/integrations/supabase/client';
 import { Product, Category, WHATSAPP_NUMBER, BUSINESS_NAME } from '@/lib/types';
