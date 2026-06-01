@@ -320,9 +320,6 @@ const Index = () => {
         {/* Before/After Showcase */}
         <BeforeAfterShowcase />
 
-        {/* Custom Video Invitations */}
-        <InvitesHomeSection />
-
         {/* Customer Gallery / Wall of Fame */}
         <CustomerGallery />
 
