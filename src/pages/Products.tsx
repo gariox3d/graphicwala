@@ -3,7 +3,6 @@ import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
-import GoogleAd from '@/components/ads/GoogleAd';
 import ProductCard from '@/components/products/ProductCard';
 import { supabase } from '@/integrations/supabase/client';
 import { Product, Category } from '@/lib/types';
@@ -145,9 +144,6 @@ const Products = () => {
             </div>
           )}
           {!loading && filteredProducts.length === 0 && <p className="text-center text-muted-foreground py-12">No products found.</p>}
-          <div className="mt-10">
-            <GoogleAd />
-          </div>
         </div>
       </main>
       <Footer />

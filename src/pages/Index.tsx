@@ -17,7 +17,6 @@ import BeforeAfterShowcase from '@/components/BeforeAfterShowcase';
 import ProductMarquee from '@/components/products/ProductMarquee';
 import FlashSaleBanner from '@/components/products/FlashSaleBanner';
 import AdBanner from '@/components/ads/AdBanner';
-import GoogleAd from '@/components/ads/GoogleAd';
 import TestimonialsSection from '@/components/TestimonialsSection';
 import StatsCounter from '@/components/StatsCounter';
 
@@ -149,7 +148,6 @@ const Index = () => {
         <section className="py-4 bg-background">
           <div className="container">
             <AdBanner slotId="homepage_after_hero" />
-            <GoogleAd />
           </div>
         </section>
 
@@ -216,7 +214,6 @@ const Index = () => {
         <section className="py-4 bg-background">
           <div className="container">
             <AdBanner slotId="homepage_after_categories" />
-            <GoogleAd />
           </div>
         </section>
 
@@ -270,7 +267,6 @@ const Index = () => {
         <section className="py-4 bg-background">
           <div className="container">
             <AdBanner slotId="homepage_after_products" />
-            <GoogleAd />
           </div>
         </section>
 
@@ -313,7 +309,6 @@ const Index = () => {
         <section className="py-4 bg-background">
           <div className="container">
             <AdBanner slotId="homepage_mid_page" />
-            <GoogleAd />
           </div>
         </section>
 
