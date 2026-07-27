@@ -164,7 +164,7 @@ const Index = () => {
           <div className="container">
             <header className="flex items-center justify-between mb-12">
               <div>
-                <h2 id="categories-heading" className="text-3xl md:text-4xl font-bold mb-2">Shop by Category</h2>
+                <h2 id="categories-heading" className="font-serif-editorial text-4xl md:text-5xl italic mb-2">Shop by <span className="text-primary">Category</span></h2>
                 <p className="text-muted-foreground">Custom Photo Frames, PVC Cards, ID Cards, Keychains & Visiting Cards — All India Delivery</p>
               </div>
               <Link to="/products" className="hidden md:block" aria-label="View all product categories">
@@ -221,7 +221,7 @@ const Index = () => {
           <div className="container">
             <header className="flex items-center justify-between mb-12">
               <div>
-                <h2 id="products-heading" className="text-3xl md:text-4xl font-bold mb-2">Featured Products</h2>
+                <h2 id="products-heading" className="font-serif-editorial text-4xl md:text-5xl italic mb-2">Featured <span className="text-primary">Products</span></h2>
                 <p className="text-muted-foreground">Personalized gifts and custom printed products with All India delivery</p>
               </div>
               <Link to="/products" className="hidden md:block" aria-label="View all products">
@@ -280,7 +280,7 @@ const Index = () => {
         <section className="py-16 md:py-24 bg-secondary" aria-labelledby="services-heading">
           <div className="container">
             <header className="text-center mb-12">
-              <h2 id="services-heading" className="text-3xl md:text-4xl font-bold mb-4">Why Choose Graphic Wala?</h2>
+              <h2 id="services-heading" className="font-serif-editorial text-4xl md:text-5xl italic mb-4">Why <span className="text-primary">Graphic Wala</span>?</h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
                 Premium custom printing services across India. We deliver excellence in every print with home delivery nationwide.
               </p>
@@ -342,7 +342,7 @@ const Index = () => {
         {/* CTA Section */}
         <section className="py-16 md:py-24 bg-primary text-primary-foreground" aria-labelledby="cta-heading">
           <div className="container text-center">
-            <h2 id="cta-heading" className="text-3xl md:text-4xl font-bold mb-4 drop-shadow-md">Ready to Get Started?</h2>
+            <h2 id="cta-heading" className="font-serif-editorial text-4xl md:text-5xl italic mb-4 drop-shadow-md">Ready to <span className="italic">create</span>?</h2>
             <p className="text-primary-foreground/90 max-w-2xl mx-auto mb-8 font-medium">
               Order personalized photo frames, PVC cards, keychains and more. Prepaid orders with home delivery across India.
             </p>
