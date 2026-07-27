@@ -1,248 +1,255 @@
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, Frame, Coffee, Shirt, KeyRound, CircleDot, Plane } from 'lucide-react';
+import { ArrowRight, Truck, Shield, CreditCard, CheckCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@/components/ui/button';
+import { useFestivalSettings } from '@/hooks/useFestivalSettings';
+import EidCountdown from '@/components/festival/EidCountdown';
 
-type CategoryTile = {
-  key: string;
-  name: string;
-  matchers: string[]; // possible category name matches
-  fallbackLabel?: string;
-};
+const heroSubtexts = [
+  "Photo Frames for Every Special Moment",
+  "PVC Cards & Keychains with Your Photos",
+  "Visiting Cards & ID Cards",
+  "Delivered Across India • Premium Print • Prepaid Only",
+];
 
-const TILES: CategoryTile[] = [
-  { key: 'frames', name: 'Photo Frames', matchers: ['photo frame', 'frame'] },
-  { key: 'mugs', name: 'Mugs', matchers: ['mug'] },
-  { key: 'tees', name: 'T-Shirts', matchers: ['t-shirt', 'tshirt', 'tee'] },
-  { key: 'keychains', name: 'Keychains', matchers: ['keychain', 'key chain'] },
-  { key: 'caps', name: 'Caps', matchers: ['cap', 'hat'] },
-  { key: 'plates', name: 'Plates', matchers: ['plate'] },
+const trustBadges = [
+  { icon: Truck, text: "All India Delivery" },
+  { icon: Shield, text: "Premium Quality" },
+  { icon: CreditCard, text: "Prepaid Only" },
+];
+
+const deliveryPoints = [
+  "All India Delivery Available",
+  "No Cash on Delivery",
+  "Online Prepaid Orders Only",
 ];
 
 const HeroSection = () => {
-  const [images, setImages] = useState<Record<string, string>>({});
-  const [catRoutes, setCatRoutes] = useState<Record<string, string>>({});
+  const [currentSubtext, setCurrentSubtext] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(true);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const { settings, isThemeActive } = useFestivalSettings();
+  const festivalActive = isThemeActive();
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        const [{ data: cats }, { data: prods }] = await Promise.all([
-          supabase.from('categories').select('id, name, image_url'),
-          supabase
-            .from('products')
-            .select('name, image_url, image_urls, category_id, categories(name)')
-            .eq('is_active', true)
-            .limit(80),
-        ]);
+    const interval = setInterval(() => {
+      setIsAnimating(false);
+      setTimeout(() => {
+        setCurrentSubtext((prev) => (prev + 1) % heroSubtexts.length);
+        setIsAnimating(true);
+      }, 300);
+    }, 3500);
 
-        const imgMap: Record<string, string> = {};
-        const routeMap: Record<string, string> = {};
-
-        TILES.forEach((tile) => {
-          const cat = (cats || []).find((c: any) =>
-            tile.matchers.some((m) => c.name?.toLowerCase().includes(m))
-          );
-          if (cat) {
-            routeMap[tile.key] = `/products?category=${encodeURIComponent(cat.name)}`;
-            if (cat.image_url) imgMap[tile.key] = cat.image_url;
-          }
-          if (!imgMap[tile.key]) {
-            const p: any = (prods || []).find((pr: any) => {
-              const catName = pr.categories?.name || '';
-              return tile.matchers.some((m) =>
-                catName.toLowerCase().includes(m) || pr.name?.toLowerCase().includes(m)
-              );
-            });
-            const pic =
-              p && (Array.isArray(p.image_urls) && p.image_urls[0] ? p.image_urls[0] : p.image_url);
-            if (pic) imgMap[tile.key] = pic;
-          }
-        });
-
-        setImages(imgMap);
-        setCatRoutes(routeMap);
-      } catch (e) {
-        console.error('Hero fetch failed:', e);
-      }
-    };
-    load();
+    return () => clearInterval(interval);
   }, []);
 
-  const linkFor = (key: string) => catRoutes[key] || '/products';
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({
+        x: (e.clientX / window.innerWidth) * 100,
+        y: (e.clientY / window.innerHeight) * 100,
+      });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   return (
-    <section
-      className="relative overflow-hidden bg-black text-white"
-      aria-label="Graphic Wala - Personalized Gifts"
+    <section 
+      className="relative min-h-[95vh] md:min-h-[90vh] flex items-center overflow-hidden"
+      aria-label="Graphic Wala - Custom Printing Store India"
     >
-      {/* Ambient red glows */}
-      <div className="pointer-events-none absolute -top-24 -right-24 h-[320px] w-[320px] rounded-full bg-primary/15 blur-[110px]" />
-      <div className="pointer-events-none absolute bottom-10 -left-24 h-[280px] w-[280px] rounded-full bg-primary/10 blur-[100px]" />
-
-      <div className="relative container px-4 sm:px-6 pt-8 pb-12 md:pt-14 md:pb-20">
-        {/* Editorial heading */}
-        <div className="mb-8 md:mb-12 max-w-3xl">
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-white/70 backdrop-blur-md">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-            India's Favorite Custom Gift Store
-          </div>
-          <h1 className="font-serif-editorial mt-5 text-[42px] leading-[0.92] tracking-tight sm:text-6xl md:text-7xl">
-            Personalized <span className="italic text-primary">gifts</span>,
-            <br />
-            crafted from your{' '}
-            <span className="italic">memories.</span>
-          </h1>
-          <p className="mt-5 max-w-xl text-sm md:text-base text-white/60 leading-relaxed">
-            Photo frames, mugs, t-shirts, keychains, caps &amp; plates — custom
-            printed with premium quality and delivered across India.
-          </p>
+      {/* Premium Animated Gradient Background */}
+      <div className="absolute inset-0 bg-[#0a0a0a]">
+        {/* Animated gradient orbs */}
+        <div 
+          className="absolute w-[800px] h-[800px] rounded-full blur-[150px] opacity-40 animate-pulse"
+          style={{ 
+            background: 'radial-gradient(circle, hsl(0, 85%, 35%) 0%, transparent 70%)',
+            top: '-20%',
+            left: '-10%',
+            animationDuration: '6s',
+            transform: `translate(${mousePosition.x * 0.02}px, ${mousePosition.y * 0.02}px)`,
+          }}
+        />
+        <div 
+          className="absolute w-[600px] h-[600px] rounded-full blur-[120px] opacity-30 animate-pulse"
+          style={{ 
+            background: 'radial-gradient(circle, hsl(0, 70%, 25%) 0%, transparent 70%)',
+            bottom: '-15%',
+            right: '-5%',
+            animationDuration: '8s',
+            animationDelay: '2s',
+            transform: `translate(${-mousePosition.x * 0.015}px, ${-mousePosition.y * 0.015}px)`,
+          }}
+        />
+        <div 
+          className="absolute w-[500px] h-[500px] rounded-full blur-[100px] opacity-25 animate-pulse"
+          style={{ 
+            background: 'radial-gradient(circle, hsl(350, 80%, 20%) 0%, transparent 70%)',
+            top: '40%',
+            left: '50%',
+            transform: `translate(-50%, -50%) translate(${mousePosition.x * 0.01}px, ${mousePosition.y * 0.01}px)`,
+            animationDuration: '10s',
+            animationDelay: '1s',
+          }}
+        />
+        
+        {/* Floating particles */}
+        <div className="absolute inset-0 overflow-hidden">
+          {[...Array(20)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute rounded-full bg-primary/20 animate-pulse"
+              style={{
+                width: `${Math.random() * 4 + 2}px`,
+                height: `${Math.random() * 4 + 2}px`,
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                animationDuration: `${Math.random() * 4 + 3}s`,
+                animationDelay: `${Math.random() * 2}s`,
+              }}
+            />
+          ))}
         </div>
 
-        {/* Bento hero grid */}
-        <div className="grid grid-cols-6 grid-rows-6 gap-3 h-[520px] md:h-[620px]">
-          {/* Primary: Photo Frames */}
-          <Link
-            to={linkFor('frames')}
-            className="col-span-4 row-span-4 group relative overflow-hidden rounded-[2rem] md:rounded-[2.5rem] border border-white/5 bg-zinc-900"
-          >
-            {images.frames && (
-              <img
-                src={images.frames}
-                alt="Custom Photo Frames"
-                loading="lazy"
-                className="absolute inset-0 h-full w-full object-cover opacity-60 mix-blend-luminosity transition-transform duration-700 group-hover:scale-105"
-              />
-            )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
-            <div className="absolute inset-0 flex flex-col justify-between p-5 md:p-7">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-primary">
-                  Featured
-                </span>
-                <ArrowUpRight className="h-5 w-5 text-white/70 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-              </div>
-              <div>
-                <Frame className="h-5 w-5 text-white/70 mb-2" />
-                <h2 className="font-serif-editorial text-4xl md:text-5xl italic leading-[0.9]">
-                  Timeless<br />Frames
-                </h2>
-                <p className="mt-2 text-xs text-white/60">
-                  Hand-crafted with your photos
-                </p>
-              </div>
-            </div>
-          </Link>
+        {/* Subtle grid overlay */}
+        <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:60px_60px]" />
+        
+        {/* Dark vignette overlay */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)]" />
+      </div>
 
-          {/* Mugs */}
-          <Link
-            to={linkFor('mugs')}
-            className="col-span-2 row-span-2 group relative overflow-hidden rounded-[1.5rem] md:rounded-[2rem] border border-white/5 bg-zinc-900"
+      <div className="container relative z-10 py-16 md:py-20">
+        <header className="max-w-4xl mx-auto text-center">
+          {/* Top Badge */}
+          <div 
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary/15 border border-primary/25 text-primary text-sm font-bold mb-8 animate-fade-in backdrop-blur-md"
+            style={{ animationDelay: '0.1s' }}
           >
-            {images.mugs && (
-              <img
-                src={images.mugs}
-                alt="Custom Mugs"
-                loading="lazy"
-                className="absolute inset-0 h-full w-full object-cover opacity-40 transition-transform duration-700 group-hover:scale-110"
-              />
-            )}
-            <div className="absolute inset-0 flex items-end justify-between p-4">
-              <span className="font-serif-editorial text-lg italic">Mugs</span>
-              <Coffee className="h-4 w-4 text-white/60" />
-            </div>
-          </Link>
+            <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+            India's Favorite Custom Gift Store
+          </div>
 
-          {/* India Only accent */}
-          <div className="col-span-2 row-span-2 rounded-[1.5rem] md:rounded-[2rem] bg-primary p-4 md:p-5 flex flex-col justify-between text-white">
-            <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center">
-              <Plane className="h-4 w-4" />
-            </div>
-            <p className="text-[10px] md:text-xs font-bold uppercase leading-tight tracking-wider">
-              All India<br />Delivery
+          {/* Main Heading */}
+          <h1 
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-white mb-6 animate-fade-in"
+            style={{ 
+              textShadow: '0 4px 30px rgba(0,0,0,0.5), 0 0 60px rgba(220,38,38,0.15)',
+              animationDelay: '0.2s'
+            }}
+          >
+            <span className="block text-lg sm:text-xl md:text-2xl text-white/70 font-semibold mb-2">Graphic Wala</span>
+            Personalized Gifts Made from
+            <br />
+            <span className="text-primary">Your Memories</span> 🎁
+          </h1>
+
+          {/* Animated Subtext */}
+          <div className="h-[60px] md:h-[70px] flex items-center justify-center mb-6">
+            <p 
+              className={`text-lg md:text-xl lg:text-2xl text-white/85 font-medium transition-all duration-500 ${
+                isAnimating ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'
+              }`}
+              style={{ textShadow: '0 2px 15px rgba(0,0,0,0.4)' }}
+            >
+              {heroSubtexts[currentSubtext]}
             </p>
           </div>
 
-          {/* T-Shirts wide */}
-          <Link
-            to={linkFor('tees')}
-            className="col-span-6 row-span-2 group relative overflow-hidden rounded-[2rem] md:rounded-[2.5rem] border border-white/5 bg-zinc-900 flex items-center justify-between p-5 md:p-7"
+          {/* Emotional Quote */}
+          <blockquote 
+            className="text-base md:text-lg text-white/60 italic mb-8 max-w-2xl mx-auto animate-fade-in px-4"
+            style={{ animationDelay: '0.4s' }}
           >
-            <div className="relative z-10">
-              <h3 className="font-serif-editorial text-2xl md:text-3xl italic">
-                Bespoke Tees
-              </h3>
-              <p className="mt-1 text-xs text-white/50">
-                100% cotton · personalized prints
-              </p>
-            </div>
-            <div className="relative h-20 w-20 md:h-24 md:w-24 rounded-2xl overflow-hidden rotate-6 border border-white/10">
-              {images.tees ? (
-                <img
-                  src={images.tees}
-                  alt="Custom T-Shirts"
-                  loading="lazy"
-                  className="h-full w-full object-cover opacity-70"
-                />
-              ) : (
-                <div className="h-full w-full flex items-center justify-center bg-zinc-800">
-                  <Shirt className="h-8 w-8 text-white/40" />
-                </div>
-              )}
-            </div>
-          </Link>
-        </div>
+            <span className="text-primary/70">"</span>
+            Because the best gifts are not bought,
+            <br className="hidden sm:block" />
+            they are created with memories.
+            <span className="text-primary/70">"</span>
+          </blockquote>
 
-        {/* Catalog strip */}
-        <div className="mt-10 md:mt-14">
-          <div className="flex items-baseline">
-            <h4 className="font-serif-editorial text-lg md:text-xl italic">
-              The Catalog
-            </h4>
-            <div className="mx-4 h-px flex-1 bg-white/10" />
-            <span className="text-[10px] uppercase tracking-[0.25em] text-white/40">
-              Explore
-            </span>
-          </div>
-
-          <div className="mt-5 grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-            {[
-              { key: 'keychains', label: 'Keychains', sub: 'Metal & Acrylic', Icon: KeyRound },
-              { key: 'plates', label: 'Plates', sub: 'Ceramic Prints', Icon: CircleDot },
-              { key: 'caps', label: 'Caps', sub: 'Printed & Embroidered', Icon: Shirt },
-              { key: 'mugs', label: 'Mugs', sub: 'Photo & Magic', Icon: Coffee },
-            ].map(({ key, label, sub, Icon }) => (
-              <Link
-                key={key}
-                to={linkFor(key)}
-                className="group aspect-square rounded-2xl md:rounded-3xl border border-white/10 bg-zinc-950 p-4 md:p-6 flex flex-col justify-between transition-colors hover:border-primary/40"
+          {/* Bihar Delivery Points */}
+          <div 
+            className="flex flex-wrap justify-center gap-3 md:gap-4 mb-8 animate-fade-in px-4"
+            style={{ animationDelay: '0.5s' }}
+          >
+            {deliveryPoints.map((point) => (
+              <div 
+                key={point}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/20"
               >
-                <div className="h-10 w-10 rounded-xl bg-zinc-900 flex items-center justify-center text-primary transition-colors group-hover:bg-primary group-hover:text-white">
-                  <Icon className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium">{label}</p>
-                  <p className="mt-0.5 text-[10px] uppercase tracking-widest text-white/40">
-                    {sub}
-                  </p>
-                </div>
-              </Link>
+                <CheckCircle className="h-4 w-4 text-green-400" aria-hidden="true" />
+                <span className="text-xs md:text-sm font-medium text-green-300">{point}</span>
+              </div>
             ))}
           </div>
-        </div>
 
-        {/* Trust strip */}
-        <div className="mt-10 flex items-center justify-between border-t border-white/10 pt-6 text-[10px] font-semibold uppercase tracking-[0.25em] text-white/50">
-          <div className="flex items-center gap-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-            Premium Quality
+          {/* Trust Badges */}
+          <div 
+            className="flex flex-wrap justify-center gap-3 md:gap-5 mb-10 animate-fade-in px-4"
+            style={{ animationDelay: '0.55s' }}
+            role="list"
+            aria-label="Store features"
+          >
+            {trustBadges.map((badge) => (
+              <div 
+                key={badge.text}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm"
+                role="listitem"
+              >
+                <badge.icon className="h-4 w-4 md:h-5 md:w-5 text-primary" aria-hidden="true" />
+                <span className="text-xs md:text-sm font-semibold text-white/90">{badge.text}</span>
+              </div>
+            ))}
           </div>
-          <div className="hidden sm:flex items-center gap-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-            All India Delivery
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-            Prepaid Only
+
+          {/* CTA Buttons */}
+          <nav 
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in px-4"
+            style={{ animationDelay: '0.6s' }}
+            aria-label="Shop actions"
+          >
+            <Link to="/products" aria-label="Create your personalized gift">
+              <Button 
+                size="xl" 
+                className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-bold shadow-lg shadow-primary/40 hover:shadow-xl hover:shadow-primary/50 transition-all duration-300 hover:-translate-y-1 border border-primary/50"
+              >
+                Create Your Gift
+                <ArrowRight className="h-5 w-5 ml-1" aria-hidden="true" />
+              </Button>
+            </Link>
+            <Link to="/products" aria-label="Browse gift categories">
+              <Button 
+                variant="outline" 
+                size="xl"
+                className="w-full sm:w-auto border-2 border-white/30 bg-white/5 text-white hover:bg-white hover:text-black font-bold backdrop-blur-sm transition-all duration-300 hover:-translate-y-1"
+              >
+                Browse Gift Categories
+              </Button>
+            </Link>
+          </nav>
+
+          {/* Eid Countdown (when Ramadan theme active + show_countdown enabled + end_date set) */}
+          {festivalActive && settings?.show_countdown && settings?.end_date && (
+            <div className="mt-10 animate-fade-in" style={{ animationDelay: '0.7s' }}>
+              <EidCountdown endDate={settings.end_date} />
+            </div>
+          )}
+
+          {/* Hidden SEO Content */}
+          <p className="sr-only">
+            Graphic Wala Store offers premium custom printing services across India including personalized photo frames, 
+            PVC card printing, ID card printing, visiting card printing, and keychain printing. 
+            We provide home delivery across India with prepaid orders only. 
+            Order your custom printed gifts online and get them delivered to your doorstep.
+          </p>
+        </header>
+
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce hidden md:block" aria-hidden="true">
+          <div className="w-6 h-10 rounded-full border-2 border-white/20 flex items-start justify-center p-2">
+            <div className="w-1.5 h-3 rounded-full bg-white/40 animate-pulse" />
           </div>
         </div>
       </div>
