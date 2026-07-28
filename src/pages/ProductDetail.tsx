@@ -234,8 +234,9 @@ const ProductDetail = () => {
   const productDescription = product.description 
     ? `${product.description.slice(0, 120)} | Buy ${product.name} online from Graphic Wala. Premium quality, All India delivery.`
     : `Buy ${product.name} online from Graphic Wala. Premium quality custom printing with All India home delivery. Order now!`;
-  const productUrl = `${SITE_URL}/product/${product.id}`;
-  const shareUrl = `${SHARE_BASE_URL}/${product.id}`;
+  const productSlug = (product as any).slug || product.id;
+  const productUrl = `${SITE_URL}/product/${productSlug}`;
+  const shareUrl = `${SHARE_BASE_URL}/${productSlug}`;
   const allImages = product.image_urls && product.image_urls.length > 0 
     ? product.image_urls 
     : product.image_url ? [product.image_url] : [DEFAULT_OG_IMAGE];
