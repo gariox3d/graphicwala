@@ -121,7 +121,6 @@ export interface Profile {
   city?: string | null;
   state?: string | null;
   pincode?: string | null;
-  is_admin?: boolean;
   created_at: string;
   updated_at: string;
 }

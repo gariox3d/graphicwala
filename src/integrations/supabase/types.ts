@@ -916,7 +916,6 @@ export type Database = {
           created_at: string
           full_name: string | null
           id: string
-          is_admin: boolean | null
           phone: string | null
           pincode: string | null
           referred_by: string | null
@@ -930,7 +929,6 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
-          is_admin?: boolean | null
           phone?: string | null
           pincode?: string | null
           referred_by?: string | null
@@ -944,7 +942,6 @@ export type Database = {
           created_at?: string
           full_name?: string | null
           id?: string
-          is_admin?: boolean | null
           phone?: string | null
           pincode?: string | null
           referred_by?: string | null
@@ -1303,7 +1300,7 @@ export type Database = {
         Returns: boolean
       }
       increment_coupon_usage: {
-        Args: { coupon_id_input: string }
+        Args: { coupon_id_input: string; order_id_input?: string }
         Returns: undefined
       }
       reorder_products: { Args: { _product_ids: string[] }; Returns: undefined }

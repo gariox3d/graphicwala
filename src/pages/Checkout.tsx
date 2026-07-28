@@ -314,13 +314,11 @@ const Checkout = () => {
             // Payment verified and order created successfully
             // Track coupon usage
             if (appliedCoupon && verifyData.order_id) {
-              await supabase.from('coupon_usage').insert({
-                coupon_id: appliedCoupon.id,
-                user_id: user!.id,
-                order_id: verifyData.order_id,
+              // Record usage + increment count atomically via secure RPC
+              await supabase.rpc('increment_coupon_usage' as any, {
+                coupon_id_input: appliedCoupon.id,
+                order_id_input: verifyData.order_id,
               });
-              // Increment used_count
-              await supabase.rpc('increment_coupon_usage' as any, { coupon_id_input: appliedCoupon.id });
             }
 
             await clearCart();
