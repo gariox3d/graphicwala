@@ -43,8 +43,41 @@ const AdminHeroShowcase = () => {
     load();
   }, []);
 
+  const ensureFreshAdminSession = async () => {
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (!sessionData.session) {
+      toast.error('Your session has expired. Please sign in again.');
+      return false;
+    }
+
+    const { data: refreshedData, error: refreshError } = await supabase.auth.refreshSession();
+    if (refreshError || !refreshedData.session) {
+      toast.error('Your session could not be refreshed. Please sign in again.');
+      return false;
+    }
+
+    const { data: adminRole, error: roleError } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', refreshedData.session.user.id)
+      .eq('role', 'admin')
+      .maybeSingle();
+
+    if (roleError || !adminRole) {
+      toast.error('Administrator access is required.');
+      return false;
+    }
+
+    return true;
+  };
+
   const save = async () => {
     setSaving(true);
+    const hasAdminSession = await ensureFreshAdminSession();
+    if (!hasAdminSession) {
+      setSaving(false);
+      return;
+    }
     const payload = {
       is_active: row.is_active,
       collection_label: row.collection_label,
@@ -67,10 +100,22 @@ const AdminHeroShowcase = () => {
 
   const handleUpload = async (file: File) => {
     setUploading(true);
-    const ext = file.name.split('.').pop();
-    const path = `hero/${Date.now()}.${ext}`;
+    const hasAdminSession = await ensureFreshAdminSession();
+    if (!hasAdminSession) {
+      setUploading(false);
+      return;
+    }
+
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      setUploading(false);
+      toast.error('Please upload a JPG, PNG, or WebP image.');
+      return;
+    }
+
+    const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+    const path = `hero/${Date.now()}-${crypto.randomUUID()}.${ext}`;
     const { error } = await supabase.storage.from('ad-images').upload(path, file, {
-      upsert: true,
+      upsert: false,
       cacheControl: '3600',
     });
     if (error) {
