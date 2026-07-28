@@ -1,35 +1,30 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Truck, Shield, CreditCard, CheckCircle } from 'lucide-react';
+import { ArrowRight, Truck, Shield, CreditCard, Star, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useFestivalSettings } from '@/hooks/useFestivalSettings';
 import EidCountdown from '@/components/festival/EidCountdown';
+import { useHeroShowcase } from '@/hooks/useHeroShowcase';
 
 const heroSubtexts = [
-  "Photo Frames for Every Special Moment",
-  "PVC Cards & Keychains with Your Photos",
-  "Visiting Cards & ID Cards",
-  "Delivered Across India • Premium Print • Prepaid Only",
+  "Photo Frames, framed forever",
+  "PVC Cards & Keychains, your story",
+  "Visiting Cards that speak for you",
+  "Premium Print. Prepaid. All India.",
 ];
 
 const trustBadges = [
-  { icon: Truck, text: "All India Delivery" },
-  { icon: Shield, text: "Premium Quality" },
-  { icon: CreditCard, text: "Prepaid Only" },
-];
-
-const deliveryPoints = [
-  "All India Delivery Available",
-  "No Cash on Delivery",
-  "Online Prepaid Orders Only",
+  { icon: Truck, text: "All-India Delivery" },
+  { icon: Shield, text: "Premium Print" },
+  { icon: CreditCard, text: "Prepaid & Secure" },
 ];
 
 const HeroSection = () => {
   const [currentSubtext, setCurrentSubtext] = useState(0);
   const [isAnimating, setIsAnimating] = useState(true);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const { settings, isThemeActive } = useFestivalSettings();
   const festivalActive = isThemeActive();
+  const { data: showcase } = useHeroShowcase();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -39,219 +34,179 @@ const HeroSection = () => {
         setIsAnimating(true);
       }, 300);
     }, 3500);
-
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({
-        x: (e.clientX / window.innerWidth) * 100,
-        y: (e.clientY / window.innerHeight) * 100,
-      });
-    };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
+  const card = {
+    collection_label: showcase?.collection_label || 'COLLECTION 01',
+    eyebrow: showcase?.eyebrow || 'YOUR PHOTO',
+    title: showcase?.title || 'A moment,\nframed forever.',
+    price_prefix: showcase?.price_prefix || 'STARTS AT',
+    price_label: showcase?.price_label || '₹99',
+    rating_value: showcase?.rating_value || '4.9 / 5',
+    rating_subtitle: showcase?.rating_subtitle || '10K+ ORDERS',
+    image_url: showcase?.image_url || null,
+    is_active: showcase?.is_active !== false,
+  };
 
   return (
-    <section 
-      className="relative min-h-[95vh] md:min-h-[90vh] flex items-center overflow-hidden"
+    <section
+      className="relative bg-white overflow-hidden"
       aria-label="Graphic Wala - Custom Printing Store India"
     >
-      {/* Premium Animated Gradient Background */}
-      <div className="absolute inset-0 bg-[#0a0a0a]">
-        {/* Animated gradient orbs */}
-        <div 
-          className="absolute w-[800px] h-[800px] rounded-full blur-[150px] opacity-40 animate-pulse"
-          style={{ 
-            background: 'radial-gradient(circle, hsl(0, 85%, 35%) 0%, transparent 70%)',
-            top: '-20%',
-            left: '-10%',
-            animationDuration: '6s',
-            transform: `translate(${mousePosition.x * 0.02}px, ${mousePosition.y * 0.02}px)`,
-          }}
-        />
-        <div 
-          className="absolute w-[600px] h-[600px] rounded-full blur-[120px] opacity-30 animate-pulse"
-          style={{ 
-            background: 'radial-gradient(circle, hsl(0, 70%, 25%) 0%, transparent 70%)',
-            bottom: '-15%',
-            right: '-5%',
-            animationDuration: '8s',
-            animationDelay: '2s',
-            transform: `translate(${-mousePosition.x * 0.015}px, ${-mousePosition.y * 0.015}px)`,
-          }}
-        />
-        <div 
-          className="absolute w-[500px] h-[500px] rounded-full blur-[100px] opacity-25 animate-pulse"
-          style={{ 
-            background: 'radial-gradient(circle, hsl(350, 80%, 20%) 0%, transparent 70%)',
-            top: '40%',
-            left: '50%',
-            transform: `translate(-50%, -50%) translate(${mousePosition.x * 0.01}px, ${mousePosition.y * 0.01}px)`,
-            animationDuration: '10s',
-            animationDelay: '1s',
-          }}
-        />
-        
-        {/* Floating particles */}
-        <div className="absolute inset-0 overflow-hidden">
-          {[...Array(20)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute rounded-full bg-primary/20 animate-pulse"
-              style={{
-                width: `${Math.random() * 4 + 2}px`,
-                height: `${Math.random() * 4 + 2}px`,
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                animationDuration: `${Math.random() * 4 + 3}s`,
-                animationDelay: `${Math.random() * 2}s`,
-              }}
-            />
-          ))}
+      {/* Subtle editorial grid background */}
+      <div
+        className="absolute inset-0 opacity-[0.04] pointer-events-none"
+        style={{
+          backgroundImage:
+            'linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)',
+          backgroundSize: '80px 80px',
+        }}
+      />
+
+      <div className="container relative z-10 py-10 md:py-16">
+        {/* Brand row — logo + brand name always on one line */}
+        <div className="flex items-center gap-2 mb-6 whitespace-nowrap">
+          <div className="w-8 h-8 shrink-0 rounded-md bg-primary flex items-center justify-center">
+            <span className="text-white font-bold text-sm">G</span>
+          </div>
+          <span className="font-bold text-lg tracking-tight text-foreground shrink-0">
+            Graphic Wala
+          </span>
+          <span className="ml-2 hidden sm:inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground shrink-0">
+            <Sparkles className="h-3 w-3 text-primary" /> Custom Print Studio
+          </span>
         </div>
 
-        {/* Subtle grid overlay */}
-        <div className="absolute inset-0 opacity-[0.03] bg-[linear-gradient(rgba(255,255,255,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.1)_1px,transparent_1px)] bg-[size:60px_60px]" />
-        
-        {/* Dark vignette overlay */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)]" />
-      </div>
+        <div className="grid lg:grid-cols-12 gap-10 items-center">
+          {/* Left: editorial copy */}
+          <header className="lg:col-span-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/30 bg-primary/5 text-primary text-[11px] font-bold uppercase tracking-widest mb-6 animate-fade-in">
+              <span className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
+              India's Favourite Custom Gift Studio
+            </div>
 
-      <div className="container relative z-10 py-16 md:py-20">
-        <header className="max-w-4xl mx-auto text-center">
-          {/* Top Badge */}
-          <div 
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary/15 border border-primary/25 text-primary text-sm font-bold mb-8 animate-fade-in backdrop-blur-md"
-            style={{ animationDelay: '0.1s' }}
-          >
-            <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-            India's Favorite Custom Gift Store
-          </div>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.05] tracking-tight text-foreground mb-5">
+              Your Memories,
+              <br />
+              <span className="relative inline-block">
+                <span
+                  className={`text-primary transition-all duration-500 ${
+                    isAnimating ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'
+                  }`}
+                >
+                  {heroSubtexts[currentSubtext]}
+                </span>
+              </span>
+            </h1>
 
-          {/* Main Heading */}
-          <h1 
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-white mb-6 animate-fade-in"
-            style={{ 
-              textShadow: '0 4px 30px rgba(0,0,0,0.5), 0 0 60px rgba(220,38,38,0.15)',
-              animationDelay: '0.2s'
-            }}
-          >
-            <span className="block text-lg sm:text-xl md:text-2xl text-white/70 font-semibold mb-2">Graphic Wala</span>
-            Personalized Gifts Made from
-            <br />
-            <span className="text-primary">Your Memories</span> 🎁
-          </h1>
-
-          {/* Animated Subtext */}
-          <div className="h-[60px] md:h-[70px] flex items-center justify-center mb-6">
-            <p 
-              className={`text-lg md:text-xl lg:text-2xl text-white/85 font-medium transition-all duration-500 ${
-                isAnimating ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'
-              }`}
-              style={{ textShadow: '0 2px 15px rgba(0,0,0,0.4)' }}
-            >
-              {heroSubtexts[currentSubtext]}
+            <p className="text-base md:text-lg text-muted-foreground max-w-lg mb-8 leading-relaxed">
+              Personalised photo frames, PVC cards, keychains & gifts —
+              printed with premium quality and delivered across India.
             </p>
-          </div>
 
-          {/* Emotional Quote */}
-          <blockquote 
-            className="text-base md:text-lg text-white/60 italic mb-8 max-w-2xl mx-auto animate-fade-in px-4"
-            style={{ animationDelay: '0.4s' }}
-          >
-            <span className="text-primary/70">"</span>
-            Because the best gifts are not bought,
-            <br className="hidden sm:block" />
-            they are created with memories.
-            <span className="text-primary/70">"</span>
-          </blockquote>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-8">
+              <Link to="/products" className="w-full sm:w-auto">
+                <Button
+                  size="xl"
+                  className="w-full sm:w-auto bg-foreground text-background hover:bg-foreground/90 font-bold rounded-full shadow-md hover:shadow-lg transition-all"
+                >
+                  Start Creating
+                  <ArrowRight className="h-5 w-5 ml-1" />
+                </Button>
+              </Link>
+              <Link to="/products" className="w-full sm:w-auto">
+                <Button
+                  variant="outline"
+                  size="xl"
+                  className="w-full sm:w-auto rounded-full border-2 border-foreground/15 hover:bg-muted font-semibold"
+                >
+                  Browse Categories
+                </Button>
+              </Link>
+            </div>
 
-          {/* Bihar Delivery Points */}
-          <div 
-            className="flex flex-wrap justify-center gap-3 md:gap-4 mb-8 animate-fade-in px-4"
-            style={{ animationDelay: '0.5s' }}
-          >
-            {deliveryPoints.map((point) => (
-              <div 
-                key={point}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/10 border border-green-500/20"
-              >
-                <CheckCircle className="h-4 w-4 text-green-400" aria-hidden="true" />
-                <span className="text-xs md:text-sm font-medium text-green-300">{point}</span>
+            <div className="flex flex-wrap gap-x-6 gap-y-3">
+              {trustBadges.map((badge) => (
+                <div key={badge.text} className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+                    <badge.icon className="h-4 w-4 text-primary" />
+                  </div>
+                  <span className="text-sm font-semibold text-foreground">
+                    {badge.text}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </header>
+
+          {/* Right: showcase card */}
+          {card.is_active && (
+            <div className="lg:col-span-6 relative">
+              <div className="relative mx-auto max-w-md">
+                {/* Rating chip */}
+                <div className="absolute -top-4 right-2 sm:right-6 z-20 bg-foreground text-background rounded-2xl px-4 py-2 shadow-xl flex items-center gap-2 animate-fade-in">
+                  <Star className="h-4 w-4 fill-primary text-primary" />
+                  <div className="leading-tight">
+                    <div className="text-sm font-bold">{card.rating_value}</div>
+                    <div className="text-[10px] uppercase tracking-widest opacity-80">
+                      {card.rating_subtitle}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Card */}
+                <div className="relative rounded-[2rem] border border-foreground/10 bg-white shadow-[0_20px_60px_-20px_rgba(0,0,0,0.15)] overflow-hidden aspect-[4/5]">
+                  <div className="absolute top-5 left-5 z-10">
+                    <span className="inline-block px-3 py-1 rounded-full bg-white/90 border border-foreground/10 text-[11px] font-bold tracking-widest text-foreground">
+                      {card.collection_label}
+                    </span>
+                  </div>
+
+                  {card.image_url ? (
+                    <img
+                      src={card.image_url}
+                      alt={card.title}
+                      className="absolute inset-0 w-full h-full object-cover"
+                      loading="eager"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-8 bg-gradient-to-b from-white to-muted/40">
+                      <div className="text-xs font-bold tracking-[0.25em] text-primary mb-3">
+                        {card.eyebrow}
+                      </div>
+                      <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-foreground leading-tight whitespace-pre-line">
+                        {card.title}
+                      </h2>
+                      <div className="w-16 h-0.5 bg-primary mt-6" />
+                    </div>
+                  )}
+                </div>
+
+                {/* Price chip */}
+                <div className="absolute -bottom-4 left-2 sm:-left-4 z-20 bg-white border border-foreground/10 rounded-2xl px-4 py-2 shadow-xl animate-fade-in">
+                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">
+                    {card.price_prefix}
+                  </div>
+                  <div className="text-xl font-black text-foreground leading-none">
+                    {card.price_label}
+                  </div>
+                </div>
               </div>
-            ))}
-          </div>
-
-          {/* Trust Badges */}
-          <div 
-            className="flex flex-wrap justify-center gap-3 md:gap-5 mb-10 animate-fade-in px-4"
-            style={{ animationDelay: '0.55s' }}
-            role="list"
-            aria-label="Store features"
-          >
-            {trustBadges.map((badge) => (
-              <div 
-                key={badge.text}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm"
-                role="listitem"
-              >
-                <badge.icon className="h-4 w-4 md:h-5 md:w-5 text-primary" aria-hidden="true" />
-                <span className="text-xs md:text-sm font-semibold text-white/90">{badge.text}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* CTA Buttons */}
-          <nav 
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in px-4"
-            style={{ animationDelay: '0.6s' }}
-            aria-label="Shop actions"
-          >
-            <Link to="/products" aria-label="Create your personalized gift">
-              <Button 
-                size="xl" 
-                className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-bold shadow-lg shadow-primary/40 hover:shadow-xl hover:shadow-primary/50 transition-all duration-300 hover:-translate-y-1 border border-primary/50"
-              >
-                Create Your Gift
-                <ArrowRight className="h-5 w-5 ml-1" aria-hidden="true" />
-              </Button>
-            </Link>
-            <Link to="/products" aria-label="Browse gift categories">
-              <Button 
-                variant="outline" 
-                size="xl"
-                className="w-full sm:w-auto border-2 border-white/30 bg-white/5 text-white hover:bg-white hover:text-black font-bold backdrop-blur-sm transition-all duration-300 hover:-translate-y-1"
-              >
-                Browse Gift Categories
-              </Button>
-            </Link>
-          </nav>
-
-          {/* Eid Countdown (when Ramadan theme active + show_countdown enabled + end_date set) */}
-          {festivalActive && settings?.show_countdown && settings?.end_date && (
-            <div className="mt-10 animate-fade-in" style={{ animationDelay: '0.7s' }}>
-              <EidCountdown endDate={settings.end_date} />
             </div>
           )}
-
-          {/* Hidden SEO Content */}
-          <p className="sr-only">
-            Graphic Wala Store offers premium custom printing services across India including personalized photo frames, 
-            PVC card printing, ID card printing, visiting card printing, and keychain printing. 
-            We provide home delivery across India with prepaid orders only. 
-            Order your custom printed gifts online and get them delivered to your doorstep.
-          </p>
-        </header>
-
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce hidden md:block" aria-hidden="true">
-          <div className="w-6 h-10 rounded-full border-2 border-white/20 flex items-start justify-center p-2">
-            <div className="w-1.5 h-3 rounded-full bg-white/40 animate-pulse" />
-          </div>
         </div>
+
+        {festivalActive && settings?.show_countdown && settings?.end_date && (
+          <div className="mt-10">
+            <EidCountdown endDate={settings.end_date} />
+          </div>
+        )}
+
+        <p className="sr-only">
+          Graphic Wala offers custom printing across India — personalised photo frames,
+          PVC cards, ID cards, visiting cards and keychains with premium print quality and prepaid delivery.
+        </p>
       </div>
     </section>
   );
