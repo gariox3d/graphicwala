@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import LoginPromptDialog from '@/components/reviews/LoginPromptDialog';
 import PhotoPrivacyNotice from '@/components/PhotoPrivacyNotice';
+import { SignedImage } from '@/components/SignedImage';
 
 interface UploadField {
   id: string;
@@ -172,8 +173,10 @@ const DesignUpload = ({
                 <div className="relative border rounded-lg overflow-hidden">
                   {previews[field.id] === 'pdf' ? (
                     <div className="h-32 bg-muted flex items-center justify-center">PDF uploaded</div>
+                  ) : previews[field.id]?.startsWith('data:') ? (
+                    <img src={previews[field.id]} alt={field.label} className="w-full h-32 object-contain bg-muted" />
                   ) : (
-                    <img src={previews[field.id] || uploadedUrls[field.id]} alt={field.label} className="w-full h-32 object-contain bg-muted" />
+                    <SignedImage url={uploadedUrls[field.id]} alt={field.label} className="w-full h-32 object-contain bg-muted" />
                   )}
                   <Button type="button" variant="destructive" size="icon" className="absolute top-2 right-2 h-6 w-6" onClick={() => handleRemove(field.id)}>
                     <X className="h-3 w-3" />

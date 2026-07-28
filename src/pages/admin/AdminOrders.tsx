@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
 import { Search, ShoppingCart, Eye, Package, MapPin, CreditCard, User, Image, Download, Trash2, Truck, Store, MessageCircle } from 'lucide-react';
+import { SignedImage, openSignedDesign } from '@/components/SignedImage';
 
 interface OrderWithProfile extends Order {
   profiles?: { full_name: string | null };
@@ -597,21 +598,12 @@ const AdminOrders = () => {
                                     PDF Document
                                   </div>
                                 ) : (
-                                  <img
-                                    src={upload.file_url}
-                                    alt={upload.label}
-                                    className="w-full h-full object-contain"
-                                  />
+                                  <SignedImage url={upload.file_url} alt={upload.label} className="w-full h-full object-contain" />
                                 )}
                               </div>
-                              <a
-                                href={upload.file_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
-                              >
+                              <button type="button" onClick={() => openSignedDesign(upload.file_url)} className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
                                 <Download className="h-3 w-3" />Download Original
-                              </a>
+                              </button>
                             </div>
                           ))}
                         </div>
@@ -626,16 +618,11 @@ const AdminOrders = () => {
                                 <Image className="h-3 w-3" />Front Design
                               </p>
                               <div className="aspect-video bg-muted rounded overflow-hidden">
-                                <img src={item.front_design_url} alt="Front" className="w-full h-full object-contain" />
+                                <SignedImage url={item.front_design_url} alt="Front" className="w-full h-full object-contain" />
                               </div>
-                              <a
-                                href={item.front_design_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
-                              >
+                              <button type="button" onClick={() => openSignedDesign(item.front_design_url || '')} className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
                                 <Download className="h-3 w-3" />Download
-                              </a>
+                              </button>
                             </div>
                           )}
                           {item.back_design_url && (
@@ -644,16 +631,11 @@ const AdminOrders = () => {
                                 <Image className="h-3 w-3" />Back Design
                               </p>
                               <div className="aspect-video bg-muted rounded overflow-hidden">
-                                <img src={item.back_design_url} alt="Back" className="w-full h-full object-contain" />
+                                <SignedImage url={item.back_design_url} alt="Back" className="w-full h-full object-contain" />
                               </div>
-                              <a
-                                href={item.back_design_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
-                              >
+                              <button type="button" onClick={() => openSignedDesign(item.back_design_url || '')} className="inline-flex items-center gap-1 text-sm text-primary hover:underline">
                                 <Download className="h-3 w-3" />Download
-                              </a>
+                              </button>
                             </div>
                           )}
                         </div>

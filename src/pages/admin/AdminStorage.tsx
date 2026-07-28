@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { Trash2, Image, RefreshCw, HardDrive, Eye, MessageCircle, User, ImageOff } from 'lucide-react';
+import { SignedImage, openSignedDesign } from '@/components/SignedImage';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -446,13 +447,11 @@ const AdminStorage = () => {
                               onClick={() => setPreviewFile(file)}
                             >
                               {isImage && !hasError ? (
-                                <img
-                                  src={previewUrl}
-                                  alt={file.name}
-                                  className="w-full h-full object-cover"
-                                  loading="lazy"
-                                  onError={() => handleImgError(file.fullPath)}
-                                />
+                                isCustomerDesigns ? (
+                                  <SignedImage url={file.fullPath} alt={file.name} className="w-full h-full object-cover" loading="lazy" />
+                                ) : (
+                                  <img src={previewUrl} alt={file.name} className="w-full h-full object-cover" loading="lazy" onError={() => handleImgError(file.fullPath)} />
+                                )
                               ) : (
                                 <div className="text-center p-2">
                                   <ImageOff className="h-8 w-8 mx-auto text-muted-foreground/40" />
@@ -551,15 +550,11 @@ const AdminStorage = () => {
                   {/* Full image */}
                   <div className="bg-muted rounded-lg overflow-hidden flex items-center justify-center min-h-[200px]">
                     {isImg ? (
-                      <img
-                        src={url}
-                        alt={previewFile.name}
-                        className="max-w-full max-h-[60vh] object-contain"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).style.display = 'none';
-                          (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
-                        }}
-                      />
+                      isCustomerDesigns ? (
+                        <SignedImage url={previewFile.fullPath} alt={previewFile.name} className="max-w-full max-h-[60vh] object-contain" />
+                      ) : (
+                        <img src={url} alt={previewFile.name} className="max-w-full max-h-[60vh] object-contain" />
+                      )
                     ) : null}
                     <div className={`text-center p-8 ${isImg ? 'hidden' : ''}`}>
                       <ImageOff className="h-16 w-16 mx-auto text-muted-foreground/40" />
@@ -623,7 +618,7 @@ const AdminStorage = () => {
                   )}
 
                   {/* Open in new tab */}
-                  <Button variant="outline" className="w-full" onClick={() => window.open(url, '_blank')}>
+                  <Button variant="outline" className="w-full" onClick={() => isCustomerDesigns ? openSignedDesign(previewFile.fullPath) : window.open(url, '_blank')}>
                     Open Full Image in New Tab
                   </Button>
                 </div>
