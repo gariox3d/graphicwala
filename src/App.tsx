@@ -18,6 +18,7 @@ import AdminBeforeAfter from "./pages/admin/AdminBeforeAfter";
 import AdminAbandonedCarts from "./pages/admin/AdminAbandonedCarts";
 import AdminBilling from "./pages/admin/AdminBilling";
 import AdminPickupEarnings from "./pages/admin/AdminPickupEarnings";
+import AdminHeroShowcase from "./pages/admin/AdminHeroShowcase";
 import Index from "./pages/Index";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
@@ -122,6 +123,7 @@ const App = () => {
                 <Route path="/admin/abandoned-carts" element={<AdminGuard><AdminAbandonedCarts /></AdminGuard>} />
                 <Route path="/admin/pickup-earnings" element={<AdminGuard><AdminPickupEarnings /></AdminGuard>} />
                 <Route path="/admin/billing" element={<AdminGuard><AdminBilling /></AdminGuard>} />
+                <Route path="/admin/hero-showcase" element={<AdminGuard><AdminHeroShowcase /></AdminGuard>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>
