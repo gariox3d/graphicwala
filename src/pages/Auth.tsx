@@ -31,7 +31,15 @@ const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
   const { user, signIn, signUp, loading: authLoading } = useAuth();
+
+  // Countdown ticker for Resend OTP cooldown
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const t = setInterval(() => setResendCooldown((s) => (s > 0 ? s - 1 : 0)), 1000);
+    return () => clearInterval(t);
+  }, [resendCooldown]);
 
   // Handle redirect after login
   useEffect(() => {
@@ -95,6 +103,7 @@ const Auth = () => {
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (resendCooldown > 0) return;
     setLoading(true);
 
     try {
@@ -107,14 +116,29 @@ const Auth = () => {
       setPassword('');
       setConfirmPassword('');
       setMode('verify-otp');
+      setResendCooldown(60);
     } catch (err) {
       toast({
         title: 'OTP Sent',
         description: 'If an account exists, a 6-digit code has been sent to your email.',
       });
       setMode('verify-otp');
+      setResendCooldown(60);
     }
 
+    setLoading(false);
+  };
+
+  const handleResendOtp = async () => {
+    if (resendCooldown > 0 || !email) return;
+    setLoading(true);
+    try {
+      await supabase.functions.invoke('send-password-otp', { body: { email } });
+      toast({ title: 'OTP Resent', description: 'A new 6-digit code has been sent to your email.' });
+    } catch {
+      toast({ title: 'OTP Resent', description: 'A new 6-digit code has been sent to your email.' });
+    }
+    setResendCooldown(60);
     setLoading(false);
   };
 
@@ -330,11 +354,11 @@ const Auth = () => {
         </button>
         <button
           type="button"
-          onClick={(e) => { e.preventDefault(); handleForgotPassword(e as any); }}
-          className="text-primary font-medium hover:underline"
-          disabled={loading}
+          onClick={handleResendOtp}
+          className="text-primary font-medium hover:underline disabled:opacity-50 disabled:no-underline disabled:cursor-not-allowed"
+          disabled={loading || resendCooldown > 0}
         >
-          Resend OTP
+          {resendCooldown > 0 ? `Resend OTP in ${resendCooldown}s` : 'Resend OTP'}
         </button>
       </div>
     </form>

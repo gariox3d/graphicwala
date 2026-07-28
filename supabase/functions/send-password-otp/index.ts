@@ -78,7 +78,7 @@ serve(async (req) => {
         method: "POST",
         headers: { "Authorization": `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
         body: JSON.stringify({
-          from: "Graphic Wala <onboarding@resend.dev>",
+          from: "Graphic Wala <orders@graphicwala.com>",
           to: [normalizedEmail],
           subject: `${otp} is your Graphic Wala password reset code`,
           html: otpEmailHtml(otp),
