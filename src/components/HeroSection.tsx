@@ -66,7 +66,7 @@ const HeroSection = () => {
 
       <div className="container relative z-10 py-10 md:py-16">
         {/* Brand row — logo + brand name always on one line */}
-        <div className="flex items-center gap-2 mb-6 whitespace-nowrap">
+        <div className="flex items-center justify-center gap-2 mb-6 whitespace-nowrap">
           <div className="w-8 h-8 shrink-0 rounded-md bg-primary flex items-center justify-center">
             <span className="text-white font-bold text-sm">G</span>
           </div>
@@ -78,9 +78,9 @@ const HeroSection = () => {
           </span>
         </div>
 
-        <div className="grid lg:grid-cols-12 gap-10 items-center">
+        <div className="grid lg:grid-cols-12 gap-10 items-center text-center lg:text-center">
           {/* Left: editorial copy */}
-          <header className="lg:col-span-6">
+          <header className="lg:col-span-6 flex flex-col items-center">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/30 bg-primary/5 text-primary text-[11px] font-bold uppercase tracking-widest mb-6 animate-fade-in">
               <span className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
               India's Favourite Custom Gift Studio
@@ -100,12 +100,12 @@ const HeroSection = () => {
               </span>
             </h1>
 
-            <p className="text-base md:text-lg text-muted-foreground max-w-lg mb-8 leading-relaxed">
+            <p className="text-base md:text-lg text-muted-foreground max-w-lg mb-8 leading-relaxed mx-auto">
               Personalised photo frames, PVC cards, keychains & gifts —
               printed with premium quality and delivered across India.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-8">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 mb-8 w-full">
               <Link to="/products" className="w-full sm:w-auto">
                 <Button
                   size="xl"
@@ -126,7 +126,7 @@ const HeroSection = () => {
               </Link>
             </div>
 
-            <div className="flex flex-wrap gap-x-6 gap-y-3">
+            <div className="flex flex-wrap justify-center gap-x-6 gap-y-3">
               {trustBadges.map((badge) => (
                 <div key={badge.text} className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
