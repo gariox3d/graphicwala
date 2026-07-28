@@ -188,7 +188,7 @@ const Cart = () => {
                     <Card key={item.id} className={!allRequiredUploaded && hasCustomization ? 'border-destructive/50' : ''}>
                       <CardContent className="p-4">
                         <div className="flex gap-4">
-                          <Link to={`/product/${product?.id}`} className="w-20 h-20 rounded-lg bg-muted overflow-hidden flex-shrink-0">
+                          <Link to={`/product/${(product as any)?.slug || product?.id}`} className="w-20 h-20 rounded-lg bg-muted overflow-hidden flex-shrink-0">
                             {product?.image_url ? (
                               <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
                             ) : (
