@@ -83,7 +83,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
       style={isOutOfStock ? { filter: 'grayscale(100%)', opacity: 0.65 } : undefined}
     >
       <Link 
-        to={`/product/${product.id}`} 
+        to={`/product/${(product as any).slug || product.id}`} 
         className="block relative aspect-square overflow-hidden bg-muted"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -159,7 +159,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
       </Link>
 
       <div className="p-4">
-        <Link to={`/product/${product.id}`}>
+        <Link to={`/product/${(product as any).slug || product.id}`}>
           <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-1">
             {product.name}
           </h3>

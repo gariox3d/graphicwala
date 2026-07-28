@@ -93,7 +93,7 @@ const SearchBar = ({ onNavigate }: { onNavigate?: () => void }) => {
             results.map((product) => (
               <Link
                 key={product.id}
-                to={`/product/${product.id}`}
+                to={`/product/${(product as any).slug || product.id}`}
                 onClick={handleSelect}
                 className="flex items-center gap-3 px-3 py-2.5 hover:bg-muted transition-colors"
               >

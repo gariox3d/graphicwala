@@ -51,7 +51,7 @@ const ProductMarquee = () => {
         {items.map((product, idx) => (
           <Link
             key={`${product.id}-${idx}`}
-            to={`/product/${product.id}`}
+            to={`/product/${(product as any).slug || product.id}`}
             className="group flex-shrink-0 w-36 md:w-44"
             tabIndex={-1}
           >
