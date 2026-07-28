@@ -461,6 +461,51 @@ export type Database = {
         }
         Relationships: []
       }
+      hero_showcase: {
+        Row: {
+          collection_label: string
+          created_at: string
+          eyebrow: string
+          id: string
+          image_url: string | null
+          is_active: boolean
+          price_label: string
+          price_prefix: string
+          rating_subtitle: string
+          rating_value: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          collection_label?: string
+          created_at?: string
+          eyebrow?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          price_label?: string
+          price_prefix?: string
+          rating_subtitle?: string
+          rating_value?: string
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          collection_label?: string
+          created_at?: string
+          eyebrow?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          price_label?: string
+          price_prefix?: string
+          rating_subtitle?: string
+          rating_value?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       loyalty_balances: {
         Row: {
           current_balance: number
