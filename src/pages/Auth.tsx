@@ -28,6 +28,8 @@ const Auth = () => {
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
+  const [resetId, setResetId] = useState('');
+  const [resetToken, setResetToken] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -142,44 +144,75 @@ const Auth = () => {
     setLoading(false);
   };
 
-  const handleVerifyOtpAndReset = async (e: React.FormEvent) => {
+  const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!/^\d{6}$/.test(otp)) {
       toast({ title: 'Invalid OTP', description: 'Please enter the 6-digit code from your email.', variant: 'destructive' });
       return;
     }
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('verify-password-otp', {
+        body: { action: 'verify', email, otp },
+      });
+
+      if (error || !data?.success || !data.resetId || !data.resetToken) {
+        const msg = (data && data.error) || error?.message || 'Verification failed';
+        toast({ title: 'Failed', description: msg, variant: 'destructive' });
+        return;
+      }
+
+      setResetId(data.resetId);
+      setResetToken(data.resetToken);
+      setPassword('');
+      setConfirmPassword('');
+      setMode('reset-password');
+      toast({ title: 'OTP Verified', description: 'Now create your new password.' });
+    } catch {
+      toast({ title: 'Error', description: 'Something went wrong. Please try again.', variant: 'destructive' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resetId || !resetToken) {
+      toast({ title: 'Verification expired', description: 'Please request and verify a new OTP.', variant: 'destructive' });
+      setMode('forgot-password');
+      return;
+    }
     if (password !== confirmPassword) {
       toast({ title: 'Passwords do not match', description: 'Please make sure both passwords are the same.', variant: 'destructive' });
       return;
     }
-    if (password.length < 6) {
-      toast({ title: 'Password too short', description: 'Password must be at least 6 characters', variant: 'destructive' });
+    if (password.length < 8) {
+      toast({ title: 'Password too short', description: 'Password must be at least 8 characters.', variant: 'destructive' });
       return;
     }
 
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke('verify-password-otp', {
-        body: { email, otp, newPassword: password },
+        body: { action: 'reset', resetId, resetToken, newPassword: password },
       });
-
-      if (error || (data && data.error)) {
-        const msg = (data && data.error) || error?.message || 'Verification failed';
-        toast({ title: 'Failed', description: msg, variant: 'destructive' });
-        setLoading(false);
+      if (error || !data?.success) {
+        toast({ title: 'Password not updated', description: data?.error || error?.message || 'Please try again.', variant: 'destructive' });
         return;
       }
-
       toast({ title: 'Password Updated!', description: 'Your password has been reset. Please login with your new password.' });
       setOtp('');
       setPassword('');
       setConfirmPassword('');
+      setResetId('');
+      setResetToken('');
       setMode('login');
-    } catch (err) {
+    } catch {
       toast({ title: 'Error', description: 'Something went wrong. Please try again.', variant: 'destructive' });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const getFriendlyErrorMessage = (message: string): string => {
@@ -255,13 +288,13 @@ const Auth = () => {
   );
 
   const renderVerifyOtpForm = () => (
-    <form onSubmit={handleVerifyOtpAndReset} className="space-y-4">
+    <form onSubmit={handleVerifyOtp} className="space-y-4">
       <div className="text-center mb-6">
         <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
           <Lock className="h-8 w-8 text-green-600" />
         </div>
         <p className="text-sm text-muted-foreground">
-          Enter the 6-digit OTP sent to <strong>{email}</strong> and set your new password.
+          Enter the 6-digit OTP sent to <strong>{email}</strong>.
         </p>
       </div>
 
@@ -281,57 +314,6 @@ const Auth = () => {
         />
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="password" className="text-sm font-medium">New Password</Label>
-        <div className="relative">
-          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            id="password"
-            type={showPassword ? 'text' : 'password'}
-            placeholder="Enter new password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="pl-10 pr-10"
-            required
-            minLength={6}
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-            tabIndex={-1}
-          >
-            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-          </button>
-        </div>
-        <p className="text-xs text-muted-foreground">Minimum 6 characters</p>
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="confirmPassword" className="text-sm font-medium">Confirm Password</Label>
-        <div className="relative">
-          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            id="confirmPassword"
-            type={showConfirmPassword ? 'text' : 'password'}
-            placeholder="Confirm new password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            className="pl-10 pr-10"
-            required
-            minLength={6}
-          />
-          <button
-            type="button"
-            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-            tabIndex={-1}
-          >
-            {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-          </button>
-        </div>
-      </div>
-
       <Button type="submit" variant="hero" className="w-full h-12" disabled={loading}>
         {loading ? (
           <div className="flex items-center gap-2">
@@ -339,7 +321,7 @@ const Auth = () => {
             Verifying...
           </div>
         ) : (
-          'Verify OTP & Reset Password'
+          'Verify OTP'
         )}
       </Button>
 
@@ -361,6 +343,41 @@ const Auth = () => {
           {resendCooldown > 0 ? `Resend OTP in ${resendCooldown}s` : 'Resend OTP'}
         </button>
       </div>
+    </form>
+  );
+
+  const renderResetPasswordForm = () => (
+    <form onSubmit={handleResetPassword} className="space-y-4">
+      <div className="text-center mb-6">
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-4">
+          <Lock className="h-8 w-8 text-primary" />
+        </div>
+        <p className="text-sm text-muted-foreground">OTP verified successfully. Create a strong new password.</p>
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="newPassword">New Password</Label>
+        <div className="relative">
+          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input id="newPassword" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} className="pl-10 pr-10" minLength={8} required autoFocus />
+          <Button type="button" variant="ghost" size="icon" onClick={() => setShowPassword((value) => !value)} className="absolute right-1 top-1/2 -translate-y-1/2" aria-label={showPassword ? 'Hide password' : 'Show password'}>
+            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </Button>
+        </div>
+        <p className="text-xs text-muted-foreground">Use at least 8 characters and avoid common passwords.</p>
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="confirmNewPassword">Confirm Password</Label>
+        <div className="relative">
+          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input id="confirmNewPassword" type={showConfirmPassword ? 'text' : 'password'} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="pl-10 pr-10" minLength={8} required />
+          <Button type="button" variant="ghost" size="icon" onClick={() => setShowConfirmPassword((value) => !value)} className="absolute right-1 top-1/2 -translate-y-1/2" aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}>
+            {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </Button>
+        </div>
+      </div>
+      <Button type="submit" variant="hero" className="w-full h-12" disabled={loading}>
+        {loading ? 'Updating Password...' : 'Set New Password'}
+      </Button>
     </form>
   );
 
@@ -494,7 +511,7 @@ const Auth = () => {
     switch (mode) {
       case 'signup': return 'Join Graphic Wala for a premium experience';
       case 'forgot-password': return "No worries, we'll help you recover it";
-      case 'verify-otp': return 'Enter OTP from email and set a new password';
+      case 'verify-otp': return 'Enter the code sent to your email';
       case 'reset-password': return 'Almost there! Create your new password';
       default: return 'Login to access your orders and designs';
     }
@@ -525,6 +542,7 @@ const Auth = () => {
             {/* Form Content */}
             {mode === 'forgot-password' && renderForgotPasswordForm()}
             {mode === 'verify-otp' && renderVerifyOtpForm()}
+            {mode === 'reset-password' && renderResetPasswordForm()}
             {(mode === 'login' || mode === 'signup') && renderLoginSignupForm()}
 
             {/* Toggle Login/Signup */}
