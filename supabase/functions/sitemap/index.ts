@@ -18,7 +18,7 @@ serve(async (req) => {
     // Fetch all active products
     const { data: products } = await supabase
       .from("products")
-      .select("id, name, updated_at, image_url, image_urls, categories(name)")
+      .select("id, slug, name, updated_at, image_url, image_urls, categories(name)")
       .eq("is_active", true)
       .order("display_order", { ascending: true });
 
