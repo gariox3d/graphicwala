@@ -788,6 +788,7 @@ export type Database = {
           sale_end: string | null
           sale_price: number | null
           sale_start: string | null
+          slug: string
           stock_quantity: number | null
           updated_at: string
           upload_config: Json | null
@@ -817,6 +818,7 @@ export type Database = {
           sale_end?: string | null
           sale_price?: number | null
           sale_start?: string | null
+          slug: string
           stock_quantity?: number | null
           updated_at?: string
           upload_config?: Json | null
@@ -846,6 +848,7 @@ export type Database = {
           sale_end?: string | null
           sale_price?: number | null
           sale_start?: string | null
+          slug?: string
           stock_quantity?: number | null
           updated_at?: string
           upload_config?: Json | null
@@ -1259,6 +1262,7 @@ export type Database = {
         Returns: undefined
       }
       reorder_products: { Args: { _product_ids: string[] }; Returns: undefined }
+      slugify: { Args: { _input: string }; Returns: string }
       validate_referral_code: { Args: { p_code: string }; Returns: boolean }
     }
     Enums: {
