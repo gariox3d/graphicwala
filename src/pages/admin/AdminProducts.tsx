@@ -98,24 +98,30 @@ const AdminProducts = () => {
     const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
     if (swapIdx < 0 || swapIdx >= products.length) return;
 
-    const currentOrder = products[idx].display_order ?? idx;
-    const swapOrder = products[swapIdx].display_order ?? swapIdx;
+    // Reorder in local array first
+    const reordered = [...products];
+    [reordered[idx], reordered[swapIdx]] = [reordered[swapIdx], reordered[idx]];
 
-    const [res1, res2] = await Promise.all([
-      supabase.from('products').update({ display_order: swapOrder }).eq('id', products[idx].id),
-      supabase.from('products').update({ display_order: currentOrder }).eq('id', products[swapIdx].id),
-    ]);
+    // Reassign sequential display_order across ALL products to avoid duplicates/nulls
+    const updates = reordered.map((p, i) => ({ id: p.id, display_order: i + 1 }));
 
-    if (res1.error || res2.error) {
+    // Optimistically update UI
+    const withOrder = reordered.map((p, i) => ({ ...p, display_order: i + 1 }));
+    setProducts(withOrder);
+
+    // Persist to DB
+    const results = await Promise.all(
+      updates.map(u =>
+        supabase.from('products').update({ display_order: u.display_order }).eq('id', u.id)
+      )
+    );
+
+    const failed = results.some(r => r.error);
+    if (failed) {
       toast.error('Failed to reorder');
+      setProducts(products); // revert
       return;
     }
-
-    const updated = [...products];
-    [updated[idx], updated[swapIdx]] = [updated[swapIdx], updated[idx]];
-    updated[idx].display_order = currentOrder;
-    updated[swapIdx].display_order = swapOrder;
-    setProducts(updated);
     toast.success('Order updated');
   };
 
