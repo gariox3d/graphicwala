@@ -87,7 +87,7 @@ const TestimonialsSection = () => {
             Loved by Customers
           </div>
           <h2 id="testimonials-heading" className="text-3xl md:text-5xl font-bold mb-4">
-            What Our <span className="text-gradient">Customers</span> Say
+            What Our <span className="text-primary">Customers</span> Say
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto text-base md:text-lg">
             Real reviews from real customers who love our products ❤️
