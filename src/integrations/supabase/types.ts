@@ -1299,12 +1299,10 @@ export type Database = {
         }
         Returns: boolean
       }
-      increment_coupon_usage:
-        | { Args: { coupon_id_input: string }; Returns: undefined }
-        | {
-            Args: { coupon_id_input: string; order_id_input?: string }
-            Returns: undefined
-          }
+      increment_coupon_usage: {
+        Args: { coupon_id_input: string; order_id_input?: string }
+        Returns: undefined
+      }
       reorder_products: { Args: { _product_ids: string[] }; Returns: undefined }
       slugify: { Args: { _input: string }; Returns: string }
       validate_referral_code: { Args: { p_code: string }; Returns: boolean }
