@@ -39,7 +39,7 @@ const SearchBar = ({ onNavigate }: { onNavigate?: () => void }) => {
     setLoading(true);
     const { data } = await supabase
       .from('products')
-      .select('id, name, price, sale_price, image_url')
+      .select('id, slug, name, price, sale_price, image_url')
       .eq('is_active', true)
       .ilike('name', `%${searchQuery.trim()}%`)
       .limit(6);
