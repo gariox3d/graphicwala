@@ -57,7 +57,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
     }
     if (hasCustomization && requiredUploads.length > 0) {
       toast.info('Please upload required photos before checkout');
-      navigate(`/product/${product.id}`);
+      navigate(`/product/${(product as any).slug || product.id}`);
       return;
     }
     addToCart(product.id);
