@@ -30,6 +30,7 @@ import { useRecentlyViewed } from '@/hooks/useRecentlyViewed';
 const Index = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [categoryImages, setCategoryImages] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const { settings } = useStoreSettings();
   const { viewedIds } = useRecentlyViewed();
@@ -38,9 +39,15 @@ const Index = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const [productsRes, categoriesRes] = await Promise.allSettled([
+        const [productsRes, categoriesRes, catImgRes] = await Promise.allSettled([
           supabase.from('products').select('*').order('display_order', { ascending: true }).limit(8),
           supabase.from('categories').select('*'),
+          supabase
+            .from('products')
+            .select('category_id, image_url')
+            .eq('is_active', true)
+            .not('image_url', 'is', null)
+            .order('display_order', { ascending: true }),
         ]);
 
         if (productsRes.status === 'fulfilled' && productsRes.value.data) {
@@ -48,6 +55,15 @@ const Index = () => {
         }
         if (categoriesRes.status === 'fulfilled' && categoriesRes.value.data) {
           setCategories(categoriesRes.value.data as Category[]);
+        }
+        if (catImgRes.status === 'fulfilled' && catImgRes.value.data) {
+          const map: Record<string, string> = {};
+          for (const row of catImgRes.value.data as Array<{ category_id: string; image_url: string }>) {
+            if (row.category_id && row.image_url && !map[row.category_id]) {
+              map[row.category_id] = row.image_url;
+            }
+          }
+          setCategoryImages(map);
         }
 
         if (productsRes.status === 'rejected') {
@@ -69,10 +85,11 @@ const Index = () => {
   // Get a product image for each category as fallback
   const getCategoryImage = (categoryName: string, categoryImage: string | null) => {
     if (categoryImage) return categoryImage;
-    // Find a product from this category to use its image
+    const cat = categories.find(c => c.name === categoryName);
+    if (cat && categoryImages[cat.id]) return categoryImages[cat.id];
     const categoryProduct = products.find(p => {
-      const cat = categories.find(c => c.id === p.category_id);
-      return cat?.name === categoryName;
+      const c = categories.find(cc => cc.id === p.category_id);
+      return c?.name === categoryName;
     });
     return categoryProduct?.image_url || null;
   };
