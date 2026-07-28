@@ -103,6 +103,7 @@ const Auth = () => {
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (resendCooldown > 0) return;
     setLoading(true);
 
     try {
@@ -115,14 +116,29 @@ const Auth = () => {
       setPassword('');
       setConfirmPassword('');
       setMode('verify-otp');
+      setResendCooldown(60);
     } catch (err) {
       toast({
         title: 'OTP Sent',
         description: 'If an account exists, a 6-digit code has been sent to your email.',
       });
       setMode('verify-otp');
+      setResendCooldown(60);
     }
 
+    setLoading(false);
+  };
+
+  const handleResendOtp = async () => {
+    if (resendCooldown > 0 || !email) return;
+    setLoading(true);
+    try {
+      await supabase.functions.invoke('send-password-otp', { body: { email } });
+      toast({ title: 'OTP Resent', description: 'A new 6-digit code has been sent to your email.' });
+    } catch {
+      toast({ title: 'OTP Resent', description: 'A new 6-digit code has been sent to your email.' });
+    }
+    setResendCooldown(60);
     setLoading(false);
   };
 
