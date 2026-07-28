@@ -1258,6 +1258,7 @@ export type Database = {
         Args: { coupon_id_input: string }
         Returns: undefined
       }
+      reorder_products: { Args: { _product_ids: string[] }; Returns: undefined }
       validate_referral_code: { Args: { p_code: string }; Returns: boolean }
     }
     Enums: {

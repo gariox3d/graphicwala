@@ -36,6 +36,7 @@ const AdminProducts = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [reordering, setReordering] = useState(false);
 
   useEffect(() => {
     if (!authLoading && (!user || !isAdmin)) {
@@ -93,6 +94,8 @@ const AdminProducts = () => {
   };
 
   const moveProduct = async (productId: string, direction: 'up' | 'down') => {
+    if (reordering || searchQuery) return;
+
     const idx = products.findIndex(p => p.id === productId);
     if (idx < 0) return;
     const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
@@ -102,26 +105,24 @@ const AdminProducts = () => {
     const reordered = [...products];
     [reordered[idx], reordered[swapIdx]] = [reordered[swapIdx], reordered[idx]];
 
-    // Reassign sequential display_order across ALL products to avoid duplicates/nulls
-    const updates = reordered.map((p, i) => ({ id: p.id, display_order: i + 1 }));
-
     // Optimistically update UI
     const withOrder = reordered.map((p, i) => ({ ...p, display_order: i + 1 }));
     setProducts(withOrder);
+    setReordering(true);
 
-    // Persist to DB
-    const results = await Promise.all(
-      updates.map(u =>
-        supabase.from('products').update({ display_order: u.display_order }).eq('id', u.id)
-      )
-    );
+    // Save the complete sequence atomically so partial updates cannot make items jump back.
+    const { error } = await supabase.rpc('reorder_products', {
+      _product_ids: reordered.map(product => product.id),
+    });
 
-    const failed = results.some(r => r.error);
-    if (failed) {
-      toast.error('Failed to reorder');
+    if (error) {
+      toast.error(`Failed to reorder: ${error.message}`);
       setProducts(products); // revert
+      setReordering(false);
       return;
     }
+
+    setReordering(false);
     toast.success('Order updated');
   };
 
@@ -226,7 +227,7 @@ const AdminProducts = () => {
                               variant="ghost"
                               size="icon"
                               className="h-6 w-6"
-                              disabled={!searchQuery && products.indexOf(product) === 0}
+                              disabled={reordering || !!searchQuery || products.indexOf(product) === 0}
                               onClick={() => moveProduct(product.id, 'up')}
                             >
                               <ArrowUp className="h-3 w-3" />
@@ -235,7 +236,7 @@ const AdminProducts = () => {
                               variant="ghost"
                               size="icon"
                               className="h-6 w-6"
-                              disabled={!searchQuery && products.indexOf(product) === products.length - 1}
+                              disabled={reordering || !!searchQuery || products.indexOf(product) === products.length - 1}
                               onClick={() => moveProduct(product.id, 'down')}
                             >
                               <ArrowDown className="h-3 w-3" />
