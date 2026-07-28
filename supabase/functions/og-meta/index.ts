@@ -85,11 +85,11 @@ serve(async (req) => {
 
     // If product ID is provided, fetch product details
     if (productId) {
-      const { data: product, error } = await supabase
-        .from("products")
-        .select("id, name, description, image_url, image_urls, price, stock_quantity, categories(name)")
-        .eq("id", productId)
-        .maybeSingle();
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(productId);
+      const q = supabase.from("products").select("id, slug, name, description, image_url, image_urls, price, stock_quantity, categories(name)");
+      const { data: product, error } = isUuid
+        ? await q.eq("id", productId).maybeSingle()
+        : await q.eq("slug", productId).maybeSingle();
 
       console.log(`Product fetch result:`, { product, error });
 
@@ -108,7 +108,7 @@ serve(async (req) => {
         }
         
         imageType = getImageType(image);
-        pageUrl = `${SITE_URL}/product/${product.id}`;
+        pageUrl = `${SITE_URL}/product/${product.slug || product.id}`;
         type = "product";
         
         console.log(`Using image: ${image}`);
