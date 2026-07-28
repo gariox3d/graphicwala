@@ -10,23 +10,24 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { supabase } from '@/integrations/supabase/client';
 
-type AuthMode = 'login' | 'signup' | 'forgot-password' | 'reset-password';
+type AuthMode = 'login' | 'signup' | 'forgot-password' | 'verify-otp' | 'reset-password';
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const isSignUp = searchParams.get('mode') === 'signup';
-  const isReset = searchParams.get('type') === 'recovery';
+  const isReset = false;
   const refCode = searchParams.get('ref') || '';
   
   const [mode, setMode] = useState<AuthMode>(
-    isReset ? 'reset-password' : (isSignUp || refCode) ? 'signup' : 'login'
+    (isSignUp || refCode) ? 'signup' : 'login'
   );
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
+  const [otp, setOtp] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -34,7 +35,7 @@ const Auth = () => {
 
   // Handle redirect after login
   useEffect(() => {
-    if (user && mode !== 'reset-password') {
+    if (user && mode !== 'reset-password' && mode !== 'verify-otp') {
       const redirectPath = sessionStorage.getItem('redirectAfterLogin');
       if (redirectPath) {
         sessionStorage.removeItem('redirectAfterLogin');
@@ -45,13 +46,6 @@ const Auth = () => {
     }
   }, [user, navigate, mode]);
 
-  // Handle password reset mode from URL
-  useEffect(() => {
-    if (isReset) {
-      setMode('reset-password');
-    }
-  }, [isReset]);
-
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -60,7 +54,7 @@ const Auth = () => {
     );
   }
 
-  if (user && mode !== 'reset-password') return null;
+  if (user && mode !== 'reset-password' && mode !== 'verify-otp') return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -104,58 +98,63 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      // Always show success message to prevent email enumeration
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth?type=recovery`,
+      await supabase.functions.invoke('send-password-otp', { body: { email } });
+      toast({
+        title: 'OTP Sent',
+        description: 'If an account exists, a 6-digit code has been sent to your email.',
       });
-
-      // Don't reveal if email exists or not - always show success
-      toast({ 
-        title: 'Check Your Email', 
-        description: 'If an account exists with this email, you will receive a password reset link shortly.',
-      });
-      setMode('login');
+      setOtp('');
+      setPassword('');
+      setConfirmPassword('');
+      setMode('verify-otp');
     } catch (err) {
-      // Still show success to prevent enumeration
-      toast({ 
-        title: 'Check Your Email', 
-        description: 'If an account exists with this email, you will receive a password reset link shortly.',
+      toast({
+        title: 'OTP Sent',
+        description: 'If an account exists, a 6-digit code has been sent to your email.',
       });
-      setMode('login');
+      setMode('verify-otp');
     }
 
     setLoading(false);
   };
 
-  const handleResetPassword = async (e: React.FormEvent) => {
+  const handleVerifyOtpAndReset = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
 
+    if (!/^\d{6}$/.test(otp)) {
+      toast({ title: 'Invalid OTP', description: 'Please enter the 6-digit code from your email.', variant: 'destructive' });
+      return;
+    }
     if (password !== confirmPassword) {
       toast({ title: 'Passwords do not match', description: 'Please make sure both passwords are the same.', variant: 'destructive' });
-      setLoading(false);
       return;
     }
-
     if (password.length < 6) {
       toast({ title: 'Password too short', description: 'Password must be at least 6 characters', variant: 'destructive' });
-      setLoading(false);
       return;
     }
 
+    setLoading(true);
     try {
-      const { error } = await supabase.auth.updateUser({ password });
+      const { data, error } = await supabase.functions.invoke('verify-password-otp', {
+        body: { email, otp, newPassword: password },
+      });
 
-      if (error) {
-        toast({ title: 'Error', description: getFriendlyErrorMessage(error.message), variant: 'destructive' });
-      } else {
-        toast({ title: 'Password Updated!', description: 'Your password has been reset successfully. You are now logged in.' });
-        navigate('/dashboard');
+      if (error || (data && data.error)) {
+        const msg = (data && data.error) || error?.message || 'Verification failed';
+        toast({ title: 'Failed', description: msg, variant: 'destructive' });
+        setLoading(false);
+        return;
       }
+
+      toast({ title: 'Password Updated!', description: 'Your password has been reset. Please login with your new password.' });
+      setOtp('');
+      setPassword('');
+      setConfirmPassword('');
+      setMode('login');
     } catch (err) {
       toast({ title: 'Error', description: 'Something went wrong. Please try again.', variant: 'destructive' });
     }
-
     setLoading(false);
   };
 
@@ -189,7 +188,7 @@ const Auth = () => {
           <Mail className="h-8 w-8 text-primary" />
         </div>
         <p className="text-sm text-muted-foreground">
-          Enter your email address and we'll send you a secure link to reset your password.
+          Enter your email and we'll send a 6-digit OTP to reset your password.
         </p>
       </div>
 
@@ -216,7 +215,7 @@ const Auth = () => {
             Sending...
           </div>
         ) : (
-          'Send Reset Link'
+          'Send OTP'
         )}
       </Button>
 
@@ -231,15 +230,31 @@ const Auth = () => {
     </form>
   );
 
-  const renderResetPasswordForm = () => (
-    <form onSubmit={handleResetPassword} className="space-y-4">
+  const renderVerifyOtpForm = () => (
+    <form onSubmit={handleVerifyOtpAndReset} className="space-y-4">
       <div className="text-center mb-6">
         <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
           <Lock className="h-8 w-8 text-green-600" />
         </div>
         <p className="text-sm text-muted-foreground">
-          Create a strong new password for your account.
+          Enter the 6-digit OTP sent to <strong>{email}</strong> and set your new password.
         </p>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="otp" className="text-sm font-medium">6-Digit OTP</Label>
+        <Input
+          id="otp"
+          type="text"
+          inputMode="numeric"
+          placeholder="Enter OTP"
+          value={otp}
+          onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+          className="text-center text-2xl font-bold tracking-[0.5em] h-14"
+          required
+          maxLength={6}
+          autoFocus
+        />
       </div>
 
       <div className="space-y-2">
@@ -297,12 +312,31 @@ const Auth = () => {
         {loading ? (
           <div className="flex items-center gap-2">
             <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
-            Updating...
+            Verifying...
           </div>
         ) : (
-          'Reset Password'
+          'Verify OTP & Reset Password'
         )}
       </Button>
+
+      <div className="flex items-center justify-between text-xs mt-2">
+        <button
+          type="button"
+          onClick={() => setMode('forgot-password')}
+          className="flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors"
+        >
+          <ArrowLeft className="h-3 w-3" />
+          Change email
+        </button>
+        <button
+          type="button"
+          onClick={(e) => { e.preventDefault(); handleForgotPassword(e as any); }}
+          className="text-primary font-medium hover:underline"
+          disabled={loading}
+        >
+          Resend OTP
+        </button>
+      </div>
     </form>
   );
 
@@ -426,6 +460,7 @@ const Auth = () => {
     switch (mode) {
       case 'signup': return 'Create Account';
       case 'forgot-password': return 'Forgot Password?';
+      case 'verify-otp': return 'Verify OTP';
       case 'reset-password': return 'Set New Password';
       default: return 'Welcome Back';
     }
@@ -435,6 +470,7 @@ const Auth = () => {
     switch (mode) {
       case 'signup': return 'Join Graphic Wala for a premium experience';
       case 'forgot-password': return "No worries, we'll help you recover it";
+      case 'verify-otp': return 'Enter OTP from email and set a new password';
       case 'reset-password': return 'Almost there! Create your new password';
       default: return 'Login to access your orders and designs';
     }
@@ -464,7 +500,7 @@ const Auth = () => {
 
             {/* Form Content */}
             {mode === 'forgot-password' && renderForgotPasswordForm()}
-            {mode === 'reset-password' && renderResetPasswordForm()}
+            {mode === 'verify-otp' && renderVerifyOtpForm()}
             {(mode === 'login' || mode === 'signup') && renderLoginSignupForm()}
 
             {/* Toggle Login/Signup */}
