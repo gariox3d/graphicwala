@@ -354,11 +354,11 @@ const Auth = () => {
         </button>
         <button
           type="button"
-          onClick={(e) => { e.preventDefault(); handleForgotPassword(e as any); }}
-          className="text-primary font-medium hover:underline"
-          disabled={loading}
+          onClick={handleResendOtp}
+          className="text-primary font-medium hover:underline disabled:opacity-50 disabled:no-underline disabled:cursor-not-allowed"
+          disabled={loading || resendCooldown > 0}
         >
-          Resend OTP
+          {resendCooldown > 0 ? `Resend OTP in ${resendCooldown}s` : 'Resend OTP'}
         </button>
       </div>
     </form>
