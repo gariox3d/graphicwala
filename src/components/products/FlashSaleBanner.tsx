@@ -171,7 +171,7 @@ const ProductOverlay = ({ product, onClose }: { product: Product; onClose: () =>
             <span className="text-sm font-mono font-bold text-destructive">{label}</span>
             <span className="text-xs text-destructive/80">remaining</span>
           </div>
-          <Link to={`/product/${product.id}`} className="block w-full text-center bg-primary text-primary-foreground font-bold py-3 rounded-xl hover:opacity-90 transition-opacity" onClick={onClose}>
+          <Link to={`/product/${(product as any).slug || product.id}`} className="block w-full text-center bg-primary text-primary-foreground font-bold py-3 rounded-xl hover:opacity-90 transition-opacity" onClick={onClose}>
             View Product
           </Link>
         </div>

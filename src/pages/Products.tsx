@@ -85,7 +85,7 @@ const Products = () => {
     "itemListElement": filteredProducts.slice(0, 20).map((p, i) => ({
       "@type": "ListItem",
       "position": i + 1,
-      "url": `https://graphicwala.com/product/${p.id}`,
+      "url": `https://graphicwala.com/product/${(p as any).slug || p.id}`,
       "name": p.name,
       "image": p.image_url || undefined
     }))

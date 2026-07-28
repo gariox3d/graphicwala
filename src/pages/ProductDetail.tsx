@@ -39,7 +39,7 @@ const DEFAULT_OG_IMAGE = `${SITE_URL}/og-square.png`;
 const SHARE_BASE_URL = `${SITE_URL}/share/product`;
 
 const ProductDetail = () => {
-  const { id } = useParams();
+  const { id: slugOrId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { settings } = useStoreSettings();
@@ -66,12 +66,17 @@ const ProductDetail = () => {
 
   useEffect(() => {
     const fetchProduct = async () => {
-      const { data } = await supabase
-        .from('products')
-        .select('*, categories(*)')
-        .eq('id', id)
-        .maybeSingle();
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slugOrId || '');
+      const query = supabase.from('products').select('*, categories(*)');
+      const { data } = isUuid
+        ? await query.eq('id', slugOrId).maybeSingle()
+        : await query.eq('slug', slugOrId).maybeSingle();
       if (data) {
+        // Redirect UUID URLs to slug URLs for SEO
+        if (isUuid && (data as any).slug && (data as any).slug !== slugOrId) {
+          navigate(`/product/${(data as any).slug}`, { replace: true });
+          return;
+        }
         const uploadConfig = Array.isArray(data.upload_config) 
           ? data.upload_config as unknown as UploadField[]
           : [];
@@ -88,22 +93,22 @@ const ProductDetail = () => {
       }
       setLoading(false);
     };
-    if (id) fetchProduct();
-  }, [id]);
+    if (slugOrId) fetchProduct();
+  }, [slugOrId, navigate]);
 
   // Track recently viewed
   useEffect(() => {
-    if (id) addToRecentlyViewed(id);
-  }, [id, addToRecentlyViewed]);
+    if (product?.id) addToRecentlyViewed(product.id);
+  }, [product?.id, addToRecentlyViewed]);
 
   // Fetch review stats for JSON-LD
   useEffect(() => {
-    if (!id) return;
+    if (!product?.id) return;
     const fetchReviewStats = async () => {
       const { data } = await supabase
         .from('reviews')
         .select('rating, user_name, comment, created_at')
-        .eq('product_id', id)
+        .eq('product_id', product.id)
         .order('created_at', { ascending: false })
         .limit(5);
       if (data && data.length > 0) {
@@ -112,7 +117,7 @@ const ProductDetail = () => {
       }
     };
     fetchReviewStats();
-  }, [id]);
+  }, [product?.id]);
 
   // Load existing designs from session storage
   useEffect(() => {
@@ -229,8 +234,9 @@ const ProductDetail = () => {
   const productDescription = product.description 
     ? `${product.description.slice(0, 120)} | Buy ${product.name} online from Graphic Wala. Premium quality, All India delivery.`
     : `Buy ${product.name} online from Graphic Wala. Premium quality custom printing with All India home delivery. Order now!`;
-  const productUrl = `${SITE_URL}/product/${product.id}`;
-  const shareUrl = `${SHARE_BASE_URL}/${product.id}`;
+  const productSlug = (product as any).slug || product.id;
+  const productUrl = `${SITE_URL}/product/${productSlug}`;
+  const shareUrl = `${SHARE_BASE_URL}/${productSlug}`;
   const allImages = product.image_urls && product.image_urls.length > 0 
     ? product.image_urls 
     : product.image_url ? [product.image_url] : [DEFAULT_OG_IMAGE];

@@ -18,7 +18,7 @@ serve(async (req) => {
     // Fetch all active products
     const { data: products } = await supabase
       .from("products")
-      .select("id, name, updated_at, image_url, image_urls, categories(name)")
+      .select("id, slug, name, updated_at, image_url, image_urls, categories(name)")
       .eq("is_active", true)
       .order("display_order", { ascending: true });
 
@@ -82,7 +82,7 @@ ${catImage}  </url>
         const allImages = imageUrls.length > 0 ? imageUrls : (product.image_url ? [product.image_url] : []);
 
         xml += `  <url>
-    <loc>${SITE_URL}/product/${product.id}</loc>
+    <loc>${SITE_URL}/product/${product.slug || product.id}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>

@@ -274,6 +274,7 @@ const ProductForm = () => {
     try {
       const productData = {
         name: formData.name.trim(),
+        slug: formData.name.trim().toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/[\s-]+/g, '-').replace(/^-+|-+$/g, '') || 'product',
         description: formData.description.trim() || null,
         price: parseFloat(formData.price),
         category_id: formData.category_id || null,
