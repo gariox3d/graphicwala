@@ -4,13 +4,14 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
+import UserAvatar from '@/components/profile/UserAvatar';
 import { WHATSAPP_NUMBER, PHONE_NUMBER, BUSINESS_NAME } from '@/lib/types';
 import logoImage from '@/assets/logo.png';
 import SearchBar from './SearchBar';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, signOut, isAdmin } = useAuth();
+  const { user, profile, signOut, isAdmin } = useAuth();
   const { cartCount } = useCart();
   const location = useLocation();
 
@@ -98,8 +99,17 @@ const Header = () => {
                 </Button>
               </Link>
               <Link to="/dashboard">
-                <Button variant="ghost" size="icon">
-                  <User className="h-5 w-5" />
+                <Button variant="ghost" size="icon" aria-label="My account">
+                  {profile?.avatar_url ? (
+                    <UserAvatar
+                      avatarUrl={profile.avatar_url}
+                      name={profile.full_name || user.email}
+                      className="h-7 w-7"
+                      fallbackClassName="text-[11px]"
+                    />
+                  ) : (
+                    <User className="h-5 w-5" />
+                  )}
                 </Button>
               </Link>
               {isAdmin && (
