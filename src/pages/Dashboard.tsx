@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label';
 import { User, Package, Eye, ShoppingBag, Edit2, Save, X, Loader2, MapPin, Phone, Heart, Truck, Store } from 'lucide-react';
 import { toast } from 'sonner';
 import OrderTimeline from '@/components/OrderTimeline';
+import ProfilePhotoUpload from '@/components/profile/ProfilePhotoUpload';
 import ReferralSection from '@/components/ReferralSection';
 import LoyaltyWidget from '@/components/loyalty/LoyaltyWidget';
 
@@ -191,6 +192,15 @@ const Dashboard = () => {
                   )}
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  <div className="pb-4 border-b border-border">
+                    <ProfilePhotoUpload
+                      userId={user.id}
+                      avatarUrl={profile?.avatar_url}
+                      name={profile?.full_name || user.email}
+                      onChanged={refreshProfile}
+                    />
+                    <p className="mt-3 text-sm text-muted-foreground break-all">{user.email}</p>
+                  </div>
                   {isEditing ? (
                     <div className="space-y-4">
                       <div className="space-y-2">
