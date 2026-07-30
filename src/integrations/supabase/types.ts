@@ -984,6 +984,27 @@ export type Database = {
         }
         Relationships: []
       }
+      public_profiles: {
+        Row: {
+          avatar_url: string | null
+          display_name: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          display_name?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          display_name?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       referral_codes: {
         Row: {
           code: string
@@ -1262,24 +1283,6 @@ export type Database = {
       }
     }
     Views: {
-      public_profile_avatars: {
-        Row: {
-          avatar_url: string | null
-          full_name: string | null
-          user_id: string | null
-        }
-        Insert: {
-          avatar_url?: string | null
-          full_name?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          avatar_url?: string | null
-          full_name?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
       trending_products: {
         Row: {
           order_count: number | null
