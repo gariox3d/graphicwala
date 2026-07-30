@@ -36,11 +36,33 @@ const UserAvatar = ({ avatarUrl, name, className, fallbackClassName }: UserAvata
   }, [avatarUrl]);
 
   return (
-    <Avatar className={cn('h-10 w-10', className)}>
-      {src && <AvatarImage src={src} alt={name ? `${name} profile photo` : 'Profile photo'} loading="lazy" decoding="async" />}
+    <Avatar
+      className={cn('h-10 w-10 relative select-none', className)}
+      onContextMenu={(e) => e.preventDefault()}
+      onDragStart={(e) => e.preventDefault()}
+    >
+      {src && (
+        <AvatarImage
+          src={src}
+          alt={name ? `${name} profile photo` : 'Profile photo'}
+          loading="lazy"
+          decoding="async"
+          draggable={false}
+          className="pointer-events-none select-none"
+          style={{ WebkitUserSelect: 'none', WebkitTouchCallout: 'none' } as React.CSSProperties}
+        />
+      )}
       <AvatarFallback className={cn('bg-primary/10 text-primary font-semibold', fallbackClassName)}>
         {getInitials(name)}
       </AvatarFallback>
+      {src && (
+        <span
+          aria-hidden="true"
+          className="absolute inset-0 z-10 rounded-full"
+          style={{ WebkitTouchCallout: 'none' } as React.CSSProperties}
+          onContextMenu={(e) => e.preventDefault()}
+        />
+      )}
     </Avatar>
   );
 };
