@@ -5,7 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
-import { Info, Mail, Lock, User, ArrowLeft, Phone, Eye, EyeOff } from 'lucide-react';
+import { Info, Mail, Lock, User, ArrowLeft, Phone, Eye, EyeOff, Camera, X } from 'lucide-react';
+import { uploadAvatar, validateAvatarFile } from '@/lib/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { supabase } from '@/integrations/supabase/client';
@@ -407,6 +409,8 @@ const Auth = () => {
             )}
             <div className="space-y-2">
               <Label htmlFor="fullName" className="text-sm font-medium">Full Name</Label>
+            </div>
+            <div className="space-y-2">
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
