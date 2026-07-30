@@ -942,6 +942,7 @@ export type Database = {
       profiles: {
         Row: {
           address: string | null
+          avatar_url: string | null
           city: string | null
           created_at: string
           full_name: string | null
@@ -955,6 +956,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          avatar_url?: string | null
           city?: string | null
           created_at?: string
           full_name?: string | null
@@ -968,6 +970,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          avatar_url?: string | null
           city?: string | null
           created_at?: string
           full_name?: string | null
@@ -1259,6 +1262,24 @@ export type Database = {
       }
     }
     Views: {
+      public_profile_avatars: {
+        Row: {
+          avatar_url: string | null
+          full_name: string | null
+          user_id: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          full_name?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          full_name?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       trending_products: {
         Row: {
           order_count: number | null
