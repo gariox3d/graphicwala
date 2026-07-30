@@ -13,7 +13,6 @@ import { Product, UploadField, BUSINESS_NAME } from '@/lib/types';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import DesignUpload from '@/components/DesignUpload';
-import WhatsAppButton from '@/components/WhatsAppButton';
 import DeliveryInfoBanner from '@/components/DeliveryInfoBanner';
 import SupportContact from '@/components/SupportContact';
 import ShareButton from '@/components/ShareButton';
