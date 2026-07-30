@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { getAvatarUrl } from '@/lib/avatar';
+import { getDefaultAvatar } from '@/lib/defaultAvatar';
 import { cn } from '@/lib/utils';
 
 interface UserAvatarProps {
@@ -22,6 +23,7 @@ export const getInitials = (name?: string | null) => {
 
 const UserAvatar = ({ avatarUrl, name, className, fallbackClassName }: UserAvatarProps) => {
   const [src, setSrc] = useState<string | null>(null);
+  const fallbackSrc = getDefaultAvatar(name);
 
   useEffect(() => {
     let active = true;
@@ -35,15 +37,17 @@ const UserAvatar = ({ avatarUrl, name, className, fallbackClassName }: UserAvata
     };
   }, [avatarUrl]);
 
+  const shown = src || fallbackSrc;
+
   return (
     <Avatar
       className={cn('h-10 w-10 relative select-none', className)}
       onContextMenu={(e) => e.preventDefault()}
       onDragStart={(e) => e.preventDefault()}
     >
-      {src && (
+      {shown && (
         <AvatarImage
-          src={src}
+          src={shown}
           alt={name ? `${name} profile photo` : 'Profile photo'}
           loading="lazy"
           decoding="async"
@@ -55,7 +59,7 @@ const UserAvatar = ({ avatarUrl, name, className, fallbackClassName }: UserAvata
       <AvatarFallback className={cn('bg-primary/10 text-primary font-semibold', fallbackClassName)}>
         {getInitials(name)}
       </AvatarFallback>
-      {src && (
+      {shown && (
         <span
           aria-hidden="true"
           className="absolute inset-0 z-10 rounded-full"
