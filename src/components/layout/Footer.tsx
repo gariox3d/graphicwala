@@ -7,7 +7,7 @@ const Footer = () => {
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hello ${BUSINESS_NAME}, I have a question.`)}`;
 
   return (
-    <footer className="bg-foreground text-background">
+    <footer className="bg-foreground text-background pb-16 md:pb-0">
       <div className="container py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Brand */}
@@ -24,6 +24,9 @@ const Footer = () => {
             </Link>
             <p className="text-background/70 text-sm leading-relaxed">
               Graphic Wala (graphicwala.com) — India's trusted online store for custom photo frames, PVC cards, keychains & personalized gifts with All India home delivery.
+            </p>
+            <p className="text-background/60 text-xs mt-3">
+              Prepaid orders only · UPI, Card & Netbanking accepted · Custom printed in Katihar, Bihar and shipped across India.
             </p>
             <div className="flex gap-4 mt-6">
               <a href="#" className="text-background/70 hover:text-primary transition-colors">

@@ -1,26 +1,25 @@
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { ArrowRight, Printer, CreditCard, Palette, Truck, Shield, Clock, MessageCircle } from 'lucide-react';
+import { ArrowRight, MessageCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
-import ProductCard from '@/components/products/ProductCard';
-import DeliveryInfoBanner from '@/components/DeliveryInfoBanner';
-import SupportContact from '@/components/SupportContact';
 import HeroSection from '@/components/HeroSection';
 import AnnouncementBanner from '@/components/AnnouncementBanner';
 import RecentlyViewedProducts from '@/components/products/RecentlyViewedProducts';
-import TrendingProducts from '@/components/products/TrendingProducts';
 import CustomerGallery from '@/components/CustomerGallery';
 import BeforeAfterShowcase from '@/components/BeforeAfterShowcase';
-import ProductMarquee from '@/components/products/ProductMarquee';
 import FlashSaleBanner from '@/components/products/FlashSaleBanner';
 import AdBanner from '@/components/ads/AdBanner';
 import TestimonialsSection from '@/components/TestimonialsSection';
 import StatsCounter from '@/components/StatsCounter';
-
-import InstagramSection from '@/components/InstagramSection';
+import TrustStrip from '@/components/home/TrustStrip';
+import Bestsellers from '@/components/home/Bestsellers';
+import CategoryGrid from '@/components/home/CategoryGrid';
+import HowItWorks from '@/components/home/HowItWorks';
+import WhyBuyFromUs from '@/components/home/WhyBuyFromUs';
+import TrustPanel from '@/components/home/TrustPanel';
 import SocialProofNotifications from '@/components/SocialProofNotifications';
 import { supabase } from '@/integrations/supabase/client';
 import { Product, Category, WHATSAPP_NUMBER, BUSINESS_NAME } from '@/lib/types';
@@ -94,39 +93,6 @@ const Index = () => {
     return categoryProduct?.image_url || null;
   };
 
-  const services = [
-    {
-      icon: Printer,
-      title: 'Premium Printing',
-      description: 'High-quality prints with vibrant colors and sharp details',
-    },
-    {
-      icon: CreditCard,
-      title: 'Custom Cards',
-      description: 'Professional ID cards, visiting cards, and PVC cards',
-    },
-    {
-      icon: Palette,
-      title: 'Creative Designs',
-      description: 'Unique designs tailored to your brand identity',
-    },
-    {
-      icon: Truck,
-      title: 'Home Delivery',
-      description: 'Custom-made products delivered to your doorstep',
-    },
-    {
-      icon: Shield,
-      title: 'Quality Assured',
-      description: '100% satisfaction guaranteed on all products',
-    },
-    {
-      icon: Clock,
-      title: '24/7 Support',
-      description: 'Call or WhatsApp us anytime for assistance',
-    },
-  ];
-
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hello ${BUSINESS_NAME}, I need help.`)}`;
 
   return (
@@ -144,6 +110,32 @@ const Index = () => {
         <meta name="twitter:title" content="Graphic Wala | Custom Photo Frames Online India" />
         <meta name="twitter:description" content="Buy custom photo frames, PVC cards, keychains online. All India delivery." />
         <meta name="twitter:image" content="https://graphicwala.com/og-square.png" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'LocalBusiness',
+            '@id': 'https://graphicwala.com/#localbusiness',
+            name: 'Graphic Wala',
+            image: 'https://graphicwala.com/og-square.png',
+            url: 'https://graphicwala.com/',
+            telephone: '+91-6207142994',
+            email: 'graphicwalaktr@gmail.com',
+            priceRange: '₹₹',
+            description:
+              'Graphic Wala is a custom printing store in Katihar, Bihar offering photo frames, PVC cards, ID cards, visiting cards, keychains and personalized gifts with All India delivery.',
+            address: {
+              '@type': 'PostalAddress',
+              addressLocality: 'Katihar',
+              addressRegion: 'Bihar',
+              addressCountry: 'IN',
+            },
+            areaServed: { '@type': 'Country', name: 'India' },
+            openingHours: 'Mo-Su 09:00-21:00',
+            paymentAccepted: 'UPI, Credit Card, Debit Card, Netbanking',
+            currenciesAccepted: 'INR',
+            sameAs: ['https://wa.me/916207142994'],
+          })}
+        </script>
       </Helmet>
       {/* Announcement Banner - Top of page */}
       <AnnouncementBanner />
@@ -154,185 +146,36 @@ const Index = () => {
         {/* Hero Section */}
         <HeroSection />
 
-        {/* Product Marquee / Auto-scroll strip */}
-        <ProductMarquee />
+        {/* Trust strip — conversion proof above the fold */}
+        <TrustStrip />
 
         {/* Flash Sale Banner — shown only when active sales exist */}
         <FlashSaleBanner />
 
-        {/* Ad Slot: After Hero */}
-        <section className="py-4 bg-background">
-          <div className="container">
-            <AdBanner slotId="homepage_after_hero" />
-          </div>
-        </section>
+        {/* Bestsellers */}
+        <Bestsellers products={products} loading={loading} />
 
-        {/* Trust Notice Banner */}
-        <section className="py-4 bg-amber-50 dark:bg-amber-950/30 border-y border-amber-200 dark:border-amber-900">
-          <div className="container">
-            <p className="text-center text-sm font-medium text-amber-800 dark:text-amber-200">
-              ⚠️ All products are custom-made and prepaid only. No Cash on Delivery available.
-            </p>
-          </div>
-        </section>
-
-        {/* Categories Section */}
-        <section className="py-16 md:py-24" aria-labelledby="categories-heading">
-          <div className="container">
-            <header className="flex items-center justify-between mb-12">
-              <div>
-                <h2 id="categories-heading" className="text-3xl md:text-4xl font-bold mb-2">Shop by Category</h2>
-                <p className="text-muted-foreground">Custom Photo Frames, PVC Cards, ID Cards, Keychains & Visiting Cards — All India Delivery</p>
-              </div>
-              <Link to="/products" className="hidden md:block" aria-label="View all product categories">
-                <Button variant="outline">
-                  View All
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </Button>
-              </Link>
-            </header>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4" role="list">
-              {categories.map((category, index) => {
-                const categoryImage = getCategoryImage(category.name, category.image_url);
-                return (
-                  <Link
-                    key={category.id}
-                    to={`/products?category=${encodeURIComponent(category.name)}`}
-                    className="group relative aspect-square rounded-xl overflow-hidden shadow-soft hover:shadow-brand transition-all duration-300 animate-scale-in"
-                    style={{ animationDelay: `${index * 0.05}s` }}
-                    aria-label={`Shop ${category.name} - All India Delivery`}
-                    role="listitem"
-                  >
-                    {categoryImage ? (
-                      <img
-                        src={categoryImage}
-                        alt={`${category.name} - Custom Printing India`}
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-foreground" />
-                    )}
-                    <div className="absolute inset-0 bg-foreground/60 group-hover:bg-foreground/50 transition-colors duration-300" />
-                    <div className="absolute inset-0 flex items-center justify-center p-4">
-                      <h3 className="text-background font-bold text-center text-sm md:text-base group-hover:scale-105 transition-transform duration-300 drop-shadow-lg">
-                        {category.name}
-                      </h3>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        {/* Ad Slot: After Categories */}
-        <section className="py-4 bg-background">
-          <div className="container">
-            <AdBanner slotId="homepage_after_categories" />
-          </div>
-        </section>
-
-        {/* Featured Products */}
-        <section className="py-16 md:py-24 bg-secondary" aria-labelledby="products-heading">
-          <div className="container">
-            <header className="flex items-center justify-between mb-12">
-              <div>
-                <h2 id="products-heading" className="text-3xl md:text-4xl font-bold mb-2">Featured Products</h2>
-                <p className="text-muted-foreground">Personalized gifts and custom printed products with All India delivery</p>
-              </div>
-              <Link to="/products" className="hidden md:block" aria-label="View all products">
-                <Button variant="outline">
-                  View All
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </Button>
-              </Link>
-            </header>
-            {loading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {[...Array(4)].map((_, i) => (
-                  <div key={i} className="bg-card rounded-xl overflow-hidden animate-pulse">
-                    <div className="aspect-square bg-muted" />
-                    <div className="p-4 space-y-3">
-                      <div className="h-4 bg-muted rounded w-3/4" />
-                      <div className="h-3 bg-muted rounded w-1/2" />
-                      <div className="h-8 bg-muted rounded w-full" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" role="list">
-                {products.slice(0, 8).map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
-            )}
-            <div className="text-center mt-8 md:hidden">
-              <Link to="/products" aria-label="View all products">
-                <Button variant="outline" size="lg">
-                  View All Products
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* Ad Slot: After Products */}
+        {/* Ad Slot */}
         <section className="py-4 bg-background">
           <div className="container">
             <AdBanner slotId="homepage_after_products" />
           </div>
         </section>
 
-        {/* Delivery Info Banner */}
-        <section className="py-8 bg-background" aria-label="Delivery information">
-          <div className="container">
-            <DeliveryInfoBanner />
-          </div>
-        </section>
+        {/* Categories */}
+        <CategoryGrid categories={categories} getImage={getCategoryImage} />
 
-        {/* Services Section */}
-        <section className="py-16 md:py-24 bg-secondary" aria-labelledby="services-heading">
-          <div className="container">
-            <header className="text-center mb-12">
-              <h2 id="services-heading" className="text-3xl md:text-4xl font-bold mb-4">Why Choose Graphic Wala?</h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto">
-                Premium custom printing services across India. We deliver excellence in every print with home delivery nationwide.
-              </p>
-            </header>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" role="list">
-              {services.map((service, index) => (
-                <article
-                  key={service.title}
-                  className="bg-card rounded-xl p-6 shadow-soft hover:shadow-brand transition-all duration-300 animate-slide-up"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                  role="listitem"
-                >
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4" aria-hidden="true">
-                    <service.icon className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="font-semibold text-lg mb-2">{service.title}</h3>
-                  <p className="text-muted-foreground text-sm">{service.description}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
+        {/* 3-step custom order flow */}
+        <HowItWorks />
 
-        {/* Ad Slot: Mid Page */}
-        <section className="py-4 bg-background">
-          <div className="container">
-            <AdBanner slotId="homepage_mid_page" />
-          </div>
-        </section>
+        {/* Why buy from us */}
+        <WhyBuyFromUs />
 
         {/* Stats Counter */}
         <StatsCounter />
 
-        {/* Trending Products */}
-        <TrendingProducts />
+        {/* Testimonials */}
+        <TestimonialsSection />
 
         {/* Before/After Showcase */}
         <BeforeAfterShowcase />
@@ -340,21 +183,12 @@ const Index = () => {
         {/* Customer Gallery / Wall of Fame */}
         <CustomerGallery />
 
-        {/* Testimonials */}
-        <TestimonialsSection />
-
-        {/* Instagram Section */}
-        <InstagramSection />
+        {/* Delivery, payment & policy trust panel */}
+        <TrustPanel />
 
         {/* Recently Viewed Products */}
         {viewedIds.length > 0 && <RecentlyViewedProducts viewedIds={viewedIds} />}
 
-        {/* Support Section */}
-        <section className="py-12 bg-background" aria-label="Customer support">
-          <div className="container">
-            <SupportContact />
-          </div>
-        </section>
 
         {/* CTA Section */}
         <section className="py-16 md:py-24 bg-primary text-primary-foreground" aria-labelledby="cta-heading">

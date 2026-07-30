@@ -53,6 +53,7 @@ import AdminGuard from "./components/admin/AdminGuard";
 import WelcomeBackPopup from "./components/WelcomeBackPopup";
 import AddressGate from "./components/AddressGate";
 import SplashScreen from "./components/SplashScreen";
+import MobileBottomBar from "./components/MobileBottomBar";
 import { useState, useCallback } from "react";
 
 const queryClient = new QueryClient();
@@ -126,6 +127,7 @@ const App = () => {
                 <Route path="/admin/hero-showcase" element={<AdminGuard><AdminHeroShowcase /></AdminGuard>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
+              <MobileBottomBar />
             </BrowserRouter>
             </AddressGate>
           </CartProvider>

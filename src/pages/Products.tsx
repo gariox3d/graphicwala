@@ -7,6 +7,7 @@ import ProductCard from '@/components/products/ProductCard';
 import { supabase } from '@/integrations/supabase/client';
 import { Product, Category } from '@/lib/types';
 import { Button } from '@/components/ui/button';
+import { getCategoryCopy } from '@/components/home/CategoryGrid';
 
 
 const Products = () => {
@@ -69,12 +70,18 @@ const Products = () => {
     ? products.filter((p) => p.categories?.name === selectedCategory)
     : products;
 
-  const pageTitle = selectedCategory 
-    ? `${selectedCategory} - Buy Online | Graphic Wala India`
+  const pageTitle = selectedCategory
+    ? `Custom ${selectedCategory} Online in India | Graphic Wala`
     : 'Custom Photo Frames, PVC Cards, Keychains & More | Graphic Wala';
   const pageDescription = selectedCategory
-    ? `Buy ${selectedCategory} online from Graphic Wala. Premium quality custom printing with All India home delivery. Order now!`
+    ? `${getCategoryCopy(selectedCategory)} Order custom ${selectedCategory.toLowerCase()} from Graphic Wala — premium printing, fast dispatch and All India delivery.`
     : 'Buy custom photo frames, PVC cards, ID cards, visiting cards, keychains & personalized gifts online. Premium quality with All India home delivery.';
+  const heading = selectedCategory
+    ? `Custom ${selectedCategory} Online in India`
+    : 'Custom Printed Products & Personalized Gifts';
+  const intro = selectedCategory
+    ? `${getCategoryCopy(selectedCategory)} Printed in 24-48 hours and delivered to every pincode in India. All orders are prepaid — pay securely by UPI, card or netbanking.`
+    : 'Photo frames, PVC cards, ID cards, visiting cards and keychains — personalised with your photo or details and shipped across India.';
 
   // ItemList JSON-LD for product listing
   const itemListJsonLd = !loading && filteredProducts.length > 0 ? {
@@ -112,7 +119,10 @@ const Products = () => {
       <Header />
       <main className="flex-1 py-8" ref={productsRef}>
         <div className="container">
-          <h1 className="text-3xl md:text-4xl font-bold mb-8">Our Products</h1>
+          <header className="mb-8 max-w-2xl">
+            <h1 className="text-3xl md:text-4xl font-black tracking-tight mb-3">{heading}</h1>
+            <p className="text-muted-foreground">{intro}</p>
+          </header>
           <div className="flex gap-2 mb-8 overflow-x-auto pb-2 scrollbar-hide">
             <Button 
               variant={!selectedCategory ? 'hero' : 'outline'} 
