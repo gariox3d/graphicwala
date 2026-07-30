@@ -192,6 +192,13 @@ const Header = () => {
             <div className="flex flex-col gap-2 pt-2 border-t border-border">
               {user ? (
                 <>
+                  <Link to="/dashboard" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3 py-2">
+                    <UserAvatar avatarUrl={profile?.avatar_url} name={profile?.full_name || user.email} className="h-10 w-10" />
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold truncate">{profile?.full_name || 'My Account'}</p>
+                      <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+                    </div>
+                  </Link>
                   <Link to="/cart" onClick={() => setIsMenuOpen(false)}>
                     <Button variant="outline" className="w-full justify-start">
                       <ShoppingCart className="h-5 w-5 mr-2" />
