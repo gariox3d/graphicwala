@@ -26,6 +26,7 @@ import ReturnPolicy from '@/components/ReturnPolicy';
 import RecentlyViewedProducts from '@/components/products/RecentlyViewedProducts';
 import SimilarProducts from '@/components/products/SimilarProducts';
 import StickyAddToCart from '@/components/products/StickyAddToCart';
+import ProductFAQ from '@/components/products/ProductFAQ';
 
 import WishlistButton from '@/components/products/WishlistButton';
 import FlashSaleBadge from '@/components/products/FlashSaleBadge';
@@ -524,6 +525,14 @@ const ProductDetail = () => {
               />
             </div>
           </div>
+
+          {/* FAQ Section */}
+          <ProductFAQ
+            productName={product.name}
+            deliveryDays={product.delivery_days}
+            deliveryCharge={deliveryCharge}
+            customizable={uploadConfig.length > 0}
+          />
 
           {/* Reviews Section */}
           <Separator className="my-12" />

@@ -110,6 +110,32 @@ const Index = () => {
         <meta name="twitter:title" content="Graphic Wala | Custom Photo Frames Online India" />
         <meta name="twitter:description" content="Buy custom photo frames, PVC cards, keychains online. All India delivery." />
         <meta name="twitter:image" content="https://graphicwala.com/og-square.png" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'LocalBusiness',
+            '@id': 'https://graphicwala.com/#localbusiness',
+            name: 'Graphic Wala',
+            image: 'https://graphicwala.com/og-square.png',
+            url: 'https://graphicwala.com/',
+            telephone: '+91-6207142994',
+            email: 'graphicwalaktr@gmail.com',
+            priceRange: '₹₹',
+            description:
+              'Graphic Wala is a custom printing store in Katihar, Bihar offering photo frames, PVC cards, ID cards, visiting cards, keychains and personalized gifts with All India delivery.',
+            address: {
+              '@type': 'PostalAddress',
+              addressLocality: 'Katihar',
+              addressRegion: 'Bihar',
+              addressCountry: 'IN',
+            },
+            areaServed: { '@type': 'Country', name: 'India' },
+            openingHours: 'Mo-Su 09:00-21:00',
+            paymentAccepted: 'UPI, Credit Card, Debit Card, Netbanking',
+            currenciesAccepted: 'INR',
+            sameAs: ['https://wa.me/916207142994'],
+          })}
+        </script>
       </Helmet>
       {/* Announcement Banner - Top of page */}
       <AnnouncementBanner />
