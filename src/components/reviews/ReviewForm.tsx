@@ -8,7 +8,7 @@ import StarRating from './StarRating';
 import ReviewImageUpload from './ReviewImageUpload';
 import LoginPromptDialog from './LoginPromptDialog';
 import { toast } from 'sonner';
-import { Send, Edit2 } from 'lucide-react';
+import { Send, Edit2, PenLine } from 'lucide-react';
 
 interface ReviewFormProps {
   productId: string;
@@ -142,11 +142,19 @@ const ReviewForm = ({ productId, existingReview, onReviewSubmitted }: ReviewForm
 
   return (
     <>
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">
+      <Card id="write-review" className="border-2 border-primary/40 bg-primary/5 shadow-brand-red scroll-mt-24">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-xl md:text-2xl font-extrabold text-primary">
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground animate-pulse">
+              <PenLine className="h-4 w-4" />
+            </span>
             {existingReview ? 'Edit Your Review' : 'Write a Review'}
           </CardTitle>
+          {!existingReview && (
+            <p className="text-sm font-medium text-foreground/80">
+              Aapka review dusre customers ki madad karta hai — 30 seconds lagenge ⭐
+            </p>
+          )}
         </CardHeader>
         <CardContent>
           {!user ? (
@@ -157,7 +165,8 @@ const ReviewForm = ({ productId, existingReview, onReviewSubmitted }: ReviewForm
               <p className="text-xs text-muted-foreground mb-4">
                 Login is required for order tracking and reviews. Takes less than 30 seconds.
               </p>
-              <Button onClick={handleWriteReviewClick}>
+              <Button size="lg" onClick={handleWriteReviewClick} className="font-bold">
+                <PenLine className="h-4 w-4 mr-2" />
                 Write a Review
               </Button>
             </div>
@@ -201,7 +210,7 @@ const ReviewForm = ({ productId, existingReview, onReviewSubmitted }: ReviewForm
               )}
 
               <div className="flex gap-2">
-                <Button type="submit" disabled={loading} className="flex-1">
+                <Button type="submit" size="lg" disabled={loading} className="flex-1 font-bold">
                   <Send className="h-4 w-4 mr-2" />
                   {loading ? 'Submitting...' : existingReview ? 'Update Review' : 'Submit Review'}
                 </Button>
