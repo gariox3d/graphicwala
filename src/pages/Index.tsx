@@ -93,39 +93,6 @@ const Index = () => {
     return categoryProduct?.image_url || null;
   };
 
-  const services = [
-    {
-      icon: Printer,
-      title: 'Premium Printing',
-      description: 'High-quality prints with vibrant colors and sharp details',
-    },
-    {
-      icon: CreditCard,
-      title: 'Custom Cards',
-      description: 'Professional ID cards, visiting cards, and PVC cards',
-    },
-    {
-      icon: Palette,
-      title: 'Creative Designs',
-      description: 'Unique designs tailored to your brand identity',
-    },
-    {
-      icon: Truck,
-      title: 'Home Delivery',
-      description: 'Custom-made products delivered to your doorstep',
-    },
-    {
-      icon: Shield,
-      title: 'Quality Assured',
-      description: '100% satisfaction guaranteed on all products',
-    },
-    {
-      icon: Clock,
-      title: '24/7 Support',
-      description: 'Call or WhatsApp us anytime for assistance',
-    },
-  ];
-
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hello ${BUSINESS_NAME}, I need help.`)}`;
 
   return (
