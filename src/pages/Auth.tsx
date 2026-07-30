@@ -5,7 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
-import { Info, Mail, Lock, User, ArrowLeft, Phone, Eye, EyeOff } from 'lucide-react';
+import { Info, Mail, Lock, User, ArrowLeft, Phone, Eye, EyeOff, Camera, X } from 'lucide-react';
+import { uploadAvatar, validateAvatarFile } from '@/lib/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { supabase } from '@/integrations/supabase/client';
@@ -26,6 +28,8 @@ const Auth = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
   const [resetId, setResetId] = useState('');
@@ -87,6 +91,14 @@ const Auth = () => {
           const friendlyMessage = getFriendlyErrorMessage(error.message);
           toast({ title: 'Sign Up Failed', description: friendlyMessage, variant: 'destructive' });
         } else {
+          if (avatarFile) {
+            try {
+              const { data: userData } = await supabase.auth.getUser();
+              if (userData?.user) await uploadAvatar(userData.user.id, avatarFile);
+            } catch {
+              toast({ title: 'Photo not uploaded', description: 'You can add your profile photo later from My Account.' });
+            }
+          }
           toast({ title: 'Account Created!', description: 'Welcome to Graphic Wala!' });
         }
       } else if (mode === 'login') {
@@ -395,6 +407,53 @@ const Auth = () => {
                 </div>
               </div>
             )}
+            <div className="flex items-center gap-4 p-3 border border-border rounded-lg">
+              <Avatar className="h-16 w-16 ring-2 ring-primary/20">
+                {avatarPreview && <AvatarImage src={avatarPreview} alt="Profile photo preview" loading="lazy" />}
+                <AvatarFallback className="bg-primary/10 text-primary">
+                  <Camera className="h-5 w-5" />
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium">Profile Photo <span className="text-muted-foreground font-normal">(optional)</span></p>
+                <p className="text-xs text-muted-foreground mb-2">You can skip this and add it later.</p>
+                <div className="flex flex-wrap gap-2">
+                  <Label
+                    htmlFor="signup-avatar"
+                    className="cursor-pointer text-xs font-medium px-3 py-1.5 border border-border rounded-md hover:bg-muted"
+                  >
+                    {avatarFile ? 'Change' : 'Choose Photo'}
+                  </Label>
+                  {avatarFile && (
+                    <button
+                      type="button"
+                      className="text-xs font-medium px-3 py-1.5 rounded-md hover:bg-muted flex items-center gap-1"
+                      onClick={() => { setAvatarFile(null); setAvatarPreview(null); }}
+                    >
+                      <X className="h-3 w-3" /> Remove
+                    </button>
+                  )}
+                </div>
+                <input
+                  id="signup-avatar"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    const err = validateAvatarFile(file);
+                    if (err) {
+                      toast({ title: 'Invalid image', description: err, variant: 'destructive' });
+                      return;
+                    }
+                    setAvatarFile(file);
+                    setAvatarPreview(URL.createObjectURL(file));
+                  }}
+                />
+              </div>
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="fullName" className="text-sm font-medium">Full Name</Label>
               <div className="relative">

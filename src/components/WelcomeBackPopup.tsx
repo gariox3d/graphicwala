@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '@/contexts/AuthContext';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { Sparkles, Check } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
+import UserAvatar from '@/components/profile/UserAvatar';
 
 const WELCOME_POPUP_KEY = 'welcome_popup_shown_session';
 
@@ -11,6 +12,7 @@ const WelcomeBackPopup: React.FC = () => {
 
   const user = auth?.user ?? null;
   const loading = auth?.loading ?? true;
+  const profile = auth?.profile ?? null;
 
   useEffect(() => {
     if (!auth) return;
@@ -42,6 +44,12 @@ const WelcomeBackPopup: React.FC = () => {
 
   if (!auth || loading || !user) return null;
 
+  const displayName =
+    profile?.full_name ||
+    (user.user_metadata?.full_name as string | undefined) ||
+    user.email?.split('@')[0] ||
+    'Friend';
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-md border-0 bg-transparent shadow-none p-0">
@@ -50,15 +58,19 @@ const WelcomeBackPopup: React.FC = () => {
           <div className="absolute -top-20 -right-20 w-40 h-40 bg-primary/20 rounded-full blur-3xl animate-pulse" />
           <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-primary/15 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
           <div className="relative z-10 p-8 text-center">
-            <div className="mx-auto w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-primary/30 flex items-center justify-center mb-6 ring-4 ring-primary/10">
-              <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center animate-scale-in">
-                <Check className="w-6 h-6 text-primary-foreground" strokeWidth={3} />
-              </div>
+            <div className="mx-auto w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-primary/30 flex items-center justify-center mb-5 ring-4 ring-primary/10 animate-scale-in">
+              <UserAvatar
+                avatarUrl={profile?.avatar_url}
+                name={displayName}
+                className="h-16 w-16"
+                fallbackClassName="text-lg"
+              />
             </div>
-            <h2 className="text-2xl font-bold text-foreground mb-2 flex items-center justify-center gap-2">
-              Welcome back <span className="text-2xl">👋</span>
+            <h2 className="text-2xl font-bold text-foreground mb-2 flex items-center justify-center gap-2 flex-wrap">
+              <span className="truncate max-w-full">Welcome back, {displayName}</span>
+              <span className="text-2xl">👋</span>
             </h2>
-            <p className="text-muted-foreground mb-4">You're securely logged in.</p>
+            <p className="text-muted-foreground mb-4">So good to see you again — you're securely logged in.</p>
             <p className="text-sm text-muted-foreground/80 flex items-center justify-center gap-1">
               Let's continue where you left off
               <Sparkles className="w-4 h-4 text-primary animate-pulse" />

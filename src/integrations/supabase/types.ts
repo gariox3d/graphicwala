@@ -942,6 +942,7 @@ export type Database = {
       profiles: {
         Row: {
           address: string | null
+          avatar_url: string | null
           city: string | null
           created_at: string
           full_name: string | null
@@ -955,6 +956,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          avatar_url?: string | null
           city?: string | null
           created_at?: string
           full_name?: string | null
@@ -968,6 +970,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          avatar_url?: string | null
           city?: string | null
           created_at?: string
           full_name?: string | null
@@ -976,6 +979,27 @@ export type Database = {
           pincode?: string | null
           referred_by?: string | null
           state?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      public_profiles: {
+        Row: {
+          avatar_url: string | null
+          display_name: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          display_name?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          display_name?: string | null
           updated_at?: string
           user_id?: string
         }

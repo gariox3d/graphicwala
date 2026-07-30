@@ -29,6 +29,7 @@ const ProductReviews = ({ productId, productName }: ProductReviewsProps) => {
   const [loading, setLoading] = useState(true);
   const [averageRating, setAverageRating] = useState(0);
   const [userReview, setUserReview] = useState<Review | null>(null);
+  const [reviewProfiles, setReviewProfiles] = useState<Record<string, { display_name?: string | null; avatar_url?: string | null }>>({});
 
   const fetchReviews = async () => {
     setLoading(true);
@@ -60,6 +61,22 @@ const ProductReviews = ({ productId, productName }: ProductReviewsProps) => {
       if (user) {
         const existing = reviewsData.find((r: Review) => r.user_id === user.id);
         setUserReview(existing || null);
+      }
+
+      // Fetch latest public profile (name + photo) for each reviewer
+      const userIds = Array.from(new Set(reviewsData.map((r) => r.user_id).filter(Boolean)));
+      if (userIds.length > 0) {
+        const { data: profileRows } = await supabase
+          .from('public_profiles')
+          .select('user_id, display_name, avatar_url')
+          .in('user_id', userIds);
+        const map: Record<string, { display_name?: string | null; avatar_url?: string | null }> = {};
+        (profileRows || []).forEach((p: any) => {
+          map[p.user_id] = { display_name: p.display_name, avatar_url: p.avatar_url };
+        });
+        setReviewProfiles(map);
+      } else {
+        setReviewProfiles({});
       }
     } catch (error) {
       console.error('Error fetching reviews:', error);
@@ -134,6 +151,7 @@ const ProductReviews = ({ productId, productName }: ProductReviewsProps) => {
           reviews={reviews.filter((r) => r.id !== userReview?.id)}
           loading={loading}
           onReviewDeleted={fetchReviews}
+          profiles={reviewProfiles}
         />
       </div>
     </div>
