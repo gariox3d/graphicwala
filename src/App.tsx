@@ -54,6 +54,7 @@ import WelcomeBackPopup from "./components/WelcomeBackPopup";
 import AddressGate from "./components/AddressGate";
 import SplashScreen from "./components/SplashScreen";
 import MobileBottomBar from "./components/MobileBottomBar";
+import FloatingWhatsApp from "./components/FloatingWhatsApp";
 import { useState, useCallback } from "react";
 
 const queryClient = new QueryClient();
@@ -128,6 +129,7 @@ const App = () => {
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <MobileBottomBar />
+              <FloatingWhatsApp />
             </BrowserRouter>
             </AddressGate>
           </CartProvider>
