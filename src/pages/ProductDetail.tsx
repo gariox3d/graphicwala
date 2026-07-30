@@ -13,7 +13,6 @@ import { Product, UploadField, BUSINESS_NAME } from '@/lib/types';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import DesignUpload from '@/components/DesignUpload';
-import WhatsAppButton from '@/components/WhatsAppButton';
 import DeliveryInfoBanner from '@/components/DeliveryInfoBanner';
 import SupportContact from '@/components/SupportContact';
 import ShareButton from '@/components/ShareButton';
@@ -27,6 +26,9 @@ import RecentlyViewedProducts from '@/components/products/RecentlyViewedProducts
 import SimilarProducts from '@/components/products/SimilarProducts';
 import StickyAddToCart from '@/components/products/StickyAddToCart';
 import ProductFAQ from '@/components/products/ProductFAQ';
+import WhyBuyFromProduct from '@/components/products/WhyBuyFromProduct';
+import SecurePaymentBadge from '@/components/SecurePaymentBadge';
+import { trackEvent } from '@/lib/analytics';
 
 import WishlistButton from '@/components/products/WishlistButton';
 import FlashSaleBadge from '@/components/products/FlashSaleBadge';
@@ -101,6 +103,16 @@ const ProductDetail = () => {
   useEffect(() => {
     if (product?.id) addToRecentlyViewed(product.id);
   }, [product?.id, addToRecentlyViewed]);
+
+  // Conversion tracking: product view
+  useEffect(() => {
+    if (!product?.id) return;
+    trackEvent('view_product', {
+      item_id: product.id,
+      item_name: product.name,
+      value: product.price,
+    });
+  }, [product?.id, product?.name, product?.price]);
 
   // Fetch review stats for JSON-LD
   useEffect(() => {
@@ -181,6 +193,12 @@ const ProductDetail = () => {
     }
 
     addToCart(product.id, quantity);
+    trackEvent('add_to_cart', {
+      item_id: product.id,
+      item_name: product.name,
+      quantity,
+      value: product.price * quantity,
+    });
     toast.success('Added to cart!');
   };
 
@@ -505,6 +523,8 @@ const ProductDetail = () => {
                   </Button>
                 </div>
 
+                <SecurePaymentBadge />
+
                 {uploadConfig.length > 0 && (
                   <p className="text-xs text-muted-foreground text-center">
                     💡 You can upload photos now or add to cart and upload before checkout
@@ -514,6 +534,9 @@ const ProductDetail = () => {
 
               {/* Delivery Info */}
               <DeliveryInfoBanner variant="compact" />
+
+              {/* Why Buy From Graphic Wala */}
+              <WhyBuyFromProduct />
 
               {/* Return Policy */}
               <ReturnPolicy variant="compact" />
@@ -552,9 +575,6 @@ const ProductDetail = () => {
       {/* Sticky Add to Cart - Mobile */}
       <StickyAddToCart product={product} onAddToCart={handleAddToCart} onBuyNow={handleBuyNow} />
 
-
-      {/* Floating WhatsApp Button */}
-      <WhatsAppButton variant="floating" showText={false} className="bottom-28 right-4 md:bottom-6 md:right-6" />
 
       {/* Login Prompt Dialog */}
       <LoginPromptDialog 
