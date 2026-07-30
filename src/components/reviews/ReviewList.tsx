@@ -3,7 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import UserAvatar from '@/components/profile/UserAvatar';
 import { Textarea } from '@/components/ui/textarea';
 import StarRating from './StarRating';
 import { formatDistanceToNow } from 'date-fns';
@@ -38,9 +38,10 @@ interface ReviewListProps {
   reviews: Review[];
   loading: boolean;
   onReviewDeleted: () => void;
+  profiles?: Record<string, { display_name?: string | null; avatar_url?: string | null }>;
 }
 
-const ReviewList = ({ reviews, loading, onReviewDeleted }: ReviewListProps) => {
+const ReviewList = ({ reviews, loading, onReviewDeleted, profiles = {} }: ReviewListProps) => {
   const { user, isAdmin } = useAuth();
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
@@ -163,15 +164,17 @@ const ReviewList = ({ reviews, loading, onReviewDeleted }: ReviewListProps) => {
         <Card key={review.id}>
           <CardContent className="pt-6">
             <div className="flex items-start gap-4">
-              <Avatar>
-                <AvatarFallback className="bg-primary/10 text-primary">
-                  {review.user_name.charAt(0).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
+              <UserAvatar
+                avatarUrl={profiles[review.user_id]?.avatar_url}
+                name={profiles[review.user_id]?.display_name || review.user_name}
+                className="h-10 w-10 shrink-0"
+              />
               
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-2 mb-1">
-                  <h4 className="font-medium truncate">{review.user_name}</h4>
+                  <h4 className="font-medium truncate">
+                    {profiles[review.user_id]?.display_name || review.user_name}
+                  </h4>
                   <div className="flex items-center gap-1">
                     {/* Love reaction indicator (visible to all) */}
                     {review.admin_loved && (
