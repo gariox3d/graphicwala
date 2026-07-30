@@ -26,6 +26,8 @@ const Auth = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
   const [resetId, setResetId] = useState('');
@@ -87,6 +89,14 @@ const Auth = () => {
           const friendlyMessage = getFriendlyErrorMessage(error.message);
           toast({ title: 'Sign Up Failed', description: friendlyMessage, variant: 'destructive' });
         } else {
+          if (avatarFile) {
+            try {
+              const { data: userData } = await supabase.auth.getUser();
+              if (userData?.user) await uploadAvatar(userData.user.id, avatarFile);
+            } catch {
+              toast({ title: 'Photo not uploaded', description: 'You can add your profile photo later from My Account.' });
+            }
+          }
           toast({ title: 'Account Created!', description: 'Welcome to Graphic Wala!' });
         }
       } else if (mode === 'login') {
