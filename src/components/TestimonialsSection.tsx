@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { Star, Quote, Sparkles } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import UserAvatar from '@/components/profile/UserAvatar';
 
 interface Review {
   rating: number;
   comment: string;
   user_name: string;
   product_name: string;
+  avatar_url?: string | null;
 }
 
 const TestimonialsSection = () => {
@@ -18,7 +20,7 @@ const TestimonialsSection = () => {
     const fetchReviews = async () => {
       const { data } = await supabase
         .from('reviews')
-        .select('rating, comment, user_name, product_id')
+        .select('rating, comment, user_name, product_id, user_id')
         .gte('rating', 4)
         .order('created_at', { ascending: false })
         .limit(6);
@@ -34,12 +36,19 @@ const TestimonialsSection = () => {
 
       const productMap = new Map(products?.map(p => [p.id, p.name]) || []);
 
+      const userIds = [...new Set(data.map(r => r.user_id).filter(Boolean))];
+      const { data: profileRows } = userIds.length
+        ? await supabase.from('public_profiles').select('user_id, display_name, avatar_url').in('user_id', userIds)
+        : { data: [] as any[] };
+      const profileMap = new Map((profileRows || []).map((p: any) => [p.user_id, p]));
+
       setReviews(
         data.map(r => ({
           rating: r.rating,
           comment: r.comment,
-          user_name: r.user_name,
+          user_name: profileMap.get(r.user_id)?.display_name || r.user_name,
           product_name: productMap.get(r.product_id) || 'Product',
+          avatar_url: profileMap.get(r.user_id)?.avatar_url || null,
         }))
       );
     };
@@ -134,9 +143,11 @@ const TestimonialsSection = () => {
 
               {/* User info */}
               <div className="flex items-center gap-3 pt-4 border-t border-border/50">
-                <div className="w-10 h-10 rounded-full gradient-primary flex items-center justify-center font-bold text-primary-foreground text-sm shadow-brand-red">
-                  {review.user_name.charAt(0).toUpperCase()}
-                </div>
+                <UserAvatar
+                  avatarUrl={review.avatar_url}
+                  name={review.user_name}
+                  className="h-10 w-10 shrink-0 ring-2 ring-primary/20"
+                />
                 <div className="min-w-0">
                   <p className="font-semibold text-sm truncate">{review.user_name}</p>
                   <p className="text-xs text-muted-foreground truncate">{review.product_name}</p>
