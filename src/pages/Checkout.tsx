@@ -21,6 +21,8 @@ import DeliveryInfoBanner from '@/components/DeliveryInfoBanner';
 import PhotoPrivacyNotice from '@/components/PhotoPrivacyNotice';
 import ReturnPolicy from '@/components/ReturnPolicy';
 import DeliveryCountdown, { calculateEstimatedDeliveryDate } from '@/components/products/DeliveryCountdown';
+import SecurePaymentBadge from '@/components/SecurePaymentBadge';
+import { trackEvent } from '@/lib/analytics';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
 import { Product, getEffectivePrice } from '@/lib/types';
 import { toast } from 'sonner';
@@ -201,6 +203,11 @@ const Checkout = () => {
     if (!validateForm()) return;
 
     setLoading(true);
+    trackEvent('begin_checkout', {
+      value: totalPayable,
+      items: cartItems.length,
+      delivery_method: deliveryMethod,
+    });
     try {
       // Build full address with landmark
       const fullAddress = deliveryMethod === 'store_pickup' 
@@ -323,10 +330,15 @@ const Checkout = () => {
 
             await clearCart();
             sessionStorage.removeItem('productDesigns');
+            trackEvent('payment_success', {
+              value: totalPayable,
+              transaction_id: verifyData.order_id,
+            });
             toast.success('Payment successful! Order confirmed.');
             navigate(`/order-confirmation/${verifyData.order_id}`, { replace: true });
           } catch (error: any) {
             console.error('Payment verification error:', error);
+            trackEvent('payment_failed', { value: totalPayable, reason: 'verification_failed' });
             toast.error(error.message || 'Payment verification failed. Please contact support.');
             navigate('/cart', { replace: true });
           } finally {
@@ -358,6 +370,10 @@ const Checkout = () => {
       // Handle payment failure event
       razorpay.on('payment.failed', (response: any) => {
         console.error('Payment failed:', response.error);
+        trackEvent('payment_failed', {
+          value: totalPayable,
+          reason: response?.error?.description || 'unknown',
+        });
         toast.error(`Payment failed: ${response.error.description || 'Unknown error'}`);
         setLoading(false);
         navigate('/cart', { replace: true });
@@ -366,6 +382,7 @@ const Checkout = () => {
       razorpay.open();
     } catch (error: any) {
       console.error('Payment error:', error);
+      trackEvent('payment_failed', { value: totalPayable, reason: error?.message || 'unknown' });
       toast.error(error.message || 'Payment failed. Please try again.');
       setLoading(false);
     }
@@ -765,6 +782,7 @@ const Checkout = () => {
                     )}
                   </Button>
 
+                  <SecurePaymentBadge />
                   <p className="text-xs text-center text-muted-foreground">
                     Secure prepaid payment via Razorpay
                   </p>
