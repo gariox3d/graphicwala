@@ -6,7 +6,8 @@ import { Separator } from '@/components/ui/separator';
 import StarRating from './StarRating';
 import ReviewForm from './ReviewForm';
 import ReviewList from './ReviewList';
-import { Star } from 'lucide-react';
+import { Star, PenLine } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface Review {
   id: string;
@@ -94,10 +95,22 @@ const ProductReviews = ({ productId, productName }: ProductReviewsProps) => {
       {/* Rating Summary */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Star className="h-5 w-5 text-yellow-400 fill-yellow-400" />
-            Customer Reviews
-          </CardTitle>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <CardTitle className="flex items-center gap-2">
+              <Star className="h-5 w-5 text-yellow-400 fill-yellow-400" />
+              Customer Reviews
+            </CardTitle>
+            <Button
+              size="sm"
+              className="font-bold"
+              onClick={() =>
+                document.getElementById('write-review')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+              }
+            >
+              <PenLine className="h-4 w-4 mr-2" />
+              Write a Review
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4">
