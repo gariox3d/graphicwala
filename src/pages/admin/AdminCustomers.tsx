@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Users, Search, Copy, Check, Trash2, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { normalizeIndianPhoneForWhatsApp } from '@/lib/phone';
+import UserAvatar from '@/components/profile/UserAvatar';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,6 +24,7 @@ interface CustomerInfo {
   name: string;
   phone: string;
   email: string;
+  avatar_url?: string | null;
 }
 
 const AdminCustomers = () => {
@@ -38,6 +40,12 @@ const AdminCustomers = () => {
       const { data, error } = await supabase.rpc('get_all_customers');
       if (error) { console.error('Error:', error); return; }
       if (data) {
+        const { data: profileRows } = await supabase
+          .from('public_profiles')
+          .select('user_id, avatar_url');
+        const avatarMap = new Map<string, string | null>(
+          (profileRows || []).map((p: any) => [p.user_id, p.avatar_url])
+        );
         setCustomers(
           data
             .filter((c: any) => c.full_name || c.phone || c.email)
@@ -46,6 +54,7 @@ const AdminCustomers = () => {
               name: c.full_name || '',
               phone: c.phone || '',
               email: c.email || '',
+              avatar_url: avatarMap.get(c.user_id) || null,
             }))
         );
       }
@@ -62,6 +71,8 @@ const AdminCustomers = () => {
     const q = search.toLowerCase();
     return c.name.toLowerCase().includes(q) || c.phone.includes(q) || c.email.toLowerCase().includes(q);
   });
+
+  const withPhoto = customers.filter(c => !!c.avatar_url).length;
 
   const copyToClipboard = (text: string, idx: number) => {
     navigator.clipboard.writeText(text);
@@ -107,6 +118,8 @@ const AdminCustomers = () => {
 
         <div className="text-sm text-muted-foreground">
           Total Customers: <span className="font-semibold text-foreground">{customers.length}</span>
+          {' '}• With Photo: <span className="font-semibold text-foreground">{withPhoto}</span>
+          {' '}• Without Photo: <span className="font-semibold text-foreground">{customers.length - withPhoto}</span>
           {search && <> • Showing: <span className="font-semibold text-foreground">{filtered.length}</span></>}
         </div>
 
@@ -126,6 +139,7 @@ const AdminCustomers = () => {
                   <thead>
                     <tr className="border-b bg-muted/50">
                       <th className="text-left p-4 font-semibold">#</th>
+                      <th className="text-left p-4 font-semibold">Photo</th>
                       <th className="text-left p-4 font-semibold">Name</th>
                       <th className="text-left p-4 font-semibold">Phone</th>
                       <th className="text-left p-4 font-semibold">Email</th>
@@ -138,6 +152,14 @@ const AdminCustomers = () => {
                       return (
                         <tr key={c.user_id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
                           <td className="p-4 text-muted-foreground">{i + 1}</td>
+                          <td className="p-4">
+                            <div className="flex items-center gap-2">
+                              <UserAvatar avatarUrl={c.avatar_url} name={c.name || c.email} className="h-9 w-9" />
+                              <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${c.avatar_url ? 'bg-green-100 text-green-700' : 'bg-muted text-muted-foreground'}`}>
+                                {c.avatar_url ? 'Uploaded' : 'No photo'}
+                              </span>
+                            </div>
+                          </td>
                           <td className="p-4 font-medium">{c.name || '—'}</td>
                           <td className="p-4">{c.phone || '—'}</td>
                           <td className="p-4">{c.email || '—'}</td>
