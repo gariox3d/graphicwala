@@ -48,6 +48,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import ShippingPolicy from "./pages/ShippingPolicy";
 import RefundPolicy from "./pages/RefundPolicy";
+import TrackOrder from "./pages/TrackOrder";
 import ScrollToTop from "./components/ScrollToTop";
 import AdminGuard from "./components/admin/AdminGuard";
 import WelcomeBackPopup from "./components/WelcomeBackPopup";
@@ -97,6 +98,7 @@ const App = () => {
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/track-order" element={<TrackOrder />} />
                 <Route path="/ai-assistant" element={<AIAssistant />} />
                 <Route path="/sale" element={<Sale />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />

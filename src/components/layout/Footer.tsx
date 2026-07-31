@@ -66,6 +66,11 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link to="/track-order" className="text-background/70 hover:text-primary text-sm transition-colors">
+                  Track Order
+                </Link>
+              </li>
+              <li>
                 <Link to="/privacy-policy" className="text-background/70 hover:text-primary text-sm transition-colors">
                   Privacy Policy
                 </Link>
