@@ -140,7 +140,7 @@ serve(async (req) => {
         return json({ success: false, serviceable: false, error: "No surface courier available" });
       }
 
-      const days = Number(courier.estimated_delivery_days || courier.etd_hours ? courier.estimated_delivery_days : 0) || 5;
+      const days = Number(courier.estimated_delivery_days) || 5;
       return json({
         success: true,
         serviceable: true,
