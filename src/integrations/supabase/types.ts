@@ -1359,6 +1359,22 @@ export type Database = {
       }
       reorder_products: { Args: { _product_ids: string[] }; Returns: undefined }
       slugify: { Args: { _input: string }; Returns: string }
+      track_order: {
+        Args: { p_order_id: string; p_phone: string }
+        Returns: {
+          created_at: string
+          customer_name: string
+          delivery_charge: number
+          delivery_method: string
+          estimated_delivery_date: string
+          id: string
+          items: Json
+          payment_status: string
+          status: string
+          total_amount: number
+          updated_at: string
+        }[]
+      }
       validate_referral_code: { Args: { p_code: string }; Returns: boolean }
     }
     Enums: {
