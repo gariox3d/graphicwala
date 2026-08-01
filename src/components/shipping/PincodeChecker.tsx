@@ -8,11 +8,14 @@ interface PincodeCheckerProps {
   weight?: number;
   className?: string;
   defaultPincode?: string;
+  length?: number;
+  breadth?: number;
+  height?: number;
 }
 
-const PincodeChecker = ({ weight = 0.5, className = '', defaultPincode = '' }: PincodeCheckerProps) => {
+const PincodeChecker = ({ weight = 0.5, className = '', defaultPincode = '', length, breadth, height }: PincodeCheckerProps) => {
   const [pincode, setPincode] = useState(defaultPincode);
-  const { rate, loading, check } = useShippingRate(undefined, weight, false);
+  const { rate, loading, check } = useShippingRate(undefined, weight, false, { length, breadth, height });
 
   return (
     <div className={`rounded-lg border border-border p-4 space-y-3 ${className}`}>
@@ -52,7 +55,7 @@ const PincodeChecker = ({ weight = 0.5, className = '', defaultPincode = '' }: P
             <span className="text-muted-foreground">({rate.estimated_days} days)</span>
           </p>
           <p className="text-muted-foreground text-xs">
-            Shipped via {rate.courier_name} • Shipping estimate ₹{rate.rate}
+            Shipped via {rate.courier_name} • Shipping ₹{Math.ceil(rate.rate || 0)}
           </p>
         </div>
       )}
