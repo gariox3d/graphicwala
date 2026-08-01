@@ -596,7 +596,7 @@ const Checkout = () => {
                             <p className="text-xs text-green-800">
                               📦 {liveRate.courier_name} • Expected by{' '}
                               <strong>{formatDeliveryDate(liveRate.estimated_days || 6)}</strong> ({liveRate.estimated_days} days)
-                              {' '}• Courier cost estimate ₹{liveRate.rate}
+                              {' '}• Shipping ₹{Math.ceil(liveRate.rate || 0)} ({parcel.weight} kg)
                             </p>
                           )}
                         </>
