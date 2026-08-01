@@ -526,7 +526,12 @@ const ProductDetail = () => {
 
                 <SecurePaymentBadge />
 
-                <PincodeChecker weight={(product.weight_kg || 0.5) * quantity} />
+                <PincodeChecker
+                  weight={(product.weight_kg || 0.5) * quantity}
+                  length={(product as any).length_cm || undefined}
+                  breadth={(product as any).breadth_cm || undefined}
+                  height={((product as any).height_cm || 0) * quantity || undefined}
+                />
 
                 {uploadConfig.length > 0 && (
                   <p className="text-xs text-muted-foreground text-center">

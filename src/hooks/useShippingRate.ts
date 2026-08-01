@@ -10,18 +10,32 @@ export interface ShippingRate {
   error?: string;
 }
 
+export interface PackageDims {
+  length?: number;
+  breadth?: number;
+  height?: number;
+}
+
 const cache = new Map<string, ShippingRate>();
 
 export const fetchShippingRate = async (
   pincode: string,
-  weight = 0.5
+  weight = 0.5,
+  dims: PackageDims = {}
 ): Promise<ShippingRate> => {
-  const key = `${pincode}-${weight}`;
+  const key = `${pincode}-${weight}-${dims.length || 0}x${dims.breadth || 0}x${dims.height || 0}`;
   const cached = cache.get(key);
   if (cached) return cached;
 
   const { data, error } = await supabase.functions.invoke('shiprocket', {
-    body: { action: 'serviceability', delivery_pincode: pincode, weight },
+    body: {
+      action: 'serviceability',
+      delivery_pincode: pincode,
+      weight,
+      length: dims.length,
+      breadth: dims.breadth,
+      height: dims.height,
+    },
   });
 
   if (error) {
@@ -43,10 +57,16 @@ export const fetchShippingRate = async (
 };
 
 /** Live Shiprocket rate + ETA for a pincode (auto-fetches on valid 6-digit pincode) */
-export const useShippingRate = (pincode?: string, weight = 0.5, auto = true) => {
+export const useShippingRate = (
+  pincode?: string,
+  weight = 0.5,
+  auto = true,
+  dims: PackageDims = {}
+) => {
   const [rate, setRate] = useState<ShippingRate | null>(null);
   const [loading, setLoading] = useState(false);
   const reqRef = useRef(0);
+  const dimKey = `${dims.length || 0}x${dims.breadth || 0}x${dims.height || 0}`;
 
   const check = useCallback(
     async (pin?: string) => {
@@ -57,14 +77,19 @@ export const useShippingRate = (pincode?: string, weight = 0.5, auto = true) => 
       }
       const id = ++reqRef.current;
       setLoading(true);
-      const result = await fetchShippingRate(target, weight);
+      const [length, breadth, height] = dimKey.split('x').map(Number);
+      const result = await fetchShippingRate(target, weight, {
+        length: length || undefined,
+        breadth: breadth || undefined,
+        height: height || undefined,
+      });
       if (reqRef.current === id) {
         setRate(result);
         setLoading(false);
       }
       return result;
     },
-    [pincode, weight]
+    [pincode, weight, dimKey]
   );
 
   useEffect(() => {

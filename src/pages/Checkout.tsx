@@ -51,18 +51,36 @@ const Checkout = () => {
   const [loyaltyDiscount, setLoyaltyDiscount] = useState(0);
   const [loyaltyApplied, setLoyaltyApplied] = useState(false);
 
-  // Calculate delivery charge from product-level charges only
-  const calculateDeliveryCharge = useCallback(() => {
-    if (deliveryMethod === 'store_pickup') return 0;
+  // Fallback delivery charge from product-level charges (used if live rate unavailable)
+  const fallbackDeliveryCharge = useCallback(() => {
     let totalDelivery = 0;
     cartItems.forEach(item => {
       const product = item.products as Product & { delivery_charge?: number | null };
       totalDelivery += (product?.delivery_charge || 0);
     });
     return totalDelivery;
-  }, [deliveryMethod, cartItems]);
+  }, [cartItems]);
 
-  const deliveryCharge = calculateDeliveryCharge();
+  // Real package weight & dimensions from product settings
+  const parcel = (() => {
+    let weight = 0;
+    let length = 0, breadth = 0, height = 0;
+    cartItems.forEach(item => {
+      const p = item.products as any;
+      const qty = item.quantity || 1;
+      weight += (Number(p?.weight_kg) || 0.5) * qty;
+      length = Math.max(length, Number(p?.length_cm) || 10);
+      breadth = Math.max(breadth, Number(p?.breadth_cm) || 10);
+      height += (Number(p?.height_cm) || 3) * qty;
+    });
+    return {
+      weight: Math.max(0.5, Number(weight.toFixed(2))),
+      length: length || 10,
+      breadth: breadth || 10,
+      height: height || 3,
+    };
+  })();
+
   const couponDiscount = appliedCoupon?.discountAmount || 0;
 
   // Calculate bulk discount
@@ -82,8 +100,6 @@ const Checkout = () => {
     return Math.round(discount * 100) / 100;
   })();
 
-  const totalPayable = Math.max(0, cartTotal + deliveryCharge - couponDiscount - bulkDiscount - loyaltyDiscount);
-  
   const [formData, setFormData] = useState({
     fullName: profile?.full_name || '',
     email: user?.email || '',
@@ -96,7 +112,22 @@ const Checkout = () => {
     orderNotes: '',
   });
 
-  const { rate: liveRate, loading: liveRateLoading } = useShippingRate(formData.pincode);
+  const { rate: liveRate, loading: liveRateLoading } = useShippingRate(
+    formData.pincode,
+    parcel.weight,
+    true,
+    { length: parcel.length, breadth: parcel.breadth, height: parcel.height }
+  );
+
+  // Actual courier rate is charged; product-level charge is only a fallback
+  const deliveryCharge =
+    deliveryMethod === 'store_pickup'
+      ? 0
+      : liveRate?.serviceable && liveRate.rate
+        ? Math.ceil(liveRate.rate)
+        : fallbackDeliveryCharge();
+
+  const totalPayable = Math.max(0, cartTotal + deliveryCharge - couponDiscount - bulkDiscount - loyaltyDiscount);
 
   useEffect(() => {
     if (!user) {
@@ -565,7 +596,7 @@ const Checkout = () => {
                             <p className="text-xs text-green-800">
                               📦 {liveRate.courier_name} • Expected by{' '}
                               <strong>{formatDeliveryDate(liveRate.estimated_days || 6)}</strong> ({liveRate.estimated_days} days)
-                              {' '}• Courier cost estimate ₹{liveRate.rate}
+                              {' '}• Shipping ₹{Math.ceil(liveRate.rate || 0)} ({parcel.weight} kg)
                             </p>
                           )}
                         </>

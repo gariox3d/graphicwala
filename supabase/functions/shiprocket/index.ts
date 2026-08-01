@@ -80,12 +80,18 @@ function pickCourier(list: any[]) {
   const pool = surface.length ? surface : list.filter((c) => !isAir(String(c.courier_name || "")));
   if (!pool.length) return null;
 
-  const delhivery = pool
-    .filter((c) => isDelhivery(String(c.courier_name || "")))
-    .sort((a, b) => Number(a.rate) - Number(b.rate));
-  if (delhivery.length) return delhivery[0];
+  const sorted = [...pool].sort((a, b) => Number(a.rate) - Number(b.rate));
+  const cheapest = sorted[0];
+  // Prefer Delhivery Surface, but never charge the customer a lot more for it
+  const delhivery = sorted.find((c) => isDelhivery(String(c.courier_name || "")));
+  if (delhivery && Number(delhivery.rate) <= Number(cheapest.rate) * 1.1) return delhivery;
+  return cheapest;
+}
 
-  return pool.sort((a, b) => Number(a.rate) - Number(b.rate))[0];
+// Billable weight = max(actual, volumetric). Shiprocket surface divisor = 5000
+function billableWeight(weight: number, l?: number, b?: number, h?: number) {
+  const vol = l && b && h ? (l * b * h) / 5000 : 0;
+  return Math.max(0.5, Number(Math.max(weight || 0, vol).toFixed(2)));
 }
 
 async function resolvePickupLocation(pincode?: string | null): Promise<string> {
@@ -124,14 +130,24 @@ serve(async (req) => {
       const settings = await getSettings();
       const pickup = String(body.pickup_pincode || settings?.pickup_pincode || "854105");
       const delivery = String(body.delivery_pincode || "").trim();
-      const weight = Number(body.weight || 0.5);
+      const weight = billableWeight(
+        Number(body.weight || 0.5),
+        Number(body.length || 0),
+        Number(body.breadth || 0),
+        Number(body.height || 0)
+      );
 
       if (!/^\d{6}$/.test(delivery)) {
         return json({ success: false, error: "Valid 6-digit pincode required" }, 400);
       }
 
+      const dims =
+        body.length && body.breadth && body.height
+          ? `&length=${Number(body.length)}&breadth=${Number(body.breadth)}&height=${Number(body.height)}`
+          : "";
+
       const { ok, data } = await sr(
-        `/courier/serviceability/?pickup_postcode=${pickup}&delivery_postcode=${delivery}&weight=${weight}&cod=0`
+        `/courier/serviceability/?pickup_postcode=${pickup}&delivery_postcode=${delivery}&weight=${weight}&cod=0${dims}`
       );
 
       const list = data?.data?.available_courier_companies || [];
@@ -158,6 +174,7 @@ serve(async (req) => {
         etd: courier.etd || null,
         courier_company_id: courier.courier_company_id,
         pickup_pincode: pickup,
+        billable_weight: weight,
       });
     }
 
