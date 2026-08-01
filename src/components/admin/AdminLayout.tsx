@@ -115,6 +115,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/coupons', label: 'Coupons', icon: Ticket },
     { path: '/admin/messages', label: 'Messages', icon: MessageSquare },
     { path: '/admin/settings', label: 'Delivery & Settings', icon: Truck },
+    { path: '/admin/shipping', label: 'Shiprocket Shipping', icon: Truck },
     { path: '/admin/festival-theme', label: 'Festival Theme', icon: Moon },
     { path: '/admin/valentine-theme', label: 'Valentine Theme', icon: Heart },
     { path: '/admin/ads', label: 'Ads / Banners', icon: Megaphone },

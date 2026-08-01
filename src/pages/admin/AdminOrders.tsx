@@ -23,11 +23,15 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
-import { Search, ShoppingCart, Eye, Package, MapPin, CreditCard, User, Image, Download, Trash2, Truck, Store, MessageCircle } from 'lucide-react';
+import { Search, ShoppingCart, Eye, Package, MapPin, CreditCard, User, Image, Download, Trash2, Truck, Store, MessageCircle, Loader2 } from 'lucide-react';
 import { SignedImage, openSignedDesign } from '@/components/SignedImage';
 
 interface OrderWithProfile extends Order {
   profiles?: { full_name: string | null };
+  shiprocket_awb?: string | null;
+  shiprocket_courier_name?: string | null;
+  shiprocket_order_id?: string | null;
+  delivery_method?: string | null;
 }
 
 interface OrderItemUpload {
@@ -79,6 +83,7 @@ const AdminOrders = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedOrder, setSelectedOrder] = useState<OrderWithProfile | null>(null);
+  const [shippingOrderId, setShippingOrderId] = useState<string | null>(null);
   const [orderItems, setOrderItems] = useState<OrderItemWithUploads[]>([]);
   const [deleteOrderId, setDeleteOrderId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -282,6 +287,33 @@ const AdminOrders = () => {
     }
   };
 
+
+  const handleCreateShipment = async (order: OrderWithProfile) => {
+    setShippingOrderId(order.id);
+    try {
+      const { data, error } = await supabase.functions.invoke('shiprocket', {
+        body: { action: 'create_shipment', order_id: order.id },
+      });
+      if (error) throw new Error(error.message);
+      if (!data?.success) throw new Error(data?.error || 'Shipment creation failed');
+
+      setOrders(prev => prev.map(o => o.id === order.id ? {
+        ...o,
+        shiprocket_order_id: String(data.shiprocket_order_id),
+        shiprocket_awb: data.awb,
+        shiprocket_courier_name: data.courier_name,
+      } : o));
+
+      toast.success(data.awb
+        ? `Shipment created • ${data.courier_name} • AWB ${data.awb}`
+        : `Shipment created. ${data.awb_error || 'AWB pending'}`);
+    } catch (e: any) {
+      toast.error(e.message || 'Shipment creation failed');
+    } finally {
+      setShippingOrderId(null);
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     const styles: Record<string, string> = {
       pending: 'bg-yellow-100 text-yellow-700',
@@ -408,6 +440,26 @@ const AdminOrders = () => {
                           <Button variant="ghost" size="icon" onClick={() => viewOrderDetails(order)}>
                             <Eye className="h-4 w-4" />
                           </Button>
+                          {order.delivery_method !== 'store_pickup' && (
+                            order.shiprocket_awb ? (
+                              <Badge variant="outline" className="bg-blue-50 text-blue-700 whitespace-nowrap">
+                                {order.shiprocket_courier_name || 'Shipped'} • {order.shiprocket_awb}
+                              </Badge>
+                            ) : (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                title="Create Shiprocket shipment"
+                                disabled={shippingOrderId === order.id}
+                                onClick={() => handleCreateShipment(order)}
+                              >
+                                {shippingOrderId === order.id
+                                  ? <Loader2 className="h-4 w-4 animate-spin" />
+                                  : <Truck className="h-4 w-4" />}
+                              </Button>
+                            )
+                          )}
                           {WHATSAPP_STATUS_MESSAGES[order.status] && (
                             <Button
                               variant="ghost"

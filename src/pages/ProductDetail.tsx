@@ -28,6 +28,7 @@ import StickyAddToCart from '@/components/products/StickyAddToCart';
 import ProductFAQ from '@/components/products/ProductFAQ';
 import WhyBuyFromProduct from '@/components/products/WhyBuyFromProduct';
 import SecurePaymentBadge from '@/components/SecurePaymentBadge';
+import PincodeChecker from '@/components/shipping/PincodeChecker';
 import { trackEvent } from '@/lib/analytics';
 
 import WishlistButton from '@/components/products/WishlistButton';
@@ -524,6 +525,8 @@ const ProductDetail = () => {
                 </div>
 
                 <SecurePaymentBadge />
+
+                <PincodeChecker weight={(product.weight_kg || 0.5) * quantity} />
 
                 {uploadConfig.length > 0 && (
                   <p className="text-xs text-muted-foreground text-center">

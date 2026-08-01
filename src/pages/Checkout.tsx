@@ -15,6 +15,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import PriceBreakdown from '@/components/PriceBreakdown';
+import { useShippingRate, formatDeliveryDate } from '@/hooks/useShippingRate';
 import SupportContact from '@/components/SupportContact';
 import LoyaltyRedeemCheckout from '@/components/loyalty/LoyaltyRedeemCheckout';
 import DeliveryInfoBanner from '@/components/DeliveryInfoBanner';
@@ -94,6 +95,8 @@ const Checkout = () => {
     pincode: profile?.pincode || '',
     orderNotes: '',
   });
+
+  const { rate: liveRate, loading: liveRateLoading } = useShippingRate(formData.pincode);
 
   useEffect(() => {
     if (!user) {
@@ -545,11 +548,28 @@ const Checkout = () => {
 
                   {/* Delivery confirmation */}
                   {deliveryMethod === 'home_delivery' && formData.pincode.length === 6 && (
-                    <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-                      <div className="flex items-center gap-2 text-green-700">
-                        <CheckCircle2 className="h-4 w-4" />
-                        <span className="text-sm font-medium">✅ Delivery available to {formData.pincode}</span>
-                      </div>
+                    <div className="p-3 bg-green-50 border border-green-200 rounded-lg space-y-1">
+                      {liveRateLoading && (
+                        <div className="flex items-center gap-2 text-green-700 text-sm">
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          Checking live courier rates for {formData.pincode}...
+                        </div>
+                      )}
+                      {!liveRateLoading && (
+                        <>
+                          <div className="flex items-center gap-2 text-green-700">
+                            <CheckCircle2 className="h-4 w-4" />
+                            <span className="text-sm font-medium">✅ Delivery available to {formData.pincode}</span>
+                          </div>
+                          {liveRate?.serviceable && (
+                            <p className="text-xs text-green-800">
+                              📦 {liveRate.courier_name} • Expected by{' '}
+                              <strong>{formatDeliveryDate(liveRate.estimated_days || 6)}</strong> ({liveRate.estimated_days} days)
+                              {' '}• Courier cost estimate ₹{liveRate.rate}
+                            </p>
+                          )}
+                        </>
+                      )}
                     </div>
                   )}
 

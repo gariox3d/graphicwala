@@ -88,6 +88,14 @@ function pickCourier(list: any[]) {
   return pool.sort((a, b) => Number(a.rate) - Number(b.rate))[0];
 }
 
+async function resolvePickupLocation(pincode?: string | null): Promise<string> {
+  const res = await sr("/settings/company/pickup");
+  const list = res.data?.data?.shipping_address || [];
+  if (!list.length) return "Primary";
+  const match = list.find((l: any) => String(l.pin_code) === String(pincode));
+  return (match || list[0]).pickup_location || "Primary";
+}
+
 async function requireAdmin(req: Request) {
   const authHeader = req.headers.get("Authorization") || "";
   const token = authHeader.replace("Bearer ", "");
@@ -195,7 +203,7 @@ serve(async (req) => {
       const payload = {
         order_id: String(order.id).slice(0, 8) + "-" + Date.now().toString().slice(-5),
         order_date: new Date(order.created_at).toISOString().slice(0, 19).replace("T", " "),
-        pickup_location: body.pickup_location || "Primary",
+        pickup_location: body.pickup_location || (await resolvePickupLocation(settings?.pickup_pincode)),
         billing_customer_name: nameParts[0],
         billing_last_name: nameParts.slice(1).join(" ") || ".",
         billing_address: order.shipping_address,
@@ -282,7 +290,15 @@ serve(async (req) => {
 
     if (action === "pickup_locations") {
       const res = await sr("/settings/company/pickup");
-      return json({ success: res.ok, data: res.data });
+      const list = (res.data?.data?.shipping_address || []).map((l: any) => ({
+        pickup_location: l.pickup_location,
+        address: l.address,
+        city: l.city,
+        state: l.state,
+        pin_code: l.pin_code,
+        phone: l.phone,
+      }));
+      return json({ success: res.ok, locations: list });
     }
 
     if (action === "cancel") {
