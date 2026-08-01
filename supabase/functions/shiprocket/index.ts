@@ -80,12 +80,18 @@ function pickCourier(list: any[]) {
   const pool = surface.length ? surface : list.filter((c) => !isAir(String(c.courier_name || "")));
   if (!pool.length) return null;
 
-  const delhivery = pool
-    .filter((c) => isDelhivery(String(c.courier_name || "")))
-    .sort((a, b) => Number(a.rate) - Number(b.rate));
-  if (delhivery.length) return delhivery[0];
+  const sorted = [...pool].sort((a, b) => Number(a.rate) - Number(b.rate));
+  const cheapest = sorted[0];
+  // Prefer Delhivery Surface, but never charge the customer a lot more for it
+  const delhivery = sorted.find((c) => isDelhivery(String(c.courier_name || "")));
+  if (delhivery && Number(delhivery.rate) <= Number(cheapest.rate) * 1.1) return delhivery;
+  return cheapest;
+}
 
-  return pool.sort((a, b) => Number(a.rate) - Number(b.rate))[0];
+// Billable weight = max(actual, volumetric). Shiprocket surface divisor = 5000
+function billableWeight(weight: number, l?: number, b?: number, h?: number) {
+  const vol = l && b && h ? (l * b * h) / 5000 : 0;
+  return Math.max(0.5, Number(Math.max(weight || 0, vol).toFixed(2)));
 }
 
 async function resolvePickupLocation(pincode?: string | null): Promise<string> {
