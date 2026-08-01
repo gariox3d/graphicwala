@@ -130,14 +130,24 @@ serve(async (req) => {
       const settings = await getSettings();
       const pickup = String(body.pickup_pincode || settings?.pickup_pincode || "854105");
       const delivery = String(body.delivery_pincode || "").trim();
-      const weight = Number(body.weight || 0.5);
+      const weight = billableWeight(
+        Number(body.weight || 0.5),
+        Number(body.length || 0),
+        Number(body.breadth || 0),
+        Number(body.height || 0)
+      );
 
       if (!/^\d{6}$/.test(delivery)) {
         return json({ success: false, error: "Valid 6-digit pincode required" }, 400);
       }
 
+      const dims =
+        body.length && body.breadth && body.height
+          ? `&length=${Number(body.length)}&breadth=${Number(body.breadth)}&height=${Number(body.height)}`
+          : "";
+
       const { ok, data } = await sr(
-        `/courier/serviceability/?pickup_postcode=${pickup}&delivery_postcode=${delivery}&weight=${weight}&cod=0`
+        `/courier/serviceability/?pickup_postcode=${pickup}&delivery_postcode=${delivery}&weight=${weight}&cod=0${dims}`
       );
 
       const list = data?.data?.available_courier_companies || [];
@@ -164,6 +174,7 @@ serve(async (req) => {
         etd: courier.etd || null,
         courier_company_id: courier.courier_company_id,
         pickup_pincode: pickup,
+        billable_weight: weight,
       });
     }
 
