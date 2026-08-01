@@ -23,7 +23,7 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
-import { Search, ShoppingCart, Eye, Package, MapPin, CreditCard, User, Image, Download, Trash2, Truck, Store, MessageCircle } from 'lucide-react';
+import { Search, ShoppingCart, Eye, Package, MapPin, CreditCard, User, Image, Download, Trash2, Truck, Store, MessageCircle, Loader2 } from 'lucide-react';
 import { SignedImage, openSignedDesign } from '@/components/SignedImage';
 
 interface OrderWithProfile extends Order {
