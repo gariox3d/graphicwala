@@ -34,6 +34,7 @@ import AdminProducts from "./pages/admin/AdminProducts";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminCategories from "./pages/admin/AdminCategories";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminShipping from "./pages/admin/AdminShipping";
 import AdminReviews from "./pages/admin/AdminReviews";
 import AdminCoupons from "./pages/admin/AdminCoupons";
 import AdminMessages from "./pages/admin/AdminMessages";
@@ -117,6 +118,7 @@ const App = () => {
                 <Route path="/admin/messages" element={<AdminGuard><AdminMessages /></AdminGuard>} />
                 <Route path="/admin/customers" element={<AdminGuard><AdminCustomers /></AdminGuard>} />
                 <Route path="/admin/settings" element={<AdminGuard><AdminSettings /></AdminGuard>} />
+                <Route path="/admin/shipping" element={<AdminGuard><AdminShipping /></AdminGuard>} />
                 <Route path="/admin/festival-theme" element={<AdminGuard><AdminFestivalTheme /></AdminGuard>} />
                 <Route path="/admin/valentine-theme" element={<AdminGuard><AdminValentineTheme /></AdminGuard>} />
                 <Route path="/admin/ads" element={<AdminGuard><AdminAds /></AdminGuard>} />
