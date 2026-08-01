@@ -1,0 +1,1 @@
+UPDATE public.store_settings SET pickup_pincode = '854105', shiprocket_enabled = true, updated_at = now() WHERE id = 'default';
