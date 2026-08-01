@@ -63,7 +63,6 @@ const Checkout = () => {
   }, [deliveryMethod, cartItems]);
 
   const deliveryCharge = calculateDeliveryCharge();
-  const { rate: liveRate, loading: liveRateLoading } = useShippingRate(formData?.pincode);
   const couponDiscount = appliedCoupon?.discountAmount || 0;
 
   // Calculate bulk discount
@@ -96,6 +95,8 @@ const Checkout = () => {
     pincode: profile?.pincode || '',
     orderNotes: '',
   });
+
+  const { rate: liveRate, loading: liveRateLoading } = useShippingRate(formData.pincode);
 
   useEffect(() => {
     if (!user) {
