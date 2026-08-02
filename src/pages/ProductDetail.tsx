@@ -365,6 +365,8 @@ const ProductDetail = () => {
         <title>{productTitle}</title>
         <meta name="title" content={productTitle} />
         <meta name="description" content={productDescription} />
+        <meta name="keywords" content={productKeywords} />
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
         <link rel="canonical" href={productUrl} />
 
         {/* Open Graph / Facebook / WhatsApp */}
