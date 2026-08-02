@@ -249,11 +249,6 @@ const ProductDetail = () => {
     );
   }
 
-  // Generate SEO-friendly meta data
-  const productTitle = `${product.name} - Buy Online | ${BUSINESS_NAME}`;
-  const productDescription = product.description 
-    ? `${product.description.slice(0, 120)} | Buy ${product.name} online from Graphic Wala. Premium quality, All India delivery.`
-    : `Buy ${product.name} online from Graphic Wala. Premium quality custom printing with All India home delivery. Order now!`;
   const productSlug = (product as any).slug || product.id;
   const productUrl = `${SITE_URL}/product/${productSlug}`;
   const shareUrl = `${SHARE_BASE_URL}/${productSlug}`;
@@ -262,6 +257,27 @@ const ProductDetail = () => {
     : product.image_url ? [product.image_url] : [DEFAULT_OG_IMAGE];
   const productImage = allImages[0];
   const categoryName = product.categories?.name || 'Custom Products';
+
+  // Generate SEO-friendly meta data (keyword-rich, unique per product)
+  const onSale = !!(product.sale_price && product.sale_end && new Date(product.sale_end) > new Date());
+  const effectivePrice = onSale ? product.sale_price! : product.price;
+  const productTitle = `${product.name} Online at ₹${effectivePrice} | Buy ${categoryName} – ${BUSINESS_NAME}`.slice(0, 65);
+  const productDescription = (
+    product.description
+      ? `${product.description.replace(/\s+/g, ' ').slice(0, 100)} — Buy ${product.name} online at ₹${effectivePrice}. Custom printed ${categoryName.toLowerCase()}, prepaid, All India delivery.`
+      : `Buy ${product.name} online at ₹${effectivePrice} from Graphic Wala. Custom printed ${categoryName.toLowerCase()} with premium quality and All India home delivery.`
+  ).slice(0, 158);
+  const productKeywords = [
+    product.name,
+    `${product.name} online`,
+    `buy ${product.name}`,
+    `${product.name} price in India`,
+    `custom ${categoryName}`,
+    `${categoryName} online India`,
+    'personalized gifts',
+    'Graphic Wala',
+  ].join(', ');
+  const priceValidUntil = new Date(Date.now() + 1000 * 60 * 60 * 24 * 90).toISOString().split('T')[0];
 
   // Generate JSON-LD structured data for the product
   const productJsonLd = {
@@ -281,6 +297,8 @@ const ProductDetail = () => {
       "@type": "Offer",
       "price": product.sale_price && product.sale_end && new Date(product.sale_end) > new Date() ? product.sale_price : product.price,
       "priceCurrency": "INR",
+      "priceValidUntil": priceValidUntil,
+      "itemCondition": "https://schema.org/NewCondition",
       "availability": product.stock_quantity > 0 
         ? "https://schema.org/InStock" 
         : "https://schema.org/OutOfStock",
@@ -293,7 +311,20 @@ const ProductDetail = () => {
         "shippingDestination": {
           "@type": "DefinedRegion",
           "addressCountry": "IN"
+        },
+        "deliveryTime": {
+          "@type": "ShippingDeliveryTime",
+          "handlingTime": { "@type": "QuantitativeValue", "minValue": 1, "maxValue": 2, "unitCode": "DAY" },
+          "transitTime": { "@type": "QuantitativeValue", "minValue": 3, "maxValue": 7, "unitCode": "DAY" }
         }
+      },
+      "hasMerchantReturnPolicy": {
+        "@type": "MerchantReturnPolicy",
+        "applicableCountry": "IN",
+        "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+        "merchantReturnDays": 2,
+        "returnMethod": "https://schema.org/ReturnByMail",
+        "returnFees": "https://schema.org/FreeReturn"
       },
       "url": productUrl
     },
@@ -334,6 +365,8 @@ const ProductDetail = () => {
         <title>{productTitle}</title>
         <meta name="title" content={productTitle} />
         <meta name="description" content={productDescription} />
+        <meta name="keywords" content={productKeywords} />
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
         <link rel="canonical" href={productUrl} />
 
         {/* Open Graph / Facebook / WhatsApp */}
@@ -577,6 +610,22 @@ const ProductDetail = () => {
         {viewedIds.length > 1 && (
           <RecentlyViewedProducts viewedIds={viewedIds} excludeId={product.id} />
         )}
+
+        {/* Unique SEO text block for search engines */}
+        <section className="sr-only" aria-label={`About ${product.name}`}>
+          <h2>Buy {product.name} Online in India</h2>
+          <p>
+            {product.name} is available online at Graphic Wala for ₹{effectivePrice}. This {categoryName.toLowerCase()} is
+            custom printed on premium material and delivered across all of India. Order {product.name} online with
+            prepaid payment, fast dispatch and secure packaging. Looking for {categoryName.toLowerCase()} online in India?
+            Graphic Wala offers personalized photo frames, PVC cards, ID cards, visiting cards, keychains and custom gifts.
+          </p>
+          <h3>{product.name} Price and Delivery</h3>
+          <p>
+            {product.name} price starts at ₹{effectivePrice}. Delivery across India usually takes {product.delivery_days || 5}–7 days.
+            You can customize {product.name} with your own photo or text before placing the order.
+          </p>
+        </section>
       </main>
       <Footer />
       
