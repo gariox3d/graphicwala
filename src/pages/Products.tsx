@@ -8,6 +8,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { Product, Category } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { getCategoryCopy } from '@/components/home/CategoryGrid';
+import { Link } from 'react-router-dom';
+import { categorySlug } from '@/lib/categorySeo';
 
 
 const Products = () => {
@@ -103,7 +105,7 @@ const Products = () => {
       <Helmet>
         <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />
-        <link rel="canonical" href={`https://graphicwala.com/products${selectedCategory ? `?category=${encodeURIComponent(selectedCategory)}` : ''}`} />
+        <link rel="canonical" href={selectedCategory ? `https://graphicwala.com/category/${categorySlug(selectedCategory)}` : 'https://graphicwala.com/products'} />
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={pageDescription} />
         <meta property="og:type" content="website" />
@@ -154,6 +156,20 @@ const Products = () => {
             </div>
           )}
           {!loading && filteredProducts.length === 0 && <p className="text-center text-muted-foreground py-12">No products found.</p>}
+          {categories.length > 0 && (
+            <nav aria-label="Category landing pages" className="mt-14 border-t border-border pt-8">
+              <h2 className="text-lg font-bold mb-3">Shop by category</h2>
+              <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm">
+                {categories.map((cat) => (
+                  <li key={cat.id}>
+                    <Link to={`/category/${categorySlug(cat.name)}`} className="text-muted-foreground hover:text-primary font-medium">
+                      Custom {cat.name} Online in India
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
         </div>
       </main>
       <Footer />

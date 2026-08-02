@@ -21,6 +21,7 @@ import AdminPickupEarnings from "./pages/admin/AdminPickupEarnings";
 import AdminHeroShowcase from "./pages/admin/AdminHeroShowcase";
 import Index from "./pages/Index";
 import Products from "./pages/Products";
+import CategoryLanding from "./pages/CategoryLanding";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import Auth from "./pages/Auth";
@@ -89,6 +90,7 @@ const App = () => {
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/products" element={<Products />} />
+                <Route path="/category/:slug" element={<CategoryLanding />} />
                 <Route path="/product/:id" element={<ProductDetail />} />
                 <Route path="/share/product/:id" element={<ShareRedirect />} />
                 <Route path="/cart" element={<Cart />} />
