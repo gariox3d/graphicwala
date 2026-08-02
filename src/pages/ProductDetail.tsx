@@ -610,6 +610,22 @@ const ProductDetail = () => {
         {viewedIds.length > 1 && (
           <RecentlyViewedProducts viewedIds={viewedIds} excludeId={product.id} />
         )}
+
+        {/* Unique SEO text block for search engines */}
+        <section className="sr-only" aria-label={`About ${product.name}`}>
+          <h2>Buy {product.name} Online in India</h2>
+          <p>
+            {product.name} is available online at Graphic Wala for ₹{effectivePrice}. This {categoryName.toLowerCase()} is
+            custom printed on premium material and delivered across all of India. Order {product.name} online with
+            prepaid payment, fast dispatch and secure packaging. Looking for {categoryName.toLowerCase()} online in India?
+            Graphic Wala offers personalized photo frames, PVC cards, ID cards, visiting cards, keychains and custom gifts.
+          </p>
+          <h3>{product.name} Price and Delivery</h3>
+          <p>
+            {product.name} price starts at ₹{effectivePrice}. Delivery across India usually takes {product.delivery_days || 5}–7 days.
+            You can customize {product.name} with your own photo or text before placing the order.
+          </p>
+        </section>
       </main>
       <Footer />
       
