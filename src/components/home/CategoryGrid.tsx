@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { Category } from '@/lib/types';
+import { categorySlug } from '@/lib/categorySeo';
 
 export const CATEGORY_COPY: Record<string, string> = {
   'photo frame': 'Turn your favourite photo into a premium framed keepsake.',
@@ -36,7 +37,7 @@ const CategoryGrid = ({ categories, getImage }: Props) => (
           return (
             <Link
               key={category.id}
-              to={`/products?category=${encodeURIComponent(category.name)}`}
+              to={`/category/${categorySlug(category.name)}`}
               className="group rounded-2xl border border-border bg-card overflow-hidden shadow-soft hover:shadow-brand transition-shadow"
               aria-label={`Shop ${category.name} online with All India delivery`}
             >
