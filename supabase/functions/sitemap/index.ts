@@ -65,10 +65,10 @@ serve(async (req) => {
     </image:image>
 ` : '';
         xml += `  <url>
-    <loc>${SITE_URL}/products?category=${encodeURIComponent(cat.name)}</loc>
+    <loc>${SITE_URL}/category/${categorySlug(cat.name)}</loc>
     <lastmod>${now}</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
 ${catImage}  </url>
 `;
       }
@@ -115,6 +115,24 @@ ${catImage}  </url>
 });
 
 function escapeXml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
+function categorySlug(name: string): string {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function _unusedEscape(text: string): string {
   return text
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
