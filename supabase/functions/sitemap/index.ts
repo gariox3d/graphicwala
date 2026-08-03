@@ -28,8 +28,6 @@ serve(async (req) => {
       .select("id, name, image_url, created_at")
       .eq("is_active", true);
 
-    const now = new Date().toISOString().split("T")[0];
-
     // Static pages
     const staticPages = [
       { url: "/", priority: "1.0", changefreq: "daily" },
@@ -48,7 +46,6 @@ serve(async (req) => {
     for (const page of staticPages) {
       xml += `  <url>
     <loc>${SITE_URL}${page.url}</loc>
-    <lastmod>${now}</lastmod>
     <changefreq>${page.changefreq}</changefreq>
     <priority>${page.priority}</priority>
   </url>
@@ -66,7 +63,6 @@ serve(async (req) => {
 ` : '';
         xml += `  <url>
     <loc>${SITE_URL}/category/${categorySlug(cat.name)}</loc>
-    <lastmod>${now}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
 ${catImage}  </url>
@@ -77,13 +73,13 @@ ${catImage}  </url>
     // Add product pages with images
     if (products) {
       for (const product of products) {
-        const lastmod = product.updated_at ? product.updated_at.split("T")[0] : now;
+        const lastmod = product.updated_at ? product.updated_at.split("T")[0] : null;
         const imageUrls = Array.isArray(product.image_urls) ? product.image_urls as string[] : [];
         const allImages = imageUrls.length > 0 ? imageUrls : (product.image_url ? [product.image_url] : []);
 
         xml += `  <url>
     <loc>${SITE_URL}/product/${product.slug || product.id}</loc>
-    <lastmod>${lastmod}</lastmod>
+${lastmod ? `    <lastmod>${lastmod}</lastmod>\n` : ''}
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
 `;

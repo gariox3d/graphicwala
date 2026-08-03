@@ -15,15 +15,15 @@ const Footer = () => {
             <Link to="/" className="flex items-center gap-2 mb-4">
               <img 
                 src={logoImage} 
-                alt="Graphic Wala Logo" 
+                alt="Graphicwala logo" 
                 className="h-10 w-10 rounded-lg object-cover"
               />
               <span className="text-xl font-bold">
-                Graphic <span className="text-primary">Wala</span>
+                Graphic<span className="text-primary">wala</span>
               </span>
             </Link>
             <p className="text-background/70 text-sm leading-relaxed">
-              Graphic Wala (graphicwala.com) — India's trusted online store for custom photo frames, PVC cards, keychains & personalized gifts with All India home delivery.
+               Graphicwala (also known as Graphic Wala) — custom photo frames, PVC cards, keychains and personalized gifts with All India delivery.
             </p>
             <p className="text-background/60 text-xs mt-3">
               Prepaid orders only · UPI, Card & Netbanking accepted · Custom printed in Katihar, Bihar and shipped across India.
@@ -46,7 +46,7 @@ const Footer = () => {
             <h4 className="font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-3">
               <li>
-                <Link to="/products" className="text-background/70 hover:text-primary text-sm transition-colors">
+                 <Link to="/category/photo-frame" className="text-background/70 hover:text-primary text-sm transition-colors">
                   All Products
                 </Link>
               </li>
@@ -98,22 +98,22 @@ const Footer = () => {
             <h4 className="font-semibold mb-4">Products</h4>
             <ul className="space-y-3">
               <li>
-                <Link to="/products" className="text-background/70 hover:text-primary text-sm transition-colors">
+                 <Link to="/category/pvc-card" className="text-background/70 hover:text-primary text-sm transition-colors">
                   Photo Frames
                 </Link>
               </li>
               <li>
-                <Link to="/products" className="text-background/70 hover:text-primary text-sm transition-colors">
+                 <Link to="/category/id-card" className="text-background/70 hover:text-primary text-sm transition-colors">
                   PVC Cards
                 </Link>
               </li>
               <li>
-                <Link to="/products" className="text-background/70 hover:text-primary text-sm transition-colors">
+                 <Link to="/category/visiting-card" className="text-background/70 hover:text-primary text-sm transition-colors">
                   ID Cards
                 </Link>
               </li>
               <li>
-                <Link to="/products" className="text-background/70 hover:text-primary text-sm transition-colors">
+                 <Link to="/category/keychain" className="text-background/70 hover:text-primary text-sm transition-colors">
                   Visiting Cards
                 </Link>
               </li>
@@ -183,7 +183,7 @@ const Footer = () => {
 
         <div className="border-t border-background/10 mt-12 pt-8 text-center">
           <p className="text-background/50 text-sm">
-            © {new Date().getFullYear()} Graphic Wala. All rights reserved.
+             © {new Date().getFullYear()} Graphicwala. All rights reserved.
           </p>
         </div>
       </div>
