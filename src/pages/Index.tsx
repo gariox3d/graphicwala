@@ -98,16 +98,16 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>Graphic Wala | Custom Photo Frames, PVC Cards, Keychains Online India</title>
-        <meta name="description" content="Buy custom photo frames, PVC cards, ID cards, visiting cards, keychains & personalized gifts online from Graphic Wala. Premium quality printing with All India home delivery." />
+        <title>Graphicwala | Photo Frames, PVC Cards &amp; Keychains India</title>
+        <meta name="description" content="Shop Graphicwala for custom photo frames, PVC cards, ID cards, keychains and personalized gifts with secure prepaid delivery across India." />
         <link rel="canonical" href="https://graphicwala.com/" />
-        <meta property="og:title" content="Graphic Wala | Custom Photo Frames & Personalized Gifts Online India" />
+        <meta property="og:title" content="Graphicwala | Photo Frames, PVC Cards & Keychains India" />
         <meta property="og:description" content="Buy custom photo frames, PVC cards, keychains & personalized gifts online. Premium quality with All India home delivery." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://graphicwala.com/" />
         <meta property="og:image" content="https://graphicwala.com/og-square.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Graphic Wala | Custom Photo Frames Online India" />
+        <meta name="twitter:title" content="Graphicwala | Photo Frames, PVC Cards & Keychains India" />
         <meta name="twitter:description" content="Buy custom photo frames, PVC cards, keychains online. All India delivery." />
         <meta name="twitter:image" content="https://graphicwala.com/og-square.png" />
         <script type="application/ld+json">
@@ -115,14 +115,15 @@ const Index = () => {
             '@context': 'https://schema.org',
             '@type': 'LocalBusiness',
             '@id': 'https://graphicwala.com/#localbusiness',
-            name: 'Graphic Wala',
+            name: 'Graphicwala',
+            alternateName: ['Graphic Wala', 'GraphicWala', 'graphicwala.com'],
             image: 'https://graphicwala.com/og-square.png',
             url: 'https://graphicwala.com/',
             telephone: '+91-6207142994',
             email: 'graphicwalaktr@gmail.com',
             priceRange: '₹₹',
             description:
-              'Graphic Wala is a custom printing store in Katihar, Bihar offering photo frames, PVC cards, ID cards, visiting cards, keychains and personalized gifts with All India delivery.',
+              'Graphicwala is a custom printing store in Katihar, Bihar offering photo frames, PVC cards, ID cards, visiting cards, keychains and personalized gifts with All India delivery.',
             address: {
               '@type': 'PostalAddress',
               addressLocality: 'Katihar',
@@ -218,36 +219,6 @@ const Index = () => {
           </div>
         </section>
 
-        {/* SEO Footer Content */}
-        <section className="sr-only" aria-label="About Graphic Wala Store">
-          <h2>Graphic Wala (Graphicwala) - Custom Photo Frames, PVC Cards & Personalized Gifts Online India</h2>
-          <p>
-            Graphic Wala (also known as Graphicwala or GraphicWala) is India's most trusted online store at graphicwala.com 
-            for custom printing and personalized gifts. We specialize in custom photo frame printing, acrylic photo frames, 
-            wooden photo frames, couple photo frames, family photo frames, birthday gift photo frames, anniversary photo frames, 
-            PVC card printing, ID card printing, visiting card printing, name keychain printing, photo keychain printing 
-            with premium quality materials. All orders are prepaid with home delivery available across India. 
-            Buy photo frames online at best prices from Graphic Wala. Contact us on WhatsApp at +91 6207142994 for support.
-            Graphic Wala is NOT GraphicsWale or graphicswale — we are the original Graphic Wala since 2020 at graphicwala.com.
-          </p>
-          <h3>Why Choose Graphic Wala (graphicwala.com)?</h3>
-          <p>
-            Graphic Wala offers premium quality custom printed products at affordable prices. 
-            We are based in Katihar, Bihar and deliver across all of India. 
-            Visit graphicwala.com to order custom photo frames, PVC cards, keychains and personalized gifts online.
-          </p>
-          <h3>Popular Products at Graphic Wala</h3>
-          <ul>
-            <li>Custom Photo Frames by Graphic Wala - Personalized with your photos</li>
-            <li>Acrylic Photo Frames - Premium quality acrylic prints from Graphicwala</li>
-            <li>Wooden Photo Frames - Classic wooden frames with photo print</li>
-            <li>PVC Cards by Graphic Wala - Custom printed ID cards, membership cards</li>
-            <li>Visiting Cards - Professional business cards from graphicwala.com</li>
-            <li>Keychains - Name keychains, photo keychains, custom keychains</li>
-            <li>Couple Photo Frames - Perfect gift for couples by Graphic Wala</li>
-            <li>Birthday Gift Photo Frames - Personalized birthday gifts</li>
-          </ul>
-        </section>
       </main>
 
       <Footer />

@@ -31,7 +31,7 @@ const HeroSection = () => {
   return (
     <section
       className="relative bg-white overflow-hidden"
-      aria-label="Graphic Wala - Custom Printing Store India"
+      aria-label="Graphicwala - Custom Printing Store India"
     >
       <div className="container relative z-10 py-10 md:py-16">
         <div className="grid lg:grid-cols-12 gap-10 items-center">
@@ -43,6 +43,7 @@ const HeroSection = () => {
             </div>
 
             <h1 className="text-[2rem] sm:text-5xl lg:text-[3.4rem] font-black leading-[1.06] tracking-tight text-foreground mb-4">
+              <span className="block text-base md:text-lg font-bold text-primary mb-2">Graphicwala</span>
               Custom Photo Frames, PVC Cards &amp;{' '}
               <span className="text-primary">Personalized Gifts</span> Delivered Across India
             </h1>
@@ -138,10 +139,6 @@ const HeroSection = () => {
           </div>
         )}
 
-        <p className="sr-only">
-          Graphic Wala offers custom printing across India — personalised photo frames,
-          PVC cards, ID cards, visiting cards and keychains with premium print quality and prepaid delivery.
-        </p>
       </div>
     </section>
   );
