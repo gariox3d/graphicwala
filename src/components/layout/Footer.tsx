@@ -23,10 +23,13 @@ const Footer = () => {
               </span>
             </Link>
             <p className="text-background/70 text-sm leading-relaxed">
-               Graphicwala (also known as Graphic Wala) — custom photo frames, PVC cards, keychains and personalized gifts with All India delivery.
+               Graphicwala (also known as Graphic Wala, Graphics Wala, Graphicswala or Graphics Waale) — custom photo frames, PVC cards, keychains and personalized gifts with All India delivery.
             </p>
             <p className="text-background/60 text-xs mt-3">
               Prepaid orders only · UPI, Card & Netbanking accepted · Custom printed in Katihar, Bihar and shipped across India.
+            </p>
+            <p className="text-background/50 text-xs mt-2">
+              Official website: graphicwala.com
             </p>
             <div className="flex gap-4 mt-6">
               <a href="#" className="text-background/70 hover:text-primary transition-colors">
