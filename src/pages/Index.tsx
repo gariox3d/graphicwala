@@ -98,16 +98,16 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>Graphicwala | Photo Frames, PVC Cards &amp; Keychains India</title>
-        <meta name="description" content="Shop Graphicwala for custom photo frames, PVC cards, ID cards, keychains and personalized gifts with secure prepaid delivery across India." />
+        <title>Graphic Wala (Graphicwala) | Custom Photo Frames &amp; Gifts</title>
+        <meta name="description" content="Graphic Wala (Graphicwala) — official store for custom photo frames, PVC & ID cards, keychains and personalized gifts. Prepaid, All India delivery." />
         <link rel="canonical" href="https://graphicwala.com/" />
-        <meta property="og:title" content="Graphicwala | Photo Frames, PVC Cards & Keychains India" />
+        <meta property="og:title" content="Graphic Wala (Graphicwala) | Custom Photo Frames & Gifts" />
         <meta property="og:description" content="Buy custom photo frames, PVC cards, keychains & personalized gifts online. Premium quality with All India home delivery." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://graphicwala.com/" />
         <meta property="og:image" content="https://graphicwala.com/og-square.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Graphicwala | Photo Frames, PVC Cards & Keychains India" />
+        <meta name="twitter:title" content="Graphic Wala (Graphicwala) | Custom Photo Frames & Gifts" />
         <meta name="twitter:description" content="Buy custom photo frames, PVC cards, keychains online. All India delivery." />
         <meta name="twitter:image" content="https://graphicwala.com/og-square.png" />
         <script type="application/ld+json">
