@@ -7,7 +7,6 @@ Allow: /product/
 Allow: /products
 Allow: /about
 Allow: /contact
-Crawl-delay: 1
 
 User-agent: Googlebot-Image
 Allow: /

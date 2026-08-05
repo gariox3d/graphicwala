@@ -57,13 +57,35 @@ export default defineConfig(({ mode }) => {
         workbox: {
           globPatterns: ["**/*.{js,css,html,ico,png,svg,jpg,jpeg,webp,woff,woff2}"],
           navigateFallbackDenylist: [/^\/~oauth/],
+          skipWaiting: true,
+          clientsClaim: true,
+          cleanupOutdatedCaches: true,
           runtimeCaching: [
+            {
+              // HTML documents must never be served stale.
+              urlPattern: ({ request }) => request.mode === "navigate",
+              handler: "NetworkFirst",
+              options: {
+                cacheName: "html-cache",
+                networkTimeoutSeconds: 5,
+                expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 },
+              },
+            },
             {
               urlPattern: /^https:\/\/.*\.supabase\.co\/.*/i,
               handler: "NetworkFirst",
               options: {
                 cacheName: "supabase-cache",
                 expiration: { maxEntries: 50, maxAgeSeconds: 300 },
+              },
+            },
+            {
+              // Product/CDN images — fast repeat loads without blocking updates.
+              urlPattern: ({ request }) => request.destination === "image",
+              handler: "StaleWhileRevalidate",
+              options: {
+                cacheName: "image-cache",
+                expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 30 },
               },
             },
           ],
