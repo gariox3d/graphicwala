@@ -100,6 +100,7 @@ const Index = () => {
       <Helmet>
         <title>Graphic Wala (Graphicwala) | Custom Photo Frames &amp; Gifts</title>
         <meta name="description" content="Graphic Wala (Graphicwala) — official store for custom photo frames, PVC & ID cards, keychains and personalized gifts. Prepaid, All India delivery." />
+        <meta name="keywords" content="graphicwala, graphic wala, graphics wala, graphicswala, graphics waale, graphics wale, grafix wala, graphicwala.com" />
         <link rel="canonical" href="https://graphicwala.com/" />
         <meta property="og:title" content="Graphic Wala (Graphicwala) | Custom Photo Frames & Gifts" />
         <meta property="og:description" content="Buy custom photo frames, PVC cards, keychains & personalized gifts online. Premium quality with All India home delivery." />
@@ -116,7 +117,17 @@ const Index = () => {
             '@type': 'LocalBusiness',
             '@id': 'https://graphicwala.com/#localbusiness',
             name: 'Graphicwala',
-            alternateName: ['Graphic Wala', 'GraphicWala', 'graphicwala.com'],
+            alternateName: [
+              'Graphic Wala',
+              'GraphicWala',
+              'Graphics Wala',
+              'Graphicswala',
+              'Graphics Waale',
+              'Graphics Wale',
+              'Grafix Wala',
+              'ग्राफिक वाला',
+              'graphicwala.com',
+            ],
             image: 'https://graphicwala.com/og-square.png',
             url: 'https://graphicwala.com/',
             telephone: '+91-6207142994',
