@@ -1,16 +1,16 @@
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { BUSINESS_NAME, WHATSAPP_NUMBER, PHONE_NUMBER } from '@/lib/types';
-import { Helmet } from 'react-helmet-async';
+import Seo from '@/components/seo/Seo';
 
 const ShippingPolicy = () => {
   return (
     <>
-      <Helmet>
-        <title>Shipping Policy – {BUSINESS_NAME}</title>
-        <meta name="description" content={`Shipping policy for ${BUSINESS_NAME}. Learn about delivery timelines, charges, and shipping details.`} />
-        <link rel="canonical" href="https://graphicwala.com/shipping-policy" />
-      </Helmet>
+      <Seo
+        title={`Shipping Policy – ${BUSINESS_NAME}`}
+        description={`Shipping policy for ${BUSINESS_NAME}. Learn about delivery timelines, charges, and shipping details.`}
+        path="/shipping-policy"
+      />
       <Header />
       <main className="container py-10 max-w-3xl mx-auto">
         <h1 className="text-3xl font-bold mb-6">Shipping Policy</h1>
