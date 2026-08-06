@@ -1,7 +1,7 @@
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { BUSINESS_NAME, WHATSAPP_NUMBER, PHONE_NUMBER } from '@/lib/types';
-import { Helmet } from 'react-helmet-async';
+import Seo from '@/components/seo/Seo';
 
 const TermsAndConditions = () => {
   return (
