@@ -52,6 +52,7 @@ import ShippingPolicy from "./pages/ShippingPolicy";
 import RefundPolicy from "./pages/RefundPolicy";
 import TrackOrder from "./pages/TrackOrder";
 import ScrollToTop from "./components/ScrollToTop";
+import BreadcrumbSchema from "./components/seo/BreadcrumbSchema";
 import AdminGuard from "./components/admin/AdminGuard";
 import WelcomeBackPopup from "./components/WelcomeBackPopup";
 import AddressGate from "./components/AddressGate";
@@ -87,6 +88,7 @@ const App = () => {
             <AddressGate>
             <BrowserRouter>
               <ScrollToTop />
+              <BreadcrumbSchema />
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/products" element={<Products />} />
