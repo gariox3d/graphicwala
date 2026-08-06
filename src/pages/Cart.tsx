@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import Seo from '@/components/seo/Seo';
 import { Trash2, Minus, Plus, ShoppingBag, Zap, Image, AlertCircle, Upload, Truck, CreditCard } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
@@ -120,11 +120,12 @@ const Cart = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Helmet>
-        <title>Shopping Cart | Graphic Wala</title>
-        <meta name="description" content="Review your cart and checkout. Custom photo frames, PVC cards & personalized gifts from Graphic Wala." />
-        <meta name="robots" content="noindex, nofollow" />
-      </Helmet>
+      <Seo
+        title="Shopping Cart | Graphic Wala"
+        description="Review your cart and checkout. Custom photo frames, PVC cards & personalized gifts from Graphic Wala."
+        path="/cart"
+        noindex
+      />
       <Header />
       <main className="flex-1 py-8">
         <div className="container">

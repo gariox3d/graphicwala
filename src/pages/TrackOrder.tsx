@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Helmet } from 'react-helmet-async';
+import Seo from '@/components/seo/Seo';
 import { useSearchParams } from 'react-router-dom';
 import { Package, Search, Loader2, PhoneCall } from 'lucide-react';
 import Header from '@/components/layout/Header';
@@ -75,14 +75,11 @@ const TrackOrder = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Helmet>
-        <title>Track Your Order | Graphic Wala</title>
-        <meta
-          name="description"
-          content="Track your Graphic Wala order status online. Enter your Order ID and registered phone number to see live printing and delivery updates."
-        />
-        <link rel="canonical" href="https://graphicwala.com/track-order" />
-      </Helmet>
+      <Seo
+        title="Track Your Order | Graphic Wala"
+        description="Track your Graphic Wala order status online. Enter your Order ID and registered phone number to see live printing and delivery updates."
+        path="/track-order"
+      />
 
       <Header />
 

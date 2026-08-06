@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Helmet } from 'react-helmet-async';
+import Seo from '@/components/seo/Seo';
 import { MessageCircle, Send, Bot, User, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -339,11 +339,11 @@ const AIAssistant = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Smart Assistant - {BUSINESS_NAME}</title>
-        <meta name="description" content="24×7 Printing & Gift Help Desk. Get instant help with orders, delivery, payments and more." />
-        <meta name="robots" content="index, follow" />
-      </Helmet>
+      <Seo
+        title={`Smart Assistant - ${BUSINESS_NAME}`}
+        description="24×7 Printing & Gift Help Desk. Get instant help with orders, delivery, payments and more."
+        path="/ai-assistant"
+      />
 
       <div className="min-h-screen flex flex-col bg-background">
         <Header />

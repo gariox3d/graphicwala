@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import Seo from '@/components/seo/Seo';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import CallButton from '@/components/CallButton';
 import ReturnPolicy from '@/components/ReturnPolicy';
@@ -155,6 +156,12 @@ _Sent from Graphic Wala Store_`;
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <Seo
+        title="Order Confirmed | Graphic Wala"
+        description="Your Graphic Wala order is confirmed. Track printing and delivery updates for your custom order."
+        path="/order-confirmation"
+        noindex
+      />
       <Header />
       <main className="flex-1 py-8 md:py-12">
         <div className="container mx-auto px-4 max-w-4xl">

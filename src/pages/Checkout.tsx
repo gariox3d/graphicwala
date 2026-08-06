@@ -13,6 +13,7 @@ import { Separator } from '@/components/ui/separator';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import Seo from '@/components/seo/Seo';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import PriceBreakdown from '@/components/PriceBreakdown';
 import { useShippingRate, formatDeliveryDate } from '@/hooks/useShippingRate';
@@ -439,6 +440,12 @@ const Checkout = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <Seo
+        title="Secure Checkout | Graphic Wala"
+        description="Complete your prepaid order securely at Graphic Wala. Custom photo frames, PVC cards & personalized gifts with All India delivery."
+        path="/checkout"
+        noindex
+      />
       <Header />
       <main className="flex-1 py-6 md:py-12">
         <div className="w-full max-w-6xl mx-auto px-3 sm:px-4 md:px-6">

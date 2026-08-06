@@ -1,16 +1,16 @@
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { BUSINESS_NAME, WHATSAPP_NUMBER, PHONE_NUMBER } from '@/lib/types';
-import { Helmet } from 'react-helmet-async';
+import Seo from '@/components/seo/Seo';
 
 const TermsAndConditions = () => {
   return (
     <>
-      <Helmet>
-        <title>Terms & Conditions – {BUSINESS_NAME}</title>
-        <meta name="description" content={`Terms and conditions for using ${BUSINESS_NAME}. Read about orders, payments, returns, and more.`} />
-        <link rel="canonical" href="https://graphicwala.com/terms-and-conditions" />
-      </Helmet>
+      <Seo
+        title={`Terms & Conditions – ${BUSINESS_NAME}`}
+        description={`Terms and conditions for using ${BUSINESS_NAME}. Read about orders, payments, returns, and more.`}
+        path="/terms-and-conditions"
+      />
       <Header />
       <main className="container py-10 max-w-3xl mx-auto">
         <h1 className="text-3xl font-bold mb-6">Terms & Conditions</h1>

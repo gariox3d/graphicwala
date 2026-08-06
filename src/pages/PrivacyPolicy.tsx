@@ -1,16 +1,16 @@
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { BUSINESS_NAME, WHATSAPP_NUMBER, PHONE_NUMBER } from '@/lib/types';
-import { Helmet } from 'react-helmet-async';
+import Seo from '@/components/seo/Seo';
 
 const PrivacyPolicy = () => {
   return (
     <>
-      <Helmet>
-        <title>Privacy Policy – {BUSINESS_NAME}</title>
-        <meta name="description" content={`Read the privacy policy of ${BUSINESS_NAME}. Learn how we collect, use, and protect your personal information.`} />
-        <link rel="canonical" href="https://graphicwala.com/privacy-policy" />
-      </Helmet>
+      <Seo
+        title={`Privacy Policy – ${BUSINESS_NAME}`}
+        description={`Read the privacy policy of ${BUSINESS_NAME}. Learn how we collect, use, and protect your personal information.`}
+        path="/privacy-policy"
+      />
       <Header />
       <main className="container py-10 max-w-3xl mx-auto">
         <h1 className="text-3xl font-bold mb-6">Privacy Policy</h1>

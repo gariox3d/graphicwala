@@ -1,16 +1,16 @@
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { BUSINESS_NAME, WHATSAPP_NUMBER, PHONE_NUMBER } from '@/lib/types';
-import { Helmet } from 'react-helmet-async';
+import Seo from '@/components/seo/Seo';
 
 const RefundPolicy = () => {
   return (
     <>
-      <Helmet>
-        <title>Refund Policy – {BUSINESS_NAME}</title>
-        <meta name="description" content={`Refund and return policy for ${BUSINESS_NAME}. Learn about replacements, refund timelines, and how to report damaged products.`} />
-        <link rel="canonical" href="https://graphicwala.com/refund-policy" />
-      </Helmet>
+      <Seo
+        title={`Refund Policy – ${BUSINESS_NAME}`}
+        description={`Refund and return policy for ${BUSINESS_NAME}. Learn about replacements, refund timelines, and how to report damaged products.`}
+        path="/refund-policy"
+      />
       <Header />
       <main className="container py-10 max-w-3xl mx-auto">
         <h1 className="text-3xl font-bold mb-6">Refund & Return Policy</h1>
