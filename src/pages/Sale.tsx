@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet-async';
+import Seo from '@/components/seo/Seo';
 import { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Flame, Clock, Gift, Percent, ArrowRight, Sparkles, Tag } from 'lucide-react';
@@ -101,10 +101,11 @@ const Sale = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Helmet>
-        <title>🔥 Sale - Graphic Wala | Upto 50% Off on Custom Gifts & Photo Frames</title>
-        <meta name="description" content="Graphic Wala Sale - Get upto 50% off on custom photo frames, PVC cards, keychains & personalized gifts. Limited time offers with All India delivery!" />
-      </Helmet>
+      <Seo
+        title="Sale - Graphic Wala | Upto 50% Off on Custom Gifts & Photo Frames"
+        description="Graphic Wala Sale - Get upto 50% off on custom photo frames, PVC cards, keychains & personalized gifts. Limited time offers with All India delivery!"
+        path="/sale"
+      />
 
       <Header />
 
