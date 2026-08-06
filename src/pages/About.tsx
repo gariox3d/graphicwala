@@ -1,6 +1,10 @@
 import { Helmet } from 'react-helmet-async';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import LocationSection from '@/components/LocationSection';
+import { localBusinessJsonLd } from '@/lib/nap';
+
+const aboutLocalBusinessJsonLd = localBusinessJsonLd('https://graphicwala.com/about');
 
 const aboutJsonLd = {
   "@context": "https://schema.org",
@@ -45,6 +49,7 @@ const About = () => (
       <meta name="twitter:title" content="About Graphic Wala | Custom Printing Store India" />
       <meta name="twitter:description" content="India's trusted store for custom photo frames, PVC cards & personalized gifts." />
       <script type="application/ld+json">{JSON.stringify(aboutJsonLd)}</script>
+      <script type="application/ld+json">{JSON.stringify(aboutLocalBusinessJsonLd)}</script>
     </Helmet>
     <Header />
     <main className="flex-1">
@@ -60,6 +65,10 @@ const About = () => (
           <p className="text-muted-foreground leading-relaxed mt-4">Our mission is to make premium custom printing accessible to everyone in India, with fast home delivery, competitive pricing, and unmatched customer service. Every product is custom-made with your photos and designs.</p>
         </div>
       </section>
+      <LocationSection
+        heading="Where Graphic Wala Is Based"
+        subheading="Our printing studio is located in Nasirganj, Katihar, Bihar. Walk in for local orders, or shop online with prepaid delivery anywhere in India."
+      />
     </main>
     <Footer />
   </div>

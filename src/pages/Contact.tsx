@@ -9,6 +9,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import LocationSection from '@/components/LocationSection';
+import { NAP, NAP_ADDRESS_LINE, localBusinessJsonLd } from '@/lib/nap';
+
+const contactLocalBusinessJsonLd = localBusinessJsonLd('https://graphicwala.com/contact');
 
 const contactJsonLd = {
   "@context": "https://schema.org",
@@ -95,6 +99,7 @@ const Contact = () => {
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content="Contact Graphic Wala | Custom Printing Support" />
         <script type="application/ld+json">{JSON.stringify(contactJsonLd)}</script>
+        <script type="application/ld+json">{JSON.stringify(contactLocalBusinessJsonLd)}</script>
       </Helmet>
       <Header />
       <main className="flex-1 py-16">
@@ -103,11 +108,11 @@ const Contact = () => {
           <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
             <div>
               <h2 className="text-xl font-semibold mb-6">Get in Touch</h2>
-              <div className="space-y-4">
-                <div className="flex items-center gap-4"><Mail className="h-5 w-5 text-primary" /><span>graphicwalaktr@gmail.com</span></div>
-                <div className="flex items-center gap-4"><Phone className="h-5 w-5 text-primary" /><span>+91 620714 2994</span></div>
-                <div className="flex items-center gap-4"><MapPin className="h-5 w-5 text-primary" /><span>Nasirganj, Sabji Mandi, Near Sarfaraz Art, Katihar India</span></div>
-              </div>
+              <address className="not-italic space-y-4">
+                <div className="flex items-center gap-4"><Mail className="h-5 w-5 text-primary shrink-0" aria-hidden="true" /><a href={`mailto:${NAP.email}`} className="break-all hover:text-primary transition-colors">{NAP.email}</a></div>
+                <div className="flex items-center gap-4"><Phone className="h-5 w-5 text-primary shrink-0" aria-hidden="true" /><a href={`tel:${NAP.phoneE164}`} className="hover:text-primary transition-colors">{NAP.phoneDisplay}</a></div>
+                <div className="flex items-start gap-4"><MapPin className="h-5 w-5 text-primary shrink-0 mt-0.5" aria-hidden="true" /><span>{NAP_ADDRESS_LINE}</span></div>
+              </address>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div><Label htmlFor="name">Name</Label><Input id="name" placeholder="Your name" value={name} onChange={e => setName(e.target.value)} maxLength={100} /></div>
@@ -120,6 +125,7 @@ const Contact = () => {
           </div>
         </div>
       </main>
+      <LocationSection />
       <Footer />
     </div>
   );
