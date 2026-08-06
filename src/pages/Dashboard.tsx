@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Navigate, Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import Seo from '@/components/seo/Seo';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import Header from '@/components/layout/Header';
@@ -164,11 +164,12 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Helmet>
-        <title>My Account | Graphic Wala</title>
-        <meta name="description" content="Manage your orders, profile and wishlist at Graphic Wala." />
-        <meta name="robots" content="noindex, nofollow" />
-      </Helmet>
+      <Seo
+        title="My Account | Graphic Wala"
+        description="Manage your orders, profile and wishlist at Graphic Wala."
+        path="/dashboard"
+        noindex
+      />
       <Header />
       <main className="flex-1 py-8 md:py-12">
         <div className="container mx-auto px-4 max-w-6xl">
