@@ -10,6 +10,7 @@ import { uploadAvatar, validateAvatarFile } from '@/lib/avatar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import Seo from '@/components/seo/Seo';
 import { supabase } from '@/integrations/supabase/client';
 
 type AuthMode = 'login' | 'signup' | 'forgot-password' | 'verify-otp' | 'reset-password';
@@ -578,6 +579,12 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <Seo
+        title="Sign In or Create Account | Graphic Wala"
+        description="Login or create your Graphic Wala account to order custom photo frames, PVC cards, keychains and personalized gifts."
+        path="/auth"
+        noindex
+      />
       <Header />
       <main className="flex-1 flex items-center justify-center py-12 px-4">
         <div className="w-full max-w-md">
