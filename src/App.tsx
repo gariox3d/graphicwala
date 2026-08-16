@@ -8,49 +8,53 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
 import RamadanThemeProvider from "@/components/festival/RamadanThemeProvider";
 import ValentineThemeProvider from "@/components/festival/ValentineThemeProvider";
-import AdminValentineTheme from "./pages/admin/AdminValentineTheme";
-import AdminFestivalTheme from "./pages/admin/AdminFestivalTheme";
-import AdminAds from "./pages/admin/AdminAds";
-import AdminLoyalty from "./pages/admin/AdminLoyalty";
-import AdminAnalytics from "./pages/admin/AdminAnalytics";
-import AdminStorage from "./pages/admin/AdminStorage";
-import AdminBeforeAfter from "./pages/admin/AdminBeforeAfter";
-import AdminAbandonedCarts from "./pages/admin/AdminAbandonedCarts";
-import AdminBilling from "./pages/admin/AdminBilling";
-import AdminPickupEarnings from "./pages/admin/AdminPickupEarnings";
-import AdminHeroShowcase from "./pages/admin/AdminHeroShowcase";
 import Index from "./pages/Index";
-import Products from "./pages/Products";
-import CategoryLanding from "./pages/CategoryLanding";
-import ProductDetail from "./pages/ProductDetail";
-import Cart from "./pages/Cart";
-import Auth from "./pages/Auth";
-import Dashboard from "./pages/Dashboard";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import Checkout from "./pages/Checkout";
-import OrderConfirmation from "./pages/OrderConfirmation";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminProducts from "./pages/admin/AdminProducts";
-import AdminOrders from "./pages/admin/AdminOrders";
-import AdminCategories from "./pages/admin/AdminCategories";
-import AdminSettings from "./pages/admin/AdminSettings";
-import AdminShipping from "./pages/admin/AdminShipping";
-import AdminReviews from "./pages/admin/AdminReviews";
-import AdminCoupons from "./pages/admin/AdminCoupons";
-import AdminMessages from "./pages/admin/AdminMessages";
-import AdminCustomers from "./pages/admin/AdminCustomers";
-import ProductForm from "./pages/admin/ProductForm";
-import NotFound from "./pages/NotFound";
-import ShareRedirect from "./pages/ShareRedirect";
-import Wishlist from "./pages/Wishlist";
-import AIAssistant from "./pages/AIAssistant";
-import Sale from "./pages/Sale";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import TermsAndConditions from "./pages/TermsAndConditions";
-import ShippingPolicy from "./pages/ShippingPolicy";
-import RefundPolicy from "./pages/RefundPolicy";
-import TrackOrder from "./pages/TrackOrder";
+
+// Every non-home route is code-split so the first paint only downloads home page JS.
+const Products = lazy(() => import("./pages/Products"));
+const CategoryLanding = lazy(() => import("./pages/CategoryLanding"));
+const ProductDetail = lazy(() => import("./pages/ProductDetail"));
+const Cart = lazy(() => import("./pages/Cart"));
+const Auth = lazy(() => import("./pages/Auth"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const About = lazy(() => import("./pages/About"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Checkout = lazy(() => import("./pages/Checkout"));
+const OrderConfirmation = lazy(() => import("./pages/OrderConfirmation"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const ShareRedirect = lazy(() => import("./pages/ShareRedirect"));
+const Wishlist = lazy(() => import("./pages/Wishlist"));
+const AIAssistant = lazy(() => import("./pages/AIAssistant"));
+const Sale = lazy(() => import("./pages/Sale"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const TermsAndConditions = lazy(() => import("./pages/TermsAndConditions"));
+const ShippingPolicy = lazy(() => import("./pages/ShippingPolicy"));
+const RefundPolicy = lazy(() => import("./pages/RefundPolicy"));
+const TrackOrder = lazy(() => import("./pages/TrackOrder"));
+
+// Admin panel is the heaviest area — kept fully out of the customer bundle.
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const AdminProducts = lazy(() => import("./pages/admin/AdminProducts"));
+const AdminOrders = lazy(() => import("./pages/admin/AdminOrders"));
+const AdminCategories = lazy(() => import("./pages/admin/AdminCategories"));
+const AdminSettings = lazy(() => import("./pages/admin/AdminSettings"));
+const AdminShipping = lazy(() => import("./pages/admin/AdminShipping"));
+const AdminReviews = lazy(() => import("./pages/admin/AdminReviews"));
+const AdminCoupons = lazy(() => import("./pages/admin/AdminCoupons"));
+const AdminMessages = lazy(() => import("./pages/admin/AdminMessages"));
+const AdminCustomers = lazy(() => import("./pages/admin/AdminCustomers"));
+const ProductForm = lazy(() => import("./pages/admin/ProductForm"));
+const AdminValentineTheme = lazy(() => import("./pages/admin/AdminValentineTheme"));
+const AdminFestivalTheme = lazy(() => import("./pages/admin/AdminFestivalTheme"));
+const AdminAds = lazy(() => import("./pages/admin/AdminAds"));
+const AdminLoyalty = lazy(() => import("./pages/admin/AdminLoyalty"));
+const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics"));
+const AdminStorage = lazy(() => import("./pages/admin/AdminStorage"));
+const AdminBeforeAfter = lazy(() => import("./pages/admin/AdminBeforeAfter"));
+const AdminAbandonedCarts = lazy(() => import("./pages/admin/AdminAbandonedCarts"));
+const AdminBilling = lazy(() => import("./pages/admin/AdminBilling"));
+const AdminPickupEarnings = lazy(() => import("./pages/admin/AdminPickupEarnings"));
+const AdminHeroShowcase = lazy(() => import("./pages/admin/AdminHeroShowcase"));
 import ScrollToTop from "./components/ScrollToTop";
 import BreadcrumbSchema from "./components/seo/BreadcrumbSchema";
 import AdminGuard from "./components/admin/AdminGuard";
@@ -59,9 +63,24 @@ import AddressGate from "./components/AddressGate";
 import SplashScreen from "./components/SplashScreen";
 import MobileBottomBar from "./components/MobileBottomBar";
 import FloatingWhatsApp from "./components/FloatingWhatsApp";
-import { useState, useCallback } from "react";
+import { useState, useCallback, lazy, Suspense } from "react";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000,
+      gcTime: 10 * 60 * 1000,
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
+
+const RouteFallback = () => (
+  <div className="min-h-[60vh] flex items-center justify-center">
+    <div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin" aria-label="Loading" />
+  </div>
+);
 
 const App = () => {
   const [showSplash, setShowSplash] = useState(() => {
@@ -89,6 +108,7 @@ const App = () => {
             <BrowserRouter>
               <ScrollToTop />
               <BreadcrumbSchema />
+              <Suspense fallback={<RouteFallback />}>
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/products" element={<Products />} />
@@ -136,6 +156,7 @@ const App = () => {
                 <Route path="/admin/hero-showcase" element={<AdminGuard><AdminHeroShowcase /></AdminGuard>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
+              </Suspense>
               <MobileBottomBar />
               <FloatingWhatsApp />
             </BrowserRouter>
