@@ -23,6 +23,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Product, Category, WHATSAPP_NUMBER, BUSINESS_NAME } from '@/lib/types';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
 import { useRecentlyViewed } from '@/hooks/useRecentlyViewed';
+import { PRODUCT_CARD_FIELDS } from '@/lib/productFields';
 
 const CustomerGallery = lazy(() => import('@/components/CustomerGallery'));
 const BeforeAfterShowcase = lazy(() => import('@/components/BeforeAfterShowcase'));
@@ -42,14 +43,20 @@ const Index = () => {
       setLoading(true);
       try {
         const [productsRes, categoriesRes, catImgRes] = await Promise.allSettled([
-          supabase.from('products').select('*').order('display_order', { ascending: true }).limit(8),
-          supabase.from('categories').select('*'),
+          supabase
+            .from('products')
+            .select(PRODUCT_CARD_FIELDS)
+            .eq('is_active', true)
+            .order('display_order', { ascending: true })
+            .limit(8),
+          supabase.from('categories').select('id, name, description, image_url').eq('is_active', true),
           supabase
             .from('products')
             .select('category_id, image_url')
             .eq('is_active', true)
             .not('image_url', 'is', null)
-            .order('display_order', { ascending: true }),
+            .order('display_order', { ascending: true })
+            .limit(60),
         ]);
 
         if (productsRes.status === 'fulfilled' && productsRes.value.data) {

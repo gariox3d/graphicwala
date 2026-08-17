@@ -10,13 +10,17 @@ import { Button } from '@/components/ui/button';
 import { getCategoryCopy } from '@/components/home/CategoryGrid';
 import { Link } from 'react-router-dom';
 import { categorySlug } from '@/lib/categorySeo';
+import { PRODUCT_CARD_FIELDS_WITH_CATEGORY } from '@/lib/productFields';
 
+/** Cards rendered per "page" — keeps the first paint light on slow connections. */
+const PAGE_SIZE = 12;
 
 const Products = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const selectedCategory = searchParams.get('category');
   const productsRef = useRef<HTMLDivElement>(null);
 
@@ -25,8 +29,12 @@ const Products = () => {
       setLoading(true);
       try {
         const [productsRes, categoriesRes] = await Promise.allSettled([
-          supabase.from('products').select('*, categories(*)').order('display_order', { ascending: true }),
-          supabase.from('categories').select('*'),
+          supabase
+            .from('products')
+            .select(PRODUCT_CARD_FIELDS_WITH_CATEGORY)
+            .order('display_order', { ascending: true })
+            .limit(60),
+          supabase.from('categories').select('id, name, description, image_url'),
         ]);
 
         if (productsRes.status === 'fulfilled' && productsRes.value.data) {
@@ -53,6 +61,7 @@ const Products = () => {
 
   // Scroll to top of products section when category changes
   useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
     if (productsRef.current) {
       productsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -71,6 +80,7 @@ const Products = () => {
   const filteredProducts = selectedCategory
     ? products.filter((p) => p.categories?.name === selectedCategory)
     : products;
+  const visibleProducts = filteredProducts.slice(0, visibleCount);
 
   const pageTitle = selectedCategory
     ? `Custom ${selectedCategory} Online in India | Graphic Wala`
@@ -152,7 +162,19 @@ const Products = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {filteredProducts.map((product) => (<ProductCard key={product.id} product={product} />))}
+              {visibleProducts.map((product) => (<ProductCard key={product.id} product={product} />))}
+            </div>
+          )}
+          {!loading && visibleCount < filteredProducts.length && (
+            <div className="flex justify-center mt-10">
+              <Button
+                variant="outline"
+                size="lg"
+                className="rounded-full"
+                onClick={() => setVisibleCount((count) => count + PAGE_SIZE)}
+              >
+                Load more products
+              </Button>
             </div>
           )}
           {!loading && filteredProducts.length === 0 && <p className="text-center text-muted-foreground py-12">No products found.</p>}

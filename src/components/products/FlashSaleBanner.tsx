@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Flame, Zap, Clock, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Product } from '@/lib/types';
+import { PRODUCT_CARD_FIELDS } from '@/lib/productFields';
 
 const useCountdown = (saleEnd: string | null | undefined) => {
   const calc = useCallback(() => {
@@ -190,12 +191,13 @@ const FlashSaleBanner = () => {
       const now = new Date().toISOString();
       const { data } = await supabase
         .from('products')
-        .select('*')
+        .select(PRODUCT_CARD_FIELDS)
         .eq('is_active', true)
         .not('sale_price', 'is', null)
         .lte('sale_start', now)
         .gte('sale_end', now)
-        .order('display_order', { ascending: true });
+        .order('display_order', { ascending: true })
+        .limit(12);
 
       if (data) setProducts(data as unknown as Product[]);
     };

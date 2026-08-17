@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState, useCallback, lazy, Suspense } from "react";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
@@ -63,7 +64,7 @@ import AddressGate from "./components/AddressGate";
 import SplashScreen from "./components/SplashScreen";
 import MobileBottomBar from "./components/MobileBottomBar";
 import FloatingWhatsApp from "./components/FloatingWhatsApp";
-import { useState, useCallback, lazy, Suspense } from "react";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -108,6 +109,7 @@ const App = () => {
             <BrowserRouter>
               <ScrollToTop />
               <BreadcrumbSchema />
+              <ErrorBoundary>
               <Suspense fallback={<RouteFallback />}>
               <Routes>
                 <Route path="/" element={<Index />} />
@@ -157,6 +159,7 @@ const App = () => {
                 <Route path="*" element={<NotFound />} />
               </Routes>
               </Suspense>
+              </ErrorBoundary>
               <MobileBottomBar />
               <FloatingWhatsApp />
             </BrowserRouter>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import ProductCard from './ProductCard';
 import { Product } from '@/lib/types';
+import { PRODUCT_CARD_FIELDS_WITH_CATEGORY } from '@/lib/productFields';
 
 interface SimilarProductsProps {
   currentProductId: string;
@@ -19,7 +20,7 @@ const SimilarProducts = ({ currentProductId, categoryId }: SimilarProductsProps)
       // Try same category first, then random
       let query = supabase
         .from('products')
-        .select('*, categories(*)')
+        .select(PRODUCT_CARD_FIELDS_WITH_CATEGORY)
         .eq('is_active', true)
         .neq('id', currentProductId)
         .gt('stock_quantity', 0);
@@ -28,7 +29,7 @@ const SimilarProducts = ({ currentProductId, categoryId }: SimilarProductsProps)
         query = query.eq('category_id', categoryId);
       }
 
-      const { data } = await query.limit(20);
+      const { data } = await query.limit(8);
 
       let results = (data || []) as any[];
 
@@ -36,12 +37,12 @@ const SimilarProducts = ({ currentProductId, categoryId }: SimilarProductsProps)
       if (results.length < 4 && categoryId) {
         const { data: moreData } = await supabase
           .from('products')
-          .select('*, categories(*)')
+          .select(PRODUCT_CARD_FIELDS_WITH_CATEGORY)
           .eq('is_active', true)
           .neq('id', currentProductId)
           .neq('category_id', categoryId)
           .gt('stock_quantity', 0)
-          .limit(20);
+          .limit(8);
         results = [...results, ...(moreData || [])];
       }
 

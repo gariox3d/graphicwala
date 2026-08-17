@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { PRODUCT_CARD_FIELDS } from '@/lib/productFields';
 import { Product } from '@/lib/types';
 import ProductCard from './ProductCard';
 import { TrendingUp, Flame } from 'lucide-react';
@@ -21,7 +22,7 @@ const TrendingProducts = () => {
           const ids = trending.map((t: any) => t.product_id);
           const { data: prods } = await supabase
             .from('products')
-            .select('*')
+            .select(PRODUCT_CARD_FIELDS)
             .in('id', ids);
 
           if (prods) {

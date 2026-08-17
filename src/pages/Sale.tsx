@@ -7,6 +7,7 @@ import Footer from '@/components/layout/Footer';
 import ProductCard from '@/components/products/ProductCard';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
+import { PRODUCT_CARD_FIELDS } from '@/lib/productFields';
 import { Product } from '@/lib/types';
 
 const SaleCountdown = ({ targetDate }: { targetDate: Date }) => {
@@ -74,14 +75,15 @@ const Sale = () => {
       const [saleRes, allRes] = await Promise.allSettled([
         supabase
           .from('products')
-          .select('*')
+          .select(PRODUCT_CARD_FIELDS)
           .not('sale_price', 'is', null)
           .lte('sale_start', now)
           .gte('sale_end', now)
-          .order('display_order'),
+          .order('display_order')
+          .limit(24),
         supabase
           .from('products')
-          .select('*')
+          .select(PRODUCT_CARD_FIELDS)
           .eq('is_active', true)
           .order('display_order')
           .limit(8),
