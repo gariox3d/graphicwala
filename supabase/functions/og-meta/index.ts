@@ -6,7 +6,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const SITE_URL = "https://graphicwala.com";
+const SITE_URL = "https://www.graphicwala.com";
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-square.png`;
 const BUSINESS_NAME = "Graphic Wala Store";
 

@@ -41,7 +41,7 @@ const ProductFAQ = lazy(() => import('@/components/products/ProductFAQ'));
 const SimilarProducts = lazy(() => import('@/components/products/SimilarProducts'));
 const RecentlyViewedProducts = lazy(() => import('@/components/products/RecentlyViewedProducts'));
 
-const SITE_URL = 'https://graphicwala.com';
+const SITE_URL = 'https://www.graphicwala.com';
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-square.png`;
 const SHARE_BASE_URL = `${SITE_URL}/share/product`;
 

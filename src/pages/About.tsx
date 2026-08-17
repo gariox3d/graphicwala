@@ -4,19 +4,19 @@ import Footer from '@/components/layout/Footer';
 import LocationSection from '@/components/LocationSection';
 import { localBusinessJsonLd } from '@/lib/nap';
 
-const aboutLocalBusinessJsonLd = localBusinessJsonLd('https://graphicwala.com/about');
+const aboutLocalBusinessJsonLd = localBusinessJsonLd('https://www.graphicwala.com/about');
 
 const aboutJsonLd = {
   "@context": "https://schema.org",
   "@type": "AboutPage",
   "name": "About Graphic Wala",
   "description": "Graphic Wala is India's trusted online store for custom photo frames, PVC cards, keychains & personalized gifts with All India delivery.",
-  "url": "https://graphicwala.com/about",
+  "url": "https://www.graphicwala.com/about",
   "mainEntity": {
     "@type": "Organization",
     "name": "Graphic Wala",
-    "url": "https://graphicwala.com",
-    "logo": "https://graphicwala.com/logo.png",
+    "url": "https://www.graphicwala.com",
+    "logo": "https://www.graphicwala.com/logo.png",
     "foundingDate": "2020",
     "description": "Premium custom printing and personalized gifts store with All India home delivery.",
     "address": {
@@ -39,12 +39,12 @@ const About = () => (
     <Helmet>
       <title>About Graphic Wala | Custom Printing & Personalized Gifts Store India</title>
       <meta name="description" content="Learn about Graphic Wala - India's trusted online store for custom photo frames, PVC cards, keychains & personalized gifts. Premium quality printing since 2020 with All India delivery." />
-      <link rel="canonical" href="https://graphicwala.com/about" />
+      <link rel="canonical" href="https://www.graphicwala.com/about" />
       <meta property="og:title" content="About Graphic Wala | Custom Printing Store India" />
       <meta property="og:description" content="India's trusted store for custom photo frames, PVC cards & personalized gifts. Premium quality since 2020." />
       <meta property="og:type" content="website" />
-      <meta property="og:url" content="https://graphicwala.com/about" />
-      <meta property="og:image" content="https://graphicwala.com/og-square.png" />
+      <meta property="og:url" content="https://www.graphicwala.com/about" />
+      <meta property="og:image" content="https://www.graphicwala.com/og-square.png" />
       <meta name="twitter:card" content="summary" />
       <meta name="twitter:title" content="About Graphic Wala | Custom Printing Store India" />
       <meta name="twitter:description" content="India's trusted store for custom photo frames, PVC cards & personalized gifts." />

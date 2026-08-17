@@ -12,13 +12,13 @@ import { toast } from 'sonner';
 import LocationSection from '@/components/LocationSection';
 import { NAP, NAP_ADDRESS_LINE, localBusinessJsonLd } from '@/lib/nap';
 
-const contactLocalBusinessJsonLd = localBusinessJsonLd('https://graphicwala.com/contact');
+const contactLocalBusinessJsonLd = localBusinessJsonLd('https://www.graphicwala.com/contact');
 
 const contactJsonLd = {
   "@context": "https://schema.org",
   "@type": "ContactPage",
   "name": "Contact Graphic Wala",
-  "url": "https://graphicwala.com/contact",
+  "url": "https://www.graphicwala.com/contact",
   "mainEntity": {
     "@type": "LocalBusiness",
     "name": "Graphic Wala",
@@ -90,12 +90,12 @@ const Contact = () => {
       <Helmet>
         <title>Contact Graphic Wala | Custom Printing Store India | WhatsApp Support</title>
         <meta name="description" content="Contact Graphic Wala for custom photo frames, PVC cards, keychains & printing queries. WhatsApp: +91 6207142994. Located in Katihar, Bihar. All India delivery support." />
-        <link rel="canonical" href="https://graphicwala.com/contact" />
+        <link rel="canonical" href="https://www.graphicwala.com/contact" />
         <meta property="og:title" content="Contact Graphic Wala | Custom Printing Support" />
         <meta property="og:description" content="Get in touch with Graphic Wala for custom printing queries. WhatsApp & phone support available." />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://graphicwala.com/contact" />
-        <meta property="og:image" content="https://graphicwala.com/og-square.png" />
+        <meta property="og:url" content="https://www.graphicwala.com/contact" />
+        <meta property="og:image" content="https://www.graphicwala.com/og-square.png" />
         <meta name="twitter:card" content="summary" />
         <meta name="twitter:title" content="Contact Graphic Wala | Custom Printing Support" />
         <script type="application/ld+json">{JSON.stringify(contactJsonLd)}</script>

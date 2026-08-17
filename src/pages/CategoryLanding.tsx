@@ -15,7 +15,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 
-const SITE = 'https://graphicwala.com';
+const SITE = 'https://www.graphicwala.com';
 
 const CategoryLanding = () => {
   const { slug = '' } = useParams();
