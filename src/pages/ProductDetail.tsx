@@ -51,8 +51,12 @@ const SITE_URL = 'https://www.graphicwala.com';
 const clampText = (text: string, max: number, short?: string) => {
   const clean = text.replace(/\s+/g, ' ').trim();
   if (clean.length <= max) return clean;
-  if (short && short.length <= max) return short;
-  return `${clean.slice(0, max - 1).replace(/[\s,–—-]+\S*$/, '')}…`;
+  if (short) {
+    const shortClean = short.replace(/\s+/g, ' ').trim();
+    if (shortClean.length <= max) return shortClean;
+    return shortClean.slice(0, max).replace(/[\s,–—|-]+\S*$/, '');
+  }
+  return clean.slice(0, max).replace(/[\s,–—|-]+\S*$/, '');
 };
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-square.png`;
 const SHARE_BASE_URL = `${SITE_URL}/share/product`;
