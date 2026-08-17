@@ -62,11 +62,11 @@ const ProductMarquee = () => {
                   <SmartImage
                     src={product.image_url}
                     alt={product.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    className="w-full h-full object-contain bg-white transition-transform duration-500 group-hover:scale-110"
                     widths={[160, 240, 320]}
                     fallbackWidth={240}
                     quality={64}
-                    resize="cover"
+                    resize="contain"
                     sizes="176px"
                     width={240}
                     height={240}

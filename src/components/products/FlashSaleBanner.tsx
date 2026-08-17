@@ -88,11 +88,11 @@ const FlashCard = ({ product, onSelect }: { product: Product; onSelect: (p: Prod
             <SmartImage
               src={images[imgIdx]}
               alt={product.name}
-              className="w-full h-full object-cover transition-opacity duration-500"
+              className="w-full h-full object-contain bg-white transition-opacity duration-500"
               widths={[160, 240, 320]}
               fallbackWidth={240}
               quality={66}
-              resize="cover"
+              resize="contain"
               sizes="200px"
               width={240}
               height={240}
@@ -145,7 +145,7 @@ const ProductOverlay = ({ product, onClose }: { product: Product; onClose: () =>
         </div>
         <div className="aspect-square overflow-hidden bg-muted relative">
           {images.length > 0 ? (
-            <img src={images[imgIdx]} alt={product.name} className="w-full h-full object-cover transition-opacity duration-300" />
+            <img src={images[imgIdx]} alt={product.name} className="w-full h-full object-contain bg-white transition-opacity duration-300" />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-muted">
               <Flame className="h-12 w-12 text-muted-foreground" />

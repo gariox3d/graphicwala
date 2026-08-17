@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { compressImage } from '@/lib/imageCompression';
 
 interface MultiImageUploadProps {
   images: string[];
@@ -17,11 +18,21 @@ const MultiImageUpload = ({ images, onChange, maxImages = 10 }: MultiImageUpload
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const uploadImage = async (file: File): Promise<string | null> => {
+  const uploadImage = async (original: File): Promise<string | null> => {
     try {
-      if (file.size > 5 * 1024 * 1024) {
+      if (original.size > 10 * 1024 * 1024) {
         toast.error('Image size must be less than 5MB');
         return null;
+      }
+
+      // Compress before upload (keeps original aspect ratio, max 1400px, ~JPEG q0.78)
+      let file = original;
+      try {
+        if (original.type.startsWith('image/')) {
+          file = await compressImage(original, 1400, 0.78);
+        }
+      } catch {
+        file = original;
       }
 
       const fileExt = file.name.split('.').pop()?.toLowerCase();
@@ -44,7 +55,7 @@ const MultiImageUpload = ({ images, onChange, maxImages = 10 }: MultiImageUpload
       return data.publicUrl;
     } catch (error: any) {
       console.error('Upload error:', error);
-      toast.error(`Failed to upload ${file.name}`);
+      toast.error(`Failed to upload ${original.name}`);
       return null;
     }
   };

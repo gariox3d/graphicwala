@@ -195,11 +195,11 @@ const Cart = () => {
                               <SmartImage
                                 src={product.image_url}
                                 alt={product.name}
-                                className="w-full h-full object-cover"
+                                className="w-full h-full object-contain bg-white"
                                 widths={[80, 160]}
                                 fallbackWidth={160}
                                 quality={64}
-                                resize="cover"
+                                resize="contain"
                                 sizes="80px"
                                 width={80}
                                 height={80}

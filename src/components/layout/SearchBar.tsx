@@ -102,11 +102,11 @@ const SearchBar = ({ onNavigate }: { onNavigate?: () => void }) => {
                   <SmartImage
                     src={product.image_url}
                     alt={product.name}
-                    className="h-10 w-10 rounded object-cover flex-shrink-0"
+                    className="h-10 w-10 rounded object-contain bg-white flex-shrink-0"
                     widths={[80, 160]}
                     fallbackWidth={80}
                     quality={60}
-                    resize="cover"
+                    resize="contain"
                     sizes="40px"
                     width={40}
                     height={40}
