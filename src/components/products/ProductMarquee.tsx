@@ -14,7 +14,7 @@ const ProductMarquee = () => {
         .select('id, name, image_url, price, sale_price, sale_start, sale_end')
         .eq('is_active', true)
         .order('display_order', { ascending: true })
-        .limit(20);
+        .limit(10);
       if (data) setProducts(data as unknown as Product[]);
     };
     fetchProducts();
