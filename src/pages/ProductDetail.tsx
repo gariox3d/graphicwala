@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, lazy } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { ShoppingCart, ArrowLeft, Minus, Plus, Image, Zap, Heart } from 'lucide-react';
@@ -17,15 +17,11 @@ import DeliveryInfoBanner from '@/components/DeliveryInfoBanner';
 import SupportContact from '@/components/SupportContact';
 import ShareButton from '@/components/ShareButton';
 import PriceBreakdown from '@/components/PriceBreakdown';
-import ProductReviews from '@/components/reviews/ProductReviews';
 import LoginPromptDialog from '@/components/reviews/LoginPromptDialog';
 import ProductImageGallery from '@/components/products/ProductImageGallery';
 import DeliveryCountdown from '@/components/products/DeliveryCountdown';
 import ReturnPolicy from '@/components/ReturnPolicy';
-import RecentlyViewedProducts from '@/components/products/RecentlyViewedProducts';
-import SimilarProducts from '@/components/products/SimilarProducts';
 import StickyAddToCart from '@/components/products/StickyAddToCart';
-import ProductFAQ from '@/components/products/ProductFAQ';
 import WhyBuyFromProduct from '@/components/products/WhyBuyFromProduct';
 import SecurePaymentBadge from '@/components/SecurePaymentBadge';
 import PincodeChecker from '@/components/shipping/PincodeChecker';
@@ -37,6 +33,13 @@ import { useStoreSettings } from '@/hooks/useStoreSettings';
 import { useRecentlyViewed } from '@/hooks/useRecentlyViewed';
 import { useWishlist } from '@/hooks/useWishlist';
 import { toast } from 'sonner';
+import LazySection from '@/components/LazySection';
+
+// Below-the-fold, heavy sections: downloaded only when scrolled near.
+const ProductReviews = lazy(() => import('@/components/reviews/ProductReviews'));
+const ProductFAQ = lazy(() => import('@/components/products/ProductFAQ'));
+const SimilarProducts = lazy(() => import('@/components/products/SimilarProducts'));
+const RecentlyViewedProducts = lazy(() => import('@/components/products/RecentlyViewedProducts'));
 
 const SITE_URL = 'https://graphicwala.com';
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-square.png`;
@@ -591,24 +594,32 @@ const ProductDetail = () => {
           </div>
 
           {/* FAQ Section */}
-          <ProductFAQ
-            productName={product.name}
-            deliveryDays={product.delivery_days}
-            deliveryCharge={deliveryCharge}
-            customizable={uploadConfig.length > 0}
-          />
+          <LazySection minHeight={320}>
+            <ProductFAQ
+              productName={product.name}
+              deliveryDays={product.delivery_days}
+              deliveryCharge={deliveryCharge}
+              customizable={uploadConfig.length > 0}
+            />
+          </LazySection>
 
           {/* Reviews Section */}
           <Separator className="my-12" />
-          <ProductReviews productId={product.id} productName={product.name} />
+          <LazySection minHeight={400}>
+            <ProductReviews productId={product.id} productName={product.name} />
+          </LazySection>
         </div>
 
         {/* Similar Products */}
-        <SimilarProducts currentProductId={product.id} categoryId={product.category_id} />
+        <LazySection minHeight={360}>
+          <SimilarProducts currentProductId={product.id} categoryId={product.category_id} />
+        </LazySection>
 
         {/* Recently Viewed Products */}
         {viewedIds.length > 1 && (
-          <RecentlyViewedProducts viewedIds={viewedIds} excludeId={product.id} />
+          <LazySection minHeight={320}>
+            <RecentlyViewedProducts viewedIds={viewedIds} excludeId={product.id} />
+          </LazySection>
         )}
 
         {/* Unique SEO text block for search engines */}
