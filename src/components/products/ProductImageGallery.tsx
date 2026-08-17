@@ -103,22 +103,23 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
     <div className="space-y-4">
       {/* Main Image */}
       <div 
-        className="relative w-full h-[clamp(320px,92vw,480px)] md:h-[min(70vh,680px)] rounded-xl bg-muted group"
+        className="relative grid w-full aspect-[4/5] md:aspect-square max-h-[700px] place-items-center rounded-xl bg-muted group"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
-        <div className="absolute inset-0 bg-white flex items-center justify-center p-2 md:p-4">
+        <div className="absolute inset-0 grid place-items-center bg-white p-2 md:p-4">
           <SmartImage
             src={validImages[selectedIndex]}
             alt={`${productName} - Image ${selectedIndex + 1}`}
             widths={DETAIL_WIDTHS}
             fallbackWidth={1200}
             quality={85}
+            resize="contain"
             priority={selectedIndex === 0}
             sizes="(max-width: 768px) 100vw, 600px"
             className={cn(
-              "block w-auto h-auto max-w-full max-h-full object-contain transition-opacity duration-300",
+              "block h-full w-full object-contain object-center transition-opacity duration-300",
               isTransitioning ? "opacity-70" : "opacity-100"
             )}
           />
@@ -156,7 +157,7 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
 
       {/* Thumbnail Strip (only show if more than 1 image) */}
       {validImages.length > 1 && (
-        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin">
+        <div className="flex w-full items-center gap-3 overflow-x-auto pb-2 scrollbar-thin">
           {validImages.map((url, index) => (
             <button
               key={index}
@@ -169,17 +170,18 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
               )}
               aria-label={`View image ${index + 1}`}
             >
-              <div className="w-full h-full bg-white flex items-center justify-center p-1">
+              <div className="grid h-full w-full place-items-center bg-white p-1">
                 <SmartImage
                   src={url}
                   alt={`${productName} thumbnail ${index + 1}`}
                   widths={THUMB_WIDTHS}
                   fallbackWidth={160}
                   quality={65}
+                  resize="contain"
                   sizes="96px"
                   width={96}
                   height={96}
-                  className="max-w-full max-h-full object-contain"
+                  className="h-full w-full object-contain object-center"
                 />
               </div>
             </button>
