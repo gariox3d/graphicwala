@@ -1,5 +1,8 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import {
+  useFestivalSettingsQuery,
+  useInvalidateFestivalSettings,
+} from './useFestivalSettingsQuery';
 
 export interface ValentineSettings {
   id: string;
@@ -9,30 +12,12 @@ export interface ValentineSettings {
   primary_color_override: string | null;
 }
 
-export const VALENTINE_SETTINGS_KEY = ['festival-settings', 'valentine'] as const;
-
-const fetchValentineSettings = async (): Promise<ValentineSettings | null> => {
-  const { data, error } = await supabase
-    .from('festival_settings')
-    .select('*')
-    .eq('theme_name', 'valentine')
-    .maybeSingle();
-  if (error) return null;
-  return (data as ValentineSettings) ?? null;
-};
-
-/** Cached valentine settings — one shared request for the whole app. */
+/** Valentine theme settings, read from the shared festival_settings cache. */
 export const useValentineSettings = () => {
-  const queryClient = useQueryClient();
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: VALENTINE_SETTINGS_KEY,
-    queryFn: fetchValentineSettings,
-    staleTime: 10 * 60 * 1000,
-    gcTime: 30 * 60 * 1000,
-    retry: 1,
-  });
+  const { data, isLoading, refetch } = useFestivalSettingsQuery();
+  const invalidate = useInvalidateFestivalSettings();
 
-  const settings = data ?? null;
+  const settings = (data?.find(r => r.theme_name === 'valentine') as ValentineSettings | undefined) ?? null;
 
   const updateSettings = async (updates: Partial<ValentineSettings>) => {
     if (!settings?.id) return { success: false };
@@ -41,7 +26,7 @@ export const useValentineSettings = () => {
       .update(updates)
       .eq('id', settings.id);
     if (!error) {
-      await queryClient.invalidateQueries({ queryKey: VALENTINE_SETTINGS_KEY });
+      await invalidate();
       return { success: true };
     }
     return { success: false, error };

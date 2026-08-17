@@ -1,5 +1,8 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import {
+  useFestivalSettingsQuery,
+  useInvalidateFestivalSettings,
+} from './useFestivalSettingsQuery';
 
 export interface FestivalSettings {
   id: string;
@@ -14,30 +17,12 @@ export interface FestivalSettings {
   primary_color_override: string | null;
 }
 
-export const FESTIVAL_SETTINGS_KEY = ['festival-settings', 'ramadan'] as const;
-
-const fetchFestivalSettings = async (): Promise<FestivalSettings | null> => {
-  const { data, error } = await supabase
-    .from('festival_settings')
-    .select('*')
-    .eq('theme_name', 'ramadan')
-    .maybeSingle();
-  if (error) return null;
-  return (data as FestivalSettings) ?? null;
-};
-
-/** Cached festival settings — one shared request for the whole app. */
+/** Ramadan theme settings, read from the shared festival_settings cache. */
 export const useFestivalSettings = () => {
-  const queryClient = useQueryClient();
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: FESTIVAL_SETTINGS_KEY,
-    queryFn: fetchFestivalSettings,
-    staleTime: 10 * 60 * 1000,
-    gcTime: 30 * 60 * 1000,
-    retry: 1,
-  });
+  const { data, isLoading, refetch } = useFestivalSettingsQuery();
+  const invalidate = useInvalidateFestivalSettings();
 
-  const settings = data ?? null;
+  const settings = (data?.find(r => r.theme_name === 'ramadan') as FestivalSettings | undefined) ?? null;
 
   const updateSettings = async (updates: Partial<FestivalSettings>) => {
     if (!settings?.id) return { success: false };
@@ -46,7 +31,7 @@ export const useFestivalSettings = () => {
       .update(updates)
       .eq('id', settings.id);
     if (!error) {
-      await queryClient.invalidateQueries({ queryKey: FESTIVAL_SETTINGS_KEY });
+      await invalidate();
       return { success: true };
     }
     return { success: false, error };
