@@ -11,6 +11,8 @@ import WishlistButton from './WishlistButton';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import SmartImage from '@/components/SmartImage';
+import { CARD_WIDTHS } from '@/lib/imageUrl';
 
 interface ProductCardProps {
   product: Product & { image_urls?: string[]; sale_price?: number | null; sale_start?: string | null; sale_end?: string | null };
@@ -90,28 +92,34 @@ const ProductCard = ({ product }: ProductCardProps) => {
       >
         {primaryImage ? (
           <>
-            <img
+            <SmartImage
               src={primaryImage}
               alt={`${product.name} - Buy Online from Graphic Wala | Custom Printing India`}
+              widths={CARD_WIDTHS}
+              fallbackWidth={480}
+              quality={68}
+              resize="cover"
+              sizes="(max-width: 640px) 92vw, (max-width: 1024px) 45vw, 300px"
               className={cn(
                 "w-full h-full object-cover transition-all duration-500 absolute inset-0",
                 isHovered && secondaryImage ? "opacity-0 scale-105" : "opacity-100"
               )}
-              loading="lazy"
-              decoding="async"
               width={600}
               height={600}
             />
-            {secondaryImage && (
-              <img
+            {secondaryImage && isHovered && (
+              <SmartImage
                 src={secondaryImage}
                 alt={`${product.name} - Alternate View | Graphic Wala`}
+                widths={CARD_WIDTHS}
+                fallbackWidth={480}
+                quality={68}
+                resize="cover"
+                sizes="(max-width: 640px) 92vw, (max-width: 1024px) 45vw, 300px"
                 className={cn(
                   "w-full h-full object-cover transition-all duration-500 absolute inset-0",
                   isHovered ? "opacity-100 scale-100" : "opacity-0 scale-95"
                 )}
-                loading="lazy"
-                decoding="async"
                 width={600}
                 height={600}
               />

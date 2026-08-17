@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import SmartImage from '@/components/SmartImage';
+import { DETAIL_WIDTHS, THUMB_WIDTHS } from '@/lib/imageUrl';
 
 interface ProductImageGalleryProps {
   images: string[];
@@ -13,6 +15,9 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  // Gallery slides are fetched only after the user visits them, so opening a
+  // product never downloads every image at once.
+  const [visitedIndexes, setVisitedIndexes] = useState<number[]>([0]);
 
   // Filter out empty URLs and ensure we have valid images
   const validImages = images.filter(url => url && url.trim() !== '');
@@ -22,6 +27,7 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
     if (index === selectedIndex || isTransitioning) return;
     setIsTransitioning(true);
     setSelectedIndex(index);
+    setVisitedIndexes((prev) => (prev.includes(index) ? prev : [...prev, index]));
     setTimeout(() => setIsTransitioning(false), 300);
   };
 
@@ -105,14 +111,18 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
         onTouchEnd={onTouchEnd}
       >
         <div className="w-full h-full bg-white flex items-center justify-center">
-          <img
+          <SmartImage
             src={validImages[selectedIndex]}
             alt={`${productName} - Image ${selectedIndex + 1}`}
+            widths={DETAIL_WIDTHS}
+            fallbackWidth={1024}
+            quality={82}
+            priority={selectedIndex === 0}
+            sizes="(max-width: 768px) 100vw, 560px"
             className={cn(
               "max-w-full max-h-full object-contain transition-opacity duration-300",
               isTransitioning ? "opacity-70" : "opacity-100"
             )}
-            loading="lazy"
           />
         </div>
         
@@ -162,11 +172,16 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
               aria-label={`View image ${index + 1}`}
             >
               <div className="w-full h-full bg-white flex items-center justify-center">
-                <img
+                <SmartImage
                   src={url}
                   alt={`${productName} thumbnail ${index + 1}`}
+                  widths={THUMB_WIDTHS}
+                  fallbackWidth={160}
+                  quality={60}
+                  sizes="80px"
+                  width={80}
+                  height={80}
                   className="max-w-full max-h-full object-contain"
-                  loading="lazy"
                 />
               </div>
             </button>
