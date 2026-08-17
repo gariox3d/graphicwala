@@ -15,9 +15,8 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
-  // Gallery slides are fetched only after the user visits them, so opening a
-  // product never downloads every image at once.
-  const [visitedIndexes, setVisitedIndexes] = useState<number[]>([0]);
+  // Only the selected slide is rendered, so opening a product never downloads
+  // every gallery image at once.
 
   // Filter out empty URLs and ensure we have valid images
   const validImages = images.filter(url => url && url.trim() !== '');
@@ -27,7 +26,6 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
     if (index === selectedIndex || isTransitioning) return;
     setIsTransitioning(true);
     setSelectedIndex(index);
-    setVisitedIndexes((prev) => (prev.includes(index) ? prev : [...prev, index]));
     setTimeout(() => setIsTransitioning(false), 300);
   };
 
