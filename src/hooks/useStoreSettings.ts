@@ -1,5 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+
+export const STORE_SETTINGS_KEY = ['store-settings'] as const;
 
 export interface StoreSettings {
   id: string;
