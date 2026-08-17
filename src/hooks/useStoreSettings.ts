@@ -1,5 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { readCache, writeCache } from '@/lib/persistentCache';
+
+export const STORE_SETTINGS_KEY = ['store-settings'] as const;
 
 export interface StoreSettings {
   id: string;
@@ -24,69 +27,78 @@ export interface StoreSettings {
   updated_at: string;
 }
 
-export const useStoreSettings = () => {
-  const [settings, setSettings] = useState<StoreSettings | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+const DEFAULTS: StoreSettings = {
+  id: 'default',
+  default_delivery_charge: 0,
+  store_pickup_enabled: true,
+  pickup_address: 'Graphic Wala Shop, Main Road',
+  announcement_text: null,
+  announcement_enabled: false,
+  delivery_time_text: '🚚 Estimated Delivery: 5–7 working days\n\nOrders are dispatched after quality checks.\nIn rare cases, delivery may take slightly longer due to logistics or regional delays.',
+  delivery_disclaimer_enabled: true,
+  whatsapp_support_number: '+916207142994',
+  return_policy_enabled: true,
+  return_window_hours: 48,
+  bulk_discount_enabled: false,
+  bulk_discount_min_qty: 2,
+  bulk_discount_percent: 10,
+  social_proof_enabled: false,
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+};
 
-  const fetchSettings = async () => {
-    try {
-      const { data, error: fetchError } = await supabase
-        .from('store_settings')
-        .select('*')
-        .eq('id', 'default')
-        .single();
+const fetchStoreSettings = async (): Promise<StoreSettings> => {
+  const { data, error } = await supabase
+    .from('store_settings')
+    .select('*')
+    .eq('id', 'default')
+    .single();
 
-      if (fetchError) throw fetchError;
-      
-      // Map database fields to our interface
-      setSettings({
-        id: data.id,
-        default_delivery_charge: data.default_delivery_charge ?? 0,
-        store_pickup_enabled: data.store_pickup_enabled ?? true,
-        pickup_address: data.pickup_address ?? 'Graphic Wala Shop, Main Road',
-        announcement_text: data.announcement_text,
-        announcement_enabled: data.announcement_enabled ?? false,
-        delivery_time_text: data.delivery_time_text ?? '🚚 Estimated Delivery: 5–7 working days\n\nOrders are dispatched after quality checks.\nIn rare cases, delivery may take slightly longer due to logistics or regional delays.',
-        delivery_disclaimer_enabled: data.delivery_disclaimer_enabled ?? true,
-        // Return policy settings
-        whatsapp_support_number: data.whatsapp_support_number ?? '+916207142994',
-        return_policy_enabled: data.return_policy_enabled ?? true,
-        return_window_hours: data.return_window_hours ?? 48,
-        bulk_discount_enabled: data.bulk_discount_enabled ?? false,
-        bulk_discount_min_qty: data.bulk_discount_min_qty ?? 2,
-        bulk_discount_percent: data.bulk_discount_percent ?? 10,
-        social_proof_enabled: (data as any).social_proof_enabled ?? false,
-        created_at: data.created_at,
-        updated_at: data.updated_at,
-      });
-    } catch (err: any) {
-      console.error('Error fetching store settings:', err);
-      setError(err.message);
-      // Set default values if settings don't exist
-      setSettings({
-        id: 'default',
-        default_delivery_charge: 0,
-        store_pickup_enabled: true,
-        pickup_address: 'Graphic Wala Shop, Main Road',
-        announcement_text: null,
-        announcement_enabled: false,
-        delivery_time_text: '🚚 Estimated Delivery: 5–7 working days\n\nOrders are dispatched after quality checks.\nIn rare cases, delivery may take slightly longer due to logistics or regional delays.',
-        delivery_disclaimer_enabled: true,
-        whatsapp_support_number: '+916207142994',
-        return_policy_enabled: true,
-        return_window_hours: 48,
-        bulk_discount_enabled: false,
-        bulk_discount_min_qty: 2,
-        bulk_discount_percent: 10,
-        social_proof_enabled: false,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      });
-    } finally {
-      setLoading(false);
-    }
+  if (error || !data) return DEFAULTS;
+
+  const settings: StoreSettings = {
+    ...DEFAULTS,
+    id: data.id,
+    default_delivery_charge: data.default_delivery_charge ?? 0,
+    store_pickup_enabled: data.store_pickup_enabled ?? true,
+    pickup_address: data.pickup_address ?? DEFAULTS.pickup_address,
+    announcement_text: data.announcement_text,
+    announcement_enabled: data.announcement_enabled ?? false,
+    delivery_time_text: data.delivery_time_text ?? DEFAULTS.delivery_time_text,
+    delivery_disclaimer_enabled: data.delivery_disclaimer_enabled ?? true,
+    whatsapp_support_number: data.whatsapp_support_number ?? DEFAULTS.whatsapp_support_number,
+    return_policy_enabled: data.return_policy_enabled ?? true,
+    return_window_hours: data.return_window_hours ?? 48,
+    bulk_discount_enabled: data.bulk_discount_enabled ?? false,
+    bulk_discount_min_qty: data.bulk_discount_min_qty ?? 2,
+    bulk_discount_percent: data.bulk_discount_percent ?? 10,
+    social_proof_enabled: (data as any).social_proof_enabled ?? false,
+    created_at: data.created_at,
+    updated_at: data.updated_at,
   };
+
+  writeCache('store-settings', settings);
+  return settings;
+};
+
+/**
+ * Shared, cached store settings. Every component that calls this hook reads the
+ * same React Query entry, so the settings row is fetched once per session
+ * instead of once per component (product cards used to trigger one call each).
+ */
+export const useStoreSettings = () => {
+  const queryClient = useQueryClient();
+
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: STORE_SETTINGS_KEY,
+    queryFn: fetchStoreSettings,
+    // Paint instantly from the last known settings, then revalidate.
+    initialData: () => readCache<StoreSettings>('store-settings'),
+    initialDataUpdatedAt: 0,
+    staleTime: 10 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    retry: 1,
+  });
 
   const updateSettings = async (updates: Partial<StoreSettings>) => {
     try {
@@ -96,19 +108,20 @@ export const useStoreSettings = () => {
         .eq('id', 'default');
 
       if (updateError) throw updateError;
-      await fetchSettings();
+      await queryClient.invalidateQueries({ queryKey: STORE_SETTINGS_KEY });
       return { success: true };
     } catch (err: any) {
-      console.error('Error updating store settings:', err);
       return { success: false, error: err.message };
     }
   };
 
-  useEffect(() => {
-    fetchSettings();
-  }, []);
-
-  return { settings, loading, error, refetch: fetchSettings, updateSettings };
+  return {
+    settings: data ?? null,
+    loading: isLoading,
+    error: error ? (error as Error).message : null,
+    refetch,
+    updateSettings,
+  };
 };
 
 export const getProductDeliveryCharge = (

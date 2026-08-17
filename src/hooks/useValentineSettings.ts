@@ -1,5 +1,8 @@
-import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import {
+  useFestivalSettingsQuery,
+  useInvalidateFestivalSettings,
+} from './useFestivalSettingsQuery';
 
 export interface ValentineSettings {
   id: string;
@@ -9,54 +12,27 @@ export interface ValentineSettings {
   primary_color_override: string | null;
 }
 
+/** Valentine theme settings, read from the shared festival_settings cache. */
 export const useValentineSettings = () => {
-  const [settings, setSettings] = useState<ValentineSettings | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading, refetch } = useFestivalSettingsQuery();
+  const invalidate = useInvalidateFestivalSettings();
 
-  const fetchSettings = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('festival_settings')
-        .select('*')
-        .eq('theme_name', 'valentine')
-        .maybeSingle();
-
-      if (error) {
-        throw error;
-      }
-
-      setSettings(data ? (data as ValentineSettings) : null);
-    } catch (error) {
-      console.error('Error fetching valentine settings:', error);
-      setSettings(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchSettings();
-  }, []);
+  const settings = (data?.find(r => r.theme_name === 'valentine') as ValentineSettings | undefined) ?? null;
 
   const updateSettings = async (updates: Partial<ValentineSettings>) => {
     if (!settings?.id) return { success: false };
-    
     const { error } = await supabase
       .from('festival_settings')
       .update(updates)
       .eq('id', settings.id);
-
     if (!error) {
-      setSettings(prev => prev ? { ...prev, ...updates } : null);
+      await invalidate();
       return { success: true };
     }
     return { success: false, error };
   };
 
-  const isThemeActive = (): boolean => {
-    if (!settings) return false;
-    return settings.is_enabled;
-  };
+  const isThemeActive = (): boolean => !!settings?.is_enabled;
 
-  return { settings, loading, updateSettings, isThemeActive, refetch: fetchSettings };
+  return { settings, loading: isLoading, updateSettings, isThemeActive, refetch };
 };

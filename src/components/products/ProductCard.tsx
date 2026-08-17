@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Zap, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -25,6 +25,17 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const { isWishlisted, toggleWishlist } = useWishlist();
   const { settings } = useStoreSettings();
   const [isHovered, setIsHovered] = useState(false);
+  const prefetched = useRef(false);
+
+  // Smart prefetch: only the product detail route chunk, and only once the user
+  // shows intent (hover on desktop, touch start on mobile).
+  const prefetchProductRoute = useCallback(() => {
+    if (prefetched.current) return;
+    prefetched.current = true;
+    import('@/pages/ProductDetail').catch(() => {
+      prefetched.current = false;
+    });
+  }, []);
 
   const uploadConfig = Array.isArray(product.upload_config) 
     ? product.upload_config as UploadField[] 
@@ -87,7 +98,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
       <Link 
         to={`/product/${(product as any).slug || product.id}`} 
         className="block relative aspect-square overflow-hidden bg-muted"
-        onMouseEnter={() => setIsHovered(true)}
+        onMouseEnter={() => {
+          setIsHovered(true);
+          prefetchProductRoute();
+        }}
+        onTouchStart={prefetchProductRoute}
         onMouseLeave={() => setIsHovered(false)}
       >
         {primaryImage ? (

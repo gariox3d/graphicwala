@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { ArrowRight, MessageCircle } from 'lucide-react';
-import { useEffect, useState, lazy } from 'react';
+import { useEffect, useState, lazy, Suspense } from 'react';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
@@ -18,13 +18,13 @@ import CategoryGrid from '@/components/home/CategoryGrid';
 import HowItWorks from '@/components/home/HowItWorks';
 import WhyBuyFromUs from '@/components/home/WhyBuyFromUs';
 import TrustPanel from '@/components/home/TrustPanel';
-import SocialProofNotifications from '@/components/SocialProofNotifications';
 import { supabase } from '@/integrations/supabase/client';
 import { Product, Category, WHATSAPP_NUMBER, BUSINESS_NAME } from '@/lib/types';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
 import { useRecentlyViewed } from '@/hooks/useRecentlyViewed';
 import { PRODUCT_CARD_FIELDS } from '@/lib/productFields';
 
+const SocialProofNotifications = lazy(() => import('@/components/SocialProofNotifications'));
 const CustomerGallery = lazy(() => import('@/components/CustomerGallery'));
 const BeforeAfterShowcase = lazy(() => import('@/components/BeforeAfterShowcase'));
 const TestimonialsSection = lazy(() => import('@/components/TestimonialsSection'));
@@ -254,7 +254,9 @@ const Index = () => {
       </main>
 
       <Footer />
-      <SocialProofNotifications />
+      <Suspense fallback={null}>
+        <SocialProofNotifications />
+      </Suspense>
     </div>
   );
 };

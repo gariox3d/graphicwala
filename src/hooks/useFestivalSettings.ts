@@ -1,5 +1,8 @@
-import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import {
+  useFestivalSettingsQuery,
+  useInvalidateFestivalSettings,
+} from './useFestivalSettingsQuery';
 
 export interface FestivalSettings {
   id: string;
@@ -14,55 +17,28 @@ export interface FestivalSettings {
   primary_color_override: string | null;
 }
 
+/** Ramadan theme settings, read from the shared festival_settings cache. */
 export const useFestivalSettings = () => {
-  const [settings, setSettings] = useState<FestivalSettings | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading, refetch } = useFestivalSettingsQuery();
+  const invalidate = useInvalidateFestivalSettings();
 
-  const fetchSettings = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('festival_settings')
-        .select('*')
-        .eq('theme_name', 'ramadan')
-        .maybeSingle();
-
-      if (error) {
-        throw error;
-      }
-
-      setSettings(data ? (data as FestivalSettings) : null);
-    } catch (error) {
-      console.error('Error fetching festival settings:', error);
-      setSettings(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchSettings();
-  }, []);
+  const settings = (data?.find(r => r.theme_name === 'ramadan') as FestivalSettings | undefined) ?? null;
 
   const updateSettings = async (updates: Partial<FestivalSettings>) => {
     if (!settings?.id) return { success: false };
-    
     const { error } = await supabase
       .from('festival_settings')
       .update(updates)
       .eq('id', settings.id);
-
     if (!error) {
-      setSettings(prev => prev ? { ...prev, ...updates } : null);
+      await invalidate();
       return { success: true };
     }
     return { success: false, error };
   };
 
-  // Check if theme should be active (considering auto-enable by date)
   const isThemeActive = (): boolean => {
-    if (!settings) return false;
-    if (!settings.is_enabled) return false;
-    
+    if (!settings || !settings.is_enabled) return false;
     if (settings.auto_enable_by_date && settings.start_date && settings.end_date) {
       const now = new Date();
       const start = new Date(settings.start_date);
@@ -70,9 +46,8 @@ export const useFestivalSettings = () => {
       end.setHours(23, 59, 59, 999);
       return now >= start && now <= end;
     }
-
     return settings.is_enabled;
   };
 
-  return { settings, loading, updateSettings, isThemeActive, refetch: fetchSettings };
+  return { settings, loading: isLoading, updateSettings, isThemeActive, refetch };
 };
