@@ -1,6 +1,19 @@
-import { useEffect } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { useValentineSettings } from '@/hooks/useValentineSettings';
-import FallingHearts from './FallingHearts';
+
+// Heavy animation bundle is only downloaded while the theme is actually on.
+const FallingHearts = lazy(() => import('./FallingHearts'));
+
+const GREAT_VIBES_HREF = 'https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap';
+
+const ensureGreatVibes = () => {
+  if (document.getElementById('great-vibes-font')) return;
+  const link = document.createElement('link');
+  link.id = 'great-vibes-font';
+  link.rel = 'stylesheet';
+  link.href = GREAT_VIBES_HREF;
+  document.head.appendChild(link);
+};
 
 const ValentineThemeProvider = () => {
   const { settings, isThemeActive } = useValentineSettings();
@@ -10,6 +23,7 @@ const ValentineThemeProvider = () => {
     const root = document.documentElement;
     if (active) {
       root.classList.add('valentine-theme');
+      ensureGreatVibes();
       // Optional: Set a specific CSS variable if needed
       if (settings?.primary_color_override) {
         root.style.setProperty('--valentine-override', settings.primary_color_override);
@@ -27,9 +41,9 @@ const ValentineThemeProvider = () => {
   if (!active || !settings) return null;
 
   return (
-    <>
+    <Suspense fallback={null}>
       <FallingHearts />
-    </>
+    </Suspense>
   );
 };
 
