@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { readCache, writeCache } from '@/lib/persistentCache';
 
 export interface HeroShowcase {
   id: string;
@@ -24,7 +25,9 @@ const fetchHeroShowcase = async (): Promise<HeroShowcase | null> => {
     .order('updated_at', { ascending: false })
     .limit(1)
     .maybeSingle();
-  return (data as HeroShowcase | null) ?? null;
+  const row = (data as HeroShowcase | null) ?? null;
+  writeCache('hero-showcase', row);
+  return row;
 };
 
 /** Cached hero showcase card, with a single realtime subscription for admin edits. */
@@ -33,6 +36,9 @@ export const useHeroShowcase = () => {
   const { data, isLoading, refetch } = useQuery({
     queryKey: HERO_SHOWCASE_KEY,
     queryFn: fetchHeroShowcase,
+    // Instant paint from last known hero card to avoid a hero layout shift.
+    initialData: () => readCache<HeroShowcase | null>('hero-showcase'),
+    initialDataUpdatedAt: 0,
     staleTime: 10 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
     retry: 1,
