@@ -1,73 +1,95 @@
-# Welcome to your Lovable project
+# Graphic Wala Print Hub
 
-## Project info
+Create a complete modern full-stack eCommerce website named “Graphic Wala”.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+Brand Name: Graphic Wala  
+Theme Colors: Red, White, Black  
+Primary Background: White  
+Style: Modern, clean, professional, cool UI, minimal but premium look  
+Responsive: Mobile + Tablet + Desktop fully responsive  
 
-## How can I edit this code?
+PURPOSE:
+This website is for selling printing products online and receiving orders with payment.
 
-There are several ways of editing your application.
+PRODUCTS TO SELL:
+- Photo Frames
+- PVC Cards
+- ID Cards
+- Keychains
+- Visiting Cards
+- Any future printing products (admin can add later)
 
-**Use Lovable**
+FRONTEND (USER SIDE):
+- Modern homepage with banner, services, and featured products
+- Product listing page with image, price, description
+- Product detail page
+- Add to cart system
+- Checkout page
+- Razorpay payment integration (payment keys already available)
+- Order success page
+- Contact page
+- About Graphic Wala page
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+USER FEATURES:
+- User signup & login
+- User dashboard
+- View orders
+- Order status tracking
+- Save delivery address
 
-Changes made via Lovable will be committed automatically to this repo.
+ADMIN PANEL (VERY IMPORTANT):
+- Secure admin login
+- Admin dashboard with stats
+- Add / Edit / Delete products
+- Upload product images
+- Set product price
+- Manage categories
+- View all orders
+- View customer details
+- Order status update (Pending, Processing, Completed)
+- Razorpay payment status view
+- Ability to add new products anytime later without code
 
-**Use your preferred IDE**
+BACKEND:
+- Proper database structure for users, products, orders, payments
+- API-based backend
+- Secure authentication
+- Razorpay payment verification
+- Clean scalable architecture so features can be added later
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+EXTRA REQUIREMENTS:
+- SEO friendly structure
+- Fast loading
+- Clean code
+- Easy to extend in future
+- Professional production-ready website
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+TECH STACK:
+- Modern frontend framework
+- Backend with database
+- Ready for deployment (Vercel / Netlify compatible)
 
-Follow these steps:
+Make sure the website is fully working end-to-end, not just UI.
+
+This project was built with [Lovable](https://lovable.dev).
+
+**Live app**: https://graphicwala.lovable.app
+
+## Build with Lovable
+
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/352d0d91-b6de-49ae-8ddd-5aebb272904e).
+
+- **Ship faster**: describe what you want to build and Lovable handles the code.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+
+## Development
+
+Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
+git clone <this-repository-url>
+cd <repository-name>
 npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
