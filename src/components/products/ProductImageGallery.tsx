@@ -103,12 +103,12 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
     <div className="space-y-4">
       {/* Main Image */}
       <div 
-        className="relative w-full rounded-xl overflow-hidden bg-muted group min-h-[320px] md:min-h-[480px] max-h-[65vh] md:max-h-[700px]"
+        className="relative w-full h-[clamp(320px,92vw,480px)] md:h-[min(70vh,680px)] rounded-xl overflow-hidden bg-muted group"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
-        <div className="w-full h-full bg-white flex items-center justify-center p-2 md:p-4">
+        <div className="absolute inset-0 bg-white flex items-center justify-center p-2 md:p-4">
           <SmartImage
             src={validImages[selectedIndex]}
             alt={`${productName} - Image ${selectedIndex + 1}`}
@@ -118,7 +118,7 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
             priority={selectedIndex === 0}
             sizes="(max-width: 768px) 100vw, 600px"
             className={cn(
-              "w-full h-full max-w-full max-h-full object-contain transition-opacity duration-300",
+              "block w-full h-full max-w-full max-h-full object-contain transition-opacity duration-300",
               isTransitioning ? "opacity-70" : "opacity-100"
             )}
           />
