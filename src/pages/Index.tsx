@@ -110,54 +110,16 @@ const Index = () => {
       <Helmet>
         <title>Graphic Wala (Graphicwala) | Custom Photo Frames &amp; Gifts</title>
         <meta name="description" content="Graphic Wala (Graphicwala) — official store for custom photo frames, PVC & ID cards, keychains and personalized gifts. Prepaid, All India delivery." />
-        <meta name="keywords" content="graphicwala, graphic wala, graphics wala, graphicswala, graphics waale, graphics wale, grafix wala, graphicwala.com" />
-        <link rel="canonical" href="https://graphicwala.com/" />
+        <link rel="canonical" href="https://www.graphicwala.com/" />
         <meta property="og:title" content="Graphic Wala (Graphicwala) | Custom Photo Frames & Gifts" />
         <meta property="og:description" content="Buy custom photo frames, PVC cards, keychains & personalized gifts online. Premium quality with All India home delivery." />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://graphicwala.com/" />
-        <meta property="og:image" content="https://graphicwala.com/og-square.png" />
+        <meta property="og:url" content="https://www.graphicwala.com/" />
+        <meta property="og:image" content="https://www.graphicwala.com/og-square.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Graphic Wala (Graphicwala) | Custom Photo Frames & Gifts" />
         <meta name="twitter:description" content="Buy custom photo frames, PVC cards, keychains online. All India delivery." />
-        <meta name="twitter:image" content="https://graphicwala.com/og-square.png" />
-        <script type="application/ld+json">
-          {JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'LocalBusiness',
-            '@id': 'https://graphicwala.com/#localbusiness',
-            name: 'Graphicwala',
-            alternateName: [
-              'Graphic Wala',
-              'GraphicWala',
-              'Graphics Wala',
-              'Graphicswala',
-              'Graphics Waale',
-              'Graphics Wale',
-              'Grafix Wala',
-              'ग्राफिक वाला',
-              'graphicwala.com',
-            ],
-            image: 'https://graphicwala.com/og-square.png',
-            url: 'https://graphicwala.com/',
-            telephone: '+91-6207142994',
-            email: 'graphicwalaktr@gmail.com',
-            priceRange: '₹₹',
-            description:
-              'Graphicwala is a custom printing store in Katihar, Bihar offering photo frames, PVC cards, ID cards, visiting cards, keychains and personalized gifts with All India delivery.',
-            address: {
-              '@type': 'PostalAddress',
-              addressLocality: 'Katihar',
-              addressRegion: 'Bihar',
-              addressCountry: 'IN',
-            },
-            areaServed: { '@type': 'Country', name: 'India' },
-            openingHours: 'Mo-Su 09:00-21:00',
-            paymentAccepted: 'UPI, Credit Card, Debit Card, Netbanking',
-            currenciesAccepted: 'INR',
-            sameAs: ['https://wa.me/916207142994'],
-          })}
-        </script>
+        <meta name="twitter:image" content="https://www.graphicwala.com/og-square.png" />
       </Helmet>
       {/* Announcement Banner - Top of page */}
       <AnnouncementBanner />

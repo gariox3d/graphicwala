@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 
-const SITE_URL = 'https://graphicwala.com';
+const SITE_URL = 'https://www.graphicwala.com';
 const DEFAULT_IMAGE = `${SITE_URL}/og-square.png`;
 
 interface SeoProps {

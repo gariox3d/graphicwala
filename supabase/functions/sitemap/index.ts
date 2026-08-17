@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const SITE_URL = "https://graphicwala.com";
+const SITE_URL = "https://www.graphicwala.com";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -32,8 +32,14 @@ serve(async (req) => {
     const staticPages = [
       { url: "/", priority: "1.0", changefreq: "daily" },
       { url: "/products", priority: "0.9", changefreq: "daily" },
+      { url: "/sale", priority: "0.7", changefreq: "daily" },
       { url: "/about", priority: "0.6", changefreq: "monthly" },
       { url: "/contact", priority: "0.6", changefreq: "monthly" },
+      { url: "/track-order", priority: "0.4", changefreq: "monthly" },
+      { url: "/shipping-policy", priority: "0.3", changefreq: "yearly" },
+      { url: "/refund-policy", priority: "0.3", changefreq: "yearly" },
+      { url: "/terms-and-conditions", priority: "0.3", changefreq: "yearly" },
+      { url: "/privacy-policy", priority: "0.3", changefreq: "yearly" },
     ];
 
     let xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -79,8 +85,7 @@ ${catImage}  </url>
 
         xml += `  <url>
     <loc>${SITE_URL}/product/${product.slug || product.id}</loc>
-${lastmod ? `    <lastmod>${lastmod}</lastmod>\n` : ''}
-    <changefreq>weekly</changefreq>
+${lastmod ? `    <lastmod>${lastmod}</lastmod>\n` : ''}    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
 `;
         for (const img of allImages) {

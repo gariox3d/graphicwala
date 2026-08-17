@@ -23,7 +23,7 @@ const ShareRedirect = () => {
       <Helmet>
         <title>Redirecting… | Graphic Wala</title>
         <meta name="robots" content="noindex, nofollow" />
-        {id && <link rel="canonical" href={`https://graphicwala.com/product/${id}`} />}
+        {id && <link rel="canonical" href={`https://www.graphicwala.com/product/${id}`} />}
       </Helmet>
       <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
     </div>
