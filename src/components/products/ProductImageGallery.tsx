@@ -103,22 +103,22 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
     <div className="space-y-4">
       {/* Main Image */}
       <div 
-        className="relative aspect-square rounded-xl overflow-hidden bg-muted group"
+        className="relative w-full rounded-xl overflow-hidden bg-muted group min-h-[320px] md:min-h-[480px] max-h-[65vh] md:max-h-[700px]"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
-        <div className="w-full h-full bg-white flex items-center justify-center">
+        <div className="w-full h-full bg-white flex items-center justify-center p-2 md:p-4">
           <SmartImage
             src={validImages[selectedIndex]}
             alt={`${productName} - Image ${selectedIndex + 1}`}
             widths={DETAIL_WIDTHS}
-            fallbackWidth={1024}
-            quality={82}
+            fallbackWidth={1200}
+            quality={85}
             priority={selectedIndex === 0}
-            sizes="(max-width: 768px) 100vw, 560px"
+            sizes="(max-width: 768px) 100vw, 600px"
             className={cn(
-              "max-w-full max-h-full object-contain transition-opacity duration-300",
+              "w-full h-full max-w-full max-h-full object-contain transition-opacity duration-300",
               isTransitioning ? "opacity-70" : "opacity-100"
             )}
           />
@@ -156,29 +156,29 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
 
       {/* Thumbnail Strip (only show if more than 1 image) */}
       {validImages.length > 1 && (
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin">
+        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin">
           {validImages.map((url, index) => (
             <button
               key={index}
               onClick={() => handleImageChange(index)}
               className={cn(
-                "flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-lg overflow-hidden border-2 transition-all duration-200",
+                "flex-shrink-0 w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden border-2 transition-all duration-200",
                 selectedIndex === index 
                   ? "border-primary ring-2 ring-primary/30" 
                   : "border-transparent hover:border-muted-foreground/30"
               )}
               aria-label={`View image ${index + 1}`}
             >
-              <div className="w-full h-full bg-white flex items-center justify-center">
+              <div className="w-full h-full bg-white flex items-center justify-center p-1">
                 <SmartImage
                   src={url}
                   alt={`${productName} thumbnail ${index + 1}`}
                   widths={THUMB_WIDTHS}
                   fallbackWidth={160}
-                  quality={60}
-                  sizes="80px"
-                  width={80}
-                  height={80}
+                  quality={65}
+                  sizes="96px"
+                  width={96}
+                  height={96}
                   className="max-w-full max-h-full object-contain"
                 />
               </div>
