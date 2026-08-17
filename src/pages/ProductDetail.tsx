@@ -26,6 +26,7 @@ import WhyBuyFromProduct from '@/components/products/WhyBuyFromProduct';
 import SecurePaymentBadge from '@/components/SecurePaymentBadge';
 import PincodeChecker from '@/components/shipping/PincodeChecker';
 import { trackEvent } from '@/lib/analytics';
+import { categorySlug } from '@/lib/categorySeo';
 
 import WishlistButton from '@/components/products/WishlistButton';
 import FlashSaleBadge from '@/components/products/FlashSaleBadge';
@@ -42,6 +43,17 @@ const SimilarProducts = lazy(() => import('@/components/products/SimilarProducts
 const RecentlyViewedProducts = lazy(() => import('@/components/products/RecentlyViewedProducts'));
 
 const SITE_URL = 'https://www.graphicwala.com';
+
+/**
+ * Trims a meta string to `max` characters on a word boundary so titles and
+ * descriptions never end mid-word. Falls back to `short` when provided.
+ */
+const clampText = (text: string, max: number, short?: string) => {
+  const clean = text.replace(/\s+/g, ' ').trim();
+  if (clean.length <= max) return clean;
+  if (short && short.length <= max) return short;
+  return `${clean.slice(0, max - 1).replace(/[\s,–—-]+\S*$/, '')}…`;
+};
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-square.png`;
 const SHARE_BASE_URL = `${SITE_URL}/share/product`;
 
@@ -260,26 +272,22 @@ const ProductDetail = () => {
     : product.image_url ? [product.image_url] : [DEFAULT_OG_IMAGE];
   const productImage = allImages[0];
   const categoryName = product.categories?.name || 'Custom Products';
+  const categoryHref = product.categories ? `/category/${categorySlug(categoryName)}` : '/products';
 
   // Generate SEO-friendly meta data (keyword-rich, unique per product)
   const onSale = !!(product.sale_price && product.sale_end && new Date(product.sale_end) > new Date());
   const effectivePrice = onSale ? product.sale_price! : product.price;
-  const productTitle = `${product.name} Online at ₹${effectivePrice} | Buy ${categoryName} – ${BUSINESS_NAME}`.slice(0, 65);
-  const productDescription = (
+  const productTitle = clampText(
+    `${product.name} — Custom ${categoryName} Online | ${BUSINESS_NAME}`,
+    60,
+    `${product.name} | ${BUSINESS_NAME}`,
+  );
+  const productDescription = clampText(
     product.description
-      ? `${product.description.replace(/\s+/g, ' ').slice(0, 100)} — Buy ${product.name} online at ₹${effectivePrice}. Custom printed ${categoryName.toLowerCase()}, prepaid, All India delivery.`
-      : `Buy ${product.name} online at ₹${effectivePrice} from Graphic Wala. Custom printed ${categoryName.toLowerCase()} with premium quality and All India home delivery.`
-  ).slice(0, 158);
-  const productKeywords = [
-    product.name,
-    `${product.name} online`,
-    `buy ${product.name}`,
-    `${product.name} price in India`,
-    `custom ${categoryName}`,
-    `${categoryName} online India`,
-    'personalized gifts',
-    'Graphic Wala',
-  ].join(', ');
+      ? `${product.description.replace(/\s+/g, ' ').trim()} Personalised and printed to order, with All India delivery.`
+      : `Order a personalised ${product.name.toLowerCase()} from ${BUSINESS_NAME}. Upload your photo or details, we print it to order and deliver across India.`,
+    155,
+  );
   const priceValidUntil = new Date(Date.now() + 1000 * 60 * 60 * 24 * 90).toISOString().split('T')[0];
 
   // Generate JSON-LD structured data for the product
