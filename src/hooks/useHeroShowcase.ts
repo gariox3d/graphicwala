@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface HeroShowcase {
@@ -14,33 +15,40 @@ export interface HeroShowcase {
   image_url: string | null;
 }
 
-export const useHeroShowcase = () => {
-  const [data, setData] = useState<HeroShowcase | null>(null);
-  const [loading, setLoading] = useState(true);
+export const HERO_SHOWCASE_KEY = ['hero-showcase'] as const;
 
-  const fetchData = async () => {
-    const { data: row } = await supabase
-      .from('hero_showcase')
-      .select('*')
-      .order('updated_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    setData(row as HeroShowcase | null);
-    setLoading(false);
-  };
+const fetchHeroShowcase = async (): Promise<HeroShowcase | null> => {
+  const { data } = await supabase
+    .from('hero_showcase')
+    .select('*')
+    .order('updated_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  return (data as HeroShowcase | null) ?? null;
+};
+
+/** Cached hero showcase card, with a single realtime subscription for admin edits. */
+export const useHeroShowcase = () => {
+  const queryClient = useQueryClient();
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: HERO_SHOWCASE_KEY,
+    queryFn: fetchHeroShowcase,
+    staleTime: 10 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    retry: 1,
+  });
 
   useEffect(() => {
-    fetchData();
     const channel = supabase
       .channel('hero_showcase_changes')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'hero_showcase' }, () => {
-        fetchData();
+        queryClient.invalidateQueries({ queryKey: HERO_SHOWCASE_KEY });
       })
       .subscribe();
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [queryClient]);
 
-  return { data, loading, refetch: fetchData };
+  return { data: data ?? null, loading: isLoading, refetch };
 };

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface ValentineSettings {
@@ -9,54 +9,45 @@ export interface ValentineSettings {
   primary_color_override: string | null;
 }
 
+export const VALENTINE_SETTINGS_KEY = ['festival-settings', 'valentine'] as const;
+
+const fetchValentineSettings = async (): Promise<ValentineSettings | null> => {
+  const { data, error } = await supabase
+    .from('festival_settings')
+    .select('*')
+    .eq('theme_name', 'valentine')
+    .maybeSingle();
+  if (error) return null;
+  return (data as ValentineSettings) ?? null;
+};
+
+/** Cached valentine settings — one shared request for the whole app. */
 export const useValentineSettings = () => {
-  const [settings, setSettings] = useState<ValentineSettings | null>(null);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: VALENTINE_SETTINGS_KEY,
+    queryFn: fetchValentineSettings,
+    staleTime: 10 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    retry: 1,
+  });
 
-  const fetchSettings = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('festival_settings')
-        .select('*')
-        .eq('theme_name', 'valentine')
-        .maybeSingle();
-
-      if (error) {
-        throw error;
-      }
-
-      setSettings(data ? (data as ValentineSettings) : null);
-    } catch (error) {
-      console.error('Error fetching valentine settings:', error);
-      setSettings(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchSettings();
-  }, []);
+  const settings = data ?? null;
 
   const updateSettings = async (updates: Partial<ValentineSettings>) => {
     if (!settings?.id) return { success: false };
-    
     const { error } = await supabase
       .from('festival_settings')
       .update(updates)
       .eq('id', settings.id);
-
     if (!error) {
-      setSettings(prev => prev ? { ...prev, ...updates } : null);
+      await queryClient.invalidateQueries({ queryKey: VALENTINE_SETTINGS_KEY });
       return { success: true };
     }
     return { success: false, error };
   };
 
-  const isThemeActive = (): boolean => {
-    if (!settings) return false;
-    return settings.is_enabled;
-  };
+  const isThemeActive = (): boolean => !!settings?.is_enabled;
 
-  return { settings, loading, updateSettings, isThemeActive, refetch: fetchSettings };
+  return { settings, loading: isLoading, updateSettings, isThemeActive, refetch };
 };
