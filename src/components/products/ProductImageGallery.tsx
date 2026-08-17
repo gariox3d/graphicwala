@@ -100,7 +100,7 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
   }
 
   return (
-    <div className="space-y-4">
+    <div className="w-full min-w-0 max-w-full space-y-4">
       {/* Main Image */}
       <div 
         className="relative grid w-full aspect-[4/5] md:aspect-square max-h-[700px] place-items-center rounded-xl bg-muted group"
@@ -157,7 +157,7 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
 
       {/* Thumbnail Strip (only show if more than 1 image) */}
       {validImages.length > 1 && (
-        <div className="flex w-full items-center gap-3 overflow-x-auto pb-2 scrollbar-thin">
+        <div className="flex w-full min-w-0 max-w-full items-center gap-3 overflow-x-auto pb-2 scrollbar-thin">
           {validImages.map((url, index) => (
             <button
               key={index}
