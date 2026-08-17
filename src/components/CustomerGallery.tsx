@@ -52,11 +52,17 @@ const CustomerGallery = () => {
               className="group relative aspect-square rounded-xl overflow-hidden shadow-soft hover:shadow-brand transition-all duration-300 animate-scale-in"
               style={{ animationDelay: `${index * 0.05}s` }}
             >
-              <img
+              <SmartImage
                 src={item.image_url}
                 alt={item.caption || `Photo by ${item.customer_name}`}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                loading="lazy"
+                widths={[240, 320, 480]}
+                fallbackWidth={320}
+                quality={66}
+                resize="cover"
+                sizes="(max-width: 640px) 45vw, 240px"
+                width={320}
+                height={320}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <div className="absolute bottom-0 left-0 right-0 p-3 text-white translate-y-full group-hover:translate-y-0 transition-transform duration-300">

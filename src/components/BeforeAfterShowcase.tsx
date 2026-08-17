@@ -63,11 +63,14 @@ const BeforeAfterShowcase = () => {
                     className="aspect-square overflow-hidden bg-muted cursor-zoom-in relative"
                     onClick={() => setZoomImage(item.before_image_url)}
                   >
-                    <img
+                    <SmartImage
                       src={item.before_image_url}
                       alt={`${item.product_name} - Customer Design`}
                       className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
-                      loading="lazy"
+                      widths={[240, 320, 480]}
+                      fallbackWidth={320}
+                      quality={68}
+                      sizes="(max-width: 640px) 45vw, 280px"
                     />
                     <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 hover:opacity-100">
                       <ZoomIn className="h-6 w-6 text-white drop-shadow-lg" />
@@ -89,11 +92,14 @@ const BeforeAfterShowcase = () => {
                     className="aspect-square overflow-hidden bg-muted cursor-zoom-in relative"
                     onClick={() => setZoomImage(item.after_image_url)}
                   >
-                    <img
+                    <SmartImage
                       src={item.after_image_url}
                       alt={`${item.product_name} - Final Product`}
                       className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
-                      loading="lazy"
+                      widths={[240, 320, 480]}
+                      fallbackWidth={320}
+                      quality={68}
+                      sizes="(max-width: 640px) 45vw, 280px"
                     />
                     <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 hover:opacity-100">
                       <ZoomIn className="h-6 w-6 text-white drop-shadow-lg" />
@@ -122,10 +128,14 @@ const BeforeAfterShowcase = () => {
       <Dialog open={!!zoomImage} onOpenChange={() => setZoomImage(null)}>
         <DialogContent className="max-w-3xl p-2 bg-black/90 border-none">
           {zoomImage && (
-            <img
+            <SmartImage
               src={zoomImage}
               alt="Zoomed view"
               className="w-full h-auto max-h-[85vh] object-contain rounded"
+              widths={[768, 1024, 1400]}
+              fallbackWidth={1024}
+              quality={85}
+              sizes="(max-width: 768px) 100vw, 900px"
             />
           )}
         </DialogContent>

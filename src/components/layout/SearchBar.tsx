@@ -98,11 +98,17 @@ const SearchBar = ({ onNavigate }: { onNavigate?: () => void }) => {
                 className="flex items-center gap-3 px-3 py-2.5 hover:bg-muted transition-colors"
               >
                 {product.image_url ? (
-                  <img
+                  <SmartImage
                     src={product.image_url}
                     alt={product.name}
                     className="h-10 w-10 rounded object-cover flex-shrink-0"
-                    loading="lazy"
+                    widths={[80, 160]}
+                    fallbackWidth={80}
+                    quality={60}
+                    resize="cover"
+                    sizes="40px"
+                    width={40}
+                    height={40}
                   />
                 ) : (
                   <div className="h-10 w-10 rounded bg-muted flex-shrink-0" />

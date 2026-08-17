@@ -257,11 +257,17 @@ const ReviewList = ({ reviews, loading, onReviewDeleted, profiles = {} }: Review
                   <div className="flex gap-2 mt-2 flex-wrap">
                     {(review.review_images as string[]).map((url, i) => (
                       <a key={i} href={url} target="_blank" rel="noopener noreferrer">
-                        <img 
-                          src={url} 
-                          alt={`Review photo ${i + 1}`} 
-                          className="w-20 h-20 rounded-lg object-cover border border-border hover:opacity-80 transition-opacity" 
-                          loading="lazy"
+                        <SmartImage
+                          src={url}
+                          alt={`Review photo ${i + 1}`}
+                          className="w-20 h-20 rounded-lg object-cover border border-border hover:opacity-80 transition-opacity"
+                          widths={[80, 160]}
+                          fallbackWidth={160}
+                          quality={62}
+                          resize="cover"
+                          sizes="80px"
+                          width={80}
+                          height={80}
                         />
                       </a>
                     ))}

@@ -84,11 +84,17 @@ const FlashCard = ({ product, onSelect }: { product: Product; onSelect: (p: Prod
 
         <div className="aspect-square overflow-hidden bg-muted relative">
           {images.length > 0 ? (
-            <img
+            <SmartImage
               src={images[imgIdx]}
               alt={product.name}
               className="w-full h-full object-cover transition-opacity duration-500"
-              loading="lazy"
+              widths={[160, 240, 320]}
+              fallbackWidth={240}
+              quality={66}
+              resize="cover"
+              sizes="200px"
+              width={240}
+              height={240}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-muted">
