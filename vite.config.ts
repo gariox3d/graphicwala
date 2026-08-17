@@ -55,7 +55,11 @@ export default defineConfig(({ mode }) => {
           ],
         },
         workbox: {
-          globPatterns: ["**/*.{js,css,html,ico,png,svg,jpg,jpeg,webp,woff,woff2}"],
+          // Admin bundles are huge and never needed by shoppers — keep them out of
+          // the precache so first visit downloads only the storefront.
+          globPatterns: ["**/*.{js,css,html,ico,png,svg,woff,woff2}"],
+          globIgnores: ["**/Admin*", "**/ProductForm-*", "**/node_modules/**"],
+          maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
           navigateFallbackDenylist: [/^\/~oauth/],
           skipWaiting: true,
           clientsClaim: true,
@@ -103,6 +107,23 @@ export default defineConfig(({ mode }) => {
           replacement: path.resolve(__dirname, "./src"),
         },
       ],
+    },
+    esbuild: {
+      // Strip debug noise from the production bundle (keeps warnings/errors).
+      drop: mode === "production" ? ["debugger"] : [],
+      pure: mode === "production" ? ["console.log", "console.debug", "console.info"] : [],
+    },
+    build: {
+      cssCodeSplit: true,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            "react-vendor": ["react", "react-dom", "react-router-dom"],
+            supabase: ["@supabase/supabase-js"],
+            query: ["@tanstack/react-query"],
+          },
+        },
+      },
     },
   };
 });
