@@ -105,6 +105,10 @@ const HeroSection = () => {
                       alt={card.title}
                       className="absolute inset-0 w-full h-full object-cover"
                       loading="eager"
+                      decoding="async"
+                      fetchPriority="high"
+                      width={800}
+                      height={1000}
                     />
                   ) : (
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-8 bg-gradient-to-b from-white to-muted/40">

@@ -98,6 +98,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
                 isHovered && secondaryImage ? "opacity-0 scale-105" : "opacity-100"
               )}
               loading="lazy"
+              decoding="async"
+              width={600}
+              height={600}
             />
             {secondaryImage && (
               <img
@@ -108,6 +111,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
                   isHovered ? "opacity-100 scale-100" : "opacity-0 scale-95"
                 )}
                 loading="lazy"
+                decoding="async"
+                width={600}
+                height={600}
               />
             )}
           </>
