@@ -55,7 +55,7 @@ const MultiImageUpload = ({ images, onChange, maxImages = 10 }: MultiImageUpload
       return data.publicUrl;
     } catch (error: any) {
       console.error('Upload error:', error);
-      toast.error(`Failed to upload ${file.name}`);
+      toast.error(`Failed to upload ${original.name}`);
       return null;
     }
   };
