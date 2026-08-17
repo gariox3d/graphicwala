@@ -74,14 +74,15 @@ const Sale = () => {
       const [saleRes, allRes] = await Promise.allSettled([
         supabase
           .from('products')
-          .select('*')
+          .select(PRODUCT_CARD_FIELDS)
           .not('sale_price', 'is', null)
           .lte('sale_start', now)
           .gte('sale_end', now)
-          .order('display_order'),
+          .order('display_order')
+          .limit(24),
         supabase
           .from('products')
-          .select('*')
+          .select(PRODUCT_CARD_FIELDS)
           .eq('is_active', true)
           .order('display_order')
           .limit(8),

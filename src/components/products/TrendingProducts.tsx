@@ -21,7 +21,7 @@ const TrendingProducts = () => {
           const ids = trending.map((t: any) => t.product_id);
           const { data: prods } = await supabase
             .from('products')
-            .select('*')
+            .select(PRODUCT_CARD_FIELDS)
             .in('id', ids);
 
           if (prods) {
