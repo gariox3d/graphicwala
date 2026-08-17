@@ -20,7 +20,7 @@ const BRAND = 'Graphic Wala';
 
 const PRESETS: Record<string, Partial<CategorySeoContent>> = {
   'photo frame': {
-    title: `Custom Photo Frames Online in India — Personalised Photo Frame Printing | ${BRAND}`,
+    title: `Custom Photo Frames Online in India | ${BRAND}`,
     description:
       'Buy custom photo frames online in India. Upload your photo, choose a size and get a premium personalised photo frame printed in 24-48 hours with All India delivery.',
     h1: 'Custom Photo Frames Online in India',
@@ -49,7 +49,7 @@ const PRESETS: Record<string, Partial<CategorySeoContent>> = {
     ],
   },
   'id card': {
-    title: `Custom ID Card Printing Online — School & Office ID Cards | ${BRAND}`,
+    title: `ID Card Printing Online — School & Office | ${BRAND}`,
     description:
       'Order custom ID cards online in India. School, college, staff and event ID cards printed on durable PVC with photo, logo and QR — bulk friendly, fast dispatch, All India delivery.',
     h1: 'Custom ID Card Printing Online in India',
@@ -135,7 +135,7 @@ const PRESETS: Record<string, Partial<CategorySeoContent>> = {
     ],
   },
   'visiting card': {
-    title: `Visiting Card Printing Online in India — Custom Business Cards | ${BRAND}`,
+    title: `Visiting Card Printing Online in India | ${BRAND}`,
     description:
       'Design and print visiting cards online in India. Premium business card printing with your logo and details, printed in 24-48 hours and delivered across India.',
     h1: 'Visiting Card Printing Online in India',

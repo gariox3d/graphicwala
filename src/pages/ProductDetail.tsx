@@ -281,11 +281,13 @@ const ProductDetail = () => {
   // Generate SEO-friendly meta data (keyword-rich, unique per product)
   const onSale = !!(product.sale_price && product.sale_end && new Date(product.sale_end) > new Date());
   const effectivePrice = onSale ? product.sale_price! : product.price;
-  const productTitle = clampText(
-    `${product.name} — Custom ${categoryName} Online | ${BUSINESS_NAME}`,
-    60,
-    `${product.name} | ${BUSINESS_NAME}`,
-  );
+  // Long product names stay intact (Google truncates visually); we only avoid
+  // appending suffixes that would push a short title past a readable length.
+  const shortTitle = `${product.name} | ${BUSINESS_NAME}`;
+  const productTitle =
+    `${product.name} — Custom ${categoryName} Online | ${BUSINESS_NAME}`.length <= 65
+      ? `${product.name} — Custom ${categoryName} Online | ${BUSINESS_NAME}`
+      : shortTitle;
   const productDescription = clampText(
     product.description
       ? `${product.description.replace(/\s+/g, ' ').trim()} Personalised and printed to order, with All India delivery.`
