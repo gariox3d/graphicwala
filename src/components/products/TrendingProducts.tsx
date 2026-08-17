@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { PRODUCT_CARD_FIELDS } from '@/lib/productFields';
 import { Product } from '@/lib/types';
 import ProductCard from './ProductCard';
 import { TrendingUp, Flame } from 'lucide-react';

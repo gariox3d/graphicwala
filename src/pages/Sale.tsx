@@ -7,6 +7,7 @@ import Footer from '@/components/layout/Footer';
 import ProductCard from '@/components/products/ProductCard';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
+import { PRODUCT_CARD_FIELDS } from '@/lib/productFields';
 import { Product } from '@/lib/types';
 
 const SaleCountdown = ({ targetDate }: { targetDate: Date }) => {
