@@ -61,6 +61,7 @@ const Products = () => {
 
   // Scroll to top of products section when category changes
   useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
     if (productsRef.current) {
       productsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -79,6 +80,7 @@ const Products = () => {
   const filteredProducts = selectedCategory
     ? products.filter((p) => p.categories?.name === selectedCategory)
     : products;
+  const visibleProducts = filteredProducts.slice(0, visibleCount);
 
   const pageTitle = selectedCategory
     ? `Custom ${selectedCategory} Online in India | Graphic Wala`
@@ -160,7 +162,19 @@ const Products = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {filteredProducts.map((product) => (<ProductCard key={product.id} product={product} />))}
+              {visibleProducts.map((product) => (<ProductCard key={product.id} product={product} />))}
+            </div>
+          )}
+          {!loading && visibleCount < filteredProducts.length && (
+            <div className="flex justify-center mt-10">
+              <Button
+                variant="outline"
+                size="lg"
+                className="rounded-full"
+                onClick={() => setVisibleCount((count) => count + PAGE_SIZE)}
+              >
+                Load more products
+              </Button>
             </div>
           )}
           {!loading && filteredProducts.length === 0 && <p className="text-center text-muted-foreground py-12">No products found.</p>}
