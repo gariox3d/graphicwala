@@ -12,12 +12,15 @@ import { Link } from 'react-router-dom';
 import { categorySlug } from '@/lib/categorySeo';
 import { PRODUCT_CARD_FIELDS_WITH_CATEGORY } from '@/lib/productFields';
 
+/** Cards rendered per "page" — keeps the first paint light on slow connections. */
+const PAGE_SIZE = 12;
 
 const Products = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const selectedCategory = searchParams.get('category');
   const productsRef = useRef<HTMLDivElement>(null);
 
