@@ -1,3 +1,5 @@
+import SmartImage from '@/components/SmartImage';
+import { CARD_WIDTHS } from '@/lib/imageUrl';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Truck } from 'lucide-react';
 import { Button } from '@/components/ui/button';

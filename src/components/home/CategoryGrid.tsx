@@ -1,3 +1,4 @@
+import SmartImage from '@/components/SmartImage';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { Category } from '@/lib/types';

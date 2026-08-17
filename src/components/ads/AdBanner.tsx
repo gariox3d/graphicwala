@@ -1,3 +1,5 @@
+import SmartImage from '@/components/SmartImage';
+import { BANNER_WIDTHS } from '@/lib/imageUrl';
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
