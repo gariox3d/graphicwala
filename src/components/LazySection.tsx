@@ -1,4 +1,5 @@
 import { Suspense, useEffect, useRef, useState, type ReactNode } from 'react';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 interface LazySectionProps {
   children: ReactNode;
@@ -41,7 +42,11 @@ const LazySection = ({ children, minHeight = 320, rootMargin = '300px' }: LazySe
   }, [visible, rootMargin]);
 
   if (visible) {
-    return <Suspense fallback={<div style={{ minHeight }} aria-hidden="true" />}>{children}</Suspense>;
+    return (
+      <ErrorBoundary fallback={null}>
+        <Suspense fallback={<div style={{ minHeight }} aria-hidden="true" />}>{children}</Suspense>
+      </ErrorBoundary>
+    );
   }
 
   return <div ref={ref} style={{ minHeight }} aria-hidden="true" />;

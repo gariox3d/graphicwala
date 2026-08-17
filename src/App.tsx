@@ -63,6 +63,7 @@ import AddressGate from "./components/AddressGate";
 import SplashScreen from "./components/SplashScreen";
 import MobileBottomBar from "./components/MobileBottomBar";
 import FloatingWhatsApp from "./components/FloatingWhatsApp";
+import ErrorBoundary from "./components/ErrorBoundary";
 import { useState, useCallback, lazy, Suspense } from "react";
 
 const queryClient = new QueryClient({
@@ -108,6 +109,7 @@ const App = () => {
             <BrowserRouter>
               <ScrollToTop />
               <BreadcrumbSchema />
+              <ErrorBoundary>
               <Suspense fallback={<RouteFallback />}>
               <Routes>
                 <Route path="/" element={<Index />} />
@@ -157,6 +159,7 @@ const App = () => {
                 <Route path="*" element={<NotFound />} />
               </Routes>
               </Suspense>
+              </ErrorBoundary>
               <MobileBottomBar />
               <FloatingWhatsApp />
             </BrowserRouter>
