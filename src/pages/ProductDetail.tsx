@@ -421,7 +421,7 @@ const ProductDetail = () => {
             Back to Products
           </Link>
 
-          <div className="grid lg:grid-cols-2 gap-8">
+          <div className="grid w-full min-w-0 grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Product Images Gallery */}
             <ProductImageGallery 
               images={product.image_urls || (product.image_url ? [product.image_url] : [])} 
@@ -429,10 +429,10 @@ const ProductDetail = () => {
             />
 
             {/* Product Details */}
-            <div className="space-y-6">
+            <div className="w-full min-w-0 space-y-6">
               <div>
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                  <div className="flex min-w-0 flex-wrap items-center gap-2">
                     {product.categories && (
                       <Badge variant="secondary">{product.categories.name}</Badge>
                     )}
@@ -443,7 +443,7 @@ const ProductDetail = () => {
                       </Badge>
                     )}
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex shrink-0 items-center gap-2">
                     <WishlistButton
                       isWishlisted={isWishlisted(product.id)}
                       onClick={() => toggleWishlist(product.id)}
@@ -452,8 +452,8 @@ const ProductDetail = () => {
                     <ShareButton productId={product.id} productName={product.name} />
                   </div>
                 </div>
-                <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
-                <p className="text-muted-foreground mb-4">
+                <h1 className="text-2xl sm:text-3xl font-bold mb-4 break-words">{product.name}</h1>
+                <p className="text-muted-foreground mb-4 break-words">
                   {product.description || 'No description available.'}
                 </p>
                 <p className="text-sm text-muted-foreground">
