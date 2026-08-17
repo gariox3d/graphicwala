@@ -63,12 +63,17 @@ const Bestsellers = ({ products, loading }: Props) => (
               >
                 <Link to={href} className="relative block aspect-square bg-muted overflow-hidden">
                   {p.image_url ? (
-                    <img
+                    <SmartImage
                       src={p.image_url}
                       alt={`${p.name} — buy custom ${p.categories?.name || 'printing'} online India | Graphic Wala`}
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      loading={i < 2 ? 'eager' : 'lazy'}
-                      decoding="async"
+                      widths={CARD_WIDTHS}
+                      fallbackWidth={480}
+                      quality={68}
+                      resize="cover"
+                      sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 280px"
+                      width={600}
+                      height={600}
                     />
                   ) : (
                     <div className="h-full w-full bg-gradient-to-br from-muted to-secondary" />

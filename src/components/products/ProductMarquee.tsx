@@ -58,11 +58,17 @@ const ProductMarquee = () => {
             <div className="relative overflow-hidden rounded-xl border border-border bg-card shadow-sm hover:shadow-md transition-all duration-300 group-hover:-translate-y-1">
               <div className="aspect-square overflow-hidden bg-muted">
                 {product.image_url ? (
-                  <img
+                  <SmartImage
                     src={product.image_url}
                     alt={product.name}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    loading="lazy"
+                    widths={[160, 240, 320]}
+                    fallbackWidth={240}
+                    quality={64}
+                    resize="cover"
+                    sizes="176px"
+                    width={240}
+                    height={240}
                   />
                 ) : (
                   <div className="w-full h-full bg-muted flex items-center justify-center">

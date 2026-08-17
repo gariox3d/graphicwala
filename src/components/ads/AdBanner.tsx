@@ -39,12 +39,18 @@ const AdBanner = ({ slotId, className = '' }: AdBannerProps) => {
     <div className={`w-full ${className}`}>
       {ads.map((ad) => {
         const content = (
-          <img
+          <SmartImage
             src={ad.image_url}
             alt={ad.title || 'Advertisement'}
             className="w-full h-auto rounded-lg object-cover"
             style={{ maxHeight: ad.slot_height, objectFit: 'cover' }}
-            loading="lazy"
+            widths={BANNER_WIDTHS}
+            fallbackWidth={1200}
+            quality={70}
+            resize="cover"
+            sizes="(max-width: 768px) 100vw, 1200px"
+            width={ad.slot_width}
+            height={ad.slot_height}
           />
         );
 
