@@ -109,7 +109,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           <>
             <SmartImage
               src={primaryImage}
-              alt={`${product.name} - Buy Online from Graphic Wala | Custom Printing India`}
+              alt={`${product.name}${product.categories?.name ? ` — ${product.categories.name}` : ''}`}
               widths={CARD_WIDTHS}
               fallbackWidth={480}
               quality={68}
@@ -125,7 +125,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
             {secondaryImage && isHovered && (
               <SmartImage
                 src={secondaryImage}
-                alt={`${product.name} - Alternate View | Graphic Wala`}
+                alt={`${product.name} — alternate view`}
                 widths={CARD_WIDTHS}
                 fallbackWidth={480}
                 quality={68}

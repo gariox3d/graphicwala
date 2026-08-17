@@ -111,7 +111,7 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
         <div className="absolute inset-0 grid place-items-center bg-white p-2 md:p-4">
           <SmartImage
             src={validImages[selectedIndex]}
-            alt={`${productName} - Image ${selectedIndex + 1}`}
+            alt={`${productName} — photo ${selectedIndex + 1}`}
             widths={DETAIL_WIDTHS}
             fallbackWidth={1200}
             quality={85}
@@ -173,7 +173,7 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
               <div className="grid h-full w-full place-items-center bg-white p-1">
                 <SmartImage
                   src={url}
-                  alt={`${productName} thumbnail ${index + 1}`}
+                  alt={`${productName} — thumbnail ${index + 1}`}
                   widths={THUMB_WIDTHS}
                   fallbackWidth={160}
                   quality={65}

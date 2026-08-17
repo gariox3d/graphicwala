@@ -46,7 +46,7 @@ const CategoryGrid = ({ categories, getImage }: Props) => (
                 {img ? (
                   <SmartImage
                     src={img}
-                    alt={`Custom ${category.name} online in India — Graphic Wala`}
+                    alt={`${category.name} by Graphic Wala`}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     widths={[320, 480, 640]}
                     fallbackWidth={480}

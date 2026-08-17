@@ -67,7 +67,7 @@ const Bestsellers = ({ products, loading }: Props) => (
                   {p.image_url ? (
                     <SmartImage
                       src={p.image_url}
-                      alt={`${p.name} — buy custom ${p.categories?.name || 'printing'} online India | Graphic Wala`}
+                      alt={`${p.name}${p.categories?.name ? ` — ${p.categories.name}` : ''}`}
                       className="h-full w-full object-contain bg-white transition-transform duration-500 group-hover:scale-105"
                       widths={CARD_WIDTHS}
                       fallbackWidth={480}
