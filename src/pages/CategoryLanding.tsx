@@ -7,6 +7,7 @@ import ProductCard from '@/components/products/ProductCard';
 import { supabase } from '@/integrations/supabase/client';
 import { Product, Category } from '@/lib/types';
 import { categorySlug, getCategorySeo } from '@/lib/categorySeo';
+import { PRODUCT_CARD_FIELDS_WITH_CATEGORY } from '@/lib/productFields';
 import {
   Accordion,
   AccordionContent,
@@ -27,20 +28,30 @@ const CategoryLanding = () => {
     let active = true;
     const load = async () => {
       setLoading(true);
-      const [catsRes, prodRes] = await Promise.allSettled([
-        supabase.from('categories').select('*'),
-        supabase.from('products').select('*, categories(*)').order('display_order', { ascending: true }),
-      ]);
+      // 1. Categories only (small payload) — used for the filter chips + slug match.
+      const { data: catData } = await supabase
+        .from('categories')
+        .select('id, name, description, image_url');
       if (!active) return;
-      const cats =
-        catsRes.status === 'fulfilled' && catsRes.value.data ? (catsRes.value.data as Category[]) : [];
-      const prods =
-        prodRes.status === 'fulfilled' && prodRes.value.data
-          ? (prodRes.value.data as unknown as Product[])
-          : [];
+      const cats = (catData || []) as Category[];
+      const matched = cats.find((c) => categorySlug(c.name) === slug) || null;
       setCategories(cats);
-      setCategory(cats.find((c) => categorySlug(c.name) === slug) || null);
-      setProducts(prods);
+      setCategory(matched);
+
+      // 2. Only this category's products are fetched — never the whole catalogue.
+      if (!matched) {
+        setProducts([]);
+        setLoading(false);
+        return;
+      }
+      const { data: prodData } = await supabase
+        .from('products')
+        .select(PRODUCT_CARD_FIELDS_WITH_CATEGORY)
+        .eq('category_id', matched.id)
+        .order('display_order', { ascending: true })
+        .limit(48);
+      if (!active) return;
+      setProducts((prodData || []) as unknown as Product[]);
       setLoading(false);
     };
     load();
@@ -51,10 +62,7 @@ const CategoryLanding = () => {
 
   const name = category?.name || slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
   const seo = useMemo(() => getCategorySeo(name), [name]);
-  const list = useMemo(
-    () => products.filter((p) => p.categories?.name && categorySlug(p.categories.name) === slug),
-    [products, slug]
-  );
+  const list = products;
   const canonical = `${SITE}/category/${slug}`;
 
   const jsonLd = [
