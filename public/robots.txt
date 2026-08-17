@@ -33,3 +33,4 @@ Disallow: /dashboard
 Disallow: /checkout
 Disallow: /cart
 Disallow: /order-confirmation
+Disallow: /share/
