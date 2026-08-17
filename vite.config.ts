@@ -57,24 +57,18 @@ export default defineConfig(({ mode }) => {
         workbox: {
           // Admin bundles are huge and never needed by shoppers — keep them out of
           // the precache so first visit downloads only the storefront.
-          globPatterns: ["**/*.{js,css,html,ico,png,svg,woff,woff2}"],
+          // HTML is intentionally NOT precached: a precached index.html is the main
+          // reason returning users keep seeing an old build after a deploy.
+          globPatterns: ["**/*.{js,css,ico,png,svg,woff,woff2}"],
           globIgnores: ["**/Admin*", "**/ProductForm-*", "**/node_modules/**"],
           maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
-          navigateFallbackDenylist: [/^\/~oauth/],
+          // No app-shell fallback — every navigation goes to the network so the
+          // freshly deployed HTML (and its new asset hashes) is always used.
+          navigateFallback: null,
           skipWaiting: true,
           clientsClaim: true,
           cleanupOutdatedCaches: true,
           runtimeCaching: [
-            {
-              // HTML documents must never be served stale.
-              urlPattern: ({ request }) => request.mode === "navigate",
-              handler: "NetworkFirst",
-              options: {
-                cacheName: "html-cache",
-                networkTimeoutSeconds: 5,
-                expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 },
-              },
-            },
             {
               urlPattern: /^https:\/\/.*\.supabase\.co\/.*/i,
               handler: "NetworkFirst",

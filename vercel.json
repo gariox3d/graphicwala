@@ -42,7 +42,19 @@
     {
       "source": "/index.html",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate, no-cache" }
+      ]
+    },
+    {
+      "source": "/",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate, no-cache" }
+      ]
+    },
+    {
+      "source": "/((?!assets/|.*\\.(?:js|css|png|jpg|jpeg|gif|svg|webp|avif|ico|woff|woff2|ttf|txt|xml|json)$).*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate, no-cache" }
       ]
     },
     {
