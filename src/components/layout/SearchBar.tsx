@@ -1,3 +1,4 @@
+import SmartImage from '@/components/SmartImage';
 import { useState, useRef, useEffect } from 'react';
 import { Search, X } from 'lucide-react';
 import { Link } from 'react-router-dom';

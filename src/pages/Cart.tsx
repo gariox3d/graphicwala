@@ -1,3 +1,4 @@
+import SmartImage from '@/components/SmartImage';
 import { useState, useEffect } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import Seo from '@/components/seo/Seo';

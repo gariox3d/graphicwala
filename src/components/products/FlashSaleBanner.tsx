@@ -1,3 +1,4 @@
+import SmartImage from '@/components/SmartImage';
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Flame, Zap, Clock, X, ChevronLeft, ChevronRight } from 'lucide-react';

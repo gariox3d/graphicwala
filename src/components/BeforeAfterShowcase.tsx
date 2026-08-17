@@ -1,3 +1,4 @@
+import SmartImage from '@/components/SmartImage';
 import { useEffect, useState } from 'react';
 import { ArrowRight, Sparkles, X, ZoomIn } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
