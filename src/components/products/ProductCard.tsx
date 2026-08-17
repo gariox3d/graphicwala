@@ -113,10 +113,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
               widths={CARD_WIDTHS}
               fallbackWidth={480}
               quality={68}
-              resize="cover"
+              resize="contain"
               sizes="(max-width: 640px) 92vw, (max-width: 1024px) 45vw, 300px"
               className={cn(
-                "w-full h-full object-cover transition-all duration-500 absolute inset-0",
+                "w-full h-full object-contain bg-white transition-all duration-500 absolute inset-0",
                 isHovered && secondaryImage ? "opacity-0 scale-105" : "opacity-100"
               )}
               width={600}
@@ -129,10 +129,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
                 widths={CARD_WIDTHS}
                 fallbackWidth={480}
                 quality={68}
-                resize="cover"
+                resize="contain"
                 sizes="(max-width: 640px) 92vw, (max-width: 1024px) 45vw, 300px"
                 className={cn(
-                  "w-full h-full object-cover transition-all duration-500 absolute inset-0",
+                  "w-full h-full object-contain bg-white transition-all duration-500 absolute inset-0",
                   isHovered ? "opacity-100 scale-100" : "opacity-0 scale-95"
                 )}
                 width={600}

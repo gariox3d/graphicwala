@@ -701,11 +701,11 @@ const Checkout = () => {
                           <SmartImage
                             src={item.products?.image_url || '/placeholder.svg'}
                             alt={item.products?.name || 'Product'}
-                            className="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-lg border shrink-0"
+                            className="w-14 h-14 sm:w-16 sm:h-16 object-contain bg-white rounded-lg border shrink-0"
                             widths={[80, 160]}
                             fallbackWidth={160}
                             quality={64}
-                            resize="cover"
+                            resize="contain"
                             sizes="64px"
                             width={64}
                             height={64}
