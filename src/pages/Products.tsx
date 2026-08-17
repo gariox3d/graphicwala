@@ -94,6 +94,11 @@ const Products = () => {
   const intro = selectedCategory
     ? `${getCategoryCopy(selectedCategory)} Printed in 24-48 hours and delivered to every pincode in India. All orders are prepaid — pay securely by UPI, card or netbanking.`
     : 'Photo frames, PVC cards, ID cards, visiting cards and keychains — personalised with your photo or details and shipped across India.';
+  // Filtered views are duplicates of the richer /category/... landing pages,
+  // so they point their canonical (and og:url) there.
+  const canonicalUrl = selectedCategory
+    ? `https://www.graphicwala.com/category/${categorySlug(selectedCategory)}`
+    : 'https://www.graphicwala.com/products';
 
   // ItemList JSON-LD for product listing
   const itemListJsonLd = !loading && filteredProducts.length > 0 ? {
@@ -115,11 +120,11 @@ const Products = () => {
       <Helmet>
         <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />
-        <link rel="canonical" href={selectedCategory ? `https://www.graphicwala.com/category/${categorySlug(selectedCategory)}` : 'https://www.graphicwala.com/products'} />
+        <link rel="canonical" href={canonicalUrl} />
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={pageDescription} />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://www.graphicwala.com/products" />
+        <meta property="og:url" content={canonicalUrl} />
         <meta property="og:image" content="https://www.graphicwala.com/og-square.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={pageTitle} />
