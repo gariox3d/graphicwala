@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { readCache, writeCache } from '@/lib/persistentCache';
 
 export const STORE_SETTINGS_KEY = ['store-settings'] as const;
 
@@ -55,7 +56,7 @@ const fetchStoreSettings = async (): Promise<StoreSettings> => {
 
   if (error || !data) return DEFAULTS;
 
-  return {
+  const settings: StoreSettings = {
     ...DEFAULTS,
     id: data.id,
     default_delivery_charge: data.default_delivery_charge ?? 0,
@@ -75,6 +76,9 @@ const fetchStoreSettings = async (): Promise<StoreSettings> => {
     created_at: data.created_at,
     updated_at: data.updated_at,
   };
+
+  writeCache('store-settings', settings);
+  return settings;
 };
 
 /**
@@ -88,6 +92,9 @@ export const useStoreSettings = () => {
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: STORE_SETTINGS_KEY,
     queryFn: fetchStoreSettings,
+    // Paint instantly from the last known settings, then revalidate.
+    initialData: () => readCache<StoreSettings>('store-settings'),
+    initialDataUpdatedAt: 0,
     staleTime: 10 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
     retry: 1,

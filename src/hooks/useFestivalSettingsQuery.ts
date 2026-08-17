@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { readCache, writeCache } from '@/lib/persistentCache';
 
 export interface FestivalSettingsRow {
   id: string;
@@ -19,7 +20,9 @@ export const FESTIVAL_SETTINGS_KEY = ['festival-settings'] as const;
 const fetchAllFestivalSettings = async (): Promise<FestivalSettingsRow[]> => {
   const { data, error } = await supabase.from('festival_settings').select('*');
   if (error || !data) return [];
-  return data as unknown as FestivalSettingsRow[];
+  const rows = data as unknown as FestivalSettingsRow[];
+  writeCache('festival-settings', rows);
+  return rows;
 };
 
 /**
@@ -30,6 +33,8 @@ export const useFestivalSettingsQuery = () => {
   const query = useQuery({
     queryKey: FESTIVAL_SETTINGS_KEY,
     queryFn: fetchAllFestivalSettings,
+    initialData: () => readCache<FestivalSettingsRow[]>('festival-settings'),
+    initialDataUpdatedAt: 0,
     staleTime: 10 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
     retry: 1,
