@@ -1,3 +1,4 @@
+import SmartImage from '@/components/SmartImage';
 import { useState, useEffect } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import Seo from '@/components/seo/Seo';
@@ -191,7 +192,18 @@ const Cart = () => {
                         <div className="flex gap-4">
                           <Link to={`/product/${(product as any)?.slug || product?.id}`} className="w-20 h-20 rounded-lg bg-muted overflow-hidden flex-shrink-0">
                             {product?.image_url ? (
-                              <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                              <SmartImage
+                                src={product.image_url}
+                                alt={product.name}
+                                className="w-full h-full object-cover"
+                                widths={[80, 160]}
+                                fallbackWidth={160}
+                                quality={64}
+                                resize="cover"
+                                sizes="80px"
+                                width={80}
+                                height={80}
+                              />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center text-xl font-bold text-muted-foreground/30">
                                 {product?.name?.charAt(0)}

@@ -1,3 +1,4 @@
+import SmartImage from '@/components/SmartImage';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Star, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -100,13 +101,16 @@ const HeroSection = () => {
                   </div>
 
                   {card.image_url ? (
-                    <img
+                    <SmartImage
                       src={card.image_url}
                       alt={card.title}
                       className="absolute inset-0 w-full h-full object-cover"
-                      loading="eager"
-                      decoding="async"
-                      fetchPriority="high"
+                      widths={[480, 640, 800, 1000]}
+                      fallbackWidth={800}
+                      quality={78}
+                      resize="cover"
+                      sizes="(max-width: 768px) 92vw, 420px"
+                      priority
                       width={800}
                       height={1000}
                     />

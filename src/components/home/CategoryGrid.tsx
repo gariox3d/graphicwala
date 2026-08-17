@@ -1,3 +1,4 @@
+import SmartImage from '@/components/SmartImage';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { Category } from '@/lib/types';
@@ -43,12 +44,17 @@ const CategoryGrid = ({ categories, getImage }: Props) => (
             >
               <div className="relative aspect-[16/10] bg-muted overflow-hidden">
                 {img ? (
-                  <img
+                  <SmartImage
                     src={img}
                     alt={`Custom ${category.name} online in India — Graphic Wala`}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
-                    decoding="async"
+                    widths={[320, 480, 640]}
+                    fallbackWidth={480}
+                    quality={68}
+                    resize="cover"
+                    sizes="(max-width: 640px) 92vw, (max-width: 1024px) 45vw, 320px"
+                    width={640}
+                    height={400}
                   />
                 ) : (
                   <div className="absolute inset-0 bg-gradient-to-br from-primary/15 to-foreground/10" />

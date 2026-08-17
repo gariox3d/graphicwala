@@ -1,3 +1,4 @@
+import SmartImage from '@/components/SmartImage';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -13,7 +14,7 @@ const ProductMarquee = () => {
         .select('id, name, image_url, price, sale_price, sale_start, sale_end')
         .eq('is_active', true)
         .order('display_order', { ascending: true })
-        .limit(20);
+        .limit(10);
       if (data) setProducts(data as unknown as Product[]);
     };
     fetchProducts();
@@ -58,11 +59,17 @@ const ProductMarquee = () => {
             <div className="relative overflow-hidden rounded-xl border border-border bg-card shadow-sm hover:shadow-md transition-all duration-300 group-hover:-translate-y-1">
               <div className="aspect-square overflow-hidden bg-muted">
                 {product.image_url ? (
-                  <img
+                  <SmartImage
                     src={product.image_url}
                     alt={product.name}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    loading="lazy"
+                    widths={[160, 240, 320]}
+                    fallbackWidth={240}
+                    quality={64}
+                    resize="cover"
+                    sizes="176px"
+                    width={240}
+                    height={240}
                   />
                 ) : (
                   <div className="w-full h-full bg-muted flex items-center justify-center">
