@@ -1,19 +1,17 @@
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { ArrowRight, MessageCircle } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, lazy } from 'react';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import HeroSection from '@/components/HeroSection';
 import AnnouncementBanner from '@/components/AnnouncementBanner';
 import RecentlyViewedProducts from '@/components/products/RecentlyViewedProducts';
-import CustomerGallery from '@/components/CustomerGallery';
-import BeforeAfterShowcase from '@/components/BeforeAfterShowcase';
 import FlashSaleBanner from '@/components/products/FlashSaleBanner';
 import AdBanner from '@/components/ads/AdBanner';
-import TestimonialsSection from '@/components/TestimonialsSection';
 import StatsCounter from '@/components/StatsCounter';
+import LazySection from '@/components/LazySection';
 import TrustStrip from '@/components/home/TrustStrip';
 import Bestsellers from '@/components/home/Bestsellers';
 import CategoryGrid from '@/components/home/CategoryGrid';
@@ -25,6 +23,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { Product, Category, WHATSAPP_NUMBER, BUSINESS_NAME } from '@/lib/types';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
 import { useRecentlyViewed } from '@/hooks/useRecentlyViewed';
+
+const CustomerGallery = lazy(() => import('@/components/CustomerGallery'));
+const BeforeAfterShowcase = lazy(() => import('@/components/BeforeAfterShowcase'));
+const TestimonialsSection = lazy(() => import('@/components/TestimonialsSection'));
+const TrendingProducts = lazy(() => import('@/components/products/TrendingProducts'));
 
 const Index = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -186,14 +189,25 @@ const Index = () => {
         {/* Stats Counter */}
         <StatsCounter />
 
-        {/* Testimonials */}
-        <TestimonialsSection />
+        {/* Trending — lazy, loads on scroll */}
+        <LazySection minHeight={400}>
+          <TrendingProducts />
+        </LazySection>
 
-        {/* Before/After Showcase */}
-        <BeforeAfterShowcase />
+        {/* Testimonials — lazy, loads on scroll */}
+        <LazySection minHeight={400}>
+          <TestimonialsSection />
+        </LazySection>
 
-        {/* Customer Gallery / Wall of Fame */}
-        <CustomerGallery />
+        {/* Before/After Showcase — lazy, loads on scroll */}
+        <LazySection minHeight={400}>
+          <BeforeAfterShowcase />
+        </LazySection>
+
+        {/* Customer Gallery / Wall of Fame — lazy, loads on scroll */}
+        <LazySection minHeight={400}>
+          <CustomerGallery />
+        </LazySection>
 
         {/* Delivery, payment & policy trust panel */}
         <TrustPanel />
