@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { getCategoryCopy } from '@/components/home/CategoryGrid';
 import { Link } from 'react-router-dom';
 import { categorySlug } from '@/lib/categorySeo';
+import { PRODUCT_CARD_FIELDS_WITH_CATEGORY } from '@/lib/productFields';
 
 
 const Products = () => {
@@ -25,8 +26,12 @@ const Products = () => {
       setLoading(true);
       try {
         const [productsRes, categoriesRes] = await Promise.allSettled([
-          supabase.from('products').select('*, categories(*)').order('display_order', { ascending: true }),
-          supabase.from('categories').select('*'),
+          supabase
+            .from('products')
+            .select(PRODUCT_CARD_FIELDS_WITH_CATEGORY)
+            .order('display_order', { ascending: true })
+            .limit(60),
+          supabase.from('categories').select('id, name, description, image_url'),
         ]);
 
         if (productsRes.status === 'fulfilled' && productsRes.value.data) {
