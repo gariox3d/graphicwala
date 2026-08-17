@@ -428,7 +428,7 @@ const AIAssistant = () => {
                   placeholder="Apna sawaal likhein..."
                   className="flex-1"
                 />
-                <Button type="submit" size="icon" disabled={!inputValue.trim()}>
+                <Button type="submit" size="icon" aria-label="Send message" disabled={!inputValue.trim()}>
                   <Send className="h-4 w-4" />
                 </Button>
               </form>
