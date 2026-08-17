@@ -364,7 +364,7 @@ const ProductDetail = () => {
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE_URL },
       { "@type": "ListItem", "position": 2, "name": "Products", "item": `${SITE_URL}/products` },
-      ...(product.categories ? [{ "@type": "ListItem", "position": 3, "name": categoryName, "item": `${SITE_URL}/products?category=${encodeURIComponent(categoryName)}` }] : []),
+      ...(product.categories ? [{ "@type": "ListItem", "position": 3, "name": categoryName, "item": `${SITE_URL}${categoryHref}` }] : []),
       { "@type": "ListItem", "position": product.categories ? 4 : 3, "name": product.name, "item": productUrl }
     ]
   };
@@ -376,7 +376,6 @@ const ProductDetail = () => {
         <title>{productTitle}</title>
         <meta name="title" content={productTitle} />
         <meta name="description" content={productDescription} />
-        <meta name="keywords" content={productKeywords} />
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
         <link rel="canonical" href={productUrl} />
 
