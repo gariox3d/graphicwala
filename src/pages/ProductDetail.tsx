@@ -420,6 +420,19 @@ const ProductDetail = () => {
       <Header />
       <main className="flex-1 py-8">
         <div className="container">
+          <nav aria-label="Breadcrumb" className="mb-6 text-sm text-muted-foreground">
+            <Link to="/" className="hover:text-primary">Home</Link>
+            <span className="mx-2">/</span>
+            <Link to="/products" className="hover:text-primary">Products</Link>
+            {product.categories && (
+              <>
+                <span className="mx-2">/</span>
+                <Link to={categoryHref} className="hover:text-primary">{categoryName}</Link>
+              </>
+            )}
+            <span className="mx-2">/</span>
+            <span className="text-foreground font-medium break-words">{product.name}</span>
+          </nav>
           <Link
             to="/products"
             className="inline-flex items-center text-muted-foreground hover:text-primary mb-8"
@@ -441,7 +454,9 @@ const ProductDetail = () => {
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                   <div className="flex min-w-0 flex-wrap items-center gap-2">
                     {product.categories && (
-                      <Badge variant="secondary">{product.categories.name}</Badge>
+                      <Link to={categoryHref} aria-label={`Browse all ${categoryName}`}>
+                        <Badge variant="secondary" className="hover:bg-secondary/80">{product.categories.name}</Badge>
+                      </Link>
                     )}
                     {product.customization_enabled && (
                       <Badge className="bg-primary/10 text-primary border-primary/30">
@@ -530,6 +545,7 @@ const ProductDetail = () => {
                     <Button
                       variant="ghost"
                       size="icon"
+                      aria-label="Decrease quantity"
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     >
                       <Minus className="h-4 w-4" />
@@ -538,6 +554,7 @@ const ProductDetail = () => {
                     <Button
                       variant="ghost"
                       size="icon"
+                      aria-label="Increase quantity"
                       onClick={() => setQuantity(quantity + 1)}
                     >
                       <Plus className="h-4 w-4" />
@@ -629,20 +646,32 @@ const ProductDetail = () => {
           </LazySection>
         )}
 
-        {/* Unique SEO text block for search engines */}
-        <section className="sr-only" aria-label={`About ${product.name}`}>
-          <h2>Buy {product.name} Online in India</h2>
-          <p>
-            {product.name} is available online at Graphic Wala for ₹{effectivePrice}. This {categoryName.toLowerCase()} is
-            custom printed on premium material and delivered across all of India. Order {product.name} online with
-            prepaid payment, fast dispatch and secure packaging. Looking for {categoryName.toLowerCase()} online in India?
-            Graphic Wala offers personalized photo frames, PVC cards, ID cards, visiting cards, keychains and custom gifts.
-          </p>
-          <h3>{product.name} Price and Delivery</h3>
-          <p>
-            {product.name} price starts at ₹{effectivePrice}. Delivery across India usually takes {product.delivery_days || 5}–7 days.
-            You can customize {product.name} with your own photo or text before placing the order.
-          </p>
+        {/* Visible product summary — also gives crawlers unique on-page context */}
+        <section className="container pb-12" aria-labelledby="product-summary-heading">
+          <div className="max-w-3xl border-t border-border pt-8">
+            <h2 id="product-summary-heading" className="text-xl md:text-2xl font-bold mb-3">
+              About this {categoryName.toLowerCase()}
+            </h2>
+            <p className="text-muted-foreground leading-relaxed break-words">
+              {product.description
+                ? product.description
+                : `This ${product.name.toLowerCase()} is made to order at our Katihar workshop.`}{' '}
+              {uploadConfig.length > 0
+                ? 'Upload your photo or details on this page and we print exactly what you approve.'
+                : 'Each piece is printed and quality-checked before dispatch.'}{' '}
+              Orders are prepaid and shipped with tracked courier delivery across India, usually arriving in{' '}
+              {product.delivery_days || 5}–7 days depending on your pincode.
+            </p>
+            <p className="mt-4 text-sm">
+              <Link to={categoryHref} className="font-semibold text-primary hover:underline">
+                See more {categoryName.toLowerCase()}
+              </Link>
+              <span className="mx-2 text-muted-foreground">·</span>
+              <Link to="/products" className="font-semibold text-primary hover:underline">
+                Browse all products
+              </Link>
+            </p>
+          </div>
         </section>
       </main>
       <Footer />
