@@ -838,11 +838,44 @@ export type Database = {
         }
         Relationships: []
       }
+      product_views: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_views_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           back_upload_enabled: boolean | null
           breadth_cm: number | null
           category_id: string | null
+          cost_price: number | null
           created_at: string
           customization_enabled: boolean | null
           cutoff_time: string | null
@@ -873,6 +906,7 @@ export type Database = {
           back_upload_enabled?: boolean | null
           breadth_cm?: number | null
           category_id?: string | null
+          cost_price?: number | null
           created_at?: string
           customization_enabled?: boolean | null
           cutoff_time?: string | null
@@ -903,6 +937,7 @@ export type Database = {
           back_upload_enabled?: boolean | null
           breadth_cm?: number | null
           category_id?: string | null
+          cost_price?: number | null
           created_at?: string
           customization_enabled?: boolean | null
           cutoff_time?: string | null
