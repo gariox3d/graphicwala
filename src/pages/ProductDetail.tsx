@@ -124,7 +124,7 @@ const ProductDetail = () => {
     if (product?.id) addToRecentlyViewed(product.id);
   }, [product?.id, addToRecentlyViewed]);
 
-  // Conversion tracking: product view
+  // Conversion tracking: product view + BI product_views table
   useEffect(() => {
     if (!product?.id) return;
     trackEvent('view_product', {
@@ -132,7 +132,25 @@ const ProductDetail = () => {
       item_name: product.name,
       value: product.price,
     });
-  }, [product?.id, product?.name, product?.price]);
+
+    // Lightweight BI view tracking (no await, fire-and-forget)
+    try {
+      let sessionId = sessionStorage.getItem('bi_session_id');
+      if (!sessionId) {
+        sessionId = crypto.randomUUID();
+        sessionStorage.setItem('bi_session_id', sessionId);
+      }
+      supabase.from('product_views').insert({
+        product_id: product.id,
+        user_id: user?.id || null,
+        session_id: sessionId,
+      }).then(({ error }) => {
+        if (error) console.warn('BI view tracking failed:', error.message);
+      });
+    } catch (e) {
+      // Non-critical tracking failure should never break product page
+    }
+  }, [product?.id, product?.name, product?.price, user?.id]);
 
   // Fetch review stats for JSON-LD
   useEffect(() => {
