@@ -203,7 +203,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           </nav>
 
           {/* Bottom Actions */}
-          <div className="p-4 border-t space-y-2">
+          <div className="p-4 border-t space-y-2 shrink-0">
             <Button
               variant={soundEnabled ? "default" : "outline"}
               size="sm"
