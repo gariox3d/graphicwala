@@ -122,6 +122,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/ads', label: 'Ads / Banners', icon: Megaphone },
     { path: '/admin/loyalty', label: 'Loyalty Points', icon: Coins },
     { path: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
+    { path: '/admin/business-intelligence', label: 'Business Intelligence', icon: Brain },
     { path: '/admin/storage', label: 'Storage Manager', icon: HardDrive },
     { path: '/admin/before-after', label: 'Before/After', icon: Layers },
     { path: '/admin/abandoned-carts', label: 'Abandoned Carts', icon: CartIcon },
