@@ -32,7 +32,8 @@ import {
   ShoppingCart as CartIcon,
   Store,
   FileText,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Brain
 } from 'lucide-react';
 import { useState } from 'react';
 
