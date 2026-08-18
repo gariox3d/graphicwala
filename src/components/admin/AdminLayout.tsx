@@ -32,7 +32,8 @@ import {
   ShoppingCart as CartIcon,
   Store,
   FileText,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Brain
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -121,6 +122,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/ads', label: 'Ads / Banners', icon: Megaphone },
     { path: '/admin/loyalty', label: 'Loyalty Points', icon: Coins },
     { path: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
+    { path: '/admin/business-intelligence', label: 'Business Intelligence', icon: Brain },
     { path: '/admin/storage', label: 'Storage Manager', icon: HardDrive },
     { path: '/admin/before-after', label: 'Before/After', icon: Layers },
     { path: '/admin/abandoned-carts', label: 'Abandoned Carts', icon: CartIcon },
@@ -158,11 +160,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       <aside className={`
         fixed lg:static inset-y-0 left-0 z-50
         w-64 bg-card border-r transform transition-transform duration-300
+        h-[100dvh] lg:h-auto
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `}>
-        <div className="h-full flex flex-col">
+        <div className="h-full flex flex-col max-h-full">
           {/* Logo */}
-          <div className="p-6 border-b">
+          <div className="p-6 border-b shrink-0">
             <Link to="/admin" className="flex items-center gap-2">
               <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
                 <span className="text-primary-foreground font-bold text-lg">G</span>
@@ -175,7 +178,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+          <nav className="flex-1 p-4 space-y-1 overflow-y-auto overscroll-y-contain min-h-0 touch-pan-y">
             {navItems.map((item) => (
               <Link
                 key={item.path}
@@ -188,7 +191,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                     : 'hover:bg-muted text-foreground'}
                 `}
               >
-                <item.icon className="h-5 w-5" />
+                <item.icon className="h-5 w-5 shrink-0" />
                 <span className="font-medium flex-1">{item.label}</span>
                 {item.path === '/admin/messages' && unreadCount > 0 && (
                   <Badge variant="destructive" className="text-xs px-1.5 py-0.5 min-w-[20px] text-center">
@@ -200,7 +203,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           </nav>
 
           {/* Bottom Actions */}
-          <div className="p-4 border-t space-y-2">
+          <div className="p-4 border-t space-y-2 shrink-0">
             <Button
               variant={soundEnabled ? "default" : "outline"}
               size="sm"

@@ -28,6 +28,7 @@ type ProductFormData = {
   name: string;
   description: string;
   price: string;
+  cost_price: string;
   category_id: string;
   stock_quantity: string;
   is_active: boolean;
@@ -64,6 +65,7 @@ const ProductForm = () => {
     name: '',
     description: '',
     price: '',
+    cost_price: '',
     category_id: '',
     stock_quantity: '0',
     is_active: true,
@@ -168,6 +170,7 @@ const ProductForm = () => {
           name: product.name,
           description: product.description || '',
           price: product.price.toString(),
+          cost_price: product.cost_price?.toString() || '',
           category_id: product.category_id || '',
           stock_quantity: product.stock_quantity?.toString() || '0',
           is_active: product.is_active,
@@ -277,6 +280,7 @@ const ProductForm = () => {
         slug: formData.name.trim().toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/[\s-]+/g, '-').replace(/^-+|-+$/g, '') || 'product',
         description: formData.description.trim() || null,
         price: parseFloat(formData.price),
+        cost_price: formData.cost_price ? parseFloat(formData.cost_price) : null,
         category_id: formData.category_id || null,
         stock_quantity: parseInt(formData.stock_quantity) || 0,
         is_active: formData.is_active,
@@ -394,7 +398,7 @@ const ProductForm = () => {
                       rows={4}
                     />
                   </div>
-                  <div className="grid md:grid-cols-2 gap-4">
+                  <div className="grid md:grid-cols-3 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="price">Price (₹) *</Label>
                       <Input
@@ -407,6 +411,19 @@ const ProductForm = () => {
                         onChange={handleInputChange}
                         placeholder="0.00"
                         required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="cost_price">Cost Price (₹)</Label>
+                      <Input
+                        id="cost_price"
+                        name="cost_price"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={formData.cost_price}
+                        onChange={handleInputChange}
+                        placeholder="For profit analysis"
                       />
                     </div>
                     <div className="space-y-2">
