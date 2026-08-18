@@ -165,8 +165,12 @@ const AdminBusinessIntelligence = () => {
         map[d].orders += 1;
       }
     });
+    const orderDates: Record<string, string> = {};
+    filteredOrders.forEach((o) => {
+      orderDates[o.id] = format(parseISO(o.created_at), 'yyyy-MM-dd');
+    });
     filteredOrderItems.forEach((item) => {
-      const d = format(parseISO(item.created_at || ''), 'yyyy-MM-dd');
+      const d = orderDates[item.order_id];
       if (!d || !map[d]) return;
       const product = productMap.get(item.product_id);
       if (product?.cost_price) {
