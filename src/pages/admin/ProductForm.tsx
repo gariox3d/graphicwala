@@ -28,6 +28,7 @@ type ProductFormData = {
   name: string;
   description: string;
   price: string;
+  cost_price: string;
   category_id: string;
   stock_quantity: string;
   is_active: boolean;
