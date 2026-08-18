@@ -65,6 +65,7 @@ const ProductForm = () => {
     name: '',
     description: '',
     price: '',
+    cost_price: '',
     category_id: '',
     stock_quantity: '0',
     is_active: true,
