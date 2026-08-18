@@ -50,6 +50,7 @@ const AdminFestivalTheme = lazy(() => import("./pages/admin/AdminFestivalTheme")
 const AdminAds = lazy(() => import("./pages/admin/AdminAds"));
 const AdminLoyalty = lazy(() => import("./pages/admin/AdminLoyalty"));
 const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics"));
+const AdminBusinessIntelligence = lazy(() => import("./pages/admin/AdminBusinessIntelligence"));
 const AdminStorage = lazy(() => import("./pages/admin/AdminStorage"));
 const AdminBeforeAfter = lazy(() => import("./pages/admin/AdminBeforeAfter"));
 const AdminAbandonedCarts = lazy(() => import("./pages/admin/AdminAbandonedCarts"));
