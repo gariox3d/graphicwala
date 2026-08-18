@@ -29,16 +29,16 @@ const HeroSection = () => {
       className="relative bg-white overflow-hidden"
       aria-label="Graphicwala - Custom Printing Store India"
     >
-      <div className="container relative z-10 py-8 md:py-12 lg:py-14">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-10 items-center">
+      <div className="container relative z-10 py-6 md:py-10 lg:py-12">
+        <div className="grid lg:grid-cols-2 gap-6 lg:gap-10 items-center">
           {/* Left: sales copy */}
           <header className="flex flex-col items-center text-center lg:items-start lg:text-left order-2 lg:order-1">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary text-[11px] font-bold uppercase tracking-wider mb-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary text-[11px] font-bold uppercase tracking-wider mb-3">
               <span className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
               Trusted by 10,000+ Happy Customers
             </div>
 
-            <h1 className="text-[1.75rem] sm:text-4xl lg:text-[2.85rem] font-black leading-[1.08] tracking-tight text-foreground mb-3">
+            <h1 className="text-[1.65rem] sm:text-[2rem] lg:text-[2.65rem] font-black leading-[1.1] tracking-tight text-foreground mb-3">
               Custom Photo Frames, Mugs, T-Shirts &amp;{' '}
               <span className="text-primary">Personalized Gifts</span> Delivered Across India
             </h1>
@@ -47,7 +47,7 @@ const HeroSection = () => {
               Upload your photo and we print it beautifully on premium products — shipped to your doorstep in 24-48 hours.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-stretch gap-3 w-full sm:w-auto mb-4">
+            <div className="flex justify-center lg:justify-start w-full mb-4">
               <Link to="/products" className="w-full sm:w-auto">
                 <Button
                   size="lg"
@@ -55,15 +55,6 @@ const HeroSection = () => {
                 >
                   Shop Now
                   <ArrowRight className="h-4 w-4 ml-1.5" aria-hidden="true" />
-                </Button>
-              </Link>
-              <Link to="/products" className="w-full sm:w-auto">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="w-full sm:w-auto rounded-full border-2 border-foreground/10 font-semibold hover:bg-muted transition-all"
-                >
-                  Explore Categories
                 </Button>
               </Link>
             </div>
