@@ -170,6 +170,7 @@ const ProductForm = () => {
           name: product.name,
           description: product.description || '',
           price: product.price.toString(),
+          cost_price: product.cost_price?.toString() || '',
           category_id: product.category_id || '',
           stock_quantity: product.stock_quantity?.toString() || '0',
           is_active: product.is_active,
