@@ -151,6 +151,7 @@ const App = () => {
                 <Route path="/admin/ads" element={<AdminGuard><AdminAds /></AdminGuard>} />
                 <Route path="/admin/loyalty" element={<AdminGuard><AdminLoyalty /></AdminGuard>} />
                 <Route path="/admin/analytics" element={<AdminGuard><AdminAnalytics /></AdminGuard>} />
+                <Route path="/admin/business-intelligence" element={<AdminGuard><AdminBusinessIntelligence /></AdminGuard>} />
                 <Route path="/admin/storage" element={<AdminGuard><AdminStorage /></AdminGuard>} />
                 <Route path="/admin/before-after" element={<AdminGuard><AdminBeforeAfter /></AdminGuard>} />
                 <Route path="/admin/abandoned-carts" element={<AdminGuard><AdminAbandonedCarts /></AdminGuard>} />
