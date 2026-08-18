@@ -398,7 +398,7 @@ const ProductForm = () => {
                       rows={4}
                     />
                   </div>
-                  <div className="grid md:grid-cols-2 gap-4">
+                  <div className="grid md:grid-cols-3 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="price">Price (₹) *</Label>
                       <Input
@@ -411,6 +411,19 @@ const ProductForm = () => {
                         onChange={handleInputChange}
                         placeholder="0.00"
                         required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="cost_price">Cost Price (₹)</Label>
+                      <Input
+                        id="cost_price"
+                        name="cost_price"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={formData.cost_price}
+                        onChange={handleInputChange}
+                        placeholder="For profit analysis"
                       />
                     </div>
                     <div className="space-y-2">
