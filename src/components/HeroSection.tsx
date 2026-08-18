@@ -81,7 +81,7 @@ const HeroSection = () => {
           {/* Right: product visual */}
           {card.is_active && (
             <div className="relative flex justify-center order-1 lg:order-2">
-              <div className="relative w-full max-w-[340px] sm:max-w-[400px] lg:max-w-[460px]">
+              <div className="relative w-full max-w-[300px] sm:max-w-[360px] lg:max-w-[420px]">
                 {/* Rating chip */}
                 <div className="absolute -top-3 right-2 sm:right-4 z-20 bg-foreground text-background rounded-2xl px-3.5 py-2 shadow-xl flex items-center gap-2 animate-fade-in">
                   <Star className="h-4 w-4 fill-primary text-primary" aria-hidden="true" />
@@ -103,7 +103,7 @@ const HeroSection = () => {
                     fallbackWidth={800}
                     quality={80}
                     resize="cover"
-                    sizes="(max-width: 640px) 85vw, (max-width: 1024px) 400px, 460px"
+                    sizes="(max-width: 640px) 80vw, (max-width: 1024px) 360px, 420px"
                     priority
                     width={1024}
                     height={1024}
@@ -125,7 +125,7 @@ const HeroSection = () => {
         </div>
 
         {festivalActive && settings?.show_countdown && settings?.end_date && (
-          <div className="mt-8 md:mt-10">
+          <div className="mt-6 md:mt-8">
             <EidCountdown endDate={settings.end_date} />
           </div>
         )}
