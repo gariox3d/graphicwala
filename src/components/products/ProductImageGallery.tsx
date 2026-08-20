@@ -103,7 +103,7 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
     <div className="w-full min-w-0 max-w-full space-y-4">
       {/* Main Image */}
       <div 
-        className="relative grid w-full aspect-[4/5] md:aspect-square max-h-[700px] place-items-center rounded-xl bg-muted group"
+        className="relative grid w-full aspect-square max-h-[700px] place-items-center rounded-xl bg-muted group"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
