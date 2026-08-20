@@ -42,19 +42,19 @@ const CategoryGrid = ({ categories, getImage }: Props) => (
               className="group rounded-2xl border border-border bg-card overflow-hidden shadow-soft hover:shadow-brand transition-shadow"
               aria-label={`Shop ${category.name} online with All India delivery`}
             >
-              <div className="relative aspect-[16/10] bg-muted overflow-hidden">
+              <div className="relative aspect-square bg-muted overflow-hidden">
                 {img ? (
                   <SmartImage
                     src={img}
                     alt={`${category.name} by Graphic Wala`}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="h-full w-full object-contain bg-white transition-transform duration-500 group-hover:scale-105"
                     widths={[320, 480, 640]}
                     fallbackWidth={480}
                     quality={68}
-                    resize="cover"
+                    resize="contain"
                     sizes="(max-width: 640px) 92vw, (max-width: 1024px) 45vw, 320px"
                     width={640}
-                    height={400}
+                    height={640}
                   />
                 ) : (
                   <div className="absolute inset-0 bg-gradient-to-br from-primary/15 to-foreground/10" />
