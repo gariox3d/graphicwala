@@ -12,14 +12,14 @@ const TrustPanel = () => {
     <section className="py-14 md:py-20 bg-background" aria-labelledby="trust-heading">
       <div className="container">
         <header className="text-center max-w-2xl mx-auto mb-10">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-2">Order With Confidence</p>
+          <p className="text-xs font-bold tracking-wide text-primary mb-2">Order With Confidence</p>
           <h2 id="trust-heading" className="text-3xl md:text-4xl font-black tracking-tight">
             A Real Shop, Real People, Real Support
           </h2>
         </header>
 
-        <div className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-soft">
+        <div className="grid gap-4 md:grid-cols-3 items-stretch">
+          <div className="flex h-full flex-col rounded-2xl border border-border bg-card p-6 shadow-soft">
             <Clock className="h-5 w-5 text-primary mb-3" aria-hidden="true" />
             <h3 className="font-bold mb-2">Delivery Timeline</h3>
             <ul className="space-y-1.5 text-sm text-muted-foreground">
@@ -27,12 +27,12 @@ const TrustPanel = () => {
               <li>Printing & packing: 1-2 days</li>
               <li>Delivery across India: 4-7 days</li>
             </ul>
-            <Link to="/shipping-policy" className="mt-3 inline-block text-sm font-bold text-primary">
+            <Link to="/shipping-policy" className="mt-auto pt-3 inline-block text-sm font-bold text-primary">
               Shipping Policy
             </Link>
           </div>
 
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-soft">
+          <div className="flex h-full flex-col rounded-2xl border border-border bg-card p-6 shadow-soft">
             <ShieldCheck className="h-5 w-5 text-primary mb-3" aria-hidden="true" />
             <h3 className="font-bold mb-2">Safe Payments</h3>
             <div className="flex flex-wrap gap-2 mb-3">
@@ -45,18 +45,18 @@ const TrustPanel = () => {
                 </span>
               ))}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="mt-auto text-xs text-muted-foreground">
               All orders are prepaid and processed on an encrypted payment gateway. Cash on Delivery is not available.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-soft">
+          <div className="flex h-full flex-col rounded-2xl border border-border bg-card p-6 shadow-soft">
             <RotateCcw className="h-5 w-5 text-primary mb-3" aria-hidden="true" />
             <h3 className="font-bold mb-2">Returns & Refunds</h3>
             <p className="text-sm text-muted-foreground">
               Damaged or wrongly printed item? Report within 48 hours with an unboxing video and we replace or refund it.
             </p>
-            <div className="mt-3 flex flex-wrap gap-3 text-sm font-bold text-primary">
+            <div className="mt-auto pt-3 flex flex-wrap gap-3 text-sm font-bold text-primary">
               <Link to="/refund-policy">Refund Policy</Link>
               <Link to="/terms-and-conditions">Terms</Link>
               <Link to="/privacy-policy">Privacy</Link>

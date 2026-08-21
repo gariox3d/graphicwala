@@ -46,7 +46,7 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-semibold mb-4">Quick Links</h4>
+            <h3 className="font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-3">
               <li>
                  <Link to="/category/photo-frame" className="text-background/70 hover:text-primary text-sm transition-colors">
@@ -98,7 +98,7 @@ const Footer = () => {
 
           {/* Products */}
           <div>
-            <h4 className="font-semibold mb-4">Products</h4>
+            <h3 className="font-semibold mb-4">Products</h3>
             <ul className="space-y-3">
               <li>
                  <Link to="/category/pvc-card" className="text-background/70 hover:text-primary text-sm transition-colors">
@@ -130,7 +130,7 @@ const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h4 className="font-semibold mb-4">Contact Us</h4>
+            <h3 className="font-semibold mb-4">Contact Us</h3>
             <ul className="space-y-3">
               <li>
                 <a 

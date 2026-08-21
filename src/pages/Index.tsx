@@ -200,11 +200,7 @@ const Index = () => {
                 </Button>
               </Link>
               <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" aria-label="Chat with us on WhatsApp">
-                <Button
-                  variant="outline"
-                  size="xl"
-                  className="border-2 border-primary-foreground/80 bg-primary-foreground/10 text-primary-foreground hover:bg-primary-foreground hover:text-primary font-bold backdrop-blur-sm"
-                >
+                <Button variant="hero-outline" size="xl">
                   <MessageCircle className="h-5 w-5" aria-hidden="true" />
                   Chat on WhatsApp
                 </Button>
