@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { PRODUCT_CARD_FIELDS } from '@/lib/productFields';
 import { Product } from '@/lib/types';
-import ProductCard from './ProductCard';
-import { TrendingUp, Flame } from 'lucide-react';
+import ProductGridCard from './ProductGridCard';
+import { Flame } from 'lucide-react';
 
 const TrendingProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -69,24 +69,21 @@ const TrendingProducts = () => {
   if (products.length === 0) return null;
 
   return (
-    <section className="py-16 md:py-24 bg-gradient-to-b from-primary/5 to-background" aria-labelledby="trending-heading">
+    <section className="py-14 md:py-20 bg-background" aria-labelledby="trending-heading">
       <div className="container">
-        <header className="mb-10">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 rounded-lg bg-destructive/10">
-              <Flame className="h-6 w-6 text-destructive" />
-            </div>
-            <h2 id="trending-heading" className="text-3xl md:text-4xl font-bold">
-              Trending Now 🔥
-            </h2>
-          </div>
-          <p className="text-muted-foreground ml-14">
-            Most loved products by our customers
+        <header className="mb-8">
+          <p className="flex items-center gap-2 text-xs font-bold tracking-wide text-primary mb-2">
+            <Flame className="h-4 w-4" aria-hidden="true" />
+            Trending
           </p>
+          <h2 id="trending-heading" className="text-3xl md:text-4xl font-black tracking-tight">
+            Trending Now
+          </h2>
+          <p className="text-muted-foreground mt-2">Most loved products by our customers</p>
         </header>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" role="list">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductGridCard key={product.id} product={product} badge="Trending" />
           ))}
         </div>
       </div>

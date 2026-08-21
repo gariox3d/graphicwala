@@ -114,7 +114,7 @@ const Header = () => {
               </Link>
               {isAdmin && (
                 <Link to="/admin">
-                  <Button variant="outline" size="sm">
+                  <Button variant="ghost" size="sm" className="text-muted-foreground font-normal" aria-label="Open admin panel">
                     Admin
                   </Button>
                 </Link>

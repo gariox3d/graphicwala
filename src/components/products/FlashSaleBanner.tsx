@@ -74,7 +74,7 @@ const FlashCard = ({ product, onSelect }: { product: Product; onSelect: (p: Prod
 
   return (
     <div
-      className="group cursor-pointer flex-shrink-0 w-40 md:w-48"
+      className="group cursor-pointer flex-shrink-0 w-48 md:w-60"
       onClick={() => onSelect(product)}
     >
       <div className="relative overflow-hidden rounded-2xl border-2 border-orange-400/50 bg-card shadow-md hover:shadow-xl transition-all duration-300 group-hover:-translate-y-1">
@@ -254,10 +254,10 @@ const FlashSaleBanner = () => {
               </div>
             </div>
             {globalTime && (
-              <div className="flex items-center gap-2 bg-destructive text-destructive-foreground px-4 py-2 rounded-full shadow-md">
-                <Clock className="h-4 w-4" />
-                <span className="text-sm font-semibold">Ends in</span>
-                <span className="font-mono font-extrabold text-base tracking-widest">{globalTime}</span>
+              <div className="flex items-center gap-3 bg-destructive text-destructive-foreground px-5 py-3 rounded-2xl shadow-md">
+                <Clock className="h-5 w-5" aria-hidden="true" />
+                <span className="text-sm font-semibold uppercase">Ends in</span>
+                <span className="font-mono font-extrabold text-2xl md:text-3xl tracking-widest tabular-nums">{globalTime}</span>
               </div>
             )}
           </div>
@@ -267,7 +267,7 @@ const FlashSaleBanner = () => {
           <div className="pointer-events-none absolute left-0 top-0 h-full w-16 z-10 bg-gradient-to-r from-secondary to-transparent" />
           <div className="pointer-events-none absolute right-0 top-0 h-full w-16 z-10 bg-gradient-to-l from-secondary to-transparent" />
 
-          <div className="flex gap-4 w-max flash-marquee-track">
+          <div className="flex gap-6 w-max flash-marquee-track">
             {items.map((product, idx) => (
               <FlashCard key={`${product.id}-${idx}`} product={product} onSelect={setSelected} />
             ))}
