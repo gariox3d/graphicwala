@@ -14,7 +14,7 @@ const Bestsellers = ({ products, loading }: Props) => (
     <div className="container">
       <Reveal as="header" className="text-center max-w-2xl mx-auto mb-12">
         <p className="eyebrow mb-3">Curated Excellence</p>
-        <h2 id="bestsellers-heading" className="display-title italic text-3xl md:text-5xl">
+        <h2 id="bestsellers-heading" className="display-title text-3xl md:text-4xl">
           The Bestsellers
         </h2>
         <div className="mt-5 mx-auto h-px w-10 bg-primary" aria-hidden="true" />
@@ -36,7 +36,7 @@ const Bestsellers = ({ products, loading }: Props) => (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 md:gap-8">
           {products.slice(0, 8).map((p, i) => (
             <Reveal key={p.id} delay={(i % 4) * 90}>
-              <ProductGridCard product={p} badge={i < 3 ? 'Best Seller' : undefined} />
+              <ProductGridCard product={p} badge={i < 3 ? 'Best Seller' : undefined} showDelivery={false} />
             </Reveal>
           ))}
         </div>

@@ -23,9 +23,9 @@ const TrustPanel = () => {
             <Clock className="h-5 w-5 text-primary mb-3" aria-hidden="true" />
             <h3 className="font-bold mb-2">Delivery Timeline</h3>
             <ul className="space-y-1.5 text-sm text-muted-foreground">
-              <li>Design approval: same day</li>
-              <li>Printing & packing: 1-2 days</li>
-              <li>Delivery across India: 4-7 days</li>
+              <li>Design approval as soon as possible</li>
+              <li>Printing & packing on priority</li>
+              <li>Delivery across India</li>
             </ul>
             <Link to="/shipping-policy" className="mt-auto pt-3 inline-block text-sm font-bold text-primary">
               Shipping Policy

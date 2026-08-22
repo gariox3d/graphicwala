@@ -29,7 +29,7 @@ const CategoryGrid = ({ categories, getImage }: Props) => (
     <div className="container">
       <Reveal as="header" className="text-center max-w-2xl mx-auto mb-12">
         <p className="eyebrow mb-3">Shop by Category</p>
-        <h2 id="categories-heading" className="display-title italic text-3xl md:text-5xl">
+        <h2 id="categories-heading" className="display-title text-3xl md:text-4xl">
           What Would You Like to Personalise?
         </h2>
         <div className="mt-5 mx-auto h-px w-10 bg-primary" aria-hidden="true" />

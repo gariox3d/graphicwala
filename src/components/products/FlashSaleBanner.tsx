@@ -247,7 +247,7 @@ const FlashSaleBanner = () => {
                 <Zap className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
                 Limited Time
               </p>
-              <h2 className="display-title italic text-3xl md:text-4xl">Flash Sale</h2>
+              <h2 className="display-title text-3xl md:text-4xl">Flash Sale</h2>
               <div className="mt-4 h-px w-10 bg-primary" aria-hidden="true" />
             </div>
             {globalTime && (
