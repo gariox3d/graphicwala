@@ -1,6 +1,6 @@
 import SmartImage from '@/components/SmartImage';
 import { Link } from 'react-router-dom';
-import { Truck, ShieldCheck, BadgeCheck, Star, ArrowRight } from 'lucide-react';
+import { ShieldCheck, BadgeCheck, Star, ArrowRight, Sparkles } from 'lucide-react';
 import { useFestivalSettings } from '@/hooks/useFestivalSettings';
 import EidCountdown from '@/components/festival/EidCountdown';
 import { useHeroShowcase } from '@/hooks/useHeroShowcase';
@@ -27,93 +27,103 @@ const HeroSection = () => {
       className="relative w-full overflow-hidden bg-background"
       aria-label="Graphicwala — premium custom printing store India"
     >
-      {/* Soft ambient wash — clean, modern, no busy photo background */}
+      {/* Soft ambient wash — premium, clean, no busy photo background */}
       <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_60%_at_85%_10%,hsl(var(--primary)/0.10),transparent_65%),radial-gradient(50%_50%_at_0%_100%,hsl(var(--muted)),transparent_70%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(55%_55%_at_85%_15%,hsl(var(--primary)/0.10),transparent_60%),radial-gradient(45%_45%_at_0%_100%,hsl(var(--muted)),transparent_70%)]"
         aria-hidden="true"
       />
 
-      <div className="container relative z-10">
-        <div className="grid items-center gap-10 lg:gap-16 py-12 sm:py-16 lg:py-24 lg:grid-cols-2">
-          {/* Copy */}
-          <header className="text-center lg:text-left animate-fade-in">
-            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-              <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
-              Premium Custom Printing
-            </span>
+      <div className="container relative z-10 py-8 sm:py-10 lg:py-14">
+        <div className="mx-auto max-w-6xl overflow-hidden rounded-[2.5rem] border border-border bg-card shadow-brand">
+          <div className="grid items-center lg:grid-cols-2">
+            {/* Copy */}
+            <header className="p-8 sm:p-10 lg:p-12 text-center lg:text-left animate-fade-in">
+              <span className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+                <Sparkles className="h-3 w-3 text-primary" aria-hidden="true" />
+                Premium Custom Printing
+              </span>
 
-            <h1 className="mt-6 font-display italic font-semibold leading-[1.06] tracking-tight text-[2.3rem] sm:text-5xl lg:text-6xl text-foreground">
-              Moments,
-              <br />
-              <span className="text-primary">Elegantly Captured.</span>
-            </h1>
+              <h1 className="mt-5 font-outfit text-[2.1rem] font-semibold leading-[1.08] tracking-tight text-foreground sm:text-4xl lg:text-[2.75rem]">
+                Moments,
+                <br />
+                <span className="text-primary">Elegantly Captured.</span>
+              </h1>
 
-            <p className="mt-5 mx-auto lg:mx-0 max-w-md text-sm sm:text-base leading-relaxed text-muted-foreground">
-              Custom photo frames, mugs, t-shirts and keychains — crafted with a premium finish and delivered across India in 24–48 hours.
-            </p>
+              <p className="mt-4 mx-auto lg:mx-0 max-w-md text-xs sm:text-sm font-medium uppercase tracking-[0.15em] text-muted-foreground">
+                Quality products, carefully crafted and delivered across India.
+              </p>
 
-            <div className="mt-8 flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4">
-              <Link
-                to="/products"
-                className={cn(buttonVariants({ variant: 'hero', size: 'xl' }), 'group w-full sm:w-auto gap-2 rounded-full text-sm tracking-[0.06em]')}
-              >
-                Shop the Collection
-                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
-              </Link>
+              <div className="mt-6 flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4">
+                <Link
+                  to="/products"
+                  className={cn(
+                    buttonVariants({ variant: 'hero', size: 'lg' }),
+                    'group w-full sm:w-auto gap-2 rounded-full text-sm tracking-wide'
+                  )}
+                >
+                  Shop Now
+                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
+                </Link>
 
-              <div className="inline-flex items-center gap-2.5 text-foreground">
-                <Star className="h-4 w-4 fill-primary text-primary" aria-hidden="true" />
-                <span className="text-sm font-semibold">{card.rating_value}</span>
-                <span className="h-3 w-px bg-border" aria-hidden="true" />
-                <span className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">{card.rating_subtitle}</span>
+                <div className="inline-flex items-center gap-2.5 rounded-full border border-border bg-secondary px-4 py-2 text-foreground">
+                  <Star className="h-4 w-4 fill-primary text-primary" aria-hidden="true" />
+                  <span className="text-sm font-bold">{card.rating_value}</span>
+                  <span className="h-3.5 w-px bg-border" aria-hidden="true" />
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                    {card.rating_subtitle}
+                  </span>
+                </div>
               </div>
-            </div>
 
-            <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-2 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-              <span className="inline-flex items-center gap-1.5">
-                <Truck className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
-                All India Delivery
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <ShieldCheck className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
-                Secure Payment
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <BadgeCheck className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
-                Quality Assured
-              </span>
-            </div>
-          </header>
+              <div className="mt-6 flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-2 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                <span className="inline-flex items-center gap-1.5">
+                  <BadgeCheck className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
+                  Premium Quality
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <ShieldCheck className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
+                  Secure Payment
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <Sparkles className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
+                  Made in India
+                </span>
+              </div>
+            </header>
 
-          {/* Visual */}
-          <div className="relative mx-auto w-full max-w-[420px] lg:max-w-none animate-scale-in">
-            <div className="relative overflow-hidden rounded-[2rem] border border-border bg-card shadow-brand">
+            {/* Visual */}
+            <div className="relative h-72 sm:h-80 lg:h-auto lg:min-h-[520px] animate-scale-in">
               <SmartImage
                 src={card.image_url}
                 alt="Personalised photo frames, mugs, t-shirts and keychains by Graphicwala"
-                className="aspect-[4/5] lg:aspect-[5/5] h-full w-full object-cover object-center"
+                className="absolute inset-0 h-full w-full object-cover object-center"
                 widths={[480, 720, 960, 1280]}
                 fallbackWidth={960}
                 quality={85}
                 resize="cover"
-                sizes="(max-width: 1024px) 90vw, 45vw"
+                sizes="(max-width: 1024px) 100vw, 50vw"
                 priority
                 width={960}
                 height={1200}
               />
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-foreground/35 to-transparent" aria-hidden="true" />
-            </div>
+              <div
+                className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-foreground/35 to-transparent"
+                aria-hidden="true"
+              />
 
-            {/* Floating price chip */}
-            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 lg:left-auto lg:right-6 lg:translate-x-0 rounded-full border border-border bg-card px-5 py-3 shadow-brand">
-              <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{card.price_prefix}</span>
-              <span className="ml-2 text-base font-bold text-foreground">{card.price_label}</span>
+              {/* Floating price chip */}
+              <div className="absolute bottom-5 left-5 rounded-full border border-border bg-card px-5 py-2.5 shadow-brand">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                  {card.price_prefix}
+                </span>
+                <span className="ml-2 text-base font-bold text-foreground">{card.price_label}</span>
+              </div>
             </div>
           </div>
         </div>
 
         {festivalActive && settings?.show_countdown && settings?.end_date && (
-          <div className="pb-12">
+          <div className="mt-10">
             <EidCountdown endDate={settings.end_date} />
           </div>
         )}

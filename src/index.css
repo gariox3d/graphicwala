@@ -189,9 +189,9 @@
     @apply text-xs md:text-[13px] font-semibold tracking-[0.08em] text-muted-foreground;
   }
 
-  /* Serif display heading used across the luxury sections */
+  /* Display heading used across premium sections — modern sans-serif */
   .display-title {
-    @apply font-display font-semibold tracking-tight text-foreground;
+    @apply font-outfit font-semibold tracking-tight text-foreground;
   }
 }
 

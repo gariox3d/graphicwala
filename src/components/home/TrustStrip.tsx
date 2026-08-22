@@ -4,7 +4,7 @@ import Reveal from '@/components/Reveal';
 const items = [
   { icon: Truck, title: 'All India Delivery', sub: 'Every pincode covered' },
   { icon: ShieldCheck, title: 'Secure Payments', sub: '100% safe checkout' },
-  { icon: Zap, title: 'Fast Dispatch', sub: 'Printed in 24-48 hrs' },
+  { icon: Zap, title: 'Fast Dispatch', sub: 'Priority processing' },
   { icon: Wallet, title: 'Prepaid Only', sub: 'UPI / Card / Netbanking' },
 ];
 

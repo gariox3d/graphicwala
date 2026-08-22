@@ -2,7 +2,7 @@ import { Palette, Timer, Truck, Printer, MessageCircle, Headphones } from 'lucid
 
 const benefits = [
   { icon: Palette, title: 'Custom Design Support', text: 'Send a rough idea — our designers make it print-ready free of cost.' },
-  { icon: Timer, title: 'Fast Processing', text: 'Orders confirmed before 5 PM go into print the same day.' },
+  { icon: Timer, title: 'Fast Processing', text: 'We confirm your order and move it into print as quickly as possible.' },
   { icon: Truck, title: 'Pan-India Delivery', text: 'Delivered to every state and pincode in India, tracked end to end.' },
   { icon: Printer, title: 'Quality Printing', text: 'Sharp colours, premium material and proper finishing on every order.' },
   { icon: MessageCircle, title: 'Easy WhatsApp Order', text: 'Not comfortable online? Just WhatsApp us and we place the order for you.' },

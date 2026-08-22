@@ -10,13 +10,15 @@ interface Props {
   product: Product;
   /** Optional ribbon shown at the top-left, e.g. "Best Seller" or "Trending". */
   badge?: string;
+  /** Whether to show the estimated delivery line. Defaults to true. */
+  showDelivery?: boolean;
 }
 
 /**
  * Single, shared product card used by every product grid on the site so the
  * layout, information hierarchy and primary action stay consistent.
  */
-const ProductGridCard = ({ product: p, badge }: Props) => {
+const ProductGridCard = ({ product: p, badge, showDelivery = true }: Props) => {
   const href = `/product/${(p as any).slug || p.id}`;
   const price = getEffectivePrice(p);
   const days = p.delivery_days || 7;
@@ -77,7 +79,7 @@ const ProductGridCard = ({ product: p, badge }: Props) => {
 
       <div className="flex flex-1 flex-col pt-4 text-center">
         <Link to={href}>
-          <h3 className="text-[13px] font-semibold uppercase tracking-[0.08em] text-foreground leading-snug line-clamp-2 transition-colors group-hover:text-primary">
+          <h3 className="text-sm font-semibold tracking-normal text-foreground leading-snug line-clamp-2 transition-colors group-hover:text-primary">
             {p.name}
           </h3>
         </Link>
@@ -89,9 +91,11 @@ const ProductGridCard = ({ product: p, badge }: Props) => {
           )}
         </div>
 
-        <p className="mt-2 text-xs tracking-[0.02em] text-muted-foreground">
-          Delivery in {days} days
-        </p>
+        {showDelivery && (
+          <p className="mt-2 text-xs tracking-[0.02em] text-muted-foreground">
+            Delivery in {days} days
+          </p>
+        )}
       </div>
     </article>
   );
