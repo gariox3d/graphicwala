@@ -79,7 +79,7 @@ const ProductGridCard = ({ product: p, badge, showDelivery = true }: Props) => {
 
       <div className="flex flex-1 flex-col pt-4 text-center">
         <Link to={href}>
-          <h3 className="text-[13px] font-semibold uppercase tracking-[0.08em] text-foreground leading-snug line-clamp-2 transition-colors group-hover:text-primary">
+          <h3 className="text-sm font-semibold tracking-normal text-foreground leading-snug line-clamp-2 transition-colors group-hover:text-primary">
             {p.name}
           </h3>
         </Link>
@@ -91,9 +91,11 @@ const ProductGridCard = ({ product: p, badge, showDelivery = true }: Props) => {
           )}
         </div>
 
-        <p className="mt-2 text-xs tracking-[0.02em] text-muted-foreground">
-          Delivery in {days} days
-        </p>
+        {showDelivery && (
+          <p className="mt-2 text-xs tracking-[0.02em] text-muted-foreground">
+            Delivery in {days} days
+          </p>
+        )}
       </div>
     </article>
   );
