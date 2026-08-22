@@ -10,6 +10,8 @@ interface Props {
   product: Product;
   /** Optional ribbon shown at the top-left, e.g. "Best Seller" or "Trending". */
   badge?: string;
+  /** Whether to show the estimated delivery line. Defaults to true. */
+  showDelivery?: boolean;
 }
 
 /**
