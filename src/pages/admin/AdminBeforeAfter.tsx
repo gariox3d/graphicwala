@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { validateImageFile, prepareImageForUpload } from '@/lib/imageOptimizer';
 import { toast } from 'sonner';
 import { Plus, Trash2, ArrowRight, ArrowUp, ArrowDown, Loader2, Upload } from 'lucide-react';
 
@@ -49,9 +50,18 @@ const AdminBeforeAfter = () => {
 
   const uploadImage = async (file: File, type: 'before' | 'after') => {
     setUploading(type);
-    const ext = file.name.split('.').pop();
+    const check = await validateImageFile(file);
+    if (!check.ok || !check.meta) {
+      toast.error(check.error || 'Invalid image');
+      setUploading(null);
+      return;
+    }
+    const prepared = await prepareImageForUpload(file, check.meta);
+    const ext = prepared.file.type === 'image/webp' ? 'webp' : file.name.split('.').pop();
     const filePath = `before-after/${Date.now()}-${type}.${ext}`;
-    const { error } = await supabase.storage.from('product-images').upload(filePath, file);
+    const { error } = await supabase.storage
+      .from('product-images')
+      .upload(filePath, prepared.file, { contentType: prepared.file.type, cacheControl: '31536000' });
     if (error) {
       toast.error('Upload failed: ' + error.message);
       setUploading(null);

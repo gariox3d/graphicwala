@@ -31,7 +31,7 @@ const SmartImage = ({
   alt,
   widths = CARD_WIDTHS,
   fallbackWidth,
-  quality = 72,
+  quality = 82,
   resize = 'contain',
   priority = false,
   sizes,
@@ -43,7 +43,11 @@ const SmartImage = ({
   // 0 = optimized, 1 = original file, 2 = static placeholder
   const [stage, setStage] = useState(0);
 
-  const requestWidth = fallbackWidth ?? widths[widths.length - 1];
+  // Account for high-DPR screens on the non-srcset fallback so the bitmap is
+  // never upscaled by the browser (a common source of "blurry" images).
+  const dpr = typeof window !== 'undefined' ? Math.min(window.devicePixelRatio || 1, 2) : 1;
+  const baseWidth = fallbackWidth ?? widths[widths.length - 1];
+  const requestWidth = Math.min(Math.round(baseWidth * dpr), widths[widths.length - 1] * 2);
   const optimized = optimizedImage(src, { width: requestWidth, quality, resize });
 
   let finalSrc = optimized;

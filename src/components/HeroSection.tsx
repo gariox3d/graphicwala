@@ -94,7 +94,7 @@ const HeroSection = () => {
                 className="aspect-[4/5] lg:aspect-[5/5] h-full w-full object-cover object-center"
                 widths={[480, 720, 960, 1280]}
                 fallbackWidth={960}
-                quality={78}
+                quality={85}
                 resize="cover"
                 sizes="(max-width: 1024px) 90vw, 45vw"
                 priority
