@@ -19,6 +19,9 @@ const buttonVariants = cva(
         "hero-outline": "border-2 border-background/80 bg-background/10 text-background hover:bg-background hover:text-foreground font-bold backdrop-blur-sm",
         "cta-secondary": "bg-background text-foreground hover:bg-background/90 shadow-md hover:shadow-lg active:scale-[0.98] font-bold",
         brand: "gradient-primary text-primary-foreground shadow-brand-red hover:opacity-90 active:scale-[0.98] font-bold",
+        /* Shared editorial outline CTA used by the luxury home sections */
+        editorial:
+          "border border-foreground bg-transparent text-foreground text-[11px] font-bold uppercase tracking-[0.22em] rounded-none transition-all duration-500 hover:bg-foreground hover:text-background",
       },
       size: {
         default: "h-11 px-5 py-2",

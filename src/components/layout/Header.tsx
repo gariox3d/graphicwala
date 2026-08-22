@@ -112,13 +112,6 @@ const Header = () => {
                   )}
                 </Button>
               </Link>
-              {isAdmin && (
-                <Link to="/admin">
-                  <Button variant="ghost" size="sm" className="text-muted-foreground font-normal" aria-label="Open admin panel">
-                    Admin
-                  </Button>
-                </Link>
-              )}
               <Button variant="ghost" size="icon" onClick={signOut}>
                 <LogOut className="h-5 w-5" />
               </Button>
