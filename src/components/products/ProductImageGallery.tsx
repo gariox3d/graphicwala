@@ -114,7 +114,7 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
             alt={`${productName} — photo ${selectedIndex + 1}`}
             widths={DETAIL_WIDTHS}
             fallbackWidth={1200}
-            quality={85}
+            quality={88}
             resize="contain"
             priority={selectedIndex === 0}
             sizes="(max-width: 768px) 100vw, 600px"
