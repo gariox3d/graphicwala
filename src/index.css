@@ -363,3 +363,9 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-muted-foreground/50;
 }
+
+/* Slow hero image push-in for a premium first impression */
+@keyframes heroZoom {
+  from { transform: scale(1.12); }
+  to { transform: scale(1.02); }
+}
