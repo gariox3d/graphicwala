@@ -1,4 +1,6 @@
 import SmartImage from '@/components/SmartImage';
+import Reveal from '@/components/Reveal';
+
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { Category } from '@/lib/types';
