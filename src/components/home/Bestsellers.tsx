@@ -1,8 +1,7 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Product } from '@/lib/types';
 import ProductGridCard from '@/components/products/ProductGridCard';
+import Reveal from '@/components/Reveal';
 
 interface Props {
   products: Product[];
@@ -10,27 +9,20 @@ interface Props {
 }
 
 const Bestsellers = ({ products, loading }: Props) => (
-  <section className="py-14 md:py-20 bg-secondary" aria-labelledby="bestsellers-heading">
+  <section className="py-16 md:py-24 bg-secondary/40" aria-labelledby="bestsellers-heading">
     <div className="container">
-      <header className="flex flex-wrap items-end justify-between gap-4 mb-8">
-        <div>
-          <p className="text-xs font-bold tracking-wide text-primary mb-2">Bestsellers</p>
-          <h2 id="bestsellers-heading" className="text-3xl md:text-4xl font-black tracking-tight">
-            Most Ordered This Month
-          </h2>
-        </div>
-        <Link to="/products" className="hidden md:block">
-          <Button variant="outline" className="rounded-full font-semibold">
-            View All Products
-            <ArrowRight className="h-4 w-4 ml-1" aria-hidden="true" />
-          </Button>
-        </Link>
-      </header>
+      <Reveal as="header" className="text-center max-w-2xl mx-auto mb-12">
+        <p className="eyebrow mb-3">Curated Excellence</p>
+        <h2 id="bestsellers-heading" className="display-title italic text-3xl md:text-5xl">
+          The Bestsellers
+        </h2>
+        <div className="mt-5 mx-auto h-px w-10 bg-primary" aria-hidden="true" />
+      </Reveal>
 
       {loading ? (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 md:gap-8">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="rounded-2xl bg-card border border-border overflow-hidden animate-pulse">
+            <div key={i} className="animate-pulse">
               <div className="aspect-square bg-muted" />
               <div className="p-4 space-y-2">
                 <div className="h-4 bg-muted rounded w-3/4" />
@@ -40,19 +32,21 @@ const Bestsellers = ({ products, loading }: Props) => (
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 md:gap-8">
           {products.slice(0, 8).map((p, i) => (
-            <ProductGridCard key={p.id} product={p} badge={i < 3 ? 'Best Seller' : undefined} />
+            <Reveal key={p.id} delay={(i % 4) * 90}>
+              <ProductGridCard product={p} badge={i < 3 ? 'Best Seller' : undefined} />
+            </Reveal>
           ))}
         </div>
       )}
 
-      <div className="mt-8 text-center md:hidden">
-        <Link to="/products">
-          <Button variant="outline" size="lg" className="rounded-full font-semibold">
-            View All Products
-            <ArrowRight className="h-4 w-4 ml-1" aria-hidden="true" />
-          </Button>
+      <div className="mt-14 text-center">
+        <Link
+          to="/products"
+          className="inline-flex items-center justify-center border border-foreground px-10 py-4 text-[11px] font-bold uppercase tracking-[0.22em] text-foreground transition-all duration-500 hover:bg-foreground hover:text-background"
+        >
+          Explore All Products
         </Link>
       </div>
     </div>
