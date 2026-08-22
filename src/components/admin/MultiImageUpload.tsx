@@ -156,6 +156,17 @@ const MultiImageUpload = ({ images, onChange, maxImages = 10 }: MultiImageUpload
 
   return (
     <div className="space-y-4">
+      {/* Upload requirements */}
+      <div className="rounded-lg border border-border bg-muted/40 p-3 text-xs text-muted-foreground space-y-1">
+        <p className="flex items-center gap-1.5 font-semibold text-foreground">
+          <Info className="h-3.5 w-3.5" /> Image Upload Requirements
+        </p>
+        <p>Supported file types: JPG / JPEG / PNG / WEBP • Maximum file size: 10MB</p>
+        <p>Minimum width 1200px • Recommended 1600–2000px for banners/hero • Keep the original aspect ratio</p>
+        <p>For best quality, upload the original high-resolution image. The website will automatically optimize it for fast loading.</p>
+        <p>JPG/JPEG: best for photos • PNG: best for transparent images/graphics • WEBP: best for modern web images</p>
+      </div>
+
       {/* Image Grid */}
       {images.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
@@ -218,7 +229,7 @@ const MultiImageUpload = ({ images, onChange, maxImages = 10 }: MultiImageUpload
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*"
+            accept={ACCEPT_ATTR}
             multiple
             onChange={handleFileSelect}
             className="hidden"
@@ -238,11 +249,26 @@ const MultiImageUpload = ({ images, onChange, maxImages = 10 }: MultiImageUpload
               <div>
                 <p className="font-medium">Click to upload images</p>
                 <p className="text-sm text-muted-foreground">
-                  {images.length}/{maxImages} images • Max 5MB each
+                  {images.length}/{maxImages} images • JPG / PNG / WEBP • Max 10MB each
                 </p>
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Optimization report */}
+      {reports.length > 0 && (
+        <div className="rounded-lg border border-border p-3 text-xs space-y-2">
+          {reports.map((r, i) => (
+            <div key={i} className="flex flex-wrap gap-x-4 gap-y-0.5">
+              <span className="font-medium text-foreground">{r.name}</span>
+              <span className="text-muted-foreground">Dimensions: {r.dimensions}</span>
+              <span className="text-muted-foreground">Size: {r.size}</span>
+              <span className="text-muted-foreground">Format: {r.format}</span>
+              <span className="text-primary font-medium">Optimized: {r.outFormat} {r.outSize}</span>
+            </div>
+          ))}
         </div>
       )}
 
