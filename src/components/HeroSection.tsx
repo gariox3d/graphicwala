@@ -1,6 +1,6 @@
 import SmartImage from '@/components/SmartImage';
 import { Link } from 'react-router-dom';
-import { Truck, ShieldCheck, BadgeCheck, Star } from 'lucide-react';
+import { Truck, ShieldCheck, BadgeCheck, Star, ArrowRight } from 'lucide-react';
 import { useFestivalSettings } from '@/hooks/useFestivalSettings';
 import EidCountdown from '@/components/festival/EidCountdown';
 import { useHeroShowcase } from '@/hooks/useHeroShowcase';
@@ -22,63 +22,52 @@ const HeroSection = () => {
 
   return (
     <section
-      className="relative w-full overflow-hidden bg-foreground"
+      className="relative w-full overflow-hidden bg-background"
       aria-label="Graphicwala — premium custom printing store India"
     >
-      {/* Full-bleed editorial image */}
-      <div className="absolute inset-0">
-        <SmartImage
-          src={card.image_url}
-          alt="Personalised photo frames, mugs, t-shirts and keychains by Graphicwala"
-          className="h-full w-full object-cover object-center scale-[1.02] motion-safe:animate-[heroZoom_14s_ease-out_forwards]"
-          widths={[640, 960, 1280, 1600, 1920]}
-          fallbackWidth={1280}
-          quality={78}
-          resize="cover"
-          sizes="100vw"
-          priority
-          width={1920}
-          height={1080}
-        />
-        <div
-          className="absolute inset-0 bg-gradient-to-t from-foreground/90 via-foreground/45 to-foreground/25 lg:bg-gradient-to-r lg:from-foreground/90 lg:via-foreground/55 lg:to-foreground/10"
-          aria-hidden="true"
-        />
-      </div>
+      {/* Soft ambient wash — clean, modern, no busy photo background */}
+      <div
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_60%_at_85%_10%,hsl(var(--primary)/0.10),transparent_65%),radial-gradient(50%_50%_at_0%_100%,hsl(var(--muted)),transparent_70%)]"
+        aria-hidden="true"
+      />
 
       <div className="container relative z-10">
-        <div className="flex min-h-[520px] sm:min-h-[600px] lg:min-h-[min(86vh,760px)] flex-col justify-end lg:justify-center py-12 lg:py-20">
-          <header className="max-w-xl animate-fade-in">
-            <span className="eyebrow !text-background/75 block mb-4">Premium Custom Printing</span>
+        <div className="grid items-center gap-10 lg:gap-16 py-12 sm:py-16 lg:py-24 lg:grid-cols-2">
+          {/* Copy */}
+          <header className="text-center lg:text-left animate-fade-in">
+            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
+              Premium Custom Printing
+            </span>
 
-            <h1 className="font-display italic font-semibold text-background leading-[1.08] tracking-tight text-[2.4rem] sm:text-5xl lg:text-6xl mb-5">
+            <h1 className="mt-6 font-display italic font-semibold leading-[1.06] tracking-tight text-[2.3rem] sm:text-5xl lg:text-6xl text-foreground">
               Moments,
               <br />
-              Elegantly Captured.
+              <span className="text-primary">Elegantly Captured.</span>
             </h1>
 
-            <p className="text-sm sm:text-base text-background/80 max-w-md leading-relaxed mb-8">
-              Custom photo frames, mugs, t-shirts and keychains — crafted with premium finish and delivered across India in 24-48 hours.
+            <p className="mt-5 mx-auto lg:mx-0 max-w-md text-sm sm:text-base leading-relaxed text-muted-foreground">
+              Custom photo frames, mugs, t-shirts and keychains — crafted with a premium finish and delivered across India in 24–48 hours.
             </p>
 
-            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="mt-8 flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4">
               <Link
                 to="/products"
-                className="group inline-flex items-center justify-center bg-background text-foreground px-9 py-4 text-[11px] font-bold uppercase tracking-[0.22em] transition-all duration-500 hover:bg-primary hover:text-primary-foreground active:scale-[0.98]"
+                className="group inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-primary px-8 py-4 text-[11px] font-bold uppercase tracking-[0.2em] text-primary-foreground transition-all duration-300 hover:opacity-90 active:scale-[0.98]"
               >
                 Shop the Collection
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
               </Link>
 
-              <div className="inline-flex items-center gap-2.5 text-background/85">
+              <div className="inline-flex items-center gap-2.5 text-foreground">
                 <Star className="h-4 w-4 fill-primary text-primary" aria-hidden="true" />
                 <span className="text-sm font-semibold">{card.rating_value}</span>
-                <span className="h-3 w-px bg-background/30" aria-hidden="true" />
-                <span className="text-[11px] uppercase tracking-[0.18em]">{card.rating_subtitle}</span>
+                <span className="h-3 w-px bg-border" aria-hidden="true" />
+                <span className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">{card.rating_subtitle}</span>
               </div>
             </div>
 
-            {/* Trust line */}
-            <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.16em] text-background/70">
+            <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-2 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
               <span className="inline-flex items-center gap-1.5">
                 <Truck className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
                 All India Delivery
@@ -92,18 +81,40 @@ const HeroSection = () => {
                 Quality Assured
               </span>
             </div>
-
-            <p className="mt-6 text-background/70 text-[11px] uppercase tracking-[0.2em]">
-              {card.price_prefix} <span className="text-background font-bold text-base tracking-normal ml-1">{card.price_label}</span>
-            </p>
           </header>
 
-          {festivalActive && settings?.show_countdown && settings?.end_date && (
-            <div className="mt-10">
-              <EidCountdown endDate={settings.end_date} />
+          {/* Visual */}
+          <div className="relative mx-auto w-full max-w-[420px] lg:max-w-none animate-scale-in">
+            <div className="relative overflow-hidden rounded-[2rem] border border-border bg-card shadow-brand">
+              <SmartImage
+                src={card.image_url}
+                alt="Personalised photo frames, mugs, t-shirts and keychains by Graphicwala"
+                className="aspect-[4/5] lg:aspect-[5/5] h-full w-full object-cover object-center"
+                widths={[480, 720, 960, 1280]}
+                fallbackWidth={960}
+                quality={78}
+                resize="cover"
+                sizes="(max-width: 1024px) 90vw, 45vw"
+                priority
+                width={960}
+                height={1200}
+              />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-foreground/35 to-transparent" aria-hidden="true" />
             </div>
-          )}
+
+            {/* Floating price chip */}
+            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 lg:left-auto lg:right-6 lg:translate-x-0 rounded-full border border-border bg-card px-5 py-3 shadow-brand">
+              <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{card.price_prefix}</span>
+              <span className="ml-2 text-base font-bold text-foreground">{card.price_label}</span>
+            </div>
+          </div>
         </div>
+
+        {festivalActive && settings?.show_countdown && settings?.end_date && (
+          <div className="pb-12">
+            <EidCountdown endDate={settings.end_date} />
+          </div>
+        )}
       </div>
     </section>
   );
