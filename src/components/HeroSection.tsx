@@ -4,6 +4,8 @@ import { Truck, ShieldCheck, BadgeCheck, Star, ArrowRight } from 'lucide-react';
 import { useFestivalSettings } from '@/hooks/useFestivalSettings';
 import EidCountdown from '@/components/festival/EidCountdown';
 import { useHeroShowcase } from '@/hooks/useHeroShowcase';
+import { buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 const DEFAULT_HERO_IMAGE = '/images/hero-products.jpg';
 
@@ -53,7 +55,7 @@ const HeroSection = () => {
             <div className="mt-8 flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4">
               <Link
                 to="/products"
-                className="group inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-primary px-8 py-4 text-[11px] font-bold uppercase tracking-[0.2em] text-primary-foreground transition-all duration-300 hover:opacity-90 active:scale-[0.98]"
+                className={cn(buttonVariants({ variant: 'hero', size: 'xl' }), 'group w-full sm:w-auto gap-2 rounded-full text-sm tracking-[0.06em]')}
               >
                 Shop the Collection
                 <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />

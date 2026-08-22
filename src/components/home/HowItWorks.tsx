@@ -31,7 +31,7 @@ const HowItWorks = () => {
     <section className="py-14 md:py-20 bg-background" aria-labelledby="how-it-works-heading">
       <div className="container">
         <header className="text-center max-w-2xl mx-auto mb-10">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-2">Simple 3-Step Order</p>
+          <p className="text-xs md:text-[13px] font-bold tracking-[0.08em] text-primary mb-2">Simple 3-Step Order</p>
           <h2 id="how-it-works-heading" className="text-3xl md:text-4xl font-black tracking-tight">
             Custom Order in 3 Easy Steps
           </h2>

@@ -17,7 +17,7 @@ const TrustStrip = () => (
             <div className="h-12 w-12 rounded-full bg-primary/8 border border-primary/15 flex items-center justify-center mb-3 transition-transform duration-500 hover:scale-110">
               <it.icon className="h-5 w-5 text-primary" strokeWidth={1.4} aria-hidden="true" />
             </div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-foreground">{it.title}</p>
+            <p className="text-sm font-semibold tracking-[0.02em] text-foreground">{it.title}</p>
             <p className="text-xs text-muted-foreground mt-1.5">{it.sub}</p>
           </Reveal>
         ))}

@@ -13,7 +13,7 @@ const WhyBuyFromUs = () => (
   <section className="py-14 md:py-20 bg-secondary" aria-labelledby="why-us-heading">
     <div className="container">
       <header className="text-center max-w-2xl mx-auto mb-10">
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary mb-2">Why Graphic Wala</p>
+        <p className="text-xs md:text-[13px] font-bold tracking-[0.08em] text-primary mb-2">Why Graphic Wala</p>
         <h2 id="why-us-heading" className="text-3xl md:text-4xl font-black tracking-tight">
           Why Thousands of Indians Order From Us
         </h2>

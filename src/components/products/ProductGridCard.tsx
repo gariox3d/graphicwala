@@ -89,7 +89,7 @@ const ProductGridCard = ({ product: p, badge }: Props) => {
           )}
         </div>
 
-        <p className="mt-2 text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+        <p className="mt-2 text-xs tracking-[0.02em] text-muted-foreground">
           Delivery in {days} days
         </p>
       </div>
