@@ -12,10 +12,16 @@ const OBJECT_PATH = '/storage/v1/object/public/';
 const RENDER_PATH = '/storage/v1/render/image/public/';
 
 /** Widths we ever request. Keeping the list short maximises CDN cache hits. */
-export const CARD_WIDTHS = [240, 320, 480, 640];
-export const DETAIL_WIDTHS = [480, 768, 1024, 1400];
-export const THUMB_WIDTHS = [80, 160];
-export const BANNER_WIDTHS = [480, 768, 1200, 1600];
+export const CARD_WIDTHS = [320, 480, 768, 1024];
+export const DETAIL_WIDTHS = [480, 768, 1024, 1440, 1920];
+export const THUMB_WIDTHS = [120, 240, 320];
+export const BANNER_WIDTHS = [480, 768, 1024, 1440, 1920];
+
+/**
+ * Minimum encode quality. Anything lower starts showing visible artefacts on
+ * photographs, which is what made uploaded images look "blurry".
+ */
+export const MIN_QUALITY = 80;
 
 export interface ImageTransform {
   width: number;
