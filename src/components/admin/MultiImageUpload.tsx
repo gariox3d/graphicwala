@@ -1,10 +1,16 @@
 import { useState, useRef } from 'react';
-import { Upload, X, GripVertical, ImageIcon, Loader2 } from 'lucide-react';
+import { Upload, X, GripVertical, Loader2, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
-import { compressImage } from '@/lib/imageCompression';
+import {
+  ACCEPT_ATTR,
+  formatBytes,
+  prepareImageForUpload,
+  sanitizeFileName,
+  validateImageFile,
+} from '@/lib/imageOptimizer';
 
 interface MultiImageUploadProps {
   images: string[];
@@ -12,45 +18,62 @@ interface MultiImageUploadProps {
   maxImages?: number;
 }
 
+interface UploadReport {
+  name: string;
+  dimensions: string;
+  size: string;
+  format: string;
+  outFormat: string;
+  outSize: string;
+}
+
 const MultiImageUpload = ({ images, onChange, maxImages = 10 }: MultiImageUploadProps) => {
   const [uploading, setUploading] = useState(false);
+  const [reports, setReports] = useState<UploadReport[]>([]);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const uploadImage = async (original: File): Promise<string | null> => {
+    // 1. Validate (real content sniffing, size, dimensions)
+    const check = await validateImageFile(original);
+    if (!check.ok || !check.meta) {
+      toast.error(`${original.name}: ${check.error}`);
+      return null;
+    }
+    if (check.warning) toast.warning(`${original.name}: ${check.warning}`);
+
     try {
-      if (original.size > 10 * 1024 * 1024) {
-        toast.error('Image size must be less than 5MB');
-        return null;
-      }
+      // 2. Single-pass optimization, full resolution preserved (max 2560px)
+      const prepared = await prepareImageForUpload(original, check.meta);
 
-      // Compress before upload (keeps original aspect ratio, max 1400px, ~JPEG q0.78)
-      let file = original;
-      try {
-        if (original.type.startsWith('image/')) {
-          file = await compressImage(original, 1400, 0.78);
-        }
-      } catch {
-        file = original;
-      }
+      setReports((prev) => [
+        ...prev,
+        {
+          name: check.meta!.name,
+          dimensions: `${check.meta!.width} × ${check.meta!.height} px`,
+          size: formatBytes(check.meta!.size),
+          format: check.meta!.type.replace('image/', '').toUpperCase(),
+          outFormat: prepared.output.type.replace('image/', '').toUpperCase(),
+          outSize: formatBytes(prepared.output.size),
+        },
+      ]);
 
-      const fileExt = file.name.split('.').pop()?.toLowerCase();
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const ext = prepared.file.type === 'image/webp' ? 'webp' : sanitizeFileName(prepared.file.name).split('.').pop() || 'jpg';
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
       const filePath = `products/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('product-images')
-        .upload(filePath, file, {
-          cacheControl: '3600',
+        .upload(filePath, prepared.file, {
+          cacheControl: '31536000',
+          contentType: prepared.file.type,
           upsert: false,
         });
 
       if (uploadError) throw uploadError;
 
-      const { data } = supabase.storage
-        .from('product-images')
-        .getPublicUrl(filePath);
+      const { data } = supabase.storage.from('product-images').getPublicUrl(filePath);
 
       return data.publicUrl;
     } catch (error: any) {
@@ -71,6 +94,7 @@ const MultiImageUpload = ({ images, onChange, maxImages = 10 }: MultiImageUpload
     }
 
     setUploading(true);
+    setReports([]);
     const newUrls: string[] = [];
 
     for (const file of files) {
@@ -107,6 +131,7 @@ const MultiImageUpload = ({ images, onChange, maxImages = 10 }: MultiImageUpload
     const newImages = images.filter((_, i) => i !== index);
     onChange(newImages);
   };
+
 
   // Drag and drop handlers
   const handleDragStart = (index: number) => {
