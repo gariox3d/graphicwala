@@ -14,7 +14,7 @@ const LocationSection = ({
   <section aria-labelledby="location-heading" className="py-14 border-t">
     <div className="container">
       <div className="max-w-2xl mb-8">
-        <p className="text-sm font-semibold text-primary uppercase tracking-wide mb-2">Our Location</p>
+        <p className="text-sm font-semibold text-primary tracking-wide mb-2">Our Location</p>
         <h2 id="location-heading" className="text-2xl md:text-3xl font-bold mb-3">{heading}</h2>
         <p className="text-muted-foreground">{subheading}</p>
       </div>
