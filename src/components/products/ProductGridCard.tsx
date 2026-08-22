@@ -1,21 +1,10 @@
 import SmartImage from '@/components/SmartImage';
 import { CARD_WIDTHS } from '@/lib/imageUrl';
 import { Link } from 'react-router-dom';
-import { Truck } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Product, getEffectivePrice } from '@/lib/types';
 
 const isNew = (p: Product) =>
   p.created_at ? Date.now() - new Date(p.created_at).getTime() < 1000 * 60 * 60 * 24 * 21 : false;
-
-const benefitLine = (p: Product) => {
-  if (p.description) return p.description;
-  const cat = p.categories?.name?.toLowerCase() || '';
-  if (cat.includes('frame')) return 'Premium finish frame with your own photo printed.';
-  if (cat.includes('card')) return 'Full-colour print on durable premium material.';
-  if (cat.includes('keychain')) return 'Personalised photo keychain — a perfect small gift.';
-  return 'Custom printed and delivered anywhere in India.';
-};
 
 interface Props {
   product: Product;
@@ -32,15 +21,16 @@ const ProductGridCard = ({ product: p, badge }: Props) => {
   const price = getEffectivePrice(p);
   const days = p.delivery_days || 7;
   const onSale = price < p.price;
+  const off = onSale ? Math.round(((p.price - price) / p.price) * 100) : 0;
 
   return (
-    <article className="group flex flex-col rounded-2xl border border-border bg-card overflow-hidden shadow-soft hover:shadow-brand transition-shadow">
-      <Link to={href} className="relative block aspect-square bg-muted overflow-hidden">
+    <article className="group flex h-full flex-col">
+      <Link to={href} className="relative block aspect-square bg-white overflow-hidden border border-border">
         {p.image_url ? (
           <SmartImage
             src={p.image_url}
             alt={`${p.name}${p.categories?.name ? ` — ${p.categories.name}` : ''}`}
-            className="h-full w-full object-contain bg-white transition-transform duration-500 group-hover:scale-105"
+            className="h-full w-full object-contain bg-white transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.06]"
             widths={CARD_WIDTHS}
             fallbackWidth={480}
             quality={68}
@@ -52,53 +42,56 @@ const ProductGridCard = ({ product: p, badge }: Props) => {
         ) : (
           <div className="h-full w-full bg-gradient-to-br from-muted to-secondary" />
         )}
-        <div className="absolute top-2 left-2 flex flex-col gap-1">
+
+        <div className="absolute top-3 left-3 flex flex-col items-start gap-1.5">
           {badge && (
-            <span className="rounded-md bg-primary px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-foreground">
+            <span className="bg-primary px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-primary-foreground">
               {badge}
             </span>
           )}
-          {isNew(p) && (
-            <span className="rounded-md bg-foreground px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-background">
+          {onSale && (
+            <span className="bg-foreground px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-background">
+              -{off}%
+            </span>
+          )}
+          {!onSale && isNew(p) && (
+            <span className="bg-foreground px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-background">
               New
             </span>
           )}
         </div>
+
         {!p.stock_quantity && (
-          <div className="absolute inset-0 bg-foreground/55 flex items-center justify-center">
-            <span className="rounded-md bg-destructive px-3 py-1 text-xs font-black uppercase tracking-wider text-destructive-foreground">
+          <div className="absolute inset-0 bg-background/70 flex items-center justify-center">
+            <span className="bg-destructive px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-destructive-foreground">
               Sold Out
             </span>
           </div>
         )}
+
+        {/* Smooth slide-up action bar */}
+        <span className="pointer-events-none absolute inset-x-0 bottom-0 translate-y-full bg-foreground/90 py-3 text-center text-[10px] font-bold uppercase tracking-[0.22em] text-background transition-transform duration-500 ease-out group-hover:translate-y-0">
+          View Product
+        </span>
       </Link>
 
-      <div className="flex flex-1 flex-col p-4">
+      <div className="flex flex-1 flex-col pt-4 text-center">
         <Link to={href}>
-          <h3 className="font-bold leading-snug line-clamp-2 group-hover:text-primary transition-colors">{p.name}</h3>
+          <h3 className="text-[13px] font-semibold uppercase tracking-[0.08em] text-foreground leading-snug line-clamp-2 transition-colors group-hover:text-primary">
+            {p.name}
+          </h3>
         </Link>
-        <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{benefitLine(p)}</p>
 
-        <div className="mt-3">
-          <span className="block text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">
-            Starts at
-          </span>
-          <span className="text-xl font-black text-foreground">₹{price.toFixed(0)}</span>
+        <div className="mt-2 flex items-baseline justify-center gap-2">
+          <span className="text-base font-bold text-foreground">₹{price.toFixed(0)}</span>
           {onSale && (
-            <span className="ml-2 text-sm font-medium text-muted-foreground line-through">₹{p.price.toFixed(0)}</span>
+            <span className="text-xs font-light text-muted-foreground line-through">₹{p.price.toFixed(0)}</span>
           )}
         </div>
 
-        <p className="mt-2 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-          <Truck className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
+        <p className="mt-2 text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
           Delivery in {days} days
         </p>
-
-        <Link to={href} className="mt-4 block">
-          <Button className="w-full rounded-full font-bold" size="sm">
-            View Product
-          </Button>
-        </Link>
       </div>
     </article>
   );

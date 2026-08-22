@@ -239,29 +239,31 @@ const FlashSaleBanner = () => {
 
   return (
     <>
-      <section className="py-6 overflow-hidden bg-secondary border-y-2 border-destructive/20">
-        <div className="container mb-5">
-          <div className="flex items-center justify-between flex-wrap gap-3">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-destructive to-primary flex items-center justify-center shadow-lg">
-                <Zap className="h-5 w-5 text-primary-foreground" />
-              </div>
-              <div>
-                <h2 className="text-xl md:text-2xl font-extrabold text-foreground tracking-tight">
-                  ⚡ Flash Sale
-                  <span className="text-sm font-normal text-muted-foreground ml-2">— Limited time deals</span>
-                </h2>
-              </div>
+      <section className="py-10 md:py-14 overflow-hidden bg-secondary/60 border-y border-border">
+        <div className="container mb-8">
+          <div className="flex items-end justify-between flex-wrap gap-4">
+            <div>
+              <p className="eyebrow mb-2 flex items-center gap-2">
+                <Zap className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
+                Limited Time
+              </p>
+              <h2 className="display-title italic text-3xl md:text-4xl">Flash Sale</h2>
+              <div className="mt-4 h-px w-10 bg-primary" aria-hidden="true" />
             </div>
             {globalTime && (
-              <div className="flex items-center gap-3 bg-destructive text-destructive-foreground px-5 py-3 rounded-2xl shadow-md">
-                <Clock className="h-5 w-5" aria-hidden="true" />
-                <span className="text-sm font-semibold uppercase">Ends in</span>
-                <span className="font-mono font-extrabold text-2xl md:text-3xl tracking-widest tabular-nums">{globalTime}</span>
+              <div className="text-right">
+                <p className="eyebrow mb-1.5 flex items-center gap-1.5 md:justify-end">
+                  <Clock className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
+                  Ends in
+                </p>
+                <span className="block font-mono font-bold text-3xl md:text-4xl tracking-[0.12em] tabular-nums text-foreground">
+                  {globalTime}
+                </span>
               </div>
             )}
           </div>
         </div>
+
 
         <div className="relative">
           <div className="pointer-events-none absolute left-0 top-0 h-full w-16 z-10 bg-gradient-to-r from-secondary to-transparent" />
