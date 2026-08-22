@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { buttonVariants } from '@/components/ui/button';
 import { Product } from '@/lib/types';
 import ProductGridCard from '@/components/products/ProductGridCard';
 import Reveal from '@/components/Reveal';
