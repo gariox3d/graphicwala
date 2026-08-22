@@ -7,6 +7,7 @@ import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
+import { validateImageFile, prepareImageForUpload } from '@/lib/imageOptimizer';
 import { toast } from 'sonner';
 import { Plus, Trash2, ExternalLink, Image as ImageIcon } from 'lucide-react';
 
@@ -55,9 +56,14 @@ const AdminAds = () => {
   useEffect(() => { fetchAds(); }, []);
 
   const handleImageUpload = async (file: File) => {
-    const ext = file.name.split('.').pop();
+    const check = await validateImageFile(file);
+    if (!check.ok || !check.meta) throw new Error(check.error || 'Invalid image');
+    const prepared = await prepareImageForUpload(file, check.meta);
+    const ext = prepared.file.type === 'image/webp' ? 'webp' : file.name.split('.').pop();
     const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-    const { error } = await supabase.storage.from('ad-images').upload(path, file);
+    const { error } = await supabase.storage
+      .from('ad-images')
+      .upload(path, prepared.file, { contentType: prepared.file.type, cacheControl: '31536000' });
     if (error) throw error;
     const { data: urlData } = supabase.storage.from('ad-images').getPublicUrl(path);
     return urlData.publicUrl;

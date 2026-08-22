@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { validateImageFile, prepareImageForUpload } from '@/lib/imageOptimizer';
 import { toast } from 'sonner';
 import { Loader2, Upload, Trash2 } from 'lucide-react';
 
@@ -106,17 +107,21 @@ const AdminHeroShowcase = () => {
       return;
     }
 
-    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+    const check = await validateImageFile(file, { minWidth: 1600 });
+    if (!check.ok || !check.meta) {
       setUploading(false);
-      toast.error('Please upload a JPG, PNG, or WebP image.');
+      toast.error(check.error || 'Invalid image');
       return;
     }
+    if (check.warning) toast.warning(check.warning);
 
-    const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+    const prepared = await prepareImageForUpload(file, check.meta);
+    const ext = prepared.file.type === 'image/webp' ? 'webp' : (file.name.split('.').pop()?.toLowerCase() || 'jpg');
     const path = `hero/${Date.now()}-${crypto.randomUUID()}.${ext}`;
-    const { error } = await supabase.storage.from('ad-images').upload(path, file, {
+    const { error } = await supabase.storage.from('ad-images').upload(path, prepared.file, {
       upsert: false,
-      cacheControl: '3600',
+      contentType: prepared.file.type,
+      cacheControl: '31536000',
     });
     if (error) {
       setUploading(false);
