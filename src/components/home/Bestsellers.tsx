@@ -42,10 +42,7 @@ const Bestsellers = ({ products, loading }: Props) => (
       )}
 
       <div className="mt-14 text-center">
-        <Link
-          to="/products"
-          className="inline-flex items-center justify-center border border-foreground px-10 py-4 text-[11px] font-bold uppercase tracking-[0.22em] text-foreground transition-all duration-500 hover:bg-foreground hover:text-background"
-        >
+        <Link to="/products" className={buttonVariants({ variant: 'editorial', size: 'lg' })}>
           Explore All Products
         </Link>
       </div>
