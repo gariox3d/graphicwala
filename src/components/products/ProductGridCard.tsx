@@ -18,7 +18,7 @@ interface Props {
  * Single, shared product card used by every product grid on the site so the
  * layout, information hierarchy and primary action stay consistent.
  */
-const ProductGridCard = ({ product: p, badge }: Props) => {
+const ProductGridCard = ({ product: p, badge, showDelivery = true }: Props) => {
   const href = `/product/${(p as any).slug || p.id}`;
   const price = getEffectivePrice(p);
   const days = p.delivery_days || 7;
