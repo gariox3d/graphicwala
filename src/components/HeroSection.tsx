@@ -47,7 +47,7 @@ const HeroSection = () => {
       </div>
 
       <div className="container relative z-10">
-        <div className="flex min-h-[520px] sm:min-h-[600px] lg:min-h-[86vh] lg:max-h-[900px] flex-col justify-end lg:justify-center py-12 lg:py-20">
+        <div className="flex min-h-[520px] sm:min-h-[600px] lg:min-h-[min(86vh,760px)] flex-col justify-end lg:justify-center py-12 lg:py-20">
           <header className="max-w-xl animate-fade-in">
             <span className="eyebrow !text-background/75 block mb-4">Premium Custom Printing</span>
 
