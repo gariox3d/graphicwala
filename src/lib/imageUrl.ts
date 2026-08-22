@@ -37,19 +37,20 @@ const isTransformable = (url: string) =>
 /** Returns a resized + auto-format URL, or the original when not transformable. */
 export const optimizedImage = (
   url: string | null | undefined,
-  { width, quality = 72, resize = 'contain' }: ImageTransform,
+  { width, quality = 82, resize = 'contain' }: ImageTransform,
 ): string => {
   if (!url) return '';
   if (!isTransformable(url)) return url;
   const base = url.split('?')[0].replace(OBJECT_PATH, RENDER_PATH);
-  return `${base}?width=${Math.round(width)}&resize=${resize}&quality=${quality}`;
+  const q = Math.min(100, Math.max(MIN_QUALITY, Math.round(quality)));
+  return `${base}?width=${Math.round(width)}&resize=${resize}&quality=${q}`;
 };
 
 /** Builds a `srcset` string so the browser picks the right size per device. */
 export const imageSrcSet = (
   url: string | null | undefined,
   widths: number[],
-  { quality = 72, resize = 'contain' }: Omit<ImageTransform, 'width'> = {},
+  { quality = 82, resize = 'contain' }: Omit<ImageTransform, 'width'> = {},
 ): string | undefined => {
   if (!url || !isTransformable(url)) return undefined;
   return widths
