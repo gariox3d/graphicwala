@@ -48,7 +48,7 @@ const RecentlyViewedProducts = ({ viewedIds, excludeId }: RecentlyViewedProducts
           <Clock className="h-5 w-5 text-primary" />
           <h2 id="recently-viewed-heading" className="text-2xl font-bold">Recently Viewed</h2>
         </header>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 xl:gap-8">
           {products.map(product => (
             <ProductCard key={product.id} product={product} />
           ))}

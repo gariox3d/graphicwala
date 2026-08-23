@@ -33,23 +33,23 @@ const HeroSection = () => {
         aria-hidden="true"
       />
 
-      <div className="container relative z-10 py-8 sm:py-10 lg:py-14">
-        <div className="mx-auto max-w-6xl overflow-hidden rounded-[2.5rem] border border-border bg-card shadow-brand">
+      <div className="container relative z-10 py-8 sm:py-10 lg:py-14 xl:py-16">
+        <div className="mx-auto w-full max-w-6xl xl:max-w-none overflow-hidden rounded-[2.5rem] border border-border bg-card shadow-brand">
           <div className="grid items-center lg:grid-cols-2">
             {/* Copy */}
-            <header className="p-8 sm:p-10 lg:p-12 text-center lg:text-left animate-fade-in">
+            <header className="p-8 sm:p-10 lg:p-12 xl:p-16 2xl:p-20 text-center lg:text-left animate-fade-in">
               <span className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
                 <Sparkles className="h-3 w-3 text-primary" aria-hidden="true" />
                 Premium Custom Printing
               </span>
 
-              <h1 className="mt-5 font-outfit text-[2.1rem] font-semibold leading-[1.08] tracking-tight text-foreground sm:text-4xl lg:text-[2.75rem]">
+              <h1 className="mt-5 font-outfit text-[2.1rem] font-semibold leading-[1.08] tracking-tight text-foreground sm:text-4xl lg:text-[2.75rem] xl:text-[3.4rem] 2xl:text-[3.9rem]">
                 Moments,
                 <br />
                 <span className="text-primary">Elegantly Captured.</span>
               </h1>
 
-              <p className="mt-4 mx-auto lg:mx-0 max-w-md text-xs sm:text-sm font-medium uppercase tracking-[0.15em] text-muted-foreground">
+              <p className="mt-4 mx-auto lg:mx-0 max-w-md xl:max-w-lg text-xs sm:text-sm xl:text-base font-medium uppercase tracking-[0.15em] text-muted-foreground">
                 Quality products, carefully crafted and delivered across India.
               </p>
 
@@ -92,7 +92,7 @@ const HeroSection = () => {
             </header>
 
             {/* Visual */}
-            <div className="relative h-72 sm:h-80 lg:h-auto lg:min-h-[520px] animate-scale-in">
+            <div className="relative h-72 sm:h-80 lg:h-auto lg:min-h-[520px] xl:min-h-[600px] 2xl:min-h-[660px] animate-scale-in">
               <SmartImage
                 src={card.image_url}
                 alt="Personalised photo frames, mugs, t-shirts and keychains by Graphicwala"

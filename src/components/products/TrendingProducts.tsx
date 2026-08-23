@@ -50,7 +50,7 @@ const TrendingProducts = () => {
           <div className="flex items-center gap-3 mb-8">
             <div className="h-8 w-48 bg-muted rounded animate-pulse" />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 xl:gap-8">
             {[...Array(4)].map((_, i) => (
               <div key={i} className="bg-card rounded-xl overflow-hidden animate-pulse">
                 <div className="aspect-square bg-muted" />
@@ -81,7 +81,7 @@ const TrendingProducts = () => {
           </h2>
           <p className="text-muted-foreground mt-2">Most loved products by our customers</p>
         </header>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 xl:gap-8">
           {products.map((product) => (
             <ProductGridCard key={product.id} product={product} badge="Trending" />
           ))}
