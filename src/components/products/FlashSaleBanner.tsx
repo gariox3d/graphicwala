@@ -74,7 +74,7 @@ const FlashCard = ({ product, onSelect }: { product: Product; onSelect: (p: Prod
 
   return (
     <div
-      className="group cursor-pointer flex-shrink-0 w-48 md:w-60"
+      className="group cursor-pointer flex-shrink-0 w-60 md:w-80"
       onClick={() => onSelect(product)}
     >
       <div className="relative overflow-hidden rounded-2xl border-2 border-orange-400/50 bg-card shadow-md hover:shadow-xl transition-all duration-300 group-hover:-translate-y-1">
@@ -111,7 +111,7 @@ const FlashCard = ({ product, onSelect }: { product: Product; onSelect: (p: Prod
           )}
         </div>
 
-        <div className="p-2.5">
+        <div className="p-4">
           <p className="text-xs font-semibold text-foreground line-clamp-1 leading-tight mb-1.5">{product.name}</p>
           <div className="flex items-center gap-1.5 mb-1.5">
             <span className="text-sm font-extrabold text-primary">₹{(product.sale_price ?? 0).toLocaleString()}</span>
