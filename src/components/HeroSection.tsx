@@ -43,7 +43,7 @@ const HeroSection = () => {
                 Premium Custom Printing
               </span>
 
-              <h1 className="mt-5 font-outfit text-[2.1rem] font-semibold leading-[1.08] tracking-tight text-foreground sm:text-4xl lg:text-[2.75rem] xl:text-[3.4rem] 2xl:text-[3.9rem]">
+              <h1 className="mt-5 font-outfit text-[2rem] font-semibold leading-[1.15] tracking-[-0.01em] text-foreground sm:text-4xl lg:text-[2.6rem] xl:text-[3rem] 2xl:text-[3.3rem]">
                 Moments,
                 <br />
                 <span className="text-primary">Elegantly Captured.</span>
@@ -92,27 +92,23 @@ const HeroSection = () => {
             </header>
 
             {/* Visual */}
-            <div className="relative h-72 sm:h-80 lg:h-auto lg:min-h-[520px] xl:min-h-[600px] 2xl:min-h-[660px] animate-scale-in">
+            <div className="relative h-64 sm:h-80 lg:h-auto lg:min-h-[460px] xl:min-h-[520px] bg-white animate-scale-in">
               <SmartImage
                 src={card.image_url}
                 alt="Personalised photo frames, mugs, t-shirts and keychains by Graphicwala"
-                className="absolute inset-0 h-full w-full object-cover object-center"
+                className="absolute inset-0 h-full w-full object-contain object-center p-3 sm:p-4"
                 widths={[480, 720, 960, 1280]}
                 fallbackWidth={960}
                 quality={85}
-                resize="cover"
+                resize="contain"
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 priority
                 width={960}
                 height={1200}
               />
-              <div
-                className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-foreground/35 to-transparent"
-                aria-hidden="true"
-              />
 
               {/* Floating price chip */}
-              <div className="absolute bottom-5 left-5 rounded-full border border-border bg-card px-5 py-2.5 shadow-brand">
+              <div className="absolute bottom-5 right-5 rounded-full border border-border bg-card px-5 py-2.5 shadow-brand">
                 <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                   {card.price_prefix}
                 </span>
