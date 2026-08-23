@@ -12,16 +12,18 @@ interface Props {
 const Bestsellers = ({ products, loading }: Props) => (
   <section className="py-16 md:py-24 xl:py-28 bg-secondary/40" aria-labelledby="bestsellers-heading">
     <div className="container">
-      <Reveal as="header" className="text-center max-w-2xl mx-auto mb-12">
+      <Reveal as="header" className="text-center max-w-3xl mx-auto mb-14">
         <p className="eyebrow mb-3">Curated Excellence</p>
-        <h2 id="bestsellers-heading" className="display-title text-3xl md:text-4xl xl:text-5xl">
+        <h2 id="bestsellers-heading" className="display-title text-4xl md:text-5xl xl:text-6xl tracking-[-0.03em]">
           The Bestsellers
         </h2>
-        <div className="mt-5 mx-auto h-px w-10 bg-primary" aria-hidden="true" />
+        <p className="mt-5 text-base md:text-lg font-light text-muted-foreground">
+          Our most-loved personalised products, printed fresh for every order.
+        </p>
       </Reveal>
 
       {loading ? (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 md:gap-8 xl:gap-10">
+        <div className="grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 md:gap-10 xl:gap-12">
           {[...Array(4)].map((_, i) => (
             <div key={i} className="animate-pulse">
               <div className="aspect-square bg-muted" />
@@ -33,7 +35,7 @@ const Bestsellers = ({ products, loading }: Props) => (
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 md:gap-8 xl:gap-10">
+        <div className="grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 md:gap-10 xl:gap-12">
           {products.slice(0, 8).map((p, i) => (
             <Reveal key={p.id} delay={(i % 4) * 90}>
               <ProductGridCard product={p} badge={i < 3 ? 'Best Seller' : undefined} showDelivery={false} />
