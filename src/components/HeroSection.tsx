@@ -98,7 +98,7 @@ const HeroSection = () => {
 
           {/* Visual — full product visible, never cropped */}
           <div className="relative animate-scale-in">
-            <div className="relative mx-auto w-full max-w-xs sm:max-w-sm md:max-w-sm lg:max-w-sm xl:max-w-md rounded-[2rem] border border-border bg-card p-3 sm:p-4 xl:p-5 shadow-brand">
+            <div className="relative mx-auto w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl rounded-[2rem] border border-border bg-card p-3 sm:p-4 xl:p-6 shadow-brand">
               <div className="relative overflow-hidden rounded-[1.4rem] bg-white">
                 <SmartImage
                   src={card.image_url}
