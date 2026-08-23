@@ -64,6 +64,20 @@ const FlashSaleBadge = ({ salePrice, originalPrice, saleEnd, variant = 'card' }:
     );
   }
 
+  if (variant === 'inline') {
+    return (
+      <div className="inline-flex items-center gap-1">
+        <span className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs font-bold px-2 py-1 rounded-md flex items-center gap-1 shadow-sm">
+          <Flame className="h-3 w-3 animate-pulse" />
+          <span>{discount}% OFF</span>
+        </span>
+        <span className="bg-black/80 text-white text-[10px] font-mono px-2 py-1 rounded-md">
+          {timeLeft}
+        </span>
+      </div>
+    );
+  }
+
   return (
     <div className="absolute top-3 left-3 z-10">
       <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs font-bold px-2 py-1 rounded-md flex items-center gap-1 shadow-lg">
