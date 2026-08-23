@@ -11,7 +11,7 @@ const items = [
 const TrustStrip = () => (
   <section aria-label="Why customers trust Graphic Wala" className="border-b border-border bg-background">
     <div className="container">
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-10 gap-x-6 py-10 md:py-14">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-10 gap-x-6 py-10 md:py-14 xl:py-16">
         {items.map((it, i) => (
           <Reveal key={it.title} delay={i * 90} className="flex flex-col items-center text-center">
             <div className="h-12 w-12 rounded-full bg-primary/8 border border-primary/15 flex items-center justify-center mb-3 transition-transform duration-500 hover:scale-110">

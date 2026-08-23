@@ -60,7 +60,7 @@ const SimilarProducts = ({ currentProductId, categoryId }: SimilarProductsProps)
   return (
     <section className="container py-10">
       <h2 className="text-2xl font-bold mb-6 animate-fade-in">You May Also Like</h2>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 xl:gap-8">
         {products.map((product, i) => (
           <div
             key={product.id}

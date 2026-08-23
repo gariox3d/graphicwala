@@ -35,7 +35,7 @@ const CategoryGrid = ({ categories, getImage }: Props) => (
         <div className="mt-5 mx-auto h-px w-10 bg-primary" aria-hidden="true" />
       </Reveal>
 
-      <div className="grid gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 md:gap-8 xl:gap-10 sm:grid-cols-2 lg:grid-cols-3">
         {categories.map((category, i) => {
           const img = getImage(category.name, category.image_url ?? null);
           return (
