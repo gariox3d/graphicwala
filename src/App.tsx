@@ -57,6 +57,7 @@ const AdminAbandonedCarts = lazy(() => import("./pages/admin/AdminAbandonedCarts
 const AdminBilling = lazy(() => import("./pages/admin/AdminBilling"));
 const AdminPickupEarnings = lazy(() => import("./pages/admin/AdminPickupEarnings"));
 const AdminHeroShowcase = lazy(() => import("./pages/admin/AdminHeroShowcase"));
+const AdminSocialPreview = lazy(() => import("./pages/admin/AdminSocialPreview"));
 import ScrollToTop from "./components/ScrollToTop";
 import BreadcrumbSchema from "./components/seo/BreadcrumbSchema";
 import AdminGuard from "./components/admin/AdminGuard";
