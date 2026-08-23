@@ -43,7 +43,7 @@ const HeroSection = () => {
                 Premium Custom Printing
               </span>
 
-              <h1 className="mt-5 font-outfit text-[2.1rem] font-semibold leading-[1.08] tracking-tight text-foreground sm:text-4xl lg:text-[2.75rem] xl:text-[3.4rem] 2xl:text-[3.9rem]">
+              <h1 className="mt-5 font-outfit text-[2rem] font-semibold leading-[1.15] tracking-[-0.01em] text-foreground sm:text-4xl lg:text-[2.6rem] xl:text-[3rem] 2xl:text-[3.3rem]">
                 Moments,
                 <br />
                 <span className="text-primary">Elegantly Captured.</span>
