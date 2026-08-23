@@ -1209,6 +1209,9 @@ export type Database = {
           delivery_disclaimer_enabled: boolean | null
           delivery_time_text: string | null
           id: string
+          og_description: string | null
+          og_image_url: string | null
+          og_title: string | null
           pickup_address: string | null
           pickup_pincode: string | null
           return_policy_enabled: boolean | null
@@ -1231,6 +1234,9 @@ export type Database = {
           delivery_disclaimer_enabled?: boolean | null
           delivery_time_text?: string | null
           id?: string
+          og_description?: string | null
+          og_image_url?: string | null
+          og_title?: string | null
           pickup_address?: string | null
           pickup_pincode?: string | null
           return_policy_enabled?: boolean | null
@@ -1253,6 +1259,9 @@ export type Database = {
           delivery_disclaimer_enabled?: boolean | null
           delivery_time_text?: string | null
           id?: string
+          og_description?: string | null
+          og_image_url?: string | null
+          og_title?: string | null
           pickup_address?: string | null
           pickup_pincode?: string | null
           return_policy_enabled?: boolean | null
