@@ -9,16 +9,16 @@ export default {
       center: true,
       padding: {
         DEFAULT: "1rem",
-        lg: "2rem",
-        xl: "2.5rem",
+        lg: "1.75rem",
+        xl: "2rem",
         "2xl": "3rem",
       },
       screens: {
-        sm: "640px",
-        md: "768px",
-        lg: "1024px",
-        xl: "1280px",
-        "2xl": "1560px",
+        sm: "100%",
+        md: "100%",
+        lg: "100%",
+        xl: "100%",
+        "2xl": "100%",
       },
     },
     extend: {
