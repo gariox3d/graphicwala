@@ -34,7 +34,7 @@ const HeroSection = () => {
       />
 
       <div className="container relative z-10 py-10 sm:py-14 lg:py-20 xl:py-24">
-        <div className="grid items-center gap-10 lg:gap-16 xl:gap-24 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+        <div className="grid items-center gap-10 lg:gap-16 xl:gap-24 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
           {/* Copy */}
           <header className="text-center lg:text-left animate-fade-in">
             <span className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
@@ -98,7 +98,7 @@ const HeroSection = () => {
 
           {/* Visual — full product visible, never cropped */}
           <div className="relative animate-scale-in">
-            <div className="relative mx-auto w-full max-w-md sm:max-w-lg lg:max-w-xl xl:max-w-2xl rounded-[2rem] border border-border bg-card p-4 sm:p-5 xl:p-6 shadow-brand">
+            <div className="relative mx-auto w-full max-w-sm sm:max-w-md lg:max-w-md xl:max-w-lg rounded-[2rem] border border-border bg-card p-3 sm:p-4 xl:p-5 shadow-brand">
               <div className="relative overflow-hidden rounded-[1.4rem] bg-white">
                 <SmartImage
                   src={card.image_url}
