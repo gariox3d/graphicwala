@@ -142,10 +142,15 @@ const ProductOverlay = ({ product, onClose }: { product: Product; onClose: () =>
         <button onClick={onClose} className="absolute top-3 right-3 z-20 bg-background/80 backdrop-blur rounded-full p-1.5 hover:bg-background transition-colors">
           <X className="h-4 w-4 text-foreground" />
         </button>
-        <div className="absolute top-3 left-3 z-10 bg-gradient-to-r from-red-500 to-orange-500 text-white text-sm font-extrabold px-3 py-1.5 rounded-full flex items-center gap-1 shadow-md">
-          <Flame className="h-4 w-4 animate-pulse" />
-          {discount}% OFF
+
+        {/* Discount badge above the image so the product photo stays clean */}
+        <div className="px-4 pt-4 pb-2 flex items-center gap-2">
+          <span className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-sm font-extrabold px-3 py-1.5 rounded-full flex items-center gap-1 shadow-md">
+            <Flame className="h-4 w-4 animate-pulse" />
+            {discount}% OFF
+          </span>
         </div>
+
         <div className="aspect-square overflow-hidden bg-muted relative">
           {images.length > 0 ? (
             <img src={images[imgIdx]} alt={product.name} className="w-full h-full object-contain bg-white transition-opacity duration-300" />
