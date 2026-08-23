@@ -27,6 +27,25 @@ const ProductGridCard = ({ product: p, badge, showDelivery = true }: Props) => {
 
   return (
     <article className="group flex h-full flex-col">
+      {/* Badge strip above the image so the product photo stays clean */}
+      <div className="mb-2 flex flex-wrap items-center gap-1.5 min-h-[22px]">
+        {badge && (
+          <span className="bg-primary px-2 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-primary-foreground">
+            {badge}
+          </span>
+        )}
+        {onSale && (
+          <span className="bg-foreground px-2 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-background">
+            -{off}%
+          </span>
+        )}
+        {!onSale && isNew(p) && (
+          <span className="bg-foreground px-2 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-background">
+            New
+          </span>
+        )}
+      </div>
+
       <Link to={href} className="relative block aspect-square bg-white overflow-hidden border border-border">
         {p.image_url ? (
           <SmartImage
@@ -44,24 +63,6 @@ const ProductGridCard = ({ product: p, badge, showDelivery = true }: Props) => {
         ) : (
           <div className="h-full w-full bg-gradient-to-br from-muted to-secondary" />
         )}
-
-        <div className="absolute top-3 left-3 flex flex-col items-start gap-1.5">
-          {badge && (
-            <span className="bg-primary px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-primary-foreground">
-              {badge}
-            </span>
-          )}
-          {onSale && (
-            <span className="bg-foreground px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-background">
-              -{off}%
-            </span>
-          )}
-          {!onSale && isNew(p) && (
-            <span className="bg-foreground px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-background">
-              New
-            </span>
-          )}
-        </div>
 
         {!p.stock_quantity && (
           <div className="absolute inset-0 bg-background/70 flex items-center justify-center">

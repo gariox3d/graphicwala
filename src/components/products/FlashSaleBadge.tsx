@@ -5,7 +5,7 @@ interface FlashSaleBadgeProps {
   salePrice: number;
   originalPrice: number;
   saleEnd: string;
-  variant?: 'card' | 'detail';
+  variant?: 'card' | 'detail' | 'inline';
 }
 
 const FlashSaleBadge = ({ salePrice, originalPrice, saleEnd, variant = 'card' }: FlashSaleBadgeProps) => {
@@ -60,6 +60,20 @@ const FlashSaleBadge = ({ salePrice, originalPrice, saleEnd, variant = 'card' }:
           <span className="bg-white/20 px-2 py-0.5 rounded font-mono font-bold">{timeLeft}</span>
           <span className="text-white/80">remaining</span>
         </div>
+      </div>
+    );
+  }
+
+  if (variant === 'inline') {
+    return (
+      <div className="inline-flex items-center gap-1">
+        <span className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs font-bold px-2 py-1 rounded-md flex items-center gap-1 shadow-sm">
+          <Flame className="h-3 w-3 animate-pulse" />
+          <span>{discount}% OFF</span>
+        </span>
+        <span className="bg-black/80 text-white text-[10px] font-mono px-2 py-1 rounded-md">
+          {timeLeft}
+        </span>
       </div>
     );
   }

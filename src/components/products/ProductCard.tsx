@@ -89,14 +89,38 @@ const ProductCard = ({ product }: ProductCardProps) => {
   };
 
   const isOutOfStock = !product.stock_quantity;
+  const isOnSale = product.sale_price && product.sale_end && new Date(product.sale_end) > new Date() &&
+    (!product.sale_start || new Date(product.sale_start) <= new Date());
 
   return (
     <div
       className="group bg-card rounded-xl overflow-hidden shadow-soft hover:shadow-brand transition-all duration-300 animate-scale-in"
       style={isOutOfStock ? { filter: 'grayscale(100%)', opacity: 0.65 } : undefined}
     >
-      <Link 
-        to={`/product/${(product as any).slug || product.id}`} 
+      {/* Badges strip above the image so the product photo stays clean */}
+      <div className="px-3 pt-3 pb-2 flex flex-wrap items-center gap-1.5 min-h-[28px]">
+        {isOnSale && (
+          <FlashSaleBadge
+            salePrice={product.sale_price!}
+            originalPrice={product.price}
+            saleEnd={product.sale_end!}
+            variant="inline"
+          />
+        )}
+        {!isOnSale && (product.stock_quantity ?? 0) <= 5 && (product.stock_quantity ?? 0) > 0 && (
+          <span className="bg-primary text-primary-foreground text-xs font-semibold px-2 py-1 rounded-md">
+            Low Stock
+          </span>
+        )}
+        {hasCustomization && (
+          <span className="bg-primary/90 text-primary-foreground text-xs font-semibold px-2 py-1 rounded-md">
+            Customizable
+          </span>
+        )}
+      </div>
+
+      <Link
+        to={`/product/${(product as any).slug || product.id}`}
         className="block relative aspect-square overflow-hidden bg-muted"
         onMouseEnter={() => {
           setIsHovered(true);
@@ -147,7 +171,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
             </span>
           </div>
         )}
-        
+
         {/* Wishlist Heart Button */}
         <WishlistButton
           isWishlisted={isWishlisted(product.id)}
@@ -155,22 +179,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           className="absolute bottom-3 right-3"
         />
 
-        {/* Flash Sale Badge */}
-        {product.sale_price && product.sale_end && new Date(product.sale_end) > new Date() && (
-          (!product.sale_start || new Date(product.sale_start) <= new Date()) && (
-            <FlashSaleBadge
-              salePrice={product.sale_price}
-              originalPrice={product.price}
-              saleEnd={product.sale_end}
-            />
-          )
-        )}
-        
-        {!product.sale_price && (product.stock_quantity ?? 0) <= 5 && (product.stock_quantity ?? 0) > 0 && (
-          <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-xs font-semibold px-2 py-1 rounded-md z-10">
-            Low Stock
-          </span>
-        )}
+        {/* Sold Out overlay kept on the image for emphasis */}
         {isOutOfStock && (
           <>
             <div className="absolute inset-0 bg-black/50 z-10 flex items-center justify-center">
@@ -179,11 +188,6 @@ const ProductCard = ({ product }: ProductCardProps) => {
               </span>
             </div>
           </>
-        )}
-        {hasCustomization && (
-          <span className="absolute top-3 right-3 bg-primary/90 text-primary-foreground text-xs font-semibold px-2 py-1 rounded-md z-10">
-            Customizable
-          </span>
         )}
       </Link>
 
