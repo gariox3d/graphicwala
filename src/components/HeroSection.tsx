@@ -36,7 +36,7 @@ const HeroSection = () => {
       <div className="container relative z-10 py-10 sm:py-14 lg:py-20 xl:py-24">
         <div className="grid items-center gap-10 lg:gap-16 xl:gap-24 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
           {/* Copy */}
-          <header className="text-center lg:text-left animate-fade-in">
+          <header className="text-center lg:text-center animate-fade-in">
             <span className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
               <Sparkles className="h-3 w-3 text-primary" aria-hidden="true" />
               Premium Custom Printing
@@ -48,11 +48,11 @@ const HeroSection = () => {
               <span className="text-primary">Elegantly Captured.</span>
             </h1>
 
-            <p className="mt-6 mx-auto lg:mx-0 max-w-xl text-base sm:text-lg xl:text-xl font-light leading-relaxed text-muted-foreground">
+            <p className="mt-6 mx-auto max-w-xl text-base sm:text-lg xl:text-xl font-light leading-relaxed text-muted-foreground">
               Quality products, carefully crafted and delivered across India.
             </p>
 
-            <div className="mt-8 flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4">
+            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 to="/products"
                 className={cn(
@@ -75,7 +75,7 @@ const HeroSection = () => {
               </Link>
             </div>
 
-            <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-3">
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
               <div className="inline-flex items-center gap-2.5 rounded-full border border-border bg-secondary px-4 py-2 text-foreground">
                 <Star className="h-4 w-4 fill-primary text-primary" aria-hidden="true" />
                 <span className="text-sm font-bold">{card.rating_value}</span>
