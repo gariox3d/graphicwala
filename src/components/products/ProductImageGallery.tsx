@@ -103,7 +103,7 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
     <div className="w-full min-w-0 max-w-full space-y-4">
       {/* Main Image */}
       <div 
-        className="relative grid w-full aspect-square max-h-[700px] place-items-center rounded-xl bg-muted group"
+        className="relative grid w-full max-w-[480px] lg:max-w-[520px] mx-auto aspect-square max-h-[55vh] lg:max-h-[480px] place-items-center rounded-xl bg-muted group"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
@@ -113,11 +113,11 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
             src={validImages[selectedIndex]}
             alt={`${productName} — photo ${selectedIndex + 1}`}
             widths={DETAIL_WIDTHS}
-            fallbackWidth={1200}
-            quality={88}
+            fallbackWidth={960}
+            quality={92}
             resize="contain"
             priority={selectedIndex === 0}
-            sizes="(max-width: 768px) 100vw, 600px"
+            sizes="(max-width: 768px) 90vw, 480px"
             className={cn(
               "block h-full w-full object-contain object-center transition-opacity duration-300",
               isTransitioning ? "opacity-70" : "opacity-100"
