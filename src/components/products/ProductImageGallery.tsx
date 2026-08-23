@@ -23,11 +23,10 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
   
 
   const handleImageChange = (index: number) => {
-    if (index === selectedIndex || isTransitioning) return;
-    setIsTransitioning(true);
+    if (index === selectedIndex) return;
     setSelectedIndex(index);
-    setTimeout(() => setIsTransitioning(false), 300);
   };
+
 
   const goToPrevious = () => {
     if (validImages.length <= 1) return;
