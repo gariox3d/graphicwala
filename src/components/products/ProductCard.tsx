@@ -117,11 +117,6 @@ const ProductCard = ({ product }: ProductCardProps) => {
             Customizable
           </span>
         )}
-        {isOutOfStock && (
-          <span className="bg-destructive text-destructive-foreground text-xs font-semibold px-2 py-1 rounded-md">
-            Sold Out
-          </span>
-        )}
       </div>
 
       <Link
