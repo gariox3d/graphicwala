@@ -89,13 +89,13 @@ const FlashCard = ({ product, onSelect }: { product: Product; onSelect: (p: Prod
               src={images[imgIdx]}
               alt={product.name}
               className="w-full h-full object-contain bg-white transition-opacity duration-500"
-              widths={[160, 240, 320]}
-              fallbackWidth={240}
-              quality={66}
+              widths={[240, 320, 480, 640]}
+              fallbackWidth={480}
+              quality={82}
               resize="contain"
-              sizes="200px"
-              width={240}
-              height={240}
+              sizes="(max-width: 768px) 240px, 320px"
+              width={480}
+              height={480}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-muted">
@@ -112,10 +112,10 @@ const FlashCard = ({ product, onSelect }: { product: Product; onSelect: (p: Prod
         </div>
 
         <div className="p-4">
-          <p className="text-xs font-semibold text-foreground line-clamp-1 leading-tight mb-1.5">{product.name}</p>
+          <p className="text-sm md:text-base font-semibold text-foreground line-clamp-1 leading-tight mb-2">{product.name}</p>
           <div className="flex items-center gap-1.5 mb-1.5">
-            <span className="text-sm font-extrabold text-primary">₹{(product.sale_price ?? 0).toLocaleString()}</span>
-            <span className="text-[10px] text-muted-foreground line-through">₹{product.price.toLocaleString()}</span>
+            <span className="text-lg md:text-xl font-extrabold text-primary">₹{(product.sale_price ?? 0).toLocaleString()}</span>
+            <span className="text-xs md:text-sm text-muted-foreground line-through">₹{product.price.toLocaleString()}</span>
           </div>
           <div className="flex items-center gap-1 bg-destructive/10 border border-destructive/20 rounded-md px-1.5 py-0.5">
             <Clock className="h-2.5 w-2.5 text-destructive flex-shrink-0" />
