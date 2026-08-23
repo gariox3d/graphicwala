@@ -44,11 +44,6 @@ const ProductGridCard = ({ product: p, badge, showDelivery = true }: Props) => {
             New
           </span>
         )}
-        {!p.stock_quantity && (
-          <span className="bg-destructive px-2 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-destructive-foreground">
-            Sold Out
-          </span>
-        )}
       </div>
 
       <Link to={href} className="relative block aspect-square bg-white overflow-hidden border border-border">
