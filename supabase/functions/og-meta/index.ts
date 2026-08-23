@@ -79,6 +79,23 @@ serve(async (req) => {
     let type = "website";
     let imageType = getImageType(image);
 
+    // Admin-configured site-wide social preview (store_settings)
+    try {
+      const { data: settings } = await supabase
+        .from("store_settings")
+        .select("og_image_url, og_title, og_description")
+        .limit(1)
+        .maybeSingle();
+      if (settings?.og_image_url) {
+        image = settings.og_image_url;
+        imageType = getImageType(image);
+      }
+      if (settings?.og_title) title = settings.og_title;
+      if (settings?.og_description) description = settings.og_description;
+    } catch (e) {
+      console.error("store_settings fetch failed", e);
+    }
+
     // If product ID is provided, fetch product details
     if (productId) {
       const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(productId);
