@@ -41,9 +41,12 @@ const CategoryShowcase = ({ categories, getImage }: Props) => {
             className={cn('w-full', i % 2 === 1 ? 'bg-secondary/40' : 'bg-background')}
           >
             <div className="container py-12 md:py-20 xl:py-24">
-              <div className="grid items-center gap-8 md:gap-14 xl:gap-20 lg:grid-cols-2">
+              <div className="mx-auto max-w-5xl grid items-center gap-8 md:gap-10 lg:grid-cols-2">
                 <Reveal className={cn('order-1', reversed ? 'lg:order-2' : 'lg:order-1')}>
-                  <div className="relative mx-auto w-full max-w-[16rem] sm:max-w-xs md:max-w-sm lg:max-w-md overflow-hidden rounded-[1.75rem] border border-border bg-white">
+                  <div className={cn(
+                    'relative w-full max-w-[16rem] sm:max-w-xs md:max-w-sm overflow-hidden rounded-[1.75rem] border border-border bg-white mx-auto',
+                    reversed ? 'lg:ml-auto lg:mr-0' : 'lg:mr-auto lg:ml-0'
+                  )}>
                     {img ? (
                       <SmartImage
                         src={img}
