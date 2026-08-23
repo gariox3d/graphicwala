@@ -44,11 +44,11 @@ const StickyAddToCart = ({ product, onAddToCart, onBuyNow }: StickyAddToCartProp
             )}
           </div>
         </div>
-        <Button size="sm" variant="outline" onClick={onAddToCart}>
+        <Button size="sm" variant="outline" className="shrink-0" onClick={onAddToCart}>
           <ShoppingCart className="h-4 w-4" />
         </Button>
-        <Button size="sm" variant="hero" onClick={onBuyNow}>
-          <Zap className="h-4 w-4 mr-1" />
+        <Button size="sm" variant="hero" className="shrink-0" onClick={onBuyNow}>
+          <Zap className="h-4 w-4" />
           Buy
         </Button>
       </div>
