@@ -23,11 +23,10 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
   
 
   const handleImageChange = (index: number) => {
-    if (index === selectedIndex || isTransitioning) return;
-    setIsTransitioning(true);
+    if (index === selectedIndex) return;
     setSelectedIndex(index);
-    setTimeout(() => setIsTransitioning(false), 300);
   };
+
 
   const goToPrevious = () => {
     if (validImages.length <= 1) return;
@@ -109,21 +108,32 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
         onTouchEnd={onTouchEnd}
       >
         <div className="absolute inset-0 grid place-items-center bg-white p-2 md:p-4">
-          <SmartImage
-            src={validImages[selectedIndex]}
-            alt={`${productName} — photo ${selectedIndex + 1}`}
-            widths={DETAIL_WIDTHS}
-            fallbackWidth={960}
-            quality={92}
-            resize="contain"
-            priority={selectedIndex === 0}
-            sizes="(max-width: 768px) 90vw, 480px"
-            className={cn(
-              "block h-full w-full object-contain object-center transition-opacity duration-300",
-              isTransitioning ? "opacity-70" : "opacity-100"
-            )}
-          />
+          {validImages.map((url, index) => {
+            const isNeighbour =
+              Math.abs(index - selectedIndex) <= 1 ||
+              (selectedIndex === 0 && index === validImages.length - 1) ||
+              (selectedIndex === validImages.length - 1 && index === 0);
+            return (
+              <SmartImage
+                key={url + index}
+                src={url}
+                alt={`${productName} — photo ${index + 1}`}
+                widths={DETAIL_WIDTHS}
+                fallbackWidth={960}
+                quality={92}
+                resize="contain"
+                priority={isNeighbour}
+                sizes="(max-width: 768px) 90vw, 480px"
+                className={cn(
+                  "col-start-1 row-start-1 block h-full w-full object-contain object-center transition-opacity duration-150",
+                  index === selectedIndex ? "opacity-100" : "opacity-0 pointer-events-none"
+                )}
+                aria-hidden={index !== selectedIndex}
+              />
+            );
+          })}
         </div>
+
         
         {/* Navigation arrows (only show if more than 1 image) */}
         {validImages.length > 1 && (
