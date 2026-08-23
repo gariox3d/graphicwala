@@ -92,15 +92,15 @@ const HeroSection = () => {
             </header>
 
             {/* Visual */}
-            <div className="relative h-72 sm:h-80 lg:h-auto lg:min-h-[520px] xl:min-h-[600px] 2xl:min-h-[660px] animate-scale-in">
+            <div className="relative h-64 sm:h-80 lg:h-auto lg:min-h-[460px] xl:min-h-[520px] bg-white animate-scale-in">
               <SmartImage
                 src={card.image_url}
                 alt="Personalised photo frames, mugs, t-shirts and keychains by Graphicwala"
-                className="absolute inset-0 h-full w-full object-cover object-center"
+                className="absolute inset-0 h-full w-full object-contain object-center p-3 sm:p-4"
                 widths={[480, 720, 960, 1280]}
                 fallbackWidth={960}
                 quality={85}
-                resize="cover"
+                resize="contain"
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 priority
                 width={960}
