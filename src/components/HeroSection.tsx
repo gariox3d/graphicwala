@@ -52,7 +52,7 @@ const HeroSection = () => {
               Quality products, carefully crafted and delivered across India.
             </p>
 
-            <div className="mt-8 flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-4">
+            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 to="/products"
                 className={cn(
@@ -75,7 +75,7 @@ const HeroSection = () => {
               </Link>
             </div>
 
-            <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-3">
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
               <div className="inline-flex items-center gap-2.5 rounded-full border border-border bg-secondary px-4 py-2 text-foreground">
                 <Star className="h-4 w-4 fill-primary text-primary" aria-hidden="true" />
                 <span className="text-sm font-bold">{card.rating_value}</span>
