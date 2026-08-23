@@ -5,7 +5,7 @@ interface FlashSaleBadgeProps {
   salePrice: number;
   originalPrice: number;
   saleEnd: string;
-  variant?: 'card' | 'detail';
+  variant?: 'card' | 'detail' | 'inline';
 }
 
 const FlashSaleBadge = ({ salePrice, originalPrice, saleEnd, variant = 'card' }: FlashSaleBadgeProps) => {
