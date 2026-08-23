@@ -14,7 +14,7 @@ import StatsCounter from '@/components/StatsCounter';
 import LazySection from '@/components/LazySection';
 import TrustStrip from '@/components/home/TrustStrip';
 import Bestsellers from '@/components/home/Bestsellers';
-import CategoryGrid from '@/components/home/CategoryGrid';
+import CategoryShowcase from '@/components/home/CategoryShowcase';
 import HowItWorks from '@/components/home/HowItWorks';
 import WhyBuyFromUs from '@/components/home/WhyBuyFromUs';
 import TrustPanel from '@/components/home/TrustPanel';
@@ -147,7 +147,7 @@ const Index = () => {
         </section>
 
         {/* Categories */}
-        <CategoryGrid categories={categories} getImage={getCategoryImage} />
+        <CategoryShowcase categories={categories} getImage={getCategoryImage} />
 
         {/* 3-step custom order flow */}
         <HowItWorks />
