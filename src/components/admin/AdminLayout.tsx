@@ -129,6 +129,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/pickup-earnings', label: 'Pickup Earnings', icon: Store },
     { path: '/admin/billing', label: 'Bill / Invoice', icon: FileText },
     { path: '/admin/hero-showcase', label: 'Hero Showcase', icon: ImageIcon },
+    { path: '/admin/social-preview', label: 'Social Preview (OG)', icon: ImageIcon },
   ];
 
   const handleSignOut = async () => {
