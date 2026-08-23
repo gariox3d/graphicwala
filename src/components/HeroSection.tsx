@@ -106,10 +106,6 @@ const HeroSection = () => {
                 width={960}
                 height={1200}
               />
-              <div
-                className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-foreground/35 to-transparent"
-                aria-hidden="true"
-              />
 
               {/* Floating price chip */}
               <div className="absolute bottom-5 left-5 rounded-full border border-border bg-card px-5 py-2.5 shadow-brand">
