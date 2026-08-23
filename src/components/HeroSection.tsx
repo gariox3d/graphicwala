@@ -108,7 +108,7 @@ const HeroSection = () => {
               />
 
               {/* Floating price chip */}
-              <div className="absolute bottom-5 left-5 rounded-full border border-border bg-card px-5 py-2.5 shadow-brand">
+              <div className="absolute bottom-5 right-5 rounded-full border border-border bg-card px-5 py-2.5 shadow-brand">
                 <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                   {card.price_prefix}
                 </span>
