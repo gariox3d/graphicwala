@@ -222,21 +222,21 @@ const ProductCard = ({ product }: ProductCardProps) => {
             <Button
               variant="outline"
               size="sm"
-              className="flex-1"
+              className="flex-1 shrink-0 px-3 sm:px-4"
               onClick={handleAddToCart}
               disabled={!product.stock_quantity}
             >
-              <ShoppingCart className="h-4 w-4 mr-1" />
+              <ShoppingCart className="h-4 w-4" />
               Cart
             </Button>
             <Button
               variant="hero"
               size="sm"
-              className="flex-1"
+              className="flex-1 shrink-0 px-3 sm:px-4"
               onClick={handleBuyNow}
               disabled={!product.stock_quantity}
             >
-              <Zap className="h-4 w-4 mr-1" />
+              <Zap className="h-4 w-4" />
               Buy
             </Button>
           </div>
