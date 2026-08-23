@@ -134,8 +134,6 @@ const Index = () => {
         {/* Trust strip — conversion proof above the fold */}
         <TrustStrip />
 
-        {/* Product highlights — featured categories with image + text */}
-        <ProductHighlights />
 
         {/* Flash Sale Banner — shown only when active sales exist */}
         <FlashSaleBanner />
