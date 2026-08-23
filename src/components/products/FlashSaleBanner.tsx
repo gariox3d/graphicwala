@@ -78,9 +78,12 @@ const FlashCard = ({ product, onSelect }: { product: Product; onSelect: (p: Prod
       onClick={() => onSelect(product)}
     >
       <div className="relative overflow-hidden rounded-2xl border-2 border-orange-400/50 bg-card shadow-md hover:shadow-xl transition-all duration-300 group-hover:-translate-y-1">
-        <div className="absolute top-2 left-2 z-10 bg-gradient-to-r from-red-500 to-orange-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-md">
-          <Flame className="h-3 w-3 animate-pulse" />
-          {discount}% OFF
+        {/* Discount badge above the image so the product photo stays clean */}
+        <div className="px-2 pt-2 pb-1.5 flex items-center gap-1.5">
+          <span className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-md">
+            <Flame className="h-3 w-3 animate-pulse" />
+            {discount}% OFF
+          </span>
         </div>
 
         <div className="aspect-square overflow-hidden bg-muted relative">
