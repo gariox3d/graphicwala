@@ -44,7 +44,7 @@ const HeroSection = () => {
 
             <h1 className="mt-6 font-outfit text-[2.6rem] font-semibold leading-[1.03] tracking-[-0.03em] text-foreground sm:text-6xl lg:text-[4.2rem] xl:text-[5.2rem] 2xl:text-[5.8rem]">
               <span className="block animate-hero-line-1">Moments,</span>
-              <span className="block text-primary animate-hero-line-2 animate-hero-gradient-text bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-primary">Elegantly Captured.</span>
+              <span className="block text-primary animate-hero-line-2">Elegantly Captured.</span>
             </h1>
 
             <p className="mt-6 mx-auto max-w-xl text-base sm:text-lg xl:text-xl font-light leading-relaxed text-muted-foreground animate-hero-subtitle-float">
