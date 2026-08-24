@@ -31,7 +31,7 @@ const SmartImage = ({
   alt,
   widths = CARD_WIDTHS,
   fallbackWidth,
-  quality = 92,
+  quality = 100,
   resize = 'contain',
   priority = false,
   sizes,
