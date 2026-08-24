@@ -57,9 +57,9 @@ const CustomerGallery = () => {
                 src={item.image_url}
                 alt={item.caption || `Photo by ${item.customer_name}`}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                widths={[240, 320, 480]}
-                fallbackWidth={320}
-                quality={66}
+                widths={[320, 480, 640]}
+                fallbackWidth={480}
+                quality={88}
                 resize="cover"
                 sizes="(max-width: 640px) 45vw, 240px"
                 width={320}

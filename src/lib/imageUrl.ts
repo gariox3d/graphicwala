@@ -12,16 +12,16 @@ const OBJECT_PATH = '/storage/v1/object/public/';
 const RENDER_PATH = '/storage/v1/render/image/public/';
 
 /** Widths we ever request. Keeping the list short maximises CDN cache hits. */
-export const CARD_WIDTHS = [320, 480, 768, 1024];
+export const CARD_WIDTHS = [400, 600, 800, 1200, 1600];
 export const DETAIL_WIDTHS = [480, 768, 1024, 1440, 1920];
-export const THUMB_WIDTHS = [120, 240, 320];
+export const THUMB_WIDTHS = [160, 240, 320, 480];
 export const BANNER_WIDTHS = [480, 768, 1024, 1440, 1920];
 
 /**
  * Minimum encode quality. Anything lower starts showing visible artefacts on
  * photographs, which is what made uploaded images look "blurry".
  */
-export const MIN_QUALITY = 80;
+export const MIN_QUALITY = 88;
 
 export interface ImageTransform {
   width: number;
@@ -37,7 +37,7 @@ const isTransformable = (url: string) =>
 /** Returns a resized + auto-format URL, or the original when not transformable. */
 export const optimizedImage = (
   url: string | null | undefined,
-  { width, quality = 82, resize = 'contain' }: ImageTransform,
+  { width, quality = 90, resize = 'contain' }: ImageTransform,
 ): string => {
   if (!url) return '';
   if (!isTransformable(url)) return url;
@@ -50,7 +50,7 @@ export const optimizedImage = (
 export const imageSrcSet = (
   url: string | null | undefined,
   widths: number[],
-  { quality = 82, resize = 'contain' }: Omit<ImageTransform, 'width'> = {},
+  { quality = 90, resize = 'contain' }: Omit<ImageTransform, 'width'> = {},
 ): string | undefined => {
   if (!url || !isTransformable(url)) return undefined;
   return widths
