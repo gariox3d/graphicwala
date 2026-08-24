@@ -223,6 +223,11 @@
     animation: heroGradientText 5s ease infinite;
   }
 
+  .animate-hero-headline-float {
+    animation: heroHeadlineFloat 8s ease-in-out infinite;
+  }
+
+
 
 
   /* Hide scrollbars on horizontal luxury rails */
