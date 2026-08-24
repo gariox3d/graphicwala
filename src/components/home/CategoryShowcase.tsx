@@ -52,9 +52,9 @@ const CategoryShowcase = ({ categories, getImage }: Props) => {
                         src={img}
                         alt={`${category.name} by Graphic Wala`}
                         className="h-auto w-full object-contain bg-white transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.03]"
-                        widths={[480, 720, 960, 1280]}
-                        fallbackWidth={960}
-                        quality={82}
+                        widths={[600, 900, 1200, 1600]}
+                        fallbackWidth={1200}
+                        quality={92}
                         resize="contain"
                         sizes="(max-width: 1024px) 92vw, 46vw"
                         width={960}

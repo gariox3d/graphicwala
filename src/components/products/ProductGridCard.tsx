@@ -53,8 +53,8 @@ const ProductGridCard = ({ product: p, badge, showDelivery = true }: Props) => {
             alt={`${p.name}${p.categories?.name ? ` — ${p.categories.name}` : ''}`}
             className="h-full w-full object-contain bg-white transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.06]"
             widths={CARD_WIDTHS}
-            fallbackWidth={480}
-            quality={68}
+            fallbackWidth={800}
+            quality={92}
             resize="contain"
             sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 280px"
             width={600}

@@ -135,8 +135,8 @@ const ProductCard = ({ product }: ProductCardProps) => {
               src={primaryImage}
               alt={`${product.name}${product.categories?.name ? ` — ${product.categories.name}` : ''}`}
               widths={CARD_WIDTHS}
-              fallbackWidth={480}
-              quality={68}
+              fallbackWidth={800}
+              quality={92}
               resize="contain"
               sizes="(max-width: 640px) 92vw, (max-width: 1024px) 45vw, 300px"
               className={cn(
@@ -151,8 +151,8 @@ const ProductCard = ({ product }: ProductCardProps) => {
                 src={secondaryImage}
                 alt={`${product.name} — alternate view`}
                 widths={CARD_WIDTHS}
-                fallbackWidth={480}
-                quality={68}
+                fallbackWidth={800}
+                quality={92}
                 resize="contain"
                 sizes="(max-width: 640px) 92vw, (max-width: 1024px) 45vw, 300px"
                 className={cn(

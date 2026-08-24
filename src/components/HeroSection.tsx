@@ -105,7 +105,7 @@ const HeroSection = () => {
                   className="h-auto w-full object-contain bg-white"
                   widths={[480, 720, 960, 1280, 1600]}
                   fallbackWidth={1280}
-                  quality={88}
+                  quality={94}
                   resize="contain"
                   sizes="(max-width: 1024px) 92vw, 50vw"
                   priority
