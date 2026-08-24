@@ -13,9 +13,9 @@
 export const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10MB
 export const MIN_RECOMMENDED_WIDTH = 1200;
 /** Web ceiling: anything wider is downscaled (still very high-res). */
-export const MASTER_MAX_WIDTH = 2560;
+export const MASTER_MAX_WIDTH = 4000;
 /** Single-pass WebP quality — sharp, professional, still compact. */
-export const WEBP_QUALITY = 0.86;
+export const WEBP_QUALITY = 0.97;
 
 export const ACCEPTED_MIME = ['image/jpeg', 'image/png', 'image/webp'] as const;
 export const ACCEPT_ATTR = 'image/jpeg,image/jpg,image/png,image/webp';
@@ -160,7 +160,9 @@ export const prepareImageForUpload = async (file: File, meta: ImageMeta): Promis
   });
 
   if (meta.type === 'image/png' && (await hasAlpha(file))) return keep();
-  if (meta.type === 'image/webp' && meta.width <= MASTER_MAX_WIDTH && file.size <= 900 * 1024) return keep();
+  // Originals that already fit the web ceiling are uploaded untouched (no re-encode).
+  if (meta.width <= MASTER_MAX_WIDTH) return keep();
+  if (meta.type === 'image/webp' && meta.width <= MASTER_MAX_WIDTH) return keep();
 
   const scale = meta.width > MASTER_MAX_WIDTH ? MASTER_MAX_WIDTH / meta.width : 1; // never upscale
   const width = Math.round(meta.width * scale);
