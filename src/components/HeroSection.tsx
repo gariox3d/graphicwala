@@ -36,9 +36,9 @@ const HeroSection = () => {
       <div className="container relative z-10 py-10 sm:py-14 lg:py-20 xl:py-24">
         <div className="grid items-center gap-10 lg:gap-16 xl:gap-24 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
           {/* Copy */}
-          <header className="text-center lg:text-center animate-fade-in">
+          <header className="text-center lg:text-center animate-hero-slow-fade">
             <span className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-              <Sparkles className="h-3 w-3 text-primary" aria-hidden="true" />
+              <Sparkles className="h-3 w-3 text-primary animate-sparkle-spin" aria-hidden="true" />
               Premium Custom Printing
             </span>
 
