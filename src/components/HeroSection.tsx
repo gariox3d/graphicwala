@@ -29,16 +29,16 @@ const HeroSection = () => {
     >
       {/* Soft ambient wash — premium, clean, no busy photo background */}
       <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_60%_at_88%_10%,hsl(var(--primary)/0.10),transparent_62%),radial-gradient(50%_50%_at_0%_100%,hsl(var(--muted)),transparent_72%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_60%_at_88%_10%,hsl(var(--primary)/0.10),transparent_62%),radial-gradient(50%_50%_at_0%_100%,hsl(var(--muted)),transparent_72%)] animate-hero-loop-glow"
         aria-hidden="true"
       />
 
       <div className="container relative z-10 py-10 sm:py-14 lg:py-20 xl:py-24">
         <div className="grid items-center gap-10 lg:gap-16 xl:gap-24 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
           {/* Copy */}
-          <header className="text-center lg:text-center animate-fade-in">
+          <header className="text-center lg:text-center animate-hero-slow-fade">
             <span className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-              <Sparkles className="h-3 w-3 text-primary" aria-hidden="true" />
+              <Sparkles className="h-3 w-3 text-primary animate-sparkle-spin" aria-hidden="true" />
               Premium Custom Printing
             </span>
 
@@ -97,8 +97,8 @@ const HeroSection = () => {
           </header>
 
           {/* Visual — full product visible, never cropped */}
-          <div className="relative animate-scale-in">
-            <div className="relative mx-auto w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl rounded-[2rem] border border-border bg-card p-3 sm:p-4 xl:p-6 shadow-brand">
+          <div className="relative animate-hero-slow-scale">
+            <div className="relative mx-auto w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl rounded-[2rem] border border-border bg-card p-3 sm:p-4 xl:p-6 shadow-brand animate-hero-float">
               <div className="relative overflow-hidden rounded-[1.4rem] bg-white">
                 <SmartImage
                   src={card.image_url}
@@ -116,7 +116,7 @@ const HeroSection = () => {
               </div>
 
               {/* Floating price chip */}
-              <div className="absolute -bottom-4 left-6 sm:left-10 rounded-full border border-border bg-card px-5 py-3 shadow-brand">
+              <div className="absolute -bottom-4 left-6 sm:left-10 rounded-full border border-border bg-card px-5 py-3 shadow-brand animate-hero-chip-pulse">
                 <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                   {card.price_prefix}
                 </span>

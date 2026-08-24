@@ -175,6 +175,32 @@
     animation: float 3s ease-in-out infinite;
   }
 
+  /* Slow-motion hero animations */
+  .animate-hero-float {
+    animation: heroFloat 8s ease-in-out infinite;
+  }
+
+  .animate-hero-slow-fade {
+    animation: heroSlowFade 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .animate-hero-slow-scale {
+    animation: heroSlowScale 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .animate-hero-loop-glow {
+    animation: heroLoopGlow 12s ease-in-out infinite;
+  }
+
+  .animate-hero-chip-pulse {
+    animation: heroChipPulse 4s ease-in-out infinite;
+  }
+
+  .animate-sparkle-spin {
+    animation: sparkleSpin 5s linear infinite;
+  }
+
+
   /* Hide scrollbars on horizontal luxury rails */
   .no-scrollbar {
     -ms-overflow-style: none;
@@ -265,6 +291,76 @@ html {
     transform: translateY(-10px);
   }
 }
+
+/* Slow-motion hero animations */
+@keyframes heroFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-12px) rotate(0.5deg);
+  }
+  66% {
+    transform: translateY(-6px) rotate(-0.3deg);
+  }
+}
+
+@keyframes heroSlowFade {
+  0% {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroSlowScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.92) translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes heroLoopGlow {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes heroChipPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+  }
+  50% {
+    transform: scale(1.03);
+    box-shadow: 0 14px 50px rgba(0, 0, 0, 0.16);
+  }
+}
+
+@keyframes sparkleSpin {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.15);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
 
 /* ============================================
    VALENTINE THEME STYLES
