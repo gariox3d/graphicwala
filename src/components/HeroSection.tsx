@@ -36,19 +36,18 @@ const HeroSection = () => {
       <div className="container relative z-10 py-10 sm:py-14 lg:py-20 xl:py-24">
         <div className="grid items-center gap-10 lg:gap-16 xl:gap-24 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
           {/* Copy */}
-          <header className="text-center lg:text-center animate-hero-slow-fade">
-            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+          <header className="text-center lg:text-center">
+            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground animate-hero-text-reveal">
               <Sparkles className="h-3 w-3 text-primary animate-sparkle-spin" aria-hidden="true" />
               Premium Custom Printing
             </span>
 
-            <h1 className="mt-6 font-outfit text-[2.6rem] font-semibold leading-[1.03] tracking-[-0.03em] text-foreground sm:text-6xl lg:text-[4.2rem] xl:text-[5.2rem] 2xl:text-[5.8rem]">
-              Moments,
-              <br />
-              <span className="text-primary">Elegantly Captured.</span>
+            <h1 className="mt-6 font-outfit text-[2.6rem] font-semibold leading-[1.03] tracking-[-0.03em] text-foreground sm:text-6xl lg:text-[4.2rem] xl:text-[5.2rem] 2xl:text-[5.8rem] animate-hero-headline-float">
+              <span className="block animate-hero-line-1">Moments,</span>
+              <span className="block text-primary animate-hero-line-2">Elegantly Captured.</span>
             </h1>
 
-            <p className="mt-6 mx-auto max-w-xl text-base sm:text-lg xl:text-xl font-light leading-relaxed text-muted-foreground">
+            <p className="mt-6 mx-auto max-w-xl text-base sm:text-lg xl:text-xl font-light leading-relaxed text-muted-foreground animate-hero-subtitle-float">
               Quality products, carefully crafted and delivered across India.
             </p>
 
