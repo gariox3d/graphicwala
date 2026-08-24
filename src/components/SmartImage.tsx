@@ -31,7 +31,7 @@ const SmartImage = ({
   alt,
   widths = CARD_WIDTHS,
   fallbackWidth,
-  quality = 82,
+  quality = 92,
   resize = 'contain',
   priority = false,
   sizes,
@@ -44,8 +44,12 @@ const SmartImage = ({
   const [stage, setStage] = useState(0);
 
   // Account for high-DPR screens on the non-srcset fallback so the bitmap is
-  // never upscaled by the browser (a common source of "blurry" images).
-  const dpr = typeof window !== 'undefined' ? Math.min(window.devicePixelRatio || 1, 2) : 1;
+  // never upscaled by the browser. A 1.5x floor keeps standard desktop
+  // monitors (dpr = 1) crisp instead of pixel-exact and soft.
+  const dpr =
+    typeof window !== 'undefined'
+      ? Math.min(Math.max(window.devicePixelRatio || 1, 1.5), 2.5)
+      : 1.5;
   const baseWidth = fallbackWidth ?? widths[widths.length - 1];
   const requestWidth = Math.min(Math.round(baseWidth * dpr), widths[widths.length - 1] * 2);
   const optimized = optimizedImage(src, { width: requestWidth, quality, resize });
