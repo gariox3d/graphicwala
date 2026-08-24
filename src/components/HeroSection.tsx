@@ -29,7 +29,7 @@ const HeroSection = () => {
     >
       {/* Soft ambient wash — premium, clean, no busy photo background */}
       <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_60%_at_88%_10%,hsl(var(--primary)/0.10),transparent_62%),radial-gradient(50%_50%_at_0%_100%,hsl(var(--muted)),transparent_72%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(60%_60%_at_88%_10%,hsl(var(--primary)/0.10),transparent_62%),radial-gradient(50%_50%_at_0%_100%,hsl(var(--muted)),transparent_72%)] animate-hero-loop-glow"
         aria-hidden="true"
       />
 
