@@ -200,6 +200,30 @@
     animation: sparkleSpin 5s linear infinite;
   }
 
+  .animate-hero-text-reveal {
+    animation: heroTextReveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .animate-hero-line-1 {
+    animation: heroLineReveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+    opacity: 0;
+  }
+
+  .animate-hero-line-2 {
+    animation: heroLineReveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+    opacity: 0;
+  }
+
+  .animate-hero-subtitle-float {
+    animation: heroSubtitleFloat 6s ease-in-out infinite;
+  }
+
+  .animate-hero-gradient-text {
+    background-size: 200% auto;
+    animation: heroGradientText 5s ease infinite;
+  }
+
+
 
   /* Hide scrollbars on horizontal luxury rails */
   .no-scrollbar {
