@@ -97,8 +97,8 @@ const HeroSection = () => {
           </header>
 
           {/* Visual — full product visible, never cropped */}
-          <div className="relative animate-scale-in">
-            <div className="relative mx-auto w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl rounded-[2rem] border border-border bg-card p-3 sm:p-4 xl:p-6 shadow-brand">
+          <div className="relative animate-hero-slow-scale">
+            <div className="relative mx-auto w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl rounded-[2rem] border border-border bg-card p-3 sm:p-4 xl:p-6 shadow-brand animate-hero-float">
               <div className="relative overflow-hidden rounded-[1.4rem] bg-white">
                 <SmartImage
                   src={card.image_url}
@@ -116,7 +116,7 @@ const HeroSection = () => {
               </div>
 
               {/* Floating price chip */}
-              <div className="absolute -bottom-4 left-6 sm:left-10 rounded-full border border-border bg-card px-5 py-3 shadow-brand">
+              <div className="absolute -bottom-4 left-6 sm:left-10 rounded-full border border-border bg-card px-5 py-3 shadow-brand animate-hero-chip-pulse">
                 <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                   {card.price_prefix}
                 </span>
