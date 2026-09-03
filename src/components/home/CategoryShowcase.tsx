@@ -16,101 +16,72 @@ interface Props {
 const CategoryShowcase = ({ categories, getImage }: Props) => {
   if (!categories.length) return null;
 
+  const preferredNames = ['photo frame', 'ceramic mug', 't-shirt', 'acrylic keychain'];
+  const featured = preferredNames
+    .map((name) => categories.find((category) => category.name.toLowerCase().includes(name)))
+    .filter((category): category is Category => Boolean(category));
+  const displayCategories = [...featured, ...categories.filter((category) => !featured.some((item) => item.id === category.id))].slice(0, 4);
+
   return (
-    <section className="bg-background" aria-labelledby="categories-heading">
-      <div className="container pt-16 md:pt-24 pb-4 md:pb-8">
+    <section className="bg-secondary/45 py-16 md:py-24" aria-labelledby="categories-heading">
+      <div className="container">
         <Reveal as="header" className="text-center max-w-3xl mx-auto">
-          <p className="eyebrow mb-3">Shop by Category</p>
-          <h2 id="categories-heading" className="display-title text-4xl md:text-5xl xl:text-6xl tracking-[-0.03em]">
-            What would you like to personalise?
+          <p className="eyebrow mb-3">Made for you</p>
+          <h2 id="categories-heading" className="display-title text-3xl md:text-5xl">
+            Pick your perfect gift
           </h2>
           <p className="mt-5 text-base md:text-lg font-light text-muted-foreground">
             Every product printed to order, checked by hand, delivered across India.
           </p>
         </Reveal>
-      </div>
-
-      {categories.map((category, i) => {
+        <div className="mt-10 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
+      {displayCategories.map((category, i) => {
         const img = getImage(category.name, category.image_url ?? null);
         const slug = categorySlug(category.name);
-        const reversed = i % 2 === 1;
 
         return (
-          <div
-            key={category.id}
-            className={cn('w-full', i % 2 === 1 ? 'bg-secondary/40' : 'bg-background')}
-          >
-            <div className="container py-12 md:py-20 xl:py-24">
-              <div className="mx-auto max-w-5xl grid items-center gap-8 md:gap-10 lg:grid-cols-2">
-                <Reveal className={cn('order-1', reversed ? 'lg:order-2' : 'lg:order-1')}>
-                  <div className={cn(
-                    'relative w-full max-w-[16rem] sm:max-w-xs md:max-w-sm overflow-hidden rounded-[1.75rem] border border-border bg-white mx-auto',
-                    reversed ? 'lg:ml-auto lg:mr-0' : 'lg:mr-auto lg:ml-0'
-                  )}>
+          <Reveal key={category.id} delay={i * 70} className="h-full">
+            <Link
+              to={`/category/${slug}`}
+              className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition duration-500 hover:-translate-y-1 hover:shadow-brand"
+              aria-label={`Shop ${category.name} online with All India delivery`}
+            >
+                  <div className="relative aspect-square overflow-hidden bg-background">
                     {img ? (
                       <SmartImage
                         src={img}
                         alt={`${category.name} by Graphic Wala`}
-                        className="h-auto w-full object-contain bg-white transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.03]"
-                        widths={[600, 900, 1200, 1600]}
-                        fallbackWidth={1200}
-                        quality={92}
+                        className="h-full w-full object-contain bg-background p-3 transition-transform duration-700 group-hover:scale-105 sm:p-5"
+                        widths={[360, 600, 900]}
+                        fallbackWidth={900}
+                        quality={95}
                         resize="contain"
-                        sizes="(max-width: 1024px) 92vw, 46vw"
-                        width={960}
-                        height={960}
+                        sizes="(max-width: 640px) 48vw, (max-width: 1024px) 24vw, 300px"
+                        width={900}
+                        height={900}
                       />
                     ) : (
                       <div className="aspect-square bg-gradient-to-br from-primary/12 to-foreground/10" />
                     )}
+                    <span className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-sm transition-transform duration-300 group-hover:rotate-45">
+                      <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                    </span>
                   </div>
-                </Reveal>
-
-                <Reveal
-                  delay={90}
-                  className={cn(
-                    'order-2 text-center lg:text-left',
-                    reversed ? 'lg:order-1' : 'lg:order-2'
-                  )}
-                >
-                  <h3 className="display-title text-3xl md:text-5xl xl:text-6xl tracking-[-0.03em]">
+                  <div className="flex flex-1 flex-col p-4 sm:p-5">
+                  <h3 className="display-title text-lg sm:text-xl">
                     {category.name}
                   </h3>
-                  <p className="mt-4 mx-auto lg:mx-0 max-w-lg text-base md:text-lg font-light leading-relaxed text-muted-foreground">
+                  <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-muted-foreground sm:text-sm">
                     {category.description || getCategoryCopy(category.name)}
                   </p>
-
-                  <div className="mt-8 flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-3">
-                    <Link
-                      to={`/category/${slug}`}
-                      className={cn(
-                        buttonVariants({ variant: 'hero', size: 'lg' }),
-                        'group w-full sm:w-auto gap-2 rounded-full'
-                      )}
-                      aria-label={`Shop ${category.name} online with All India delivery`}
-                    >
-                      Shop Now
-                      <ArrowRight
-                        className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
-                        aria-hidden="true"
-                      />
-                    </Link>
-                    <Link
-                      to="/products"
-                      className={cn(
-                        buttonVariants({ variant: 'outline', size: 'lg' }),
-                        'w-full sm:w-auto rounded-full'
-                      )}
-                    >
-                      Explore
-                    </Link>
+                  <span className="mt-4 text-sm font-semibold text-primary">Explore collection</span>
                   </div>
-                </Reveal>
-              </div>
-            </div>
-          </div>
+            </Link>
+          </Reveal>
         );
       })}
+        </div>
+      </div>
     </section>
   );
 };
