@@ -22,6 +22,7 @@ interface DesignUploadProps {
   onUploadComplete: (designUrls: Record<string, string>) => void;
   existingDesigns?: Record<string, string>;
   isCartMode?: boolean;
+  embedded?: boolean;
 }
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -34,6 +35,7 @@ const DesignUpload = ({
   onUploadComplete,
   existingDesigns = {},
   isCartMode = false,
+  embedded = false,
 }: DesignUploadProps) => {
   const { user } = useAuth();
   const [uploading, setUploading] = useState<Record<string, boolean>>({});
@@ -136,8 +138,8 @@ const DesignUpload = ({
 
   return (
     <>
-      <Card className={isCartMode ? 'border-primary/30' : ''}>
-        <CardHeader className="pb-3">
+      <Card className={`${isCartMode ? 'border-primary/30' : ''} ${embedded ? 'border-0 shadow-none' : ''}`}>
+        <CardHeader className={embedded ? 'px-0 pb-3 pt-0' : 'pb-3'}>
           <CardTitle className="flex items-center gap-2 text-lg">
             <Image className="h-5 w-5 text-primary" />
             {isCartMode ? `Upload Designs - ${productName}` : 'Customize Your Product'}
@@ -154,7 +156,7 @@ const DesignUpload = ({
             </p>
           )}
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className={embedded ? 'space-y-4 px-0 pb-0' : 'space-y-4'}>
           {uploadConfig.map((field) => (
             <div key={field.id} className="space-y-2">
               <div className="flex items-center justify-between">

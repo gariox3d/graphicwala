@@ -12,7 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Product, UploadField, BUSINESS_NAME } from '@/lib/types';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
-import DesignUpload from '@/components/DesignUpload';
+import ProductCustomizerCard from '@/components/products/ProductCustomizerCard';
 import DeliveryInfoBanner from '@/components/DeliveryInfoBanner';
 import SupportContact from '@/components/SupportContact';
 import ShareButton from '@/components/ShareButton';
@@ -552,12 +552,12 @@ const ProductDetail = () => {
 
               {/* Customization Section */}
               {uploadConfig.length > 0 && (
-                <DesignUpload
+                <ProductCustomizerCard
                   productId={product.id}
                   productName={product.name}
                   uploadConfig={uploadConfig}
+                  designUrls={designUrls}
                   onUploadComplete={(urls) => setDesignUrls(urls)}
-                  existingDesigns={designUrls}
                 />
               )}
 
