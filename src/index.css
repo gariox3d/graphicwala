@@ -394,6 +394,18 @@ html {
   }
 }
 
+@keyframes shimmerLoop {
+  0% {
+    transform: translateX(-100%);
+  }
+  55% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
 /* Hero text animations */
 @keyframes heroTextReveal {
   0% {
