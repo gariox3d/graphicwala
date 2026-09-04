@@ -10,7 +10,7 @@ interface Props {
 }
 
 const Bestsellers = ({ products, loading }: Props) => (
-  <section id="products" className="py-16 md:py-24 xl:py-28 bg-secondary/40 scroll-mt-20" aria-labelledby="bestsellers-heading">
+  <section className="py-16 md:py-24 xl:py-28 bg-secondary/40" aria-labelledby="bestsellers-heading">
     <div className="container">
       <Reveal as="header" className="text-center max-w-3xl mx-auto mb-14">
         <p className="eyebrow mb-3">Curated Excellence</p>
