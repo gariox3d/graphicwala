@@ -200,6 +200,10 @@
     animation: sparkleSpin 5s linear infinite;
   }
 
+  .animate-shimmer-loop {
+    animation: shimmerLoop 3.2s ease-in-out infinite;
+  }
+
   .animate-hero-text-reveal {
     animation: heroTextReveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
@@ -387,6 +391,18 @@ html {
   }
   100% {
     transform: rotate(360deg) scale(1);
+  }
+}
+
+@keyframes shimmerLoop {
+  0% {
+    transform: translateX(-100%);
+  }
+  55% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(100%);
   }
 }
 
