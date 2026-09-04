@@ -149,7 +149,7 @@ const HeroSection = () => {
                   <ArrowDown className="h-4 w-4 transition-transform duration-300 group-hover:translate-y-0.5" aria-hidden="true" />
                 </span>
                 <span
-                  className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent transition-transform duration-1000 ease-out group-hover:translate-x-full animate-shimmer-loop"
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer-loop"
                   aria-hidden="true"
                 />
               </button>
