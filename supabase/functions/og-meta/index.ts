@@ -121,6 +121,11 @@ serve(async (req) => {
         }
         
         imageType = getImageType(image);
+        // WhatsApp/Facebook crawlers can't render WebP previews — proxy to JPEG
+        if (imageType === 'image/webp') {
+          image = toJpegProxy(image);
+          imageType = 'image/jpeg';
+        }
         pageUrl = `${SITE_URL}/product/${product.slug || product.id}`;
         type = "product";
         
@@ -209,6 +214,11 @@ function escapeHtml(text: string): string {
     .replace(/>/g, "&gt;")
     .replace(/\"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+function toJpegProxy(imageUrl: string): string {
+  const withoutProtocol = imageUrl.replace(/^https?:\/\//, '');
+  return `https://images.weserv.nl/?url=${encodeURIComponent(withoutProtocol)}&w=1080&h=1080&fit=inside&output=jpg&q=88`;
 }
 
 function getImageType(imageUrl: string): string {
