@@ -68,7 +68,7 @@ const formatDescription = (description?: string | null): string[] => {
   if (!description) return ['No description available.'];
   return description
     .replace(/\s+/g, ' ')
-    .replace(/\s*(?=[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}])/gu, '\n')
+    .replace(/\s*(?=[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}](?!\u{FE0F}?\u{200D}))/gu, '\n')
     .split('\n')
     .map((line) => line.trim())
     .filter(Boolean);
