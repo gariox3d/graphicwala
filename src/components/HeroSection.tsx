@@ -95,27 +95,25 @@ const HeroSection = () => {
             </div>
           </header>
 
-          {/* Visual — full product visible, never cropped */}
+          {/* Visual — full product visible, no outer box */}
           <div className="relative animate-hero-slow-scale">
-            <div className="relative mx-auto w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl rounded-[2rem] border border-border bg-card p-3 sm:p-4 xl:p-6 shadow-brand animate-hero-float">
-              <div className="relative overflow-hidden rounded-[1.4rem] bg-white">
-                <SmartImage
-                  src={card.image_url}
-                  alt="Personalised photo frames, mugs, t-shirts and keychains by Graphicwala"
-                  className="h-auto w-full object-contain bg-white"
-                  widths={[480, 720, 960, 1280, 1600]}
-                  fallbackWidth={1280}
-                  quality={94}
-                  resize="contain"
-                  sizes="(max-width: 1024px) 92vw, 50vw"
-                  priority
-                  width={1280}
-                  height={1000}
-                />
-              </div>
+            <div className="relative mx-auto w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl 2xl:max-w-[46rem] animate-hero-float">
+              <SmartImage
+                src={card.image_url}
+                alt="Personalised photo frames, mugs, t-shirts and keychains by Graphicwala"
+                className="h-auto w-full object-contain"
+                widths={[480, 720, 960, 1280, 1600, 1920]}
+                fallbackWidth={1600}
+                quality={96}
+                resize="contain"
+                sizes="(max-width: 1024px) 92vw, 50vw"
+                priority
+                width={1600}
+                height={1200}
+              />
 
               {/* Floating price chip */}
-              <div className="absolute -bottom-4 left-6 sm:left-10 rounded-full border border-border bg-card px-5 py-3 shadow-brand animate-hero-chip-pulse">
+              <div className="absolute -bottom-2 left-4 sm:left-8 rounded-full border border-border bg-card px-5 py-3 shadow-brand animate-hero-chip-pulse">
                 <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                   {card.price_prefix}
                 </span>
