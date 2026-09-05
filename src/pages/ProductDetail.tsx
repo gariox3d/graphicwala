@@ -58,6 +58,21 @@ const clampText = (text: string, max: number, short?: string) => {
   }
   return clean.slice(0, max).replace(/[\s,–—|-]+\S*$/, '');
 };
+
+/**
+ * Splits a run-on product description into readable lines without changing
+ * any wording: breaks before emoji markers, collapses extra whitespace, and
+ * keeps each section on its own line.
+ */
+const formatDescription = (description?: string | null): string[] => {
+  if (!description) return ['No description available.'];
+  return description
+    .replace(/\s+/g, ' ')
+    .replace(/\s*(?=[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}])/gu, '\n')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+};
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og-square.png`;
 const SHARE_BASE_URL = `${SITE_URL}/share/product`;
 
