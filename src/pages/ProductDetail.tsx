@@ -67,8 +67,15 @@ const clampText = (text: string, max: number, short?: string) => {
 const formatDescription = (description?: string | null): string[] => {
   if (!description) return ['No description available.'];
   return description
-    .replace(/\s+/g, ' ')
-    .replace(/\s*(?=[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}](?!\u{FE0F}?\u{200D}))/gu, '\n')
+    .replace(/\r/g, '')
+    .replace(/[ \t]+/g, ' ')
+    // New line before any emoji (section markers like ✅ 🔥 📏 ✨ etc.)
+    .replace(/[ \t]*(?=[\u{1F000}-\u{1FAFF}\u{2190}-\u{21FF}\u{2300}-\u{27BF}\u{2B00}-\u{2BFF}\u{3030}\u{303D}\u{3297}\u{3299}](?!\u{FE0F}?\u{200D}))/gu, '\n')
+    // New line at bullet / separator characters
+    .replace(/[ \t]*[•▪◦‣][ \t]*/g, '\n')
+    .replace(/[ \t]+\|[ \t]+/g, '\n')
+    // New line after sentence end when a new capital/number/emoji sentence starts
+    .replace(/(?<=[.!?।])\s+(?=[A-Z₹0-9\u{1F000}-\u{1FAFF}\u{2190}-\u{27BF}])/gu, '\n')
     .split('\n')
     .map((line) => line.trim())
     .filter(Boolean);
