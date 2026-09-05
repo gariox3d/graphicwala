@@ -499,9 +499,11 @@ const ProductDetail = () => {
                   </div>
                 </div>
                 <h1 className="text-2xl sm:text-3xl font-bold mb-4 break-words">{product.name}</h1>
-                <p className="text-muted-foreground mb-4 break-words">
-                  {product.description || 'No description available.'}
-                </p>
+                <div className="text-muted-foreground mb-4 break-words space-y-1.5">
+                  {formatDescription(product.description).map((line, i) => (
+                    <p key={i}>{line}</p>
+                  ))}
+                </div>
                 <p className="text-sm text-muted-foreground">
                   {product.stock_quantity > 0 ? (
                     <span className="text-green-600">{product.stock_quantity} in stock</span>
