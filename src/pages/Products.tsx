@@ -198,6 +198,9 @@ const Products = () => {
             </nav>
           )}
         </div>
+        <div className="container py-6">
+          <GoogleAd className="mx-auto max-w-4xl" />
+        </div>
       </main>
       <Footer />
       
