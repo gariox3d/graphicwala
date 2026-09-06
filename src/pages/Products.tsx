@@ -1,3 +1,4 @@
+import GoogleAd from '@/components/ads/GoogleAd';
 import { useEffect, useState, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
