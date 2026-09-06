@@ -10,6 +10,7 @@ import AnnouncementBanner from '@/components/AnnouncementBanner';
 import RecentlyViewedProducts from '@/components/products/RecentlyViewedProducts';
 import FlashSaleBanner from '@/components/products/FlashSaleBanner';
 import AdBanner from '@/components/ads/AdBanner';
+import GoogleAd from '@/components/ads/GoogleAd';
 import StatsCounter from '@/components/StatsCounter';
 import LazySection from '@/components/LazySection';
 import TrustStrip from '@/components/home/TrustStrip';
@@ -145,6 +146,7 @@ const Index = () => {
         <section className="py-4 bg-background">
           <div className="container">
             <AdBanner slotId="homepage_after_products" />
+            <GoogleAd className="mx-auto mt-4 max-w-4xl" />
           </div>
         </section>
 
