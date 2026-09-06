@@ -33,6 +33,9 @@ const GoogleAd = ({ slot, format = 'auto', className = '', style }: GoogleAdProp
 
   return (
     <div className={`w-full overflow-hidden ${className}`}>
+      <p className="text-[10px] text-muted-foreground/70 text-right px-1 mb-1 select-none">
+        Ads by Google
+      </p>
       <ins
         className="adsbygoogle block"
         style={{ display: 'block', ...style }}
