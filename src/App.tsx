@@ -32,6 +32,8 @@ const TermsAndConditions = lazy(() => import("./pages/TermsAndConditions"));
 const ShippingPolicy = lazy(() => import("./pages/ShippingPolicy"));
 const RefundPolicy = lazy(() => import("./pages/RefundPolicy"));
 const TrackOrder = lazy(() => import("./pages/TrackOrder"));
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
 
 // Admin panel is the heaviest area — kept fully out of the customer bundle.
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
@@ -128,6 +130,8 @@ const App = () => {
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/track-order" element={<TrackOrder />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/blog/:slug" element={<BlogPost />} />
                 <Route path="/ai-assistant" element={<AIAssistant />} />
                 <Route path="/sale" element={<Sale />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />

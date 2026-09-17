@@ -11,6 +11,7 @@ const EXCLUDED = [/^\/admin/, /^\/share\//, /^\/checkout/, /^\/order-confirmatio
 
 const LABELS: Record<string, string> = {
   products: "Products",
+  blog: "Blog",
   cart: "Cart",
   wishlist: "Wishlist",
   about: "About Us",
