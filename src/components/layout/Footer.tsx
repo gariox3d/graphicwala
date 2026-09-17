@@ -54,6 +54,11 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link to="/blog" className="text-background/70 hover:text-primary text-sm transition-colors">
+                  Blog
+                </Link>
+              </li>
+              <li>
                 <Link to="/about" className="text-background/70 hover:text-primary text-sm transition-colors">
                   About Us
                 </Link>
@@ -101,27 +106,27 @@ const Footer = () => {
             <h3 className="font-semibold mb-4">Products</h3>
             <ul className="space-y-3">
               <li>
-                 <Link to="/category/pvc-card" className="text-background/70 hover:text-primary text-sm transition-colors">
+                 <Link to="/category/photo-frame" className="text-background/70 hover:text-primary text-sm transition-colors">
                   Photo Frames
                 </Link>
               </li>
               <li>
-                 <Link to="/category/id-card" className="text-background/70 hover:text-primary text-sm transition-colors">
+                 <Link to="/category/pvc-card" className="text-background/70 hover:text-primary text-sm transition-colors">
                   PVC Cards
                 </Link>
               </li>
               <li>
-                 <Link to="/category/visiting-card" className="text-background/70 hover:text-primary text-sm transition-colors">
+                 <Link to="/category/id-card" className="text-background/70 hover:text-primary text-sm transition-colors">
                   ID Cards
                 </Link>
               </li>
               <li>
-                 <Link to="/category/keychain" className="text-background/70 hover:text-primary text-sm transition-colors">
+                 <Link to="/category/visiting-card" className="text-background/70 hover:text-primary text-sm transition-colors">
                   Visiting Cards
                 </Link>
               </li>
               <li>
-                <Link to="/products" className="text-background/70 hover:text-primary text-sm transition-colors">
+                 <Link to="/category/keychain" className="text-background/70 hover:text-primary text-sm transition-colors">
                   Keychains
                 </Link>
               </li>

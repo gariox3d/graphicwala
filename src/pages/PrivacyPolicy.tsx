@@ -59,13 +59,31 @@ const PrivacyPolicy = () => {
           <section>
             <h2 className="text-xl font-semibold mb-2">5. Cookies & Analytics</h2>
             <p>
-              We use cookies and local storage to remember your cart, preferences, and recently viewed products. 
-              No third-party advertising trackers are used.
+              We use cookies and local storage to remember your cart, preferences, and recently viewed products.
+              We also use analytics cookies to understand which pages are popular so we can improve them.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-2">6. Data Security</h2>
+            <h2 className="text-xl font-semibold mb-2">6. Advertising & Third-Party Cookies</h2>
+            <p>
+              This website displays advertising served by Google, including Google AdSense. Third-party
+              vendors, including Google, use cookies to serve ads based on your prior visits to this
+              website or other websites.
+            </p>
+            <ul className="list-disc ml-6 space-y-1">
+              <li>Google's use of advertising cookies enables it and its partners to serve ads to you based on your visit to this and/or other sites on the internet.</li>
+              <li>
+                You may opt out of personalised advertising by visiting{' '}
+                <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" className="text-primary underline">Google Ads Settings</a>, or opt out of third-party vendor cookies at{' '}
+                <a href="https://www.aboutads.info/choices/" target="_blank" rel="noopener noreferrer" className="text-primary underline">aboutads.info</a>.
+              </li>
+              <li>We never share your uploaded photos, designs or order details with advertising partners.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-semibold mb-2">7. Data Security</h2>
             <p>
               We use industry-standard encryption (HTTPS) and secure cloud storage to protect your data. 
               However, no method of transmission over the internet is 100% secure.
@@ -73,7 +91,7 @@ const PrivacyPolicy = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-2">7. Your Rights</h2>
+            <h2 className="text-xl font-semibold mb-2">8. Your Rights</h2>
             <ul className="list-disc ml-6 space-y-1">
               <li>Request access to your personal data.</li>
               <li>Request deletion of your account and associated data.</li>
@@ -82,7 +100,7 @@ const PrivacyPolicy = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-2">8. Contact Us</h2>
+            <h2 className="text-xl font-semibold mb-2">9. Contact Us</h2>
             <p>
               If you have questions about this Privacy Policy, reach us on WhatsApp at{' '}
               <a href={`https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, '')}`} className="text-primary underline" target="_blank" rel="noopener noreferrer">
