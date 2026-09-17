@@ -20,6 +20,7 @@ import CategoryShowcase from '@/components/home/CategoryShowcase';
 import HowItWorks from '@/components/home/HowItWorks';
 import WhyBuyFromUs from '@/components/home/WhyBuyFromUs';
 import TrustPanel from '@/components/home/TrustPanel';
+import FaqSection from '@/components/home/FaqSection';
 import { supabase } from '@/integrations/supabase/client';
 import { Product, Category, WHATSAPP_NUMBER, BUSINESS_NAME } from '@/lib/types';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
@@ -181,6 +182,9 @@ const Index = () => {
         <LazySection minHeight={400}>
           <CustomerGallery />
         </LazySection>
+
+        {/* FAQ — in-depth printing & design answers */}
+        <FaqSection />
 
         {/* Delivery, payment & policy trust panel */}
         <TrustPanel />
