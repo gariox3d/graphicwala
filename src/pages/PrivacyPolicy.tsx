@@ -83,7 +83,7 @@ const PrivacyPolicy = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-2">6. Data Security</h2>
+            <h2 className="text-xl font-semibold mb-2">7. Data Security</h2>
             <p>
               We use industry-standard encryption (HTTPS) and secure cloud storage to protect your data. 
               However, no method of transmission over the internet is 100% secure.
@@ -91,7 +91,7 @@ const PrivacyPolicy = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-2">7. Your Rights</h2>
+            <h2 className="text-xl font-semibold mb-2">8. Your Rights</h2>
             <ul className="list-disc ml-6 space-y-1">
               <li>Request access to your personal data.</li>
               <li>Request deletion of your account and associated data.</li>
@@ -100,7 +100,7 @@ const PrivacyPolicy = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-2">8. Contact Us</h2>
+            <h2 className="text-xl font-semibold mb-2">9. Contact Us</h2>
             <p>
               If you have questions about this Privacy Policy, reach us on WhatsApp at{' '}
               <a href={`https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, '')}`} className="text-primary underline" target="_blank" rel="noopener noreferrer">
