@@ -59,12 +59,51 @@ const About = () => (
           <p className="text-background/70 max-w-2xl mx-auto">Your trusted partner for premium custom printing & personalized gifts since 2020. All India delivery.</p>
         </div>
       </section>
+
       <section className="py-16 container">
-        <div className="max-w-3xl mx-auto prose prose-lg">
-          <p className="text-muted-foreground leading-relaxed">Graphic Wala is a leading custom printing service provider committed to delivering exceptional quality products across India. From personalized photo frames to custom PVC cards, visiting cards, ID cards, and keychains — we bring your ideas to life with precision and care.</p>
-          <p className="text-muted-foreground leading-relaxed mt-4">Our mission is to make premium custom printing accessible to everyone in India, with fast home delivery, competitive pricing, and unmatched customer service. Every product is custom-made with your photos and designs.</p>
+        <div className="max-w-3xl mx-auto space-y-10">
+          <div>
+            <h2 className="text-2xl font-bold mb-3">Who We Are</h2>
+            <p className="text-muted-foreground leading-relaxed">Graphic Wala is a custom printing studio based in Nasirganj, Katihar (Bihar), serving customers across India since 2020. What started as a small local print shop has grown into a full online store where anyone in India can order personalized photo frames, PVC cards, ID cards, visiting cards, keychains, mouse pads, photo magnets and more — printed with their own photos and designs, and delivered to their doorstep.</p>
+            <p className="text-muted-foreground leading-relaxed mt-4">We handle everything in-house: design preparation, colour correction, printing, lamination, finishing and packing. Because there is no middleman, we keep prices low while maintaining tight quality control on every single order.</p>
+          </div>
+
+          <div>
+            <h2 className="text-2xl font-bold mb-3">Our Mission</h2>
+            <p className="text-muted-foreground leading-relaxed">Our mission is simple — make premium-quality custom printing accessible and affordable for every Indian household and business. Whether it is a gift for someone special, ID cards for your staff, or visiting cards for your new business, we believe professional printing should not require visiting a big-city studio or paying big-city prices.</p>
+          </div>
+
+          <div>
+            <h2 className="text-2xl font-bold mb-3">Our Equipment & Print Quality</h2>
+            <p className="text-muted-foreground leading-relaxed mb-3">We invest in professional-grade machinery so your prints look sharp and last long:</p>
+            <ul className="list-disc ml-6 space-y-2 text-muted-foreground">
+              <li><strong>High-resolution digital printing</strong> — up to 1440 dpi output for crisp photos and text on frames, cards and gifts.</li>
+              <li><strong>Sublimation & UV printing</strong> — used for keychains, mouse pads, mugs and coated surfaces so colours stay vibrant and scratch-resistant.</li>
+              <li><strong>PVC card printing</strong> — thermal-transfer and retransfer printing on genuine PVC sheets, the same process used for bank and office ID cards.</li>
+              <li><strong>Lamination & finishing</strong> — glossy and matte lamination options that protect prints from moisture, fading and daily wear.</li>
+              <li><strong>Paper stocks</strong> — photo prints on 250–350 GSM premium sheets; visiting cards on 300–350 GSM art card with optional lamination.</li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 className="text-2xl font-bold mb-3">Our Design Philosophy</h2>
+            <p className="text-muted-foreground leading-relaxed">Every order is checked by a human before it goes to print. If your uploaded photo is low-resolution, wrongly cropped, or has colour issues, we contact you on WhatsApp before printing instead of shipping a bad product. We prepare files in CMYK colour mode for accurate print output, keep safe margins so nothing important gets trimmed, and confirm layouts for bulk card orders before production.</p>
+            <p className="text-muted-foreground leading-relaxed mt-4">Good design is not decoration — it is clarity. Whether it is a visiting card that must be readable at arm's length or a photo frame that will hang on your wall for years, we design for the real world, not just the screen.</p>
+          </div>
+
+          <div>
+            <h2 className="text-2xl font-bold mb-3">Why Customers Trust Us</h2>
+            <ul className="list-disc ml-6 space-y-2 text-muted-foreground">
+              <li>100% prepaid, transparent pricing — no hidden charges, no cash-on-delivery risk.</li>
+              <li>All India delivery through trusted courier partners with live tracking.</li>
+              <li>Direct WhatsApp support — you talk to the team that actually prints your order.</li>
+              <li>Damage replacement policy with a simple unboxing-video claim process.</li>
+              <li>Thousands of orders delivered across Bihar, West Bengal, UP, Delhi, Maharashtra and beyond.</li>
+            </ul>
+          </div>
         </div>
       </section>
+
       <LocationSection
         heading="Where Graphic Wala Is Based"
         subheading="Our printing studio is located in Nasirganj, Katihar, Bihar. Walk in for local orders, or shop online with prepaid delivery anywhere in India."
