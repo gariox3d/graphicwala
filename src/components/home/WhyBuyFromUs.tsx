@@ -1,12 +1,36 @@
 import { Palette, Timer, Truck, Printer, MessageCircle, Headphones } from 'lucide-react';
 
 const benefits = [
-  { icon: Palette, title: 'Custom Design Support', text: 'Send a rough idea — our designers make it print-ready free of cost.' },
-  { icon: Timer, title: 'Fast Processing', text: 'We confirm your order and move it into print as quickly as possible.' },
-  { icon: Truck, title: 'Pan-India Delivery', text: 'Delivered to every state and pincode in India, tracked end to end.' },
-  { icon: Printer, title: 'Quality Printing', text: 'Sharp colours, premium material and proper finishing on every order.' },
-  { icon: MessageCircle, title: 'Easy WhatsApp Order', text: 'Not comfortable online? Just WhatsApp us and we place the order for you.' },
-  { icon: Headphones, title: 'Support After Purchase', text: 'Damage or print issue? Report within 48 hours and we fix it.' },
+  {
+    icon: Palette,
+    title: 'Custom Design Support',
+    text: 'Send a rough idea, a photo or even a hand-written note. Our designers redraw it as print-ready artwork in CMYK colour mode with 3 mm bleed and safe margins, so nothing important gets trimmed off at the cutting stage — free of cost with your order.',
+  },
+  {
+    icon: Timer,
+    title: 'Clear Turnaround',
+    text: 'Design proof is shared for your approval first. Once you approve, printing, finishing and packing happen in one continuous batch, and you get a dispatch update with a tracking number the moment the parcel leaves our press.',
+  },
+  {
+    icon: Truck,
+    title: 'Pan-India Delivery',
+    text: 'We ship to every state and pincode in India through trusted courier partners with live tracking. Frames travel in corner-protected, shock-absorbing packaging and cards are shipped in rigid sleeves so edges stay crisp.',
+  },
+  {
+    icon: Printer,
+    title: 'Press-Grade Printing',
+    text: 'Visiting cards on 300–400 GSM art card with matte or glossy lamination, PVC and ID cards on 0.76 mm waterproof PVC, and photo frames printed on premium coated media — colour-calibrated for accurate skin tones and deep blacks.',
+  },
+  {
+    icon: MessageCircle,
+    title: 'Easy WhatsApp Order',
+    text: 'Not comfortable ordering online? Send your design and requirement on WhatsApp. We confirm size, material, quantity and price in writing, place the order for you and share a payment link — no app or account hassle.',
+  },
+  {
+    icon: Headphones,
+    title: 'Support After Purchase',
+    text: 'If a parcel arrives damaged or a print does not match the approved proof, report it within 48 hours with an unboxing video. After a quick check we reprint or refund — you do not pay twice for our mistake.',
+  },
 ];
 
 const WhyBuyFromUs = () => (
