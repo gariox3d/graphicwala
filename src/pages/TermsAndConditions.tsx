@@ -92,7 +92,7 @@ const TermsAndConditions = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-2">7. Account & Data</h2>
+            <h2 className="text-xl font-semibold mb-2">9. Account & Data</h2>
             <ul className="list-disc ml-6 space-y-1">
               <li>You are responsible for keeping your account credentials secure.</li>
               <li>We reserve the right to suspend accounts involved in fraudulent or abusive activities.</li>
@@ -101,7 +101,7 @@ const TermsAndConditions = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-2">8. Limitation of Liability</h2>
+            <h2 className="text-xl font-semibold mb-2">10. Limitation of Liability</h2>
             <p>
               {BUSINESS_NAME} shall not be liable for any indirect, incidental, or consequential damages arising from the use of our products or website. 
               Our maximum liability is limited to the order value of the affected product.
@@ -109,14 +109,14 @@ const TermsAndConditions = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-2">9. Changes to Terms</h2>
+            <h2 className="text-xl font-semibold mb-2">11. Changes to Terms</h2>
             <p>
               We may update these terms from time to time. Continued use of the website after changes constitutes acceptance of the revised terms.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-2">10. Contact Us</h2>
+            <h2 className="text-xl font-semibold mb-2">12. Contact Us</h2>
             <p>
               For any queries, reach us on WhatsApp at{' '}
               <a href={`https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, '')}`} className="text-primary underline" target="_blank" rel="noopener noreferrer">
