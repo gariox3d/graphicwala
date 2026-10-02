@@ -36,13 +36,13 @@ const Header = () => {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2">
+        <Link to="/" className="flex shrink-0 items-center gap-2 mr-4">
           <img 
             src={logoImage} 
             alt="Graphic Wala Logo" 
             className="h-10 w-10 rounded-lg object-cover"
           />
-          <span className="flex flex-col leading-none"><span className="text-lg font-black tracking-tight text-foreground">GRAPHIC <span className="text-primary">WALA</span></span><span className="mt-0.5 text-[9px] font-semibold tracking-[0.18em] text-muted-foreground">DESIGN • PRINT • CUSTOMIZE</span></span>
+          <span className="flex flex-col leading-none"><span className="text-lg font-black tracking-tight whitespace-nowrap text-foreground">GRAPHIC <span className="text-primary">WALA</span></span><span className="mt-0.5 text-[9px] font-semibold tracking-[0.18em] whitespace-nowrap text-muted-foreground">DESIGN • PRINT • CUSTOMIZE</span></span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -71,7 +71,7 @@ const Header = () => {
             className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-white bg-green-500 hover:bg-green-600 rounded-lg transition-colors"
           >
             <MessageCircle className="h-4 w-4" />
-            <span className="hidden lg:inline">WhatsApp</span>
+            <span className="hidden 2xl:inline">WhatsApp</span>
           </a>
           
           {/* Call Button */}
@@ -80,7 +80,7 @@ const Header = () => {
             className="flex items-center gap-1 px-3 py-2 text-sm font-medium border border-border rounded-lg hover:bg-muted transition-colors"
           >
             <Phone className="h-4 w-4" />
-            <span className="hidden lg:inline">Call</span>
+            <span className="hidden 2xl:inline">Call</span>
           </a>
 
           {user ? (
