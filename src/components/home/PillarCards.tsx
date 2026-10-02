@@ -5,11 +5,11 @@ import { INVITES_URL } from '@/data/services';
 
 const PILLARS = [
   { title: 'DESIGN', icon: PenTool, to: '/design-print', cta: 'Explore Design',
-    items: ['Logo & Branding', 'Banners & Posters', 'Visiting Cards', 'Wedding Card Design', 'Photo Editing'] },
+    items: ['Graphic Design', 'Photo Editing', 'Wedding Card Design'] },
   { title: 'PRINT', icon: Printer, to: '/business-printing', cta: 'Explore Printing',
-    items: ['Visiting Cards', 'Flex & Vinyl Banners', 'Bill Books & Letterheads', 'Stickers & Labels', 'Wedding Cards'] },
+    items: ['Banner', 'Poster', 'Visiting Card', 'Bill Book', 'Pamphlet', 'Handbill', 'Letterhead', 'Folder', 'Wedding Card'] },
   { title: 'CUSTOMIZE', icon: Gift, to: '/custom-products', cta: 'Shop Custom Products',
-    items: ['Photo Frames', 'Mugs & T-Shirts', 'Keychains', 'PVC & ID Cards', 'Corporate Gifts'] },
+    items: ['T-Shirt', 'Mug', 'Keychain', 'Cushion', 'Photo Frame', 'Sublimation & Customized Gifts'] },
 ];
 
 export const PillarCards = () => (
