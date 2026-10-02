@@ -35,16 +35,9 @@ const MobileBottomBar = () => {
         <Phone className="h-5 w-5 text-primary" aria-hidden="true" />
         Call
       </a>
-      <Link to="/cart" className={`${cls} relative`}>
-        <span className="relative">
-          <ShoppingCart className="h-5 w-5 text-foreground" aria-hidden="true" />
-          {cartCount > 0 && (
-            <span className="absolute -right-2 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">
-              {cartCount}
-            </span>
-          )}
-        </span>
-        Cart
+      <Link to="/design-print" className={cls}>
+        <ShoppingCart className="h-5 w-5 text-foreground" aria-hidden="true" />
+        Order Now
       </Link>
     </nav>
   );

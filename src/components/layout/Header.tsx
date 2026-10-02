@@ -17,10 +17,13 @@ const Header = () => {
 
   const navLinks = [
     { name: 'Home', path: '/' },
-    { name: 'Products', path: '/products' },
-    { name: '🔥 Sale', path: '/sale' },
+    { name: 'Design & Print', path: '/design-print' },
+    { name: 'Custom Products', path: '/custom-products' },
+    { name: 'Wedding', path: '/wedding' },
+    { name: 'Business Printing', path: '/business-printing' },
+    { name: 'Corporate Gifting', path: '/corporate-gifting' },
+    { name: 'Portfolio', path: '/portfolio' },
     { name: 'Blog', path: '/blog' },
-    { name: 'Help', path: '/ai-assistant' },
     { name: 'About', path: '/about' },
     { name: 'Contact', path: '/contact' },
   ];

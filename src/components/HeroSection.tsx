@@ -1,6 +1,7 @@
 import SmartImage from '@/components/SmartImage';
 import { Link } from 'react-router-dom';
-import { ShieldCheck, BadgeCheck, Star, ArrowRight, Sparkles } from 'lucide-react';
+import { ShieldCheck, BadgeCheck, ArrowRight, Sparkles, MessageCircle } from 'lucide-react';
+import { waLink } from '@/components/services/ServiceBlocks';
 import { useFestivalSettings } from '@/hooks/useFestivalSettings';
 import EidCountdown from '@/components/festival/EidCountdown';
 import { useHeroShowcase } from '@/hooks/useHeroShowcase';
@@ -37,56 +38,51 @@ const HeroSection = () => {
         <div className="grid items-center gap-10 lg:gap-16 xl:gap-24 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
           {/* Copy */}
           <header className="text-center lg:text-center">
-            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground animate-hero-text-reveal">
-              <Sparkles className="h-3 w-3 text-primary animate-sparkle-spin" aria-hidden="true" />
-              Premium Custom Printing
+            <span className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+              <Sparkles className="h-3 w-3 text-primary" aria-hidden="true" />
+              Graphic Wala · डिजाइन की नई पहचान
             </span>
 
-            <h1 className="mt-6 font-outfit text-[2.6rem] font-semibold leading-[1.03] tracking-[-0.03em] text-foreground sm:text-6xl lg:text-[4.2rem] xl:text-[5.2rem] 2xl:text-[5.8rem] animate-hero-headline-float">
-              <span className="block animate-hero-line-1">Moments,</span>
-              <span className="block text-primary animate-hero-line-2">Elegantly Captured.</span>
+            <h1 className="mt-6 font-outfit text-[2.6rem] font-black leading-[1.03] tracking-[-0.03em] text-foreground sm:text-6xl lg:text-[4.2rem] xl:text-[5rem]">
+              <span className="block">DESIGN.</span>
+              <span className="block text-primary">PRINT.</span>
+              <span className="block">CUSTOMIZE.</span>
             </h1>
 
-            <p className="mt-6 mx-auto max-w-xl text-base sm:text-lg xl:text-xl font-light leading-relaxed text-muted-foreground animate-hero-subtitle-float">
-              Quality products, carefully crafted and delivered across India.
+            <p className="mt-6 mx-auto max-w-xl text-base sm:text-lg leading-relaxed text-muted-foreground">
+              Graphic design, business printing, wedding cards and personalised products — from idea to doorstep.
             </p>
 
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
-                to="/products"
+                to="/design-print"
                 className={cn(
                   buttonVariants({ variant: 'hero', size: 'xl' }),
                   'group w-full sm:w-auto gap-2 rounded-full text-base tracking-wide'
                 )}
               >
-                Shop Now
+                Explore Services
                 <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
               </Link>
 
-              <Link
-                to="/about"
+              <a
+                href={waLink('Hello Graphic Wala, I want to place an order.')}
+                target="_blank"
+                rel="noopener noreferrer"
                 className={cn(
                   buttonVariants({ variant: 'outline', size: 'xl' }),
-                  'w-full sm:w-auto rounded-full text-base'
+                  'w-full sm:w-auto gap-2 rounded-full text-base'
                 )}
               >
-                Learn More
-              </Link>
+                <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                Order on WhatsApp
+              </a>
             </div>
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
-              <div className="inline-flex items-center gap-2.5 rounded-full border border-border bg-secondary px-4 py-2 text-foreground">
-                <Star className="h-4 w-4 fill-primary text-primary" aria-hidden="true" />
-                <span className="text-sm font-bold">{card.rating_value}</span>
-                <span className="h-3.5 w-px bg-border" aria-hidden="true" />
-                <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-                  {card.rating_subtitle}
-                </span>
-              </div>
-
               <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                 <BadgeCheck className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
-                Premium Quality
+                Design approval before print
               </span>
               <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                 <ShieldCheck className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
