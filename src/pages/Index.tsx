@@ -11,16 +11,14 @@ import RecentlyViewedProducts from '@/components/products/RecentlyViewedProducts
 import FlashSaleBanner from '@/components/products/FlashSaleBanner';
 import AdBanner from '@/components/ads/AdBanner';
 import GoogleAd from '@/components/ads/GoogleAd';
-import StatsCounter from '@/components/StatsCounter';
 import LazySection from '@/components/LazySection';
-import TrustStrip from '@/components/home/TrustStrip';
 import Bestsellers from '@/components/home/Bestsellers';
-import CategoryShowcase from '@/components/home/CategoryShowcase';
 
 import HowItWorks from '@/components/home/HowItWorks';
 import WhyBuyFromUs from '@/components/home/WhyBuyFromUs';
 import TrustPanel from '@/components/home/TrustPanel';
 import FaqSection from '@/components/home/FaqSection';
+import { PillarCards, BusinessBlock, PaymentPolicy, WeddingBlock } from "@/components/home/PillarCards";
 import { supabase } from '@/integrations/supabase/client';
 import { Product, Category, WHATSAPP_NUMBER, BUSINESS_NAME } from '@/lib/types';
 import { useStoreSettings } from '@/hooks/useStoreSettings';
@@ -111,16 +109,16 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        <title>Graphic Wala (Graphicwala) | Custom Photo Frames &amp; Gifts</title>
+        <title>Graphic Wala Katihar | Design, Printing &amp; Custom Gifts</title>
         <meta name="description" content="Graphic Wala (Graphicwala) — official store for custom photo frames, PVC & ID cards, keychains and personalized gifts. Prepaid, All India delivery." />
         <link rel="canonical" href="https://www.graphicwala.com/" />
-        <meta property="og:title" content="Graphic Wala (Graphicwala) | Custom Photo Frames & Gifts" />
+        <meta property="og:title" content="Graphic Wala Katihar | Design, Printing & Custom Gifts" />
         <meta property="og:description" content="Buy custom photo frames, PVC cards, keychains & personalized gifts online. Premium quality with All India home delivery." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.graphicwala.com/" />
         <meta property="og:image" content="https://www.graphicwala.com/og-square.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Graphic Wala (Graphicwala) | Custom Photo Frames & Gifts" />
+        <meta name="twitter:title" content="Graphic Wala Katihar | Design, Printing & Custom Gifts" />
         <meta name="twitter:description" content="Buy custom photo frames, PVC cards, keychains online. All India delivery." />
         <meta name="twitter:image" content="https://www.graphicwala.com/og-square.png" />
       </Helmet>
@@ -134,7 +132,7 @@ const Index = () => {
         <HeroSection />
 
         {/* Trust strip — conversion proof above the fold */}
-        <TrustStrip />
+        <PillarCards />
 
 
         {/* Flash Sale Banner — shown only when active sales exist */}
@@ -152,16 +150,17 @@ const Index = () => {
         </section>
 
         {/* Categories */}
-        <CategoryShowcase categories={categories} getImage={getCategoryImage} />
+        <BusinessBlock />
 
         {/* 3-step custom order flow */}
         <HowItWorks />
 
         {/* Why buy from us */}
+        <PaymentPolicy />
         <WhyBuyFromUs />
+        <WeddingBlock />
 
         {/* Stats Counter */}
-        <StatsCounter />
 
         {/* Trending — lazy, loads on scroll */}
         <LazySection minHeight={400}>

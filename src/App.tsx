@@ -34,6 +34,12 @@ const RefundPolicy = lazy(() => import("./pages/RefundPolicy"));
 const TrackOrder = lazy(() => import("./pages/TrackOrder"));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
+const DesignPrint = lazy(() => import("./pages/DesignPrint"));
+const BusinessPrinting = lazy(() => import("./pages/BusinessPrinting"));
+const Wedding = lazy(() => import("./pages/Wedding"));
+const CorporateGifting = lazy(() => import("./pages/CorporateGifting"));
+const CustomProducts = lazy(() => import("./pages/CustomProducts"));
+const Portfolio = lazy(() => import("./pages/Portfolio"));
 
 // Admin panel is the heaviest area — kept fully out of the customer bundle.
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
@@ -130,7 +136,7 @@ const App = () => {
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/track-order" element={<TrackOrder />} />
-                <Route path="/blog" element={<Blog />} />
+                <Route path="/blog" element={<Blog />} />                <Route path="/design-print" element={<DesignPrint />} />                <Route path="/business-printing" element={<BusinessPrinting />} />                <Route path="/wedding" element={<Wedding />} />                <Route path="/corporate-gifting" element={<CorporateGifting />} />                <Route path="/custom-products" element={<CustomProducts />} />                <Route path="/portfolio" element={<Portfolio />} />
                 <Route path="/blog/:slug" element={<BlogPost />} />
                 <Route path="/ai-assistant" element={<AIAssistant />} />
                 <Route path="/sale" element={<Sale />} />
