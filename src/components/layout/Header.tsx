@@ -42,18 +42,16 @@ const Header = () => {
             alt="Graphic Wala Logo" 
             className="h-10 w-10 rounded-lg object-cover"
           />
-          <span className="text-xl font-bold text-foreground">
-            Graphic <span className="text-primary">Wala</span>
-          </span>
+          <span className="flex flex-col leading-none"><span className="text-lg font-black tracking-tight text-foreground">GRAPHIC <span className="text-primary">WALA</span></span><span className="mt-0.5 text-[9px] font-semibold tracking-[0.18em] text-muted-foreground">DESIGN • PRINT • CUSTOMIZE</span></span>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden xl:flex items-center gap-4">
           {navLinks.map((link) => (
             <Link
               key={link.path}
               to={link.path}
-              className={`text-sm font-medium transition-colors hover:text-primary ${
+              className={`text-[13px] font-medium whitespace-nowrap transition-colors hover:text-primary ${
                 isActive(link.path) ? 'text-primary' : 'text-muted-foreground'
               }`}
             >
@@ -134,7 +132,7 @@ const Header = () => {
 
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden p-2"
+          className="xl:hidden p-2"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -148,7 +146,7 @@ const Header = () => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden border-t border-border bg-background animate-slide-down">
+        <div className="xl:hidden border-t border-border bg-background animate-slide-down">
           <nav className="container py-4 flex flex-col gap-4">
             
             {navLinks.map((link) => (

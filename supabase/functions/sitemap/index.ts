@@ -33,7 +33,7 @@ serve(async (req) => {
       { url: "/", priority: "1.0", changefreq: "daily" },
       { url: "/products", priority: "0.9", changefreq: "daily" },
       { url: "/sale", priority: "0.7", changefreq: "daily" },
-      { url: "/blog", priority: "0.7", changefreq: "weekly" },
+      { url: "/design-print", priority: "0.9", changefreq: "weekly" },      { url: "/custom-products", priority: "0.9", changefreq: "weekly" },      { url: "/business-printing", priority: "0.8", changefreq: "monthly" },      { url: "/wedding", priority: "0.8", changefreq: "monthly" },      { url: "/corporate-gifting", priority: "0.8", changefreq: "monthly" },      { url: "/portfolio", priority: "0.7", changefreq: "weekly" },      { url: "/blog", priority: "0.7", changefreq: "weekly" },
       { url: "/blog/printing-quality-guide-gsm-paper-and-colour-modes", priority: "0.6", changefreq: "monthly" },
       { url: "/blog/vector-graphics-explained-ai-eps-svg-pdf", priority: "0.6", changefreq: "monthly" },
       { url: "/blog/visiting-card-and-pvc-card-design-principles", priority: "0.6", changefreq: "monthly" },

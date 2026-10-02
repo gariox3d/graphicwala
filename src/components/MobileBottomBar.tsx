@@ -2,12 +2,10 @@ import { Link, useLocation } from 'react-router-dom';
 import { MessageCircle, Phone, ShoppingCart } from 'lucide-react';
 import { WHATSAPP_NUMBER, PHONE_NUMBER, BUSINESS_NAME } from '@/lib/types';
 import { normalizeIndianPhoneForWhatsApp } from '@/lib/phone';
-import { useCart } from '@/contexts/CartContext';
 
 /** Sticky mobile action bar: WhatsApp / Call / Cart. Hidden on product & admin pages. */
 const MobileBottomBar = () => {
   const location = useLocation();
-  const { cartCount } = useCart();
 
   const hidden =
     location.pathname.startsWith('/admin') ||
