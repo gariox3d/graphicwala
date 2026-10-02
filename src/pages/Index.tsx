@@ -11,11 +11,8 @@ import RecentlyViewedProducts from '@/components/products/RecentlyViewedProducts
 import FlashSaleBanner from '@/components/products/FlashSaleBanner';
 import AdBanner from '@/components/ads/AdBanner';
 import GoogleAd from '@/components/ads/GoogleAd';
-import StatsCounter from '@/components/StatsCounter';
 import LazySection from '@/components/LazySection';
-import TrustStrip from '@/components/home/TrustStrip';
 import Bestsellers from '@/components/home/Bestsellers';
-import CategoryShowcase from '@/components/home/CategoryShowcase';
 
 import HowItWorks from '@/components/home/HowItWorks';
 import WhyBuyFromUs from '@/components/home/WhyBuyFromUs';
