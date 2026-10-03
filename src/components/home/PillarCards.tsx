@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Image as ImageIcon, ArrowRight, ShieldCheck, Ban, ExternalLink, Briefcase } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Ban, ExternalLink, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { INVITES_URL } from '@/data/services';
 import { HOMEPAGE_SERVICE_GROUPS } from '@/data/homepageServices';
@@ -37,7 +37,7 @@ export const PillarCards = () => {
                       {images[item.key] ? (
                         <img src={images[item.key]} alt="" className="h-full w-full object-contain" loading="lazy" />
                       ) : (
-                        <ImageIcon className="h-5 w-5 text-muted-foreground/50" aria-hidden="true" />
+                        <span className="text-[10px] text-muted-foreground/60">No image</span>
                       )}
                     </span>
                     <span>{item.label}</span>

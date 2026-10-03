@@ -158,7 +158,7 @@ const AdminServiceImages = () => {
                       {current ? (
                         <img src={current.image_url} alt={item.label} className="h-full w-full object-contain" />
                       ) : (
-                        <ImageIcon className="h-9 w-9 text-muted-foreground" aria-hidden="true" />
+                        <span className="text-xs text-muted-foreground">No image uploaded</span>
                       )}
                     </div>
                     <p className="font-semibold">{item.label}</p>
