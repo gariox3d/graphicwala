@@ -1,40 +1,59 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { PenTool, Printer, Gift, ArrowRight, ShieldCheck, Ban, ExternalLink, Briefcase } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Ban, ExternalLink, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { INVITES_URL } from '@/data/services';
+import { HOMEPAGE_SERVICE_GROUPS } from '@/data/homepageServices';
+import { supabase } from '@/integrations/supabase/client';
 
-const PILLARS = [
-  { title: 'DESIGN', icon: PenTool, to: '/design-print', cta: 'Explore Design',
-    items: ['Graphic Design', 'Photo Editing', 'Wedding Card Design'] },
-  { title: 'PRINT', icon: Printer, to: '/business-printing', cta: 'Explore Printing',
-    items: ['Banner', 'Poster', 'Visiting Card', 'Bill Book', 'Pamphlet', 'Handbill', 'Letterhead', 'Folder', 'Wedding Card'] },
-  { title: 'CUSTOMIZE', icon: Gift, to: '/custom-products', cta: 'Shop Custom Products',
-    items: ['T-Shirt', 'Mug', 'Keychain', 'Cushion', 'Photo Frame', 'Sublimation & Customized Gifts'] },
-];
+export const PillarCards = () => {
+  const [images, setImages] = useState<Record<string, string>>({});
 
-export const PillarCards = () => (
-  <section className="py-12 md:py-20 bg-background" aria-labelledby="pillars-heading">
-    <div className="container">
-      <h2 id="pillars-heading" className="text-center text-2xl md:text-4xl font-black tracking-tight">Everything in One Place</h2>
-      <div className="mt-8 grid gap-5 md:grid-cols-3">
-        {PILLARS.map((p) => (
-          <article key={p.title} className="flex flex-col rounded-2xl border border-border bg-card p-6">
-            <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-              <p.icon className="h-6 w-6" aria-hidden="true" />
-            </span>
-            <h3 className="mt-4 text-2xl font-black tracking-tight">{p.title}</h3>
-            <ul className="mt-3 flex-1 space-y-1.5 text-sm text-muted-foreground">
-              {p.items.map((i) => <li key={i}>• {i}</li>)}
-            </ul>
-            <Button asChild variant="outline" className="mt-5 rounded-full">
-              <Link to={p.to}>{p.cta} <ArrowRight className="h-4 w-4" /></Link>
-            </Button>
-          </article>
-        ))}
+  useEffect(() => {
+    let active = true;
+    supabase.from('homepage_service_images').select('service_key, image_url').then(({ data }) => {
+      if (!active) return;
+      const next = (data || []).reduce<Record<string, string>>((map, row) => {
+        map[row.service_key] = row.image_url;
+        return map;
+      }, {});
+      setImages(next);
+    });
+    return () => { active = false; };
+  }, []);
+
+  return (
+    <section className="py-12 md:py-20 bg-background" aria-labelledby="pillars-heading">
+      <div className="container">
+        <h2 id="pillars-heading" className="text-center text-2xl md:text-4xl font-black tracking-tight">Everything in One Place</h2>
+        <div className="mt-8 grid gap-5 md:grid-cols-3">
+          {HOMEPAGE_SERVICE_GROUPS.map((group) => (
+            <article key={group.title} className="flex flex-col rounded-2xl border border-border bg-card p-6">
+              <h3 className="text-2xl font-black tracking-tight">{group.title}</h3>
+              <ul className="mt-4 flex-1 space-y-2">
+                {group.items.map((item) => (
+                  <li key={item.key} className="flex min-h-12 items-center gap-3 text-sm text-muted-foreground">
+                    <span className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-md bg-muted">
+                      {images[item.key] ? (
+                        <img src={images[item.key]} alt="" className="h-full w-full object-contain" loading="lazy" />
+                      ) : (
+                        <span className="text-[10px] text-muted-foreground/60">No image</span>
+                      )}
+                    </span>
+                    <span>{item.label}</span>
+                  </li>
+                ))}
+              </ul>
+              <Button asChild variant="outline" className="mt-5 rounded-full">
+                <Link to={group.to}>{group.cta} <ArrowRight className="h-4 w-4" /></Link>
+              </Button>
+            </article>
+          ))}
+        </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 export const BusinessBlock = () => (
   <section className="py-12 md:py-16 bg-foreground text-background" aria-labelledby="biz-heading">

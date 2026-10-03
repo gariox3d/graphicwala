@@ -506,6 +506,30 @@ export type Database = {
         }
         Relationships: []
       }
+      homepage_service_images: {
+        Row: {
+          image_url: string
+          service_key: string
+          storage_path: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          image_url: string
+          service_key: string
+          storage_path: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          image_url?: string
+          service_key?: string
+          storage_path?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       loyalty_balances: {
         Row: {
           current_balance: number
