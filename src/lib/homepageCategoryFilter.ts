@@ -31,11 +31,12 @@ const matches = (value: string, key: string) => (aliases[key] ?? []).some((alias
 
 export function getHomepageProductGroup(product: Pick<Product, 'name'>, categoryName = '') {
   // Explicit design names take precedence over printing/gift words in a category.
-  for (const value of [product.name, categoryName]) {
-    const group = HOMEPAGE_SERVICE_GROUPS.find((g) => g.items.some((item) => matches(value, item.key)));
-    if (group) return group.title;
-  }
-  return undefined;
+  const namedGroup = HOMEPAGE_SERVICE_GROUPS.find((g) => g.items.some((item) => matches(product.name, item.key)));
+  if (namedGroup) return namedGroup.title;
+  // A broad admin category must not pull unrelated catalogue items into these lists.
+  const excluded = /(?:^| )(?:photo prints?|pvc cards?|id cards?|lanyards?|holders?|stickers?|envelopes?)(?: |$)/;
+  if (excluded.test(normalize(product.name))) return undefined;
+  return HOMEPAGE_SERVICE_GROUPS.find((g) => g.items.some((item) => matches(categoryName, item.key)))?.title;
 }
 
 export function getHomepageServiceDescription(item: HomepageServiceItem) {
