@@ -28,7 +28,7 @@ export const PillarCards = () => {
         <h2 id="pillars-heading" className="text-center text-2xl md:text-4xl font-black tracking-tight">Everything in One Place</h2>
         <div className="mt-8 grid gap-5 md:grid-cols-3">
           {HOMEPAGE_SERVICE_GROUPS.map((group) => (
-            <article key={group.title} className="flex flex-col rounded-2xl border border-border bg-card p-6">
+            <Link key={group.title} to={group.to} aria-label={`Explore ${group.title}`} className="flex flex-col rounded-2xl border border-border bg-card p-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
               <h3 className="text-2xl font-black tracking-tight">{group.title}</h3>
               <ul className="mt-4 flex-1 space-y-2">
                 {group.items.map((item) => (
@@ -45,9 +45,9 @@ export const PillarCards = () => {
                 ))}
               </ul>
               <Button asChild variant="outline" className="mt-5 rounded-full">
-                <Link to={group.to}>{group.cta} <ArrowRight className="h-4 w-4" /></Link>
+                <span>{group.cta} <ArrowRight className="h-4 w-4" /></span>
               </Button>
-            </article>
+            </Link>
           ))}
         </div>
       </div>

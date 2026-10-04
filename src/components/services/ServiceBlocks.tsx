@@ -12,10 +12,14 @@ import type { Service, ServiceGroup } from '@/data/services';
 export const waLink = (msg: string) =>
   `https://wa.me/${normalizeIndianPhoneForWhatsApp(WHATSAPP_NUMBER)}?text=${encodeURIComponent(msg)}`;
 
-export const ServiceCard = ({ s }: { s: Service }) => (
+export const ServiceCard = ({ s, thumbnail }: { s: Service; thumbnail?: { url?: string } }) => (
   <article className="flex flex-col rounded-2xl border border-border bg-card p-5 shadow-soft transition-shadow hover:shadow-brand">
     <div className="mb-4 flex aspect-[4/3] items-center justify-center rounded-xl bg-secondary">
-      <s.icon className="h-12 w-12 text-primary" strokeWidth={1.5} aria-hidden="true" />
+      {thumbnail ? (thumbnail.url ? (
+        <img src={thumbnail.url} alt={s.name} className="h-full w-full object-contain" loading="lazy" />
+      ) : <span className="text-sm text-muted-foreground">No image</span>) : (
+        <s.icon className="h-12 w-12 text-primary" strokeWidth={1.5} aria-hidden="true" />
+      )}
     </div>
     <h3 className="font-bold text-lg leading-tight">{s.name}</h3>
     <p className="mt-1.5 flex-1 text-sm text-muted-foreground leading-relaxed">{s.description}</p>

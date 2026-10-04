@@ -13,7 +13,7 @@ export interface HomepageServiceGroup {
 export const HOMEPAGE_SERVICE_GROUPS: HomepageServiceGroup[] = [
   {
     title: 'DESIGN',
-    to: '/design-print',
+    to: '/services/design',
     cta: 'Explore Design',
     items: [
       { key: 'design-graphic-design', label: 'Graphic Design' },
@@ -23,7 +23,7 @@ export const HOMEPAGE_SERVICE_GROUPS: HomepageServiceGroup[] = [
   },
   {
     title: 'PRINT',
-    to: '/business-printing',
+    to: '/services/print',
     cta: 'Explore Printing',
     items: [
       { key: 'print-banner', label: 'Banner' },
@@ -39,7 +39,7 @@ export const HOMEPAGE_SERVICE_GROUPS: HomepageServiceGroup[] = [
   },
   {
     title: 'CUSTOMIZE',
-    to: '/custom-products',
+    to: '/services/customize',
     cta: 'Shop Custom Products',
     items: [
       { key: 'customize-t-shirt', label: 'T-Shirt' },
