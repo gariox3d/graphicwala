@@ -917,14 +917,18 @@ export type Database = {
           length_cm: number | null
           name: string
           price: number
+          price_starting_from: boolean
           sale_end: string | null
           sale_price: number | null
           sale_start: string | null
+          service_group: string | null
+          short_description: string | null
           slug: string
           stock_quantity: number | null
           updated_at: string
           upload_config: Json | null
           weight_kg: number | null
+          whatsapp_order_enabled: boolean
         }
         Insert: {
           back_upload_enabled?: boolean | null
@@ -948,14 +952,18 @@ export type Database = {
           length_cm?: number | null
           name: string
           price: number
+          price_starting_from?: boolean
           sale_end?: string | null
           sale_price?: number | null
           sale_start?: string | null
+          service_group?: string | null
+          short_description?: string | null
           slug: string
           stock_quantity?: number | null
           updated_at?: string
           upload_config?: Json | null
           weight_kg?: number | null
+          whatsapp_order_enabled?: boolean
         }
         Update: {
           back_upload_enabled?: boolean | null
@@ -979,14 +987,18 @@ export type Database = {
           length_cm?: number | null
           name?: string
           price?: number
+          price_starting_from?: boolean
           sale_end?: string | null
           sale_price?: number | null
           sale_start?: string | null
+          service_group?: string | null
+          short_description?: string | null
           slug?: string
           stock_quantity?: number | null
           updated_at?: string
           upload_config?: Json | null
           weight_kg?: number | null
+          whatsapp_order_enabled?: boolean
         }
         Relationships: [
           {
