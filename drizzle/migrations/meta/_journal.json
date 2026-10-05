@@ -8,6 +8,13 @@
       "when": 1791015135508,
       "tag": "0000_create_homepage_service_images",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791228093055,
+      "tag": "0001_product_service_management_fields",
+      "breakpoints": true
     }
   ]
 }
