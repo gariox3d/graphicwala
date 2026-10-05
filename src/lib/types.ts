@@ -18,6 +18,10 @@ export interface Product {
   name: string;
   slug?: string | null;
   description?: string | null;
+  short_description?: string | null;
+  service_group?: 'DESIGN' | 'PRINT' | 'CUSTOMIZE' | string | null;
+  price_starting_from?: boolean | null;
+  whatsapp_order_enabled?: boolean | null;
   price: number;
   image_url?: string | null;
   category_id?: string | null;

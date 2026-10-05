@@ -29,7 +29,8 @@ const matches = (value: string, key: string) => (aliases[key] ?? []).some((alias
   new RegExp(`(?:^| )${normalize(alias)}(?:s|es)?(?: |$)`).test(normalize(value))
 );
 
-export function getHomepageProductGroup(product: Pick<Product, 'name'>, categoryName = '') {
+export function getHomepageProductGroup(product: Pick<Product, 'name' | 'service_group'>, categoryName = '') {
+  if (product.service_group) return product.service_group;
   // Explicit design names take precedence over printing/gift words in a category.
   const namedGroup = HOMEPAGE_SERVICE_GROUPS.find((g) => g.items.some((item) => matches(product.name, item.key)));
   if (namedGroup) return namedGroup.title;

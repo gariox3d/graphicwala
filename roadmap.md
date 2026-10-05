@@ -6,5 +6,5 @@
 
 # Admin product/service management
 
-- [ ] Add homepage group (DESIGN/PRINT/CUSTOMIZE), short description, "Starting From" and WhatsApp button controls to existing product form.
-- [ ] Show/hide/delete/edit remain in existing admin; customer pages reflect the new fields.
+- [x] Add homepage group (DESIGN/PRINT/CUSTOMIZE), short description, "Starting From" and WhatsApp button controls to existing product form.
+- [x] Show/hide/delete/edit remain in existing admin; customer pages reflect the new fields.
