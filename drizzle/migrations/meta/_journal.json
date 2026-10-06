@@ -15,6 +15,13 @@
       "when": 1791228093055,
       "tag": "0001_product_service_management_fields",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791309702951,
+      "tag": "0002_create_portfolio_items",
+      "breakpoints": true
     }
   ]
 }
