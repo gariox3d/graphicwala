@@ -5,6 +5,7 @@ import { PageShell, waLink } from '@/components/services/ServiceBlocks';
 
 const CustomerGallery = lazy(() => import('@/components/CustomerGallery'));
 const BeforeAfterShowcase = lazy(() => import('@/components/BeforeAfterShowcase'));
+const PortfolioGallery = lazy(() => import('@/components/PortfolioGallery'));
 
 const Portfolio = () => (
   <PageShell
@@ -23,6 +24,7 @@ const Portfolio = () => (
     }
   >
     <Suspense fallback={<div className="min-h-[300px]" />}>
+      <PortfolioGallery />
       <BeforeAfterShowcase />
       <CustomerGallery />
     </Suspense>

@@ -131,6 +131,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin/hero-showcase', label: 'Hero Showcase', icon: ImageIcon },
     { path: '/admin/social-preview', label: 'Social Preview (OG)', icon: ImageIcon },
     { path: '/admin/service-images', label: 'Service Images', icon: ImageIcon },
+    { path: '/admin/portfolio', label: 'Portfolio', icon: ImageIcon },
   ];
 
   const handleSignOut = async () => {

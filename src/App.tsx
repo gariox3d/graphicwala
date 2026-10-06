@@ -68,6 +68,7 @@ const AdminPickupEarnings = lazy(() => import("./pages/admin/AdminPickupEarnings
 const AdminHeroShowcase = lazy(() => import("./pages/admin/AdminHeroShowcase"));
 const AdminSocialPreview = lazy(() => import("./pages/admin/AdminSocialPreview"));
 const AdminServiceImages = lazy(() => import("./pages/admin/AdminServiceImages"));
+const AdminPortfolio = lazy(() => import("./pages/admin/AdminPortfolio"));
 import ScrollToTop from "./components/ScrollToTop";
 import BreadcrumbSchema from "./components/seo/BreadcrumbSchema";
 import AdminGuard from "./components/admin/AdminGuard";
@@ -174,6 +175,7 @@ const App = () => {
                 <Route path="/admin/hero-showcase" element={<AdminGuard><AdminHeroShowcase /></AdminGuard>} />
                 <Route path="/admin/social-preview" element={<AdminGuard><AdminSocialPreview /></AdminGuard>} />
                 <Route path="/admin/service-images" element={<AdminGuard><AdminServiceImages /></AdminGuard>} />
+                <Route path="/admin/portfolio" element={<AdminGuard><AdminPortfolio /></AdminGuard>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               </Suspense>
