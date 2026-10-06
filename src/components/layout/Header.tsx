@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingCart, User, Menu, X, LogOut, MessageCircle, Phone, Heart } from 'lucide-react';
+import { ShoppingCart, User, Menu, X, LogOut, MessageCircle, Phone, Heart, ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -114,6 +114,14 @@ const Header = () => {
                   )}
                 </Button>
               </Link>
+              {isAdmin && (
+                <Link to="/admin">
+                  <Button variant="default" size="sm" className="gap-1.5">
+                    <ShieldCheck className="h-4 w-4" />
+                    <span className="hidden 2xl:inline">Admin Panel</span>
+                  </Button>
+                </Link>
+              )}
               <Button variant="ghost" size="icon" onClick={signOut}>
                 <LogOut className="h-5 w-5" />
               </Button>
