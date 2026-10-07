@@ -8,3 +8,9 @@
 
 - [x] Add homepage group (DESIGN/PRINT/CUSTOMIZE), short description, "Starting From" and WhatsApp button controls to existing product form.
 - [x] Show/hide/delete/edit remain in existing admin; customer pages reflect the new fields.
+
+# Dedicated Services listing
+
+- [ ] Add database-backed DESIGN/PRINT/CUSTOMIZE sections and All/category filters.
+- [ ] Show admin images, descriptions, available prices, details and WhatsApp links.
+- [ ] Verify filtering, automatic refresh and existing navigation.
