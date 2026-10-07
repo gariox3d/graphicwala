@@ -40,6 +40,7 @@ const Wedding = lazy(() => import("./pages/Wedding"));
 const CorporateGifting = lazy(() => import("./pages/CorporateGifting"));
 const CustomProducts = lazy(() => import("./pages/CustomProducts"));
 const HomepageCategory = lazy(() => import("./pages/HomepageCategory"));
+const Services = lazy(() => import("./pages/Services"));
 const Portfolio = lazy(() => import("./pages/Portfolio"));
 
 // Admin panel is the heaviest area — kept fully out of the customer bundle.
@@ -129,6 +130,7 @@ const App = () => {
                 <Route path="/products" element={<Products />} />
                 <Route path="/category/:slug" element={<CategoryLanding />} />
                 <Route path="/services/:group" element={<HomepageCategory />} />
+                <Route path="/services" element={<Services />} />
                 <Route path="/product/:id" element={<ProductDetail />} />
                 <Route path="/share/product/:id" element={<ShareRedirect />} />
                 <Route path="/cart" element={<Cart />} />
