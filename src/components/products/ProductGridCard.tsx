@@ -1,8 +1,7 @@
 import SmartImage from '@/components/SmartImage';
 import { CARD_WIDTHS } from '@/lib/imageUrl';
 import { Link } from 'react-router-dom';
-import { Product, getEffectivePrice, WHATSAPP_NUMBER, BUSINESS_NAME } from '@/lib/types';
-import { normalizeIndianPhoneForWhatsApp } from '@/lib/phone';
+import { Product, getEffectivePrice } from '@/lib/types';
 
 const isNew = (p: Product) =>
   p.created_at ? Date.now() - new Date(p.created_at).getTime() < 1000 * 60 * 60 * 24 * 21 : false;
@@ -87,17 +86,12 @@ const ProductGridCard = ({ product: p, badge, showDelivery = true }: Props) => {
         </Link>
 
         <div className="mt-2 flex items-baseline justify-center gap-2">
-          {p.price_starting_from && <span className="text-xs text-muted-foreground">Starting from</span>}
           <span className="text-base font-bold text-foreground">₹{price.toFixed(0)}</span>
           {onSale && (
             <span className="text-xs font-light text-muted-foreground line-through">₹{p.price.toFixed(0)}</span>
           )}
         </div>
 
-        {p.short_description && <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{p.short_description}</p>}
-        {p.whatsapp_order_enabled && (
-          <a href={`https://wa.me/${normalizeIndianPhoneForWhatsApp(WHATSAPP_NUMBER)}?text=${encodeURIComponent(`Hello ${BUSINESS_NAME}, I want to order: ${p.name}`)}`} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex justify-center rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground">WhatsApp Order</a>
-        )}
         {showDelivery && (
           <p className="mt-2 text-xs tracking-[0.02em] text-muted-foreground">
             Delivery in {days} days

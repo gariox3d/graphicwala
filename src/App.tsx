@@ -32,16 +32,6 @@ const TermsAndConditions = lazy(() => import("./pages/TermsAndConditions"));
 const ShippingPolicy = lazy(() => import("./pages/ShippingPolicy"));
 const RefundPolicy = lazy(() => import("./pages/RefundPolicy"));
 const TrackOrder = lazy(() => import("./pages/TrackOrder"));
-const Blog = lazy(() => import("./pages/Blog"));
-const BlogPost = lazy(() => import("./pages/BlogPost"));
-const DesignPrint = lazy(() => import("./pages/DesignPrint"));
-const BusinessPrinting = lazy(() => import("./pages/BusinessPrinting"));
-const Wedding = lazy(() => import("./pages/Wedding"));
-const CorporateGifting = lazy(() => import("./pages/CorporateGifting"));
-const CustomProducts = lazy(() => import("./pages/CustomProducts"));
-const HomepageCategory = lazy(() => import("./pages/HomepageCategory"));
-const Services = lazy(() => import("./pages/Services"));
-const Portfolio = lazy(() => import("./pages/Portfolio"));
 
 // Admin panel is the heaviest area — kept fully out of the customer bundle.
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
@@ -68,8 +58,6 @@ const AdminBilling = lazy(() => import("./pages/admin/AdminBilling"));
 const AdminPickupEarnings = lazy(() => import("./pages/admin/AdminPickupEarnings"));
 const AdminHeroShowcase = lazy(() => import("./pages/admin/AdminHeroShowcase"));
 const AdminSocialPreview = lazy(() => import("./pages/admin/AdminSocialPreview"));
-const AdminServiceImages = lazy(() => import("./pages/admin/AdminServiceImages"));
-const AdminPortfolio = lazy(() => import("./pages/admin/AdminPortfolio"));
 import ScrollToTop from "./components/ScrollToTop";
 import BreadcrumbSchema from "./components/seo/BreadcrumbSchema";
 import AdminGuard from "./components/admin/AdminGuard";
@@ -129,8 +117,6 @@ const App = () => {
                 <Route path="/" element={<Index />} />
                 <Route path="/products" element={<Products />} />
                 <Route path="/category/:slug" element={<CategoryLanding />} />
-                <Route path="/services/:group" element={<HomepageCategory />} />
-                <Route path="/services" element={<Services />} />
                 <Route path="/product/:id" element={<ProductDetail />} />
                 <Route path="/share/product/:id" element={<ShareRedirect />} />
                 <Route path="/cart" element={<Cart />} />
@@ -142,8 +128,6 @@ const App = () => {
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/track-order" element={<TrackOrder />} />
-                <Route path="/blog" element={<Blog />} />                <Route path="/design-print" element={<DesignPrint />} />                <Route path="/business-printing" element={<BusinessPrinting />} />                <Route path="/wedding" element={<Wedding />} />                <Route path="/corporate-gifting" element={<CorporateGifting />} />                <Route path="/custom-products" element={<CustomProducts />} />                <Route path="/portfolio" element={<Portfolio />} />
-                <Route path="/blog/:slug" element={<BlogPost />} />
                 <Route path="/ai-assistant" element={<AIAssistant />} />
                 <Route path="/sale" element={<Sale />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
@@ -176,8 +160,6 @@ const App = () => {
                 <Route path="/admin/billing" element={<AdminGuard><AdminBilling /></AdminGuard>} />
                 <Route path="/admin/hero-showcase" element={<AdminGuard><AdminHeroShowcase /></AdminGuard>} />
                 <Route path="/admin/social-preview" element={<AdminGuard><AdminSocialPreview /></AdminGuard>} />
-                <Route path="/admin/service-images" element={<AdminGuard><AdminServiceImages /></AdminGuard>} />
-                <Route path="/admin/portfolio" element={<AdminGuard><AdminPortfolio /></AdminGuard>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               </Suspense>

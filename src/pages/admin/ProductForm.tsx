@@ -32,10 +32,6 @@ type ProductFormData = {
   category_id: string;
   stock_quantity: string;
   is_active: boolean;
-  service_group: string;
-  short_description: string;
-  price_starting_from: boolean;
-  whatsapp_order_enabled: boolean;
   customization_enabled: boolean;
   delivery_charge: string;
   cutoff_time: string;
@@ -73,10 +69,6 @@ const ProductForm = () => {
     category_id: '',
     stock_quantity: '0',
     is_active: true,
-    service_group: '',
-    short_description: '',
-    price_starting_from: false,
-    whatsapp_order_enabled: false,
     customization_enabled: false,
     delivery_charge: '',
     cutoff_time: '18:00',
@@ -182,10 +174,6 @@ const ProductForm = () => {
           category_id: product.category_id || '',
           stock_quantity: product.stock_quantity?.toString() || '0',
           is_active: product.is_active,
-          service_group: product.service_group || '',
-          short_description: product.short_description || '',
-          price_starting_from: product.price_starting_from ?? false,
-          whatsapp_order_enabled: product.whatsapp_order_enabled ?? false,
           customization_enabled: product.customization_enabled || false,
           delivery_charge: product.delivery_charge?.toString() || '',
           cutoff_time: product.cutoff_time?.slice(0, 5) || '18:00',
@@ -296,10 +284,6 @@ const ProductForm = () => {
         category_id: formData.category_id || null,
         stock_quantity: parseInt(formData.stock_quantity) || 0,
         is_active: formData.is_active,
-        service_group: formData.service_group || null,
-        short_description: formData.short_description.trim() || null,
-        price_starting_from: formData.price_starting_from,
-        whatsapp_order_enabled: formData.whatsapp_order_enabled,
         // Primary image (first in array) for backwards compatibility
         image_url: productImages.length > 0 ? productImages[0] : null,
         // All images as array
@@ -414,10 +398,6 @@ const ProductForm = () => {
                       rows={4}
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="short_description">Short Description</Label>
-                    <Input id="short_description" name="short_description" value={formData.short_description} onChange={handleInputChange} maxLength={300} placeholder="One line shown on product cards" />
-                  </div>
                   <div className="grid md:grid-cols-3 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="price">Price (₹) *</Label>
@@ -476,30 +456,6 @@ const ProductForm = () => {
                         ))}
                       </SelectContent>
                     </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="service_group">Homepage Category</Label>
-                    <Select value={formData.service_group || 'none'} onValueChange={(value) => setFormData({ ...formData, service_group: value === 'none' ? '' : value })}>
-                      <SelectTrigger id="service_group"><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="none">Auto (by name)</SelectItem>
-                        <SelectItem value="DESIGN">DESIGN</SelectItem>
-                        <SelectItem value="PRINT">PRINT</SelectItem>
-                        <SelectItem value="CUSTOMIZE">CUSTOMIZE</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="flex items-center justify-between gap-4 rounded-lg border p-3">
-                    <Label htmlFor="price_starting_from">Show price as "Starting From"</Label>
-                    <Switch id="price_starting_from" checked={formData.price_starting_from} onCheckedChange={(checked) => setFormData({ ...formData, price_starting_from: checked })} />
-                  </div>
-                  <div className="flex items-center justify-between gap-4 rounded-lg border p-3">
-                    <Label htmlFor="whatsapp_order_enabled">Show WhatsApp Order button</Label>
-                    <Switch id="whatsapp_order_enabled" checked={formData.whatsapp_order_enabled} onCheckedChange={(checked) => setFormData({ ...formData, whatsapp_order_enabled: checked })} />
-                  </div>
-                  <div className="flex items-center justify-between gap-4 rounded-lg border p-3">
-                    <Label htmlFor="is_active">Visible on website</Label>
-                    <Switch id="is_active" checked={formData.is_active} onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })} />
                   </div>
                 </CardContent>
               </Card>

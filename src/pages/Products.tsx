@@ -1,4 +1,3 @@
-import GoogleAd from '@/components/ads/GoogleAd';
 import { useEffect, useState, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
@@ -198,9 +197,6 @@ const Products = () => {
               </ul>
             </nav>
           )}
-        </div>
-        <div className="container py-6">
-          <GoogleAd className="mx-auto max-w-4xl" />
         </div>
       </main>
       <Footer />

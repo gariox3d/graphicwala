@@ -506,30 +506,6 @@ export type Database = {
         }
         Relationships: []
       }
-      homepage_service_images: {
-        Row: {
-          image_url: string
-          service_key: string
-          storage_path: string
-          updated_at: string
-          updated_by: string | null
-        }
-        Insert: {
-          image_url: string
-          service_key: string
-          storage_path: string
-          updated_at?: string
-          updated_by?: string | null
-        }
-        Update: {
-          image_url?: string
-          service_key?: string
-          storage_path?: string
-          updated_at?: string
-          updated_by?: string | null
-        }
-        Relationships: []
-      }
       loyalty_balances: {
         Row: {
           current_balance: number
@@ -862,45 +838,6 @@ export type Database = {
         }
         Relationships: []
       }
-      portfolio_items: {
-        Row: {
-          category: string
-          created_at: string
-          description: string | null
-          display_order: number
-          id: string
-          image_url: string
-          is_active: boolean
-          storage_path: string
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          category: string
-          created_at?: string
-          description?: string | null
-          display_order?: number
-          id?: string
-          image_url: string
-          is_active?: boolean
-          storage_path: string
-          title: string
-          updated_at?: string
-        }
-        Update: {
-          category?: string
-          created_at?: string
-          description?: string | null
-          display_order?: number
-          id?: string
-          image_url?: string
-          is_active?: boolean
-          storage_path?: string
-          title?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       product_views: {
         Row: {
           created_at: string
@@ -956,18 +893,14 @@ export type Database = {
           length_cm: number | null
           name: string
           price: number
-          price_starting_from: boolean
           sale_end: string | null
           sale_price: number | null
           sale_start: string | null
-          service_group: string | null
-          short_description: string | null
           slug: string
           stock_quantity: number | null
           updated_at: string
           upload_config: Json | null
           weight_kg: number | null
-          whatsapp_order_enabled: boolean
         }
         Insert: {
           back_upload_enabled?: boolean | null
@@ -991,18 +924,14 @@ export type Database = {
           length_cm?: number | null
           name: string
           price: number
-          price_starting_from?: boolean
           sale_end?: string | null
           sale_price?: number | null
           sale_start?: string | null
-          service_group?: string | null
-          short_description?: string | null
           slug: string
           stock_quantity?: number | null
           updated_at?: string
           upload_config?: Json | null
           weight_kg?: number | null
-          whatsapp_order_enabled?: boolean
         }
         Update: {
           back_upload_enabled?: boolean | null
@@ -1026,18 +955,14 @@ export type Database = {
           length_cm?: number | null
           name?: string
           price?: number
-          price_starting_from?: boolean
           sale_end?: string | null
           sale_price?: number | null
           sale_start?: string | null
-          service_group?: string | null
-          short_description?: string | null
           slug?: string
           stock_quantity?: number | null
           updated_at?: string
           upload_config?: Json | null
           weight_kg?: number | null
-          whatsapp_order_enabled?: boolean
         }
         Relationships: [
           {

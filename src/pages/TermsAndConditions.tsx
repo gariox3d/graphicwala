@@ -64,27 +64,7 @@ const TermsAndConditions = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-2">6. Artwork, Files & Design Proofs</h2>
-            <ul className="list-disc ml-6 space-y-1">
-              <li>Accepted upload formats are <strong>JPEG and PNG</strong>. For the sharpest results, artwork should be at least 300 DPI at the final print size.</li>
-              <li>Keep important text and faces at least 3 mm inside the edge. Anything outside the safe area may be trimmed during cutting.</li>
-              <li>Screens display colour in RGB while printing uses CMYK inks, so bright neon shades may print slightly duller. This is a normal characteristic of printing and is not treated as a defect.</li>
-              <li>Where a design proof is shared, production begins only after your approval. Spelling, numbers and names in an approved proof are considered final and reprints for such errors are chargeable.</li>
-              <li>If our design team prepares artwork for you, the final print-ready file remains with us for production use; you retain full rights to your own logos, photos and content.</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-xl font-semibold mb-2">7. Order Support & Working Hours</h2>
-            <ul className="list-disc ml-6 space-y-1">
-              <li>Orders can be placed on the website 24×7. Support and production run Monday to Saturday, 10:00 AM – 8:00 PM IST, and Sunday, 11:00 AM – 4:00 PM IST.</li>
-              <li>Messages received outside working hours or on national holidays are answered on the next working day.</li>
-              <li>Design changes requested after printing has started cannot be accommodated.</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-xl font-semibold mb-2">8. Intellectual Property</h2>
+            <h2 className="text-xl font-semibold mb-2">6. Intellectual Property</h2>
             <p>
               You confirm that you have the rights to use any images, logos, or designs you upload. 
               {BUSINESS_NAME} is not responsible for copyright infringement arising from customer-uploaded content.
@@ -92,7 +72,7 @@ const TermsAndConditions = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-2">9. Account & Data</h2>
+            <h2 className="text-xl font-semibold mb-2">7. Account & Data</h2>
             <ul className="list-disc ml-6 space-y-1">
               <li>You are responsible for keeping your account credentials secure.</li>
               <li>We reserve the right to suspend accounts involved in fraudulent or abusive activities.</li>
@@ -101,7 +81,7 @@ const TermsAndConditions = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-2">10. Limitation of Liability</h2>
+            <h2 className="text-xl font-semibold mb-2">8. Limitation of Liability</h2>
             <p>
               {BUSINESS_NAME} shall not be liable for any indirect, incidental, or consequential damages arising from the use of our products or website. 
               Our maximum liability is limited to the order value of the affected product.
@@ -109,14 +89,14 @@ const TermsAndConditions = () => {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-2">11. Changes to Terms</h2>
+            <h2 className="text-xl font-semibold mb-2">9. Changes to Terms</h2>
             <p>
               We may update these terms from time to time. Continued use of the website after changes constitutes acceptance of the revised terms.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-2">12. Contact Us</h2>
+            <h2 className="text-xl font-semibold mb-2">10. Contact Us</h2>
             <p>
               For any queries, reach us on WhatsApp at{' '}
               <a href={`https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, '')}`} className="text-primary underline" target="_blank" rel="noopener noreferrer">

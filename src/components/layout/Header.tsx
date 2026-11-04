@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingCart, User, Menu, X, LogOut, MessageCircle, Phone, Heart, ShieldCheck } from 'lucide-react';
+import { ShoppingCart, User, Menu, X, LogOut, MessageCircle, Phone, Heart } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -17,14 +17,9 @@ const Header = () => {
 
   const navLinks = [
     { name: 'Home', path: '/' },
-    { name: 'Services', path: '/services' },
-    { name: 'Design & Print', path: '/design-print' },
-    { name: 'Custom Products', path: '/custom-products' },
-    { name: 'Wedding', path: '/wedding' },
-    { name: 'Business Printing', path: '/business-printing' },
-    { name: 'Corporate Gifting', path: '/corporate-gifting' },
-    { name: 'Portfolio', path: '/portfolio' },
-    { name: 'Blog', path: '/blog' },
+    { name: 'Products', path: '/products' },
+    { name: '🔥 Sale', path: '/sale' },
+    { name: 'Help', path: '/ai-assistant' },
     { name: 'About', path: '/about' },
     { name: 'Contact', path: '/contact' },
   ];
@@ -37,22 +32,24 @@ const Header = () => {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex shrink-0 items-center gap-2 mr-3">
+        <Link to="/" className="flex items-center gap-2">
           <img 
             src={logoImage} 
             alt="Graphic Wala Logo" 
             className="h-10 w-10 rounded-lg object-cover"
           />
-          <span className="flex flex-col leading-none"><span className="text-lg font-black tracking-tight whitespace-nowrap text-foreground">GRAPHIC <span className="text-primary">WALA</span></span><span className="mt-0.5 text-[9px] font-semibold tracking-[0.18em] whitespace-nowrap text-muted-foreground">DESIGN • PRINT • CUSTOMIZE</span></span>
+          <span className="text-xl font-bold text-foreground">
+            Graphic <span className="text-primary">Wala</span>
+          </span>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden xl:flex items-center gap-3">
+        <nav className="hidden md:flex items-center gap-6">
           {navLinks.map((link) => (
             <Link
               key={link.path}
               to={link.path}
-              className={`text-[13px] font-medium whitespace-nowrap transition-colors hover:text-primary ${
+              className={`text-sm font-medium transition-colors hover:text-primary ${
                 isActive(link.path) ? 'text-primary' : 'text-muted-foreground'
               }`}
             >
@@ -72,7 +69,7 @@ const Header = () => {
             className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-white bg-green-500 hover:bg-green-600 rounded-lg transition-colors"
           >
             <MessageCircle className="h-4 w-4" />
-            <span className="hidden 2xl:inline">WhatsApp</span>
+            <span className="hidden lg:inline">WhatsApp</span>
           </a>
           
           {/* Call Button */}
@@ -81,7 +78,7 @@ const Header = () => {
             className="flex items-center gap-1 px-3 py-2 text-sm font-medium border border-border rounded-lg hover:bg-muted transition-colors"
           >
             <Phone className="h-4 w-4" />
-            <span className="hidden 2xl:inline">Call</span>
+            <span className="hidden lg:inline">Call</span>
           </a>
 
           {user ? (
@@ -115,14 +112,6 @@ const Header = () => {
                   )}
                 </Button>
               </Link>
-              {isAdmin && (
-                <Link to="/admin">
-                  <Button variant="default" size="sm" className="gap-1.5">
-                    <ShieldCheck className="h-4 w-4" />
-                    <span className="hidden 2xl:inline">Admin Panel</span>
-                  </Button>
-                </Link>
-              )}
               <Button variant="ghost" size="icon" onClick={signOut}>
                 <LogOut className="h-5 w-5" />
               </Button>
@@ -141,7 +130,7 @@ const Header = () => {
 
         {/* Mobile Menu Button */}
         <button
-          className="xl:hidden p-2"
+          className="md:hidden p-2"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -155,7 +144,7 @@ const Header = () => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="xl:hidden border-t border-border bg-background animate-slide-down">
+        <div className="md:hidden border-t border-border bg-background animate-slide-down">
           <nav className="container py-4 flex flex-col gap-4">
             
             {navLinks.map((link) => (
