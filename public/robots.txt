@@ -1,32 +1,12 @@
-# Robots.txt for Graphic Wala
-# https://www.graphicwala.com
 
-User-agent: Googlebot
-Allow: /
-Allow: /product/
-Allow: /products
-Allow: /about
-Allow: /contact
-
-User-agent: Googlebot-Image
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
+# Graphic Wala - Robots.txt
 
 User-agent: *
+
+# Allow public website pages
 Allow: /
 
-# Sitemap location
-Sitemap: https://www.graphicwala.com/sitemap.xml
-
-# Disallow admin and auth pages from indexing
+# Keep private and transactional pages out of crawling
 Disallow: /admin
 Disallow: /auth
 Disallow: /dashboard
@@ -34,3 +14,6 @@ Disallow: /checkout
 Disallow: /cart
 Disallow: /order-confirmation
 Disallow: /share/
+
+# Sitemap
+Sitemap: https://www.graphicwala.com/sitemap.xml
