@@ -1,17 +1,29 @@
-import { useEffect, useState, useCallback, lazy } from 'react';
+
+import { useEffect, useState, lazy } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { ShoppingCart, ArrowLeft, Minus, Plus, Image, Zap, Heart } from 'lucide-react';
+import {
+  ShoppingCart,
+  ArrowLeft,
+  Minus,
+  Plus,
+  Image,
+  Zap,
+} from 'lucide-react';
+
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+
 import { supabase } from '@/integrations/supabase/client';
 import { Product, UploadField, BUSINESS_NAME } from '@/lib/types';
+
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
+
 import DesignUpload from '@/components/DesignUpload';
 import DeliveryInfoBanner from '@/components/DeliveryInfoBanner';
 import SupportContact from '@/components/SupportContact';
@@ -25,265 +37,335 @@ import StickyAddToCart from '@/components/products/StickyAddToCart';
 import WhyBuyFromProduct from '@/components/products/WhyBuyFromProduct';
 import SecurePaymentBadge from '@/components/SecurePaymentBadge';
 import PincodeChecker from '@/components/shipping/PincodeChecker';
+
 import { trackEvent } from '@/lib/analytics';
 import { categorySlug } from '@/lib/categorySeo';
-
 import WishlistButton from '@/components/products/WishlistButton';
 import FlashSaleBadge from '@/components/products/FlashSaleBadge';
+
 import { useStoreSettings } from '@/hooks/useStoreSettings';
 import { useRecentlyViewed } from '@/hooks/useRecentlyViewed';
 import { useWishlist } from '@/hooks/useWishlist';
+
 import { toast } from 'sonner';
 import LazySection from '@/components/LazySection';
 
-// Below-the-fold, heavy sections: downloaded only when scrolled near.
 const ProductReviews = lazy(() => import('@/components/reviews/ProductReviews'));
 const ProductFAQ = lazy(() => import('@/components/products/ProductFAQ'));
 const SimilarProducts = lazy(() => import('@/components/products/SimilarProducts'));
 const RecentlyViewedProducts = lazy(() => import('@/components/products/RecentlyViewedProducts'));
 
 const SITE_URL = 'https://www.graphicwala.com';
+const DEFAULT_OG_IMAGE = `${SITE_URL}/og-square.png`;
+const SHARE_BASE_URL = `${SITE_URL}/share/product`;
 
-/**
- * Trims a meta string to `max` characters on a word boundary so titles and
- * descriptions never end mid-word. Falls back to `short` when provided.
- */
+type ProductDetailData = Product & {
+  delivery_charge?: number | null;
+  image_urls?: string[];
+  weight_kg?: number;
+  cutoff_time?: string | null;
+  delivery_days?: number | null;
+  sale_price?: number | null;
+  sale_start?: string | null;
+  sale_end?: string | null;
+  length_cm?: number | null;
+  breadth_cm?: number | null;
+  height_cm?: number | null;
+};
+
 const clampText = (text: string, max: number, short?: string) => {
   const clean = text.replace(/\s+/g, ' ').trim();
+
   if (clean.length <= max) return clean;
+
   if (short) {
     const shortClean = short.replace(/\s+/g, ' ').trim();
+
     if (shortClean.length <= max) return shortClean;
+
     return shortClean.slice(0, max).replace(/[\s,–—|-]+\S*$/, '');
   }
+
   return clean.slice(0, max).replace(/[\s,–—|-]+\S*$/, '');
 };
 
-/**
- * Splits a run-on product description into readable lines without changing
- * any wording: breaks before emoji markers, collapses extra whitespace, and
- * keeps each section on its own line.
- */
 const formatDescription = (description?: string | null): string[] => {
   if (!description) return ['No description available.'];
+
   return description
     .replace(/\r/g, '')
     .replace(/[ \t]+/g, ' ')
-    // New line before any emoji (section markers like ✅ 🔥 📏 ✨ etc.)
-    .replace(/[ \t]*(?=[\u{1F000}-\u{1FAFF}\u{2190}-\u{21FF}\u{2300}-\u{27BF}\u{2B00}-\u{2BFF}\u{3030}\u{303D}\u{3297}\u{3299}](?!\u{FE0F}?\u{200D}))/gu, '\n')
-    // New line at bullet / separator characters
+    .replace(
+      /[ \t]*(?=[\u{1F000}-\u{1FAFF}\u{2190}-\u{21FF}\u{2300}-\u{27BF}\u{2B00}-\u{2BFF}\u{3030}\u{303D}\u{3297}\u{3299}](?!\u{FE0F}?\u{200D}))/gu,
+      '\n'
+    )
     .replace(/[ \t]*[•▪◦‣][ \t]*/g, '\n')
     .replace(/[ \t]+\|[ \t]+/g, '\n')
-    // New line after sentence end when a new capital/number/emoji sentence starts
-    .replace(/(?<=[.!?।])\s+(?=[A-Z₹0-9\u{1F000}-\u{1FAFF}\u{2190}-\u{27BF}])/gu, '\n')
+    .replace(
+      /(?<=[.!?।])\s+(?=[A-Z₹0-9\u{1F000}-\u{1FAFF}\u{2190}-\u{27BF}])/gu,
+      '\n'
+    )
     .split('\n')
     .map((line) => line.trim())
     .filter(Boolean);
 };
-const DEFAULT_OG_IMAGE = `${SITE_URL}/og-square.png`;
-const SHARE_BASE_URL = `${SITE_URL}/share/product`;
+
+const isUuid = (value: string) =>
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
 
 const ProductDetail = () => {
   const { id: slugOrId } = useParams();
   const navigate = useNavigate();
+
   const { user } = useAuth();
   const { settings } = useStoreSettings();
   const { viewedIds, addProduct: addToRecentlyViewed } = useRecentlyViewed();
   const { isWishlisted, toggleWishlist } = useWishlist();
-  const [product, setProduct] = useState<(Product & { 
-    delivery_charge?: number | null; 
-    image_urls?: string[];
-    weight_kg?: number;
-    cutoff_time?: string | null;
-    delivery_days?: number | null;
-    sale_price?: number | null;
-    sale_start?: string | null;
-    sale_end?: string | null;
-  }) | null>(null);
+  const { addToCart } = useCart();
+
+  const [product, setProduct] = useState<ProductDetailData | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
-  const { addToCart } = useCart();
+  const [fetchError, setFetchError] = useState(false);
   const [designUrls, setDesignUrls] = useState<Record<string, string>>({});
-  const [reviewStats, setReviewStats] = useState<{ avg: number; count: number; reviews: any[] }>({ avg: 0, count: 0, reviews: [] });
-  
-  // Get delivery charge from product-level setting only
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
+
   const deliveryCharge = product?.delivery_charge ?? 0;
 
+  // Fetch product by slug or legacy UUID.
   useEffect(() => {
+    let active = true;
+
     const fetchProduct = async () => {
-      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slugOrId || '');
-      const query = supabase.from('products').select('*, categories(*)');
-      const { data } = isUuid
-        ? await query.eq('id', slugOrId).maybeSingle()
-        : await query.eq('slug', slugOrId).maybeSingle();
-      if (data) {
-        // Redirect UUID URLs to slug URLs for SEO
-        if (isUuid && (data as any).slug && (data as any).slug !== slugOrId) {
-          navigate(`/product/${(data as any).slug}`, { replace: true });
+      setLoading(true);
+      setFetchError(false);
+      setProduct(null);
+
+      try {
+        if (!slugOrId) {
+          setLoading(false);
           return;
         }
-        const uploadConfig = Array.isArray(data.upload_config) 
-          ? data.upload_config as unknown as UploadField[]
+
+        const query = supabase
+          .from('products')
+          .select('*, categories(*)');
+
+        const { data, error } = isUuid(slugOrId)
+          ? await query.eq('id', slugOrId).maybeSingle()
+          : await query.eq('slug', slugOrId).maybeSingle();
+
+        if (error) throw error;
+        if (!active) return;
+
+        if (!data) {
+          setProduct(null);
+          return;
+        }
+
+        // Redirect legacy UUID URLs to the canonical slug URL.
+        if (isUuid(slugOrId) && data.slug && data.slug !== slugOrId) {
+          navigate(`/product/${data.slug}`, { replace: true });
+          return;
+        }
+
+        const uploadConfig = Array.isArray(data.upload_config)
+          ? (data.upload_config as unknown as UploadField[])
           : [];
-        const imageUrls = Array.isArray(data.image_urls) 
-          ? data.image_urls as string[]
-          : data.image_url ? [data.image_url] : [];
-        setProduct({ 
-          ...data, 
+
+        const imageUrls = Array.isArray(data.image_urls)
+          ? (data.image_urls as string[])
+          : data.image_url
+            ? [data.image_url]
+            : [];
+
+        setProduct({
+          ...data,
           upload_config: uploadConfig,
           delivery_charge: data.delivery_charge,
           image_urls: imageUrls,
           weight_kg: data.weight_kg ?? 0.5,
-        } as any);
+        } as ProductDetailData);
+
+      } catch (error) {
+        console.error('Product loading error:', error);
+
+        if (active) {
+          setFetchError(true);
+          setProduct(null);
+        }
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
       }
-      setLoading(false);
     };
-    if (slugOrId) fetchProduct();
+
+    fetchProduct();
+
+    return () => {
+      active = false;
+    };
   }, [slugOrId, navigate]);
 
-  // Track recently viewed
+  // Track recently viewed products.
   useEffect(() => {
-    if (product?.id) addToRecentlyViewed(product.id);
+    if (product?.id) {
+      addToRecentlyViewed(product.id);
+    }
   }, [product?.id, addToRecentlyViewed]);
 
-  // Conversion tracking: product view + BI product_views table
+  // Product view analytics.
   useEffect(() => {
     if (!product?.id) return;
+
     trackEvent('view_product', {
       item_id: product.id,
       item_name: product.name,
       value: product.price,
     });
 
-    // Lightweight BI view tracking (no await, fire-and-forget)
     try {
       let sessionId = sessionStorage.getItem('bi_session_id');
+
       if (!sessionId) {
         sessionId = crypto.randomUUID();
         sessionStorage.setItem('bi_session_id', sessionId);
       }
+
       supabase.from('product_views').insert({
         product_id: product.id,
         user_id: user?.id || null,
         session_id: sessionId,
       }).then(({ error }) => {
-        if (error) console.warn('BI view tracking failed:', error.message);
+        if (error) {
+          console.warn('BI view tracking failed:', error.message);
+        }
       });
-    } catch (e) {
-      // Non-critical tracking failure should never break product page
+    } catch {
+      // Analytics failures must not break the product page.
     }
   }, [product?.id, product?.name, product?.price, user?.id]);
 
-  // Fetch review stats for JSON-LD
+  // Load existing designs from session storage.
   useEffect(() => {
-    if (!product?.id) return;
-    const fetchReviewStats = async () => {
-      const { data } = await supabase
-        .from('reviews')
-        .select('rating, user_name, comment, created_at')
-        .eq('product_id', product.id)
-        .order('created_at', { ascending: false })
-        .limit(5);
-      if (data && data.length > 0) {
-        const avg = Math.round((data.reduce((s, r) => s + r.rating, 0) / data.length) * 10) / 10;
-        setReviewStats({ avg, count: data.length, reviews: data });
-      }
-    };
-    fetchReviewStats();
-  }, [product?.id]);
+    if (!product) return;
 
-  // Load existing designs from session storage
-  useEffect(() => {
-    if (product) {
+    try {
       const savedDesigns = sessionStorage.getItem('productDesigns');
+
       if (savedDesigns) {
         const designs = JSON.parse(savedDesigns);
+
         if (designs[product.id]) {
           setDesignUrls(designs[product.id]);
         }
       }
+    } catch (error) {
+      console.warn('Unable to restore saved product designs:', error);
     }
   }, [product]);
 
   const getUploadConfig = (): UploadField[] => {
-    // Check for new upload_config first - this is the primary source
     if (product?.upload_config && product.upload_config.length > 0) {
       return product.upload_config;
     }
-    
-    // Check customization_enabled flag (set by admin)
+
     if (!product?.customization_enabled) return [];
-    
-    // Fallback to legacy fields for backward compatibility
+
     const legacyConfig: UploadField[] = [];
+
     if (product.front_upload_required) {
-      legacyConfig.push({ id: 'front', label: 'Front Design', required: true });
+      legacyConfig.push({
+        id: 'front',
+        label: 'Front Design',
+        required: true,
+      });
     }
+
     if (product.back_upload_enabled) {
-      legacyConfig.push({ id: 'back', label: 'Back Design', required: false });
+      legacyConfig.push({
+        id: 'back',
+        label: 'Back Design',
+        required: false,
+      });
     }
+
     return legacyConfig;
   };
 
   const uploadConfig = getUploadConfig();
-  const requiredFields = uploadConfig.filter(f => f.required);
-  const allRequiredUploaded = requiredFields.every(f => designUrls[f.id]);
-
-  const [showLoginDialog, setShowLoginDialog] = useState(false);
+  const requiredFields = uploadConfig.filter((field) => field.required);
+  const allRequiredUploaded = requiredFields.every((field) => designUrls[field.id]);
 
   const handleAddToCart = () => {
     if (!product) return;
+
     if (!user) {
-      // Show login dialog if user tries to add to cart without login
       setShowLoginDialog(true);
       return;
     }
 
-    // Check if required uploads are missing when user is logged in
-    if (uploadConfig.length > 0 && requiredFields.length > 0 && !allRequiredUploaded) {
+    if (requiredFields.length > 0 && !allRequiredUploaded) {
       toast.error('Please upload all required photos before adding to cart');
       return;
     }
 
-    // Store design URLs in sessionStorage for checkout
-    if (Object.keys(designUrls).length > 0) {
-      const designs = JSON.parse(sessionStorage.getItem('productDesigns') || '{}');
-      designs[product.id] = designUrls;
-      sessionStorage.setItem('productDesigns', JSON.stringify(designs));
+    try {
+      if (Object.keys(designUrls).length > 0) {
+        const designs = JSON.parse(
+          sessionStorage.getItem('productDesigns') || '{}'
+        );
+
+        designs[product.id] = designUrls;
+        sessionStorage.setItem('productDesigns', JSON.stringify(designs));
+      }
+    } catch (error) {
+      console.error('Unable to save product designs:', error);
+      toast.error('Unable to save your uploaded designs. Please try again.');
+      return;
     }
 
     addToCart(product.id, quantity);
+
     trackEvent('add_to_cart', {
       item_id: product.id,
       item_name: product.name,
       quantity,
       value: product.price * quantity,
     });
+
     toast.success('Added to cart!');
   };
 
   const handleBuyNow = () => {
     if (!product) return;
+
     if (!user) {
-      // Show login dialog if user tries to buy without login
       setShowLoginDialog(true);
       return;
     }
 
-    // Check if required uploads are missing
-    if (uploadConfig.length > 0 && !allRequiredUploaded) {
+    if (requiredFields.length > 0 && !allRequiredUploaded) {
       toast.error('Please upload all required photos before proceeding');
       return;
     }
 
-    // Store design URLs
-    if (Object.keys(designUrls).length > 0) {
-      const designs = JSON.parse(sessionStorage.getItem('productDesigns') || '{}');
-      designs[product.id] = designUrls;
-      sessionStorage.setItem('productDesigns', JSON.stringify(designs));
+    try {
+      if (Object.keys(designUrls).length > 0) {
+        const designs = JSON.parse(
+          sessionStorage.getItem('productDesigns') || '{}'
+        );
+
+        designs[product.id] = designUrls;
+        sessionStorage.setItem('productDesigns', JSON.stringify(designs));
+      }
+    } catch (error) {
+      console.error('Unable to save product designs:', error);
+      toast.error('Unable to save your uploaded designs. Please try again.');
+      return;
     }
 
-    // Add to cart and go to checkout
     addToCart(product.id, quantity);
     navigate('/checkout');
   };
@@ -296,157 +378,200 @@ const ProductDetail = () => {
     );
   }
 
+  // Missing product or fetch failure: prevent indexing.
   if (!product) {
     return (
       <div className="min-h-screen flex flex-col">
+        <Helmet>
+          <title>
+            {fetchError
+              ? `Unable to Load Product | ${BUSINESS_NAME}`
+              : `Product Not Found | ${BUSINESS_NAME}`}
+          </title>
+
+          <meta
+            name="description"
+            content="This product could not be found. Explore other products at Graphic Wala."
+          />
+
+          <meta name="robots" content="noindex, follow" />
+        </Helmet>
+
         <Header />
-        <main className="flex-1 flex items-center justify-center">
-          <p>Product not found</p>
+
+        <main className="flex-1 flex flex-col items-center justify-center px-4 text-center">
+          <h1 className="text-2xl font-bold">
+            {fetchError ? 'Unable to Load Product' : 'Product Not Found'}
+          </h1>
+
+          <p className="mt-3 text-muted-foreground">
+            {fetchError
+              ? 'Please check your connection and try again.'
+              : 'This product may have been removed or the URL may be incorrect.'}
+          </p>
+
+          <Link
+            to="/products"
+            className="mt-6 rounded-lg bg-primary px-6 py-3 text-white font-semibold"
+          >
+            Browse All Products
+          </Link>
         </main>
+
         <Footer />
       </div>
     );
   }
 
-  const productSlug = (product as any).slug || product.id;
-  const productUrl = `${SITE_URL}/product/${productSlug}`;
-  const shareUrl = `${SHARE_BASE_URL}/${productSlug}`;
-  const allImages = product.image_urls && product.image_urls.length > 0 
-    ? product.image_urls 
-    : product.image_url ? [product.image_url] : [DEFAULT_OG_IMAGE];
+  const productSlug = product.slug || product.id;
+  const productUrl = `${SITE_URL}/product/${encodeURIComponent(productSlug)}`;
+  const shareUrl = `${SHARE_BASE_URL}/${encodeURIComponent(productSlug)}`;
+
+  const allImages =
+    product.image_urls && product.image_urls.length > 0
+      ? product.image_urls
+      : product.image_url
+        ? [product.image_url]
+        : [DEFAULT_OG_IMAGE];
+
   const productImage = allImages[0];
   const categoryName = product.categories?.name || 'Custom Products';
-  const categoryHref = product.categories ? `/category/${categorySlug(categoryName)}` : '/products';
 
-  // Generate SEO-friendly meta data (keyword-rich, unique per product)
-  const onSale = !!(product.sale_price && product.sale_end && new Date(product.sale_end) > new Date());
-  const effectivePrice = onSale ? product.sale_price! : product.price;
-  // Long product names stay intact (Google truncates visually); we only avoid
-  // appending suffixes that would push a short title past a readable length.
-  const shortTitle = `${product.name} | ${BUSINESS_NAME}`;
+  const categoryHref = product.categories
+    ? `/category/${categorySlug(categoryName)}`
+    : '/products';
+
+  // Use one consistent sale-price condition everywhere.
+  const now = Date.now();
+
+  const saleActive =
+    product.sale_price != null &&
+    Number(product.sale_price) > 0 &&
+    (!product.sale_start || new Date(product.sale_start).getTime() <= now) &&
+    (!product.sale_end || new Date(product.sale_end).getTime() >= now);
+
+  const effectivePrice = saleActive
+    ? Number(product.sale_price)
+    : Number(product.price);
+
   const productTitle =
     `${product.name} — Custom ${categoryName} Online | ${BUSINESS_NAME}`.length <= 65
       ? `${product.name} — Custom ${categoryName} Online | ${BUSINESS_NAME}`
-      : shortTitle;
+      : `${product.name} | ${BUSINESS_NAME}`;
+
   const productDescription = clampText(
     product.description
       ? `${product.description.replace(/\s+/g, ' ').trim()} Personalised and printed to order, with All India delivery.`
       : `Order a personalised ${product.name.toLowerCase()} from ${BUSINESS_NAME}. Upload your photo or details, we print it to order and deliver across India.`,
-    155,
+    155
   );
-  const priceValidUntil = new Date(Date.now() + 1000 * 60 * 60 * 24 * 90).toISOString().split('T')[0];
 
-  // Generate JSON-LD structured data for the product
+  // Product structured data.
+  // Shipping and return policy are intentionally omitted until verified.
+  // AggregateRating is also omitted because only a limited review sample is fetched.
   const productJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    "name": product.name,
-    "description": product.description || `Custom ${product.name} from Graphic Wala - Buy Online`,
-    "image": allImages,
-    "url": productUrl,
-    "sku": product.id,
-    "brand": {
-      "@type": "Brand",
-      "name": BUSINESS_NAME
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description:
+      product.description ||
+      `Custom ${product.name} from Graphic Wala - Buy Online`,
+    image: allImages,
+    url: productUrl,
+    sku: product.id,
+    brand: {
+      '@type': 'Brand',
+      name: BUSINESS_NAME,
     },
-    "category": categoryName,
-    "offers": {
-      "@type": "Offer",
-      "price": product.sale_price && product.sale_end && new Date(product.sale_end) > new Date() ? product.sale_price : product.price,
-      "priceCurrency": "INR",
-      "priceValidUntil": priceValidUntil,
-      "itemCondition": "https://schema.org/NewCondition",
-      "availability": product.stock_quantity > 0 
-        ? "https://schema.org/InStock" 
-        : "https://schema.org/OutOfStock",
-      "seller": {
-        "@type": "Organization",
-        "name": BUSINESS_NAME
+    category: categoryName,
+    offers: {
+      '@type': 'Offer',
+      price: effectivePrice,
+      priceCurrency: 'INR',
+      itemCondition: 'https://schema.org/NewCondition',
+      availability:
+        product.stock_quantity > 0
+          ? 'https://schema.org/InStock'
+          : 'https://schema.org/OutOfStock',
+      seller: {
+        '@type': 'Organization',
+        name: BUSINESS_NAME,
       },
-      "shippingDetails": {
-        "@type": "OfferShippingDetails",
-        "shippingDestination": {
-          "@type": "DefinedRegion",
-          "addressCountry": "IN"
-        },
-        "deliveryTime": {
-          "@type": "ShippingDeliveryTime",
-          "handlingTime": { "@type": "QuantitativeValue", "minValue": 1, "maxValue": 2, "unitCode": "DAY" },
-          "transitTime": { "@type": "QuantitativeValue", "minValue": 3, "maxValue": 7, "unitCode": "DAY" }
-        }
-      },
-      "hasMerchantReturnPolicy": {
-        "@type": "MerchantReturnPolicy",
-        "applicableCountry": "IN",
-        "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
-        "merchantReturnDays": 2,
-        "returnMethod": "https://schema.org/ReturnByMail",
-        "returnFees": "https://schema.org/FreeReturn"
-      },
-      "url": productUrl
+      url: productUrl,
     },
-    ...(reviewStats.count > 0 ? {
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": reviewStats.avg.toString(),
-        "reviewCount": reviewStats.count.toString(),
-        "bestRating": "5",
-        "worstRating": "1"
-      },
-      "review": reviewStats.reviews.map(r => ({
-        "@type": "Review",
-        "author": { "@type": "Person", "name": r.user_name },
-        "datePublished": r.created_at.split('T')[0],
-        "reviewRating": { "@type": "Rating", "ratingValue": r.rating.toString(), "bestRating": "5", "worstRating": "1" },
-        "reviewBody": r.comment
-      }))
-    } : {})
   };
 
-  // BreadcrumbList JSON-LD
   const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE_URL },
-      { "@type": "ListItem", "position": 2, "name": "Products", "item": `${SITE_URL}/products` },
-      ...(product.categories ? [{ "@type": "ListItem", "position": 3, "name": categoryName, "item": `${SITE_URL}${categoryHref}` }] : []),
-      { "@type": "ListItem", "position": product.categories ? 4 : 3, "name": product.name, "item": productUrl }
-    ]
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: SITE_URL,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Products',
+        item: `${SITE_URL}/products`,
+      },
+      ...(product.categories
+        ? [
+            {
+              '@type': 'ListItem',
+              position: 3,
+              name: categoryName,
+              item: `${SITE_URL}${categoryHref}`,
+            },
+          ]
+        : []),
+      {
+        '@type': 'ListItem',
+        position: product.categories ? 4 : 3,
+        name: product.name,
+        item: productUrl,
+      },
+    ],
   };
 
   return (
     <div className="min-h-screen flex flex-col">
       <Helmet>
-        {/* Primary Meta Tags */}
         <title>{productTitle}</title>
+
         <meta name="title" content={productTitle} />
         <meta name="description" content={productDescription} />
-        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+        <meta
+          name="robots"
+          content="index, follow, max-image-preview:large, max-snippet:-1"
+        />
+
         <link rel="canonical" href={productUrl} />
 
-        {/* Open Graph / Facebook / WhatsApp */}
+        {/* Open Graph */}
         <meta property="og:type" content="product" />
         <meta property="og:url" content={productUrl} />
         <meta property="og:title" content={productTitle} />
         <meta property="og:description" content={productDescription} />
         <meta property="og:image" content={productImage} />
         <meta property="og:image:secure_url" content={productImage} />
-        <meta property="og:image:width" content="1080" />
-        <meta property="og:image:height" content="1080" />
-        <meta property="og:image:type" content="image/jpeg" />
         <meta property="og:image:alt" content={`${product.name} - ${BUSINESS_NAME}`} />
         <meta property="og:site_name" content={BUSINESS_NAME} />
         <meta property="og:locale" content="en_IN" />
-        
-        {/* Product-specific OG tags */}
-        <meta property="product:price:amount" content={String(product.price)} />
+
+        {/* Product Open Graph */}
+        <meta property="product:price:amount" content={String(effectivePrice)} />
         <meta property="product:price:currency" content="INR" />
-        <meta property="product:availability" content={product.stock_quantity > 0 ? "in stock" : "out of stock"} />
+        <meta
+          property="product:availability"
+          content={product.stock_quantity > 0 ? 'in stock' : 'out of stock'}
+        />
         <meta property="product:category" content={categoryName} />
         <meta property="product:brand" content={BUSINESS_NAME} />
 
-        {/* Twitter Card */}
+        {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content={productUrl} />
         <meta name="twitter:title" content={productTitle} />
@@ -454,31 +579,50 @@ const ProductDetail = () => {
         <meta name="twitter:image" content={productImage} />
         <meta name="twitter:image:alt" content={`${product.name} - ${BUSINESS_NAME}`} />
 
-        {/* JSON-LD Structured Data */}
+        {/* Structured data */}
         <script type="application/ld+json">
           {JSON.stringify(productJsonLd)}
         </script>
+
         <script type="application/ld+json">
           {JSON.stringify(breadcrumbJsonLd)}
         </script>
       </Helmet>
 
       <Header />
+
       <main className="flex-1 py-8">
         <div className="container">
-          <nav aria-label="Breadcrumb" className="mb-6 text-sm text-muted-foreground">
-            <Link to="/" className="hover:text-primary">Home</Link>
+          <nav
+            aria-label="Breadcrumb"
+            className="mb-6 text-sm text-muted-foreground"
+          >
+            <Link to="/" className="hover:text-primary">
+              Home
+            </Link>
+
             <span className="mx-2">/</span>
-            <Link to="/products" className="hover:text-primary">Products</Link>
+
+            <Link to="/products" className="hover:text-primary">
+              Products
+            </Link>
+
             {product.categories && (
               <>
                 <span className="mx-2">/</span>
-                <Link to={categoryHref} className="hover:text-primary">{categoryName}</Link>
+                <Link to={categoryHref} className="hover:text-primary">
+                  {categoryName}
+                </Link>
               </>
             )}
+
             <span className="mx-2">/</span>
-            <span className="text-foreground font-medium break-words">{product.name}</span>
+
+            <span className="text-foreground font-medium break-words">
+              {product.name}
+            </span>
           </nav>
+
           <Link
             to="/products"
             className="inline-flex items-center text-muted-foreground hover:text-primary mb-8"
@@ -488,10 +632,13 @@ const ProductDetail = () => {
           </Link>
 
           <div className="grid w-full min-w-0 grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Product Images Gallery */}
-            <ProductImageGallery 
-              images={product.image_urls || (product.image_url ? [product.image_url] : [])} 
-              productName={product.name} 
+            {/* Product Images */}
+            <ProductImageGallery
+              images={
+                product.image_urls ||
+                (product.image_url ? [product.image_url] : [])
+              }
+              productName={product.name}
             />
 
             {/* Product Details */}
@@ -500,10 +647,19 @@ const ProductDetail = () => {
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
                   <div className="flex min-w-0 flex-wrap items-center gap-2">
                     {product.categories && (
-                      <Link to={categoryHref} aria-label={`Browse all ${categoryName}`}>
-                        <Badge variant="secondary" className="hover:bg-secondary/80">{product.categories.name}</Badge>
+                      <Link
+                        to={categoryHref}
+                        aria-label={`Browse all ${categoryName}`}
+                      >
+                        <Badge
+                          variant="secondary"
+                          className="hover:bg-secondary/80"
+                        >
+                          {product.categories.name}
+                        </Badge>
                       </Link>
                     )}
+
                     {product.customization_enabled && (
                       <Badge className="bg-primary/10 text-primary border-primary/30">
                         <Image className="h-3 w-3 mr-1" />
@@ -511,61 +667,69 @@ const ProductDetail = () => {
                       </Badge>
                     )}
                   </div>
+
                   <div className="flex shrink-0 items-center gap-2">
                     <WishlistButton
                       isWishlisted={isWishlisted(product.id)}
                       onClick={() => toggleWishlist(product.id)}
                       size="md"
                     />
-                    <ShareButton productId={product.id} productName={product.name} />
+
+                    <ShareButton
+                      productId={product.id}
+                      productName={product.name}
+                    />
                   </div>
                 </div>
-                <h1 className="text-2xl sm:text-3xl font-bold mb-4 break-words">{product.name}</h1>
+
+                <h1 className="text-2xl sm:text-3xl font-bold mb-4 break-words">
+                  {product.name}
+                </h1>
+
                 <div className="text-muted-foreground mb-4 break-words space-y-1.5">
-                  {formatDescription(product.description).map((line, i) => (
-                    <p key={i}>{line}</p>
+                  {formatDescription(product.description).map((line, index) => (
+                    <p key={index}>{line}</p>
                   ))}
                 </div>
+
                 <p className="text-sm text-muted-foreground">
                   {product.stock_quantity > 0 ? (
-                    <span className="text-green-600">{product.stock_quantity} in stock</span>
+                    <span className="text-green-600">
+                      {product.stock_quantity} in stock
+                    </span>
                   ) : (
-                    <span className="text-destructive">Out of stock</span>
+                    <span className="text-destructive">
+                      Out of stock
+                    </span>
                   )}
                 </p>
               </div>
 
-              {/* Flash Sale Banner */}
-              {product.sale_price && product.sale_end && new Date(product.sale_end) > new Date() && (
-                (!product.sale_start || new Date(product.sale_start) <= new Date()) && (
-                  <FlashSaleBadge
-                    salePrice={product.sale_price}
-                    originalPrice={product.price}
-                    saleEnd={product.sale_end}
-                    variant="detail"
-                  />
-                )
+              {/* Flash Sale */}
+              {saleActive && product.sale_end && (
+                <FlashSaleBadge
+                  salePrice={Number(product.sale_price)}
+                  originalPrice={product.price}
+                  saleEnd={product.sale_end}
+                  variant="detail"
+                />
               )}
 
-              {/* Delivery Countdown & Estimate */}
-              <DeliveryCountdown 
-                cutoffTime={product.cutoff_time || "17:00"}
+              {/* Delivery Countdown */}
+              <DeliveryCountdown
+                cutoffTime={product.cutoff_time || '17:00'}
                 deliveryDays={product.delivery_days || 7}
               />
 
-              {/* Price Breakdown */}
+              {/* Price */}
               <Card>
                 <CardContent className="pt-6">
                   <PriceBreakdown
-                    productTotal={(() => {
-                      const now = new Date();
-                      const saleActive = product.sale_price != null && product.sale_start && product.sale_end &&
-                        new Date(product.sale_start) <= now && new Date(product.sale_end) >= now;
-                      return (saleActive ? product.sale_price! : product.price) * quantity;
-                    })()}
+                    productTotal={effectivePrice * quantity}
                     deliveryCharge={deliveryCharge}
                     showDetails={true}
                   />
+
                   {deliveryCharge > 0 && (
                     <p className="text-xs text-muted-foreground mt-2">
                       * Delivery charge: ₹{deliveryCharge.toLocaleString()}
@@ -574,7 +738,7 @@ const ProductDetail = () => {
                 </CardContent>
               </Card>
 
-              {/* Customization Section */}
+              {/* Customization */}
               {uploadConfig.length > 0 && (
                 <DesignUpload
                   productId={product.id}
@@ -585,25 +749,34 @@ const ProductDetail = () => {
                 />
               )}
 
-              {/* Quantity & Add to Cart */}
+              {/* Quantity and Cart */}
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
                   <span className="text-sm font-medium">Quantity:</span>
+
                   <div className="flex items-center border rounded-lg">
                     <Button
                       variant="ghost"
                       size="icon"
                       aria-label="Decrease quantity"
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      onClick={() =>
+                        setQuantity((current) => Math.max(1, current - 1))
+                      }
                     >
                       <Minus className="h-4 w-4" />
                     </Button>
-                    <span className="w-12 text-center font-semibold">{quantity}</span>
+
+                    <span className="w-12 text-center font-semibold">
+                      {quantity}
+                    </span>
+
                     <Button
                       variant="ghost"
                       size="icon"
                       aria-label="Increase quantity"
-                      onClick={() => setQuantity(quantity + 1)}
+                      onClick={() =>
+                        setQuantity((current) => current + 1)
+                      }
                     >
                       <Plus className="h-4 w-4" />
                     </Button>
@@ -620,6 +793,7 @@ const ProductDetail = () => {
                     <ShoppingCart className="h-5 w-5 mr-2" />
                     Add to Cart
                   </Button>
+
                   <Button
                     size="lg"
                     variant="hero"
@@ -636,9 +810,11 @@ const ProductDetail = () => {
 
                 <PincodeChecker
                   weight={(product.weight_kg || 0.5) * quantity}
-                  length={(product as any).length_cm || undefined}
-                  breadth={(product as any).breadth_cm || undefined}
-                  height={((product as any).height_cm || 0) * quantity || undefined}
+                  length={product.length_cm || undefined}
+                  breadth={product.breadth_cm || undefined}
+                  height={
+                    ((product.height_cm || 0) * quantity) || undefined
+                  }
                 />
 
                 {uploadConfig.length > 0 && (
@@ -648,24 +824,21 @@ const ProductDetail = () => {
                 )}
               </div>
 
-              {/* Delivery Info */}
+              {/* Delivery Information */}
               <DeliveryInfoBanner variant="compact" />
 
-              {/* Why Buy From Graphic Wala */}
               <WhyBuyFromProduct />
 
-              {/* Return Policy */}
               <ReturnPolicy variant="compact" />
 
-              {/* Help Section */}
-              <SupportContact 
-                variant="compact" 
+              <SupportContact
+                variant="compact"
                 message={`Hi, I'm interested in ${product.name} (₹${product.price}). Can you help me?`}
               />
             </div>
           </div>
 
-          {/* FAQ Section */}
+          {/* Product FAQ */}
           <LazySection minHeight={320}>
             <ProductFAQ
               productName={product.name}
@@ -675,62 +848,94 @@ const ProductDetail = () => {
             />
           </LazySection>
 
-          {/* Reviews Section */}
+          {/* Reviews */}
           <Separator className="my-12" />
+
           <LazySection minHeight={400}>
-            <ProductReviews productId={product.id} productName={product.name} />
+            <ProductReviews
+              productId={product.id}
+              productName={product.name}
+            />
           </LazySection>
         </div>
 
         {/* Similar Products */}
         <LazySection minHeight={360}>
-          <SimilarProducts currentProductId={product.id} categoryId={product.category_id} />
+          <SimilarProducts
+            currentProductId={product.id}
+            categoryId={product.category_id}
+          />
         </LazySection>
 
-        {/* Recently Viewed Products */}
+        {/* Recently Viewed */}
         {viewedIds.length > 1 && (
           <LazySection minHeight={320}>
-            <RecentlyViewedProducts viewedIds={viewedIds} excludeId={product.id} />
+            <RecentlyViewedProducts
+              viewedIds={viewedIds}
+              excludeId={product.id}
+            />
           </LazySection>
         )}
 
-        {/* Visible product summary — also gives crawlers unique on-page context */}
-        <section className="container pb-12" aria-labelledby="product-summary-heading">
+        {/* Product Summary */}
+        <section
+          className="container pb-12"
+          aria-labelledby="product-summary-heading"
+        >
           <div className="max-w-3xl border-t border-border pt-8">
-            <h2 id="product-summary-heading" className="text-xl md:text-2xl font-bold mb-3">
+            <h2
+              id="product-summary-heading"
+              className="text-xl md:text-2xl font-bold mb-3"
+            >
               About this {categoryName.toLowerCase()}
             </h2>
+
             <p className="text-muted-foreground leading-relaxed break-words">
               {product.description
                 ? product.description
                 : `This ${product.name.toLowerCase()} is made to order at our Katihar workshop.`}{' '}
+
               {uploadConfig.length > 0
                 ? 'Upload your photo or details on this page and we print exactly what you approve.'
                 : 'Each piece is printed and quality-checked before dispatch.'}{' '}
+
               Orders are prepaid and shipped with tracked courier delivery across India, usually arriving in{' '}
               {product.delivery_days || 5}–7 days depending on your pincode.
             </p>
+
             <p className="mt-4 text-sm">
-              <Link to={categoryHref} className="font-semibold text-primary hover:underline">
+              <Link
+                to={categoryHref}
+                className="font-semibold text-primary hover:underline"
+              >
                 See more {categoryName.toLowerCase()}
               </Link>
+
               <span className="mx-2 text-muted-foreground">·</span>
-              <Link to="/products" className="font-semibold text-primary hover:underline">
+
+              <Link
+                to="/products"
+                className="font-semibold text-primary hover:underline"
+              >
                 Browse all products
               </Link>
             </p>
           </div>
         </section>
       </main>
+
       <Footer />
-      
-      {/* Sticky Add to Cart - Mobile */}
-      <StickyAddToCart product={product} onAddToCart={handleAddToCart} onBuyNow={handleBuyNow} />
 
+      {/* Mobile Sticky Cart */}
+      <StickyAddToCart
+        product={product}
+        onAddToCart={handleAddToCart}
+        onBuyNow={handleBuyNow}
+      />
 
-      {/* Login Prompt Dialog */}
-      <LoginPromptDialog 
-        open={showLoginDialog} 
+      {/* Login Dialog */}
+      <LoginPromptDialog
+        open={showLoginDialog}
         onOpenChange={setShowLoginDialog}
         title="Login Required"
         description="To upload photos and place a customized order, please login first."
