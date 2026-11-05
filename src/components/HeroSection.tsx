@@ -1,4 +1,6 @@
+
 import SmartImage from '@/components/SmartImage';
+
 import {
   ShieldCheck,
   BadgeCheck,
@@ -7,200 +9,346 @@ import {
   MessageCircle,
   Phone,
   CheckCircle2,
+  Sparkles,
 } from 'lucide-react';
+
 import { useFestivalSettings } from '@/hooks/useFestivalSettings';
 import EidCountdown from '@/components/festival/EidCountdown';
 import { useHeroShowcase } from '@/hooks/useHeroShowcase';
+
 import { WHATSAPP_NUMBER, BUSINESS_NAME } from '@/lib/types';
 
 const DEFAULT_HERO_IMAGE = '/images/hero-products.jpg';
 
 const QUICK_CATEGORIES = [
-  { label: 'Photo Frames & Mugs', dot: 'bg-[#00AEEF]' },
-  { label: 'T-Shirts & Keychains', dot: 'bg-[#E6007E]' },
-  { label: 'Billbook & Letterpad', dot: 'bg-[#FFED00] border border-slate-400' },
-  { label: 'Handbill & Posters', dot: 'bg-[#0F172A]' },
-  { label: 'Wedding Cards & Invites', dot: 'bg-[#E6007E]' },
+  { label: 'Photo Frames & Mugs', color: '#00AEEF' },
+  { label: 'T-Shirts & Keychains', color: '#E6007E' },
+  { label: 'Billbooks & Letterpads', color: '#EAB308' },
+  { label: 'Handbills & Posters', color: '#111827' },
+  { label: 'Wedding Cards & Invites', color: '#E6007E' },
 ];
 
 const HeroSection = () => {
   const { settings, isThemeActive } = useFestivalSettings();
   const festivalActive = isThemeActive();
+
   const { data: showcase } = useHeroShowcase();
 
   const card = {
     rating_value: showcase?.rating_value || '4.9 / 5',
     rating_subtitle: showcase?.rating_subtitle || '10K+ Orders',
-    price_prefix: showcase?.price_prefix || 'Starts at',
+    price_prefix: showcase?.price_prefix || 'Starting at',
     price_label: showcase?.price_label || '₹99',
     image_url: showcase?.image_url || DEFAULT_HERO_IMAGE,
   };
 
-  const cleanPhone = (WHATSAPP_NUMBER || '916207142994').replace(/[^0-9]/g, '');
+  const cleanPhone = (WHATSAPP_NUMBER || '916207142994').replace(
+    /[^0-9]/g,
+    ''
+  );
+
   const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(
-    `Hello ${BUSINESS_NAME || 'GraphicWala'}, I want to order custom printing / personalized gifts. Please share details.`
+    `Hello ${BUSINESS_NAME || 'Graphic Wala'}, I want to order custom printing and personalized gifts. Please share details.`
   )}`;
+
   const callUrl = `tel:+${cleanPhone}`;
 
   return (
     <section
-      className="relative w-full overflow-hidden bg-white border-b border-slate-200/80"
-      aria-label="GraphicWala (Graphic Wala) — Official Custom Printing, Sublimation Gifts & Branding Studio"
+      className="relative isolate w-full overflow-hidden bg-white"
+      aria-label="Graphic Wala - Custom Printing, Sublimation Gifts and Branding Studio"
     >
-      {/* Subtle 4-Color CMYK Light Ambient Glows on Crisp White Background */}
+      {/* Background Effects */}
       <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(45%_45%_at_10%_15%,rgba(0,174,239,0.08),transparent_70%),radial-gradient(45%_45%_at_90%_20%,rgba(230,0,126,0.07),transparent_70%),radial-gradient(40%_40%_at_50%_95%,rgba(255,237,0,0.10),transparent_70%)]"
+        className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
         aria-hidden="true"
-      />
+      >
+        <div className="absolute -left-40 -top-40 h-[450px] w-[450px] rounded-full bg-[#00AEEF]/[0.07] blur-[100px]" />
+        <div className="absolute -right-40 top-20 h-[450px] w-[450px] rounded-full bg-[#E6007E]/[0.06] blur-[110px]" />
+        <div className="absolute bottom-0 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-yellow-300/[0.08] blur-[100px]" />
+      </div>
 
-      <div className="container relative z-10 py-10 sm:py-14 lg:py-20">
-        <div className="grid items-center gap-10 lg:gap-14 xl:gap-20 lg:grid-cols-[minmax(0,1.18fr)_minmax(0,0.82fr)]">
-          {/* Left Content Column */}
-          <header className="text-center lg:text-left">
-            {/* Official CMYK 4-Dots Brand Badge */}
-            <div className="inline-flex items-center gap-2.5 rounded-full border border-slate-200 bg-slate-50/90 px-4 py-1.5 text-[11px] font-extrabold uppercase tracking-[0.15em] text-[#0F172A] shadow-sm">
-              <span className="flex items-center gap-1">
-                <span className="h-2.5 w-2.5 rounded-full bg-[#00AEEF]" />
-                <span className="h-2.5 w-2.5 rounded-full bg-[#E6007E]" />
-                <span className="h-2.5 w-2.5 rounded-full bg-[#FFED00] border border-slate-300" />
-                <span className="h-2.5 w-2.5 rounded-full bg-[#0F172A]" />
+      <div className="container relative mx-auto px-4 py-14 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
+
+        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-10 xl:gap-16">
+
+          {/* LEFT CONTENT */}
+          <header className="mx-auto w-full max-w-2xl text-center lg:mx-0 lg:text-left">
+
+            {/* Brand Badge */}
+            <div className="inline-flex items-center gap-2.5 rounded-full border border-slate-200 bg-white/80 px-4 py-2 shadow-sm backdrop-blur-sm">
+
+              <Sparkles className="h-4 w-4 text-[#E6007E]" />
+
+              <span className="text-[10px] font-extrabold uppercase tracking-[0.17em] text-slate-700 sm:text-xs">
+                Printing · Design · Branding
               </span>
-              <span>PRINTING • DESIGN • BRANDING</span>
+
+              <span className="flex items-center gap-1">
+                <span className="h-2 w-2 rounded-full bg-[#00AEEF]" />
+                <span className="h-2 w-2 rounded-full bg-[#E6007E]" />
+                <span className="h-2 w-2 rounded-full bg-yellow-400" />
+                <span className="h-2 w-2 rounded-full bg-slate-900" />
+              </span>
+
             </div>
 
-            {/* SEO-Optimized Brand & Service H1 Heading */}
-            <h1 className="mt-5 font-outfit text-[2.35rem] font-black leading-[1.08] tracking-tight text-[#0F172A] sm:text-5xl lg:text-[3.5rem] xl:text-[4rem]">
+            {/* Main Heading */}
+            <h1 className="mt-7 font-outfit text-[2.6rem] font-extrabold leading-[1.08] tracking-[-0.045em] text-[#111827] sm:text-5xl lg:text-[3.65rem] xl:text-[4.15rem]">
+
               <span className="block">
-                Graphic<span className="text-[#E6007E]">Wala</span> Custom
+                Your Ideas,
               </span>
-              <span className="block mt-1">
-                <span className="text-[#00AEEF]">Sublimation Gifts</span> &amp;{' '}
-                <span className="underline decoration-[#FFED00] decoration-4 underline-offset-4">
-                  Printing Hub
+
+              <span className="block">
+                Our <span className="bg-gradient-to-r from-[#00AEEF] via-[#E6007E] to-[#8B4513] bg-clip-text text-transparent">
+                  Creativity.
                 </span>
               </span>
+
+              <span className="mt-2 block text-[1.75rem] font-bold leading-tight tracking-[-0.035em] text-slate-700 sm:text-3xl lg:text-[2.5rem]">
+                Custom Printing & Gifts
+              </span>
+
             </h1>
 
-            {/* Complete Service Description */}
-            <p className="mt-5 mx-auto lg:mx-0 max-w-2xl text-sm sm:text-base xl:text-lg font-medium leading-relaxed text-slate-600">
-              Order personalized <strong className="text-[#0F172A]">Photo Frames, Mugs, T-Shirts, Keychains &amp; PVC Cards</strong> along with complete commercial printing —{' '}
-              <strong className="text-[#0F172A]">Billbooks, Letterpads, Handbills, Posters &amp; Wedding Invitations</strong>. Share your photos on WhatsApp and check your live design preview before printing!
+            {/* Description */}
+            <p className="mx-auto mt-6 max-w-xl text-sm font-normal leading-7 text-slate-600 sm:text-base lg:mx-0 lg:text-lg">
+
+              From personalized{' '}
+              <strong className="font-semibold text-slate-900">
+                Photo Frames, Mugs, T-Shirts, Keychains & PVC Cards
+              </strong>{' '}
+              to professional commercial printing,{' '}
+              <strong className="font-semibold text-slate-900">
+                Billbooks, Letterpads, Posters & Wedding Invitations.
+              </strong>{' '}
+              We bring your ideas to life with quality printing.
+
             </p>
 
-            {/* Quick Category Pills */}
-            <div className="mt-5 flex flex-wrap items-center justify-center lg:justify-start gap-2">
-              {QUICK_CATEGORIES.map(item => (
+            {/* Quick Categories */}
+            <div className="mt-7 flex flex-wrap justify-center gap-2 lg:justify-start">
+
+              {QUICK_CATEGORIES.map((item) => (
                 <a
                   key={item.label}
                   href="/products"
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white hover:border-[#00AEEF] px-3 py-1.5 text-xs font-bold text-slate-800 shadow-sm transition"
+                  className="group inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-2 text-[11px] font-semibold text-slate-700 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md sm:text-xs"
                 >
-                  <span className={`h-2 w-2 rounded-full ${item.dot}`} />
-                  <span>{item.label}</span>
+                  <span
+                    className="h-2 w-2 rounded-full"
+                    style={{ backgroundColor: item.color }}
+                  />
+
+                  {item.label}
+
                 </a>
               ))}
+
             </div>
 
-            {/* Direct WhatsApp, Call & Browse Action Buttons */}
-            <div className="mt-8 flex flex-col sm:flex-row flex-wrap items-center justify-center lg:justify-start gap-3.5">
+            {/* CTA Buttons */}
+            <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start">
+
+              {/* WhatsApp */}
               <a
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 px-6 py-3.5 text-sm sm:text-base font-extrabold text-white shadow-lg shadow-emerald-500/25 transition"
+                className="group inline-flex w-full items-center justify-center gap-2.5 rounded-xl bg-[#16A34A] px-6 py-4 text-sm font-bold text-white shadow-lg shadow-green-600/15 transition-all duration-300 hover:-translate-y-1 hover:bg-[#15803D] hover:shadow-xl sm:w-auto"
               >
-                <MessageCircle className="h-5 w-5" aria-hidden="true" />
-                <span>Order on WhatsApp</span>
+                <MessageCircle className="h-5 w-5" />
+
+                Order on WhatsApp
+
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </a>
 
+              {/* Call */}
               <a
                 href={callUrl}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border-2 border-[#0F172A] bg-white hover:bg-[#0F172A] text-[#0F172A] hover:text-white px-5 py-3.5 text-sm sm:text-base font-extrabold transition"
+                className="inline-flex w-full items-center justify-center gap-2.5 rounded-xl border border-slate-300 bg-white px-6 py-4 text-sm font-bold text-slate-800 transition-all duration-300 hover:-translate-y-1 hover:border-slate-900 hover:bg-slate-50 sm:w-auto"
               >
-                <Phone className="h-4 w-4 text-[#E6007E]" aria-hidden="true" />
-                <span>Call for Enquiry</span>
+                <Phone className="h-4 w-4 text-[#E6007E]" />
+
+                Call for Enquiry
+
               </a>
 
+              {/* Catalog */}
               <a
                 href="/products"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-[#00AEEF] hover:bg-[#0095CC] px-6 py-3.5 text-sm sm:text-base font-extrabold text-white shadow-md shadow-[#00AEEF]/20 transition group"
+                className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#111827] px-6 py-4 text-sm font-bold text-white shadow-lg shadow-slate-900/10 transition-all duration-300 hover:-translate-y-1 hover:bg-[#273449] sm:w-auto"
               >
-                <span>Explore Catalog</span>
-                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true" />
+                Explore Catalog
+
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+
               </a>
+
             </div>
 
-            {/* Trust & Proof Badges */}
-            <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-x-5 gap-y-3 pt-6 border-t border-slate-100">
-              <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3.5 py-1.5 text-[#0F172A]">
-                <Star className="h-4 w-4 fill-[#FFED00] text-amber-500" aria-hidden="true" />
-                <span className="text-xs sm:text-sm font-extrabold">{card.rating_value}</span>
-                <span className="h-3.5 w-px bg-slate-300" aria-hidden="true" />
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-600">
-                  {card.rating_subtitle}
+            {/* Trust Section */}
+            <div className="mt-9 border-t border-slate-200/80 pt-7">
+
+              <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-4 lg:justify-start">
+
+                {/* Rating */}
+                <div className="inline-flex items-center gap-2 rounded-full bg-slate-50 px-3.5 py-2">
+
+                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-500" />
+
+                  <span className="text-sm font-extrabold text-slate-900">
+                    {card.rating_value}
+                  </span>
+
+                  <span className="text-[10px] font-semibold text-slate-500">
+                    {card.rating_subtitle}
+                  </span>
+
+                </div>
+
+                {/* Trust Items */}
+                <span className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600">
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-[#00AEEF]" />
+                  HD Print Quality
                 </span>
+
+                <span className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600">
+                  <BadgeCheck className="h-4 w-4 shrink-0 text-[#E6007E]" />
+                  Design Preview
+                </span>
+
+                <span className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600">
+                  <ShieldCheck className="h-4 w-4 shrink-0 text-green-600" />
+                  All India Delivery
+                </span>
+
               </div>
 
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700">
-                <CheckCircle2 className="h-4 w-4 text-[#00AEEF]" aria-hidden="true" />
-                Live Design Preview on WhatsApp
-              </span>
-
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700">
-                <BadgeCheck className="h-4 w-4 text-[#E6007E]" aria-hidden="true" />
-                HD Print Quality
-              </span>
-
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-700">
-                <ShieldCheck className="h-4 w-4 text-emerald-600" aria-hidden="true" />
-                All India Delivery
-              </span>
             </div>
+
           </header>
 
-          {/* Right Visual Column — Product Showcase with CMYK Frame Accent */}
-          <div className="relative">
-            <div className="relative mx-auto w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl animate-hero-float">
-              {/* Decorative CMYK top bar above showcase */}
-              <div
-                className="mx-auto mb-3 h-1.5 w-40 rounded-full"
-                style={{
-                  background:
-                    'linear-gradient(90deg, #00AEEF 0% 25%, #E6007E 25% 50%, #FFED00 50% 75%, #0F172A 75% 100%)',
-                }}
-              />
+          {/* RIGHT PRODUCT SHOWCASE */}
+          <div className="relative mx-auto w-full max-w-lg lg:max-w-none">
 
-              <SmartImage
-                src={card.image_url}
-                alt="GraphicWala Custom Photo Frames, Sublimation Mugs, T-Shirts, Keychains, Billbooks and Wedding Cards"
-                className="h-auto w-full object-contain drop-shadow-xl"
-                widths={[480, 720, 960, 1280, 1600, 1920]}
-                fallbackWidth={1600}
-                quality={96}
-                resize="contain"
-                sizes="(max-width: 1024px) 92vw, 50vw"
-                priority
-                width={1600}
-                height={1200}
-              />
+            {/* Decorative Background */}
+            <div className="absolute inset-5 rounded-[2.5rem] bg-gradient-to-br from-[#00AEEF]/10 via-white to-[#E6007E]/10 blur-2xl" />
 
-              {/* Floating Price Chip with CMYK Accent */}
-              <div className="absolute -bottom-3 left-4 sm:left-8 rounded-2xl border-2 border-[#00AEEF] bg-white px-5 py-2.5 shadow-xl">
-                <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
-                  {card.price_prefix}
-                </span>
-                <span className="ml-2 text-lg font-black text-[#E6007E]">{card.price_label}</span>
+            {/* Main Showcase Card */}
+            <div className="relative overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white/80 p-3 shadow-[0_25px_80px_-30px_rgba(15,23,42,0.22)] backdrop-blur-sm sm:p-5">
+
+              {/* Top Header */}
+              <div className="flex items-center justify-between border-b border-slate-100 px-2 pb-4">
+
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">
+                    GRAPHIC WALA
+                  </p>
+
+                  <p className="mt-1 text-sm font-bold text-slate-900">
+                    Made With Creativity
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-1.5 rounded-full border border-green-100 bg-green-50 px-3 py-1.5">
+
+                  <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+
+                  <span className="text-[10px] font-bold text-green-700">
+                    Quality First
+                  </span>
+
+                </div>
+
               </div>
+
+              {/* Product Image */}
+              <div className="relative flex min-h-[260px] items-center justify-center px-2 py-5 sm:min-h-[340px] sm:px-4">
+
+                <SmartImage
+                  src={card.image_url}
+                  alt="Graphic Wala custom photo frames, sublimation mugs, T-shirts, keychains, billbooks and wedding cards"
+                  className="h-auto max-h-[430px] w-full object-contain"
+                  widths={[480, 720, 960, 1280, 1600, 1920]}
+                  fallbackWidth={1600}
+                  quality={96}
+                  resize="contain"
+                  sizes="(max-width: 1024px) 92vw, 50vw"
+                  priority
+                  width={1600}
+                  height={1200}
+                />
+
+              </div>
+
+              {/* Bottom Footer */}
+              <div className="flex items-center justify-between gap-3 rounded-2xl bg-slate-50 px-4 py-4 sm:px-5">
+
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                    Custom Printing
+                  </p>
+
+                  <p className="mt-1 text-sm font-extrabold text-slate-900">
+                    Designed For You.
+                  </p>
+                </div>
+
+                <div className="text-right">
+
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                    {card.price_prefix}
+                  </p>
+
+                  <p className="mt-0.5 text-2xl font-black tracking-tight text-[#E6007E]">
+                    {card.price_label}
+                  </p>
+
+                </div>
+
+              </div>
+
             </div>
+
+            {/* Floating Rating Card */}
+            <div className="absolute -left-3 top-24 hidden rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-xl sm:block lg:-left-7">
+
+              <div className="flex items-center gap-2">
+
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-yellow-50">
+                  <Star className="h-5 w-5 fill-yellow-400 text-yellow-500" />
+                </div>
+
+                <div>
+                  <p className="text-sm font-extrabold text-slate-900">
+                    {card.rating_value}
+                  </p>
+
+                  <p className="text-[10px] font-medium text-slate-500">
+                    Customer Rating
+                  </p>
+                </div>
+
+              </div>
+
+            </div>
+
           </div>
+
         </div>
 
+        {/* Festival Countdown */}
         {festivalActive && settings?.show_countdown && settings?.end_date && (
-          <div className="mt-12">
+          <div className="mt-14">
             <EidCountdown endDate={settings.end_date} />
           </div>
         )}
+
       </div>
+
     </section>
   );
 };
