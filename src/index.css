@@ -5,111 +5,68 @@
 
 @layer base {
   :root {
-    /* Graphic Wala Brand Colors - Red, White, Black */
+    /* Graphic Wala CMYK palette — fixed light theme */
     --background: 0 0% 100%;
-    --foreground: 0 0% 8%;
+    --foreground: 222 47% 11%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 8%;
+    --card: 210 40% 98%;
+    --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 8%;
+    --popover-foreground: 222 47% 11%;
 
-    /* Vibrant Red Primary */
-    --primary: 0 84% 50%;
+    --primary: 327 100% 45%;
     --primary-foreground: 0 0% 100%;
 
-    /* Light Gray Secondary */
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 8%;
+    --secondary: 210 40% 98%;
+    --secondary-foreground: 222 47% 11%;
 
-    --muted: 0 0% 94%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 210 40% 98%;
+    --muted-foreground: 215 19% 35%;
 
-    /* Red Accent */
-    --accent: 0 84% 50%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 197 100% 47%;
+    --accent-foreground: 222 47% 11%;
 
-    --destructive: 0 84% 50%;
+    --destructive: 327 100% 45%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 0 84% 50%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 327 100% 45%;
 
     --radius: 0.75rem;
 
-    /* Custom Brand Colors */
-    --brand-red: 0 84% 50%;
-    --brand-red-dark: 0 84% 40%;
-    --brand-red-light: 0 84% 95%;
-    --brand-black: 0 0% 8%;
+    --brand-red: 327 100% 45%;
+    --brand-red-dark: 327 100% 38%;
+    --brand-red-light: 327 100% 96%;
+    --brand-magenta: 327 100% 45%;
+    --brand-cyan: 197 100% 47%;
+    --brand-yellow: 56 100% 50%;
+    --brand-black: 222 47% 11%;
     --brand-white: 0 0% 100%;
-    --brand-gray: 0 0% 96%;
+    --brand-gray: 210 40% 98%;
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(0 84% 50%), hsl(0 84% 40%));
-    --gradient-hero: linear-gradient(135deg, hsl(0 0% 8%), hsl(0 0% 15%));
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(0 0% 98%));
+    --gradient-primary: linear-gradient(135deg, hsl(327 100% 45%), hsl(197 100% 47%));
+    --gradient-hero: linear-gradient(135deg, hsl(210 40% 98%), hsl(0 0% 100%));
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 40% 98%));
 
     /* Shadows */
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.12);
-    --shadow-red: 0 10px 40px rgba(220, 38, 38, 0.25);
+    --shadow-md: 0 20px 40px -12px rgba(0, 174, 239, 0.14);
+    --shadow-lg: 0 20px 40px -12px rgba(0, 174, 239, 0.14);
+    --shadow-hover: 0 20px 40px -12px rgba(0, 174, 239, 0.14);
+    --shadow-red: 0 10px 40px rgba(230, 0, 126, 0.2);
 
     /* Sidebar */
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 0 0% 8%;
-    --sidebar-primary: 0 84% 50%;
+    --sidebar-background: 210 40% 98%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 327 100% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 94%;
-    --sidebar-accent-foreground: 0 0% 8%;
-    --sidebar-border: 0 0% 90%;
-    --sidebar-ring: 0 84% 50%;
-  }
-
-  .dark {
-    --background: 0 0% 6%;
-    --foreground: 0 0% 98%;
-
-    --card: 0 0% 10%;
-    --card-foreground: 0 0% 98%;
-
-    --popover: 0 0% 10%;
-    --popover-foreground: 0 0% 98%;
-
-    --primary: 0 84% 55%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 98%;
-
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 65%;
-
-    --accent: 0 84% 55%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 62% 40%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 0 0% 18%;
-    --input: 0 0% 18%;
-    --ring: 0 84% 55%;
-
-    --brand-red: 0 84% 55%;
-    --brand-red-dark: 0 84% 45%;
-    --brand-red-light: 0 84% 20%;
-
-    --sidebar-background: 0 0% 8%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 0 84% 55%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 15%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 0 0% 18%;
-    --sidebar-ring: 0 84% 55%;
+    --sidebar-accent: 210 40% 98%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-ring: 327 100% 45%;
   }
 }
 
@@ -125,11 +82,25 @@
   }
 
   body {
-    @apply bg-background text-foreground font-outfit antialiased;
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Plus Jakarta Sans', sans-serif;
   }
 
   h1, h2, h3, h4, h5, h6 {
     @apply font-outfit font-bold tracking-tight;
+  }
+
+  button, [role="button"] {
+    font-family: 'Outfit', sans-serif;
+  }
+
+  .site-header::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 5px;
+    background: linear-gradient(90deg, #00AEEF 0% 25%, #E6007E 25% 50%, #FFED00 50% 75%, #0F172A 75% 100%);
+    pointer-events: none;
   }
 }
 
