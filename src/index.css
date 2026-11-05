@@ -1,191 +1,435 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* =========================================================
+   GRAPHIC WALA — GLOBAL DESIGN SYSTEM
+   Modern • Minimal • Premium • CMYK Branding
+   ========================================================= */
+
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+
+/* =========================================================
+   1. BRAND COLORS & DESIGN TOKENS
+   ========================================================= */
+
 @layer base {
   :root {
-    /* Graphic Wala CMYK palette — fixed light theme with balanced Cyan, Magenta, Yellow & Black */
+    /* Base Colors */
     --background: 0 0% 100%;
-    --foreground: 222 47% 11%;
+    --foreground: 0 0% 7%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 0 0% 7%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 0 0% 7%;
 
-    /* Primary set to Vibrant CMYK Cyan (#00AEEF) so the whole site doesn't turn pink */
+    /* CMYK Primary — Cyan */
     --primary: 197 100% 47%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary surface with subtle Cyan-tint light slate */
-    --secondary: 197 60% 97%;
-    --secondary-foreground: 222 47% 11%;
+    /* Secondary */
+    --secondary: 195 50% 96%;
+    --secondary-foreground: 0 0% 12%;
 
-    --muted: 210 40% 98%;
-    --muted-foreground: 215 19% 35%;
+    /* Muted */
+    --muted: 210 20% 96%;
+    --muted-foreground: 215 12% 43%;
 
-    /* Accent set to CMYK Print Yellow (#FFED00) */
+    /* Accent — Yellow */
     --accent: 56 100% 50%;
-    --accent-foreground: 222 47% 11%;
+    --accent-foreground: 0 0% 7%;
 
-    /* Destructive / Highlight mapped to CMYK Magenta (#E6007E) */
+    /* Destructive — Magenta */
     --destructive: 327 100% 45%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
+    /* Borders */
+    --border: 210 16% 91%;
+    --input: 210 16% 91%;
     --ring: 197 100% 47%;
 
-    --radius: 0.75rem;
+    /* Radius */
+    --radius: 0.85rem;
 
-    /* Core Brand CMYK Tokens */
-    --brand-red: 327 100% 45%;
-    --brand-red-dark: 327 100% 38%;
-    --brand-red-light: 197 100% 96%;
-    --brand-magenta: 327 100% 45%;
+    /* Official CMYK Colors */
+    --cmyk-cyan: #00AEEF;
+    --cmyk-magenta: #E6007E;
+    --cmyk-yellow: #FFED00;
+    --cmyk-black: #111111;
+    --cmyk-white: #FFFFFF;
+
+    /* Brand Colors */
     --brand-cyan: 197 100% 47%;
+    --brand-magenta: 327 100% 45%;
     --brand-yellow: 56 100% 50%;
-    --brand-black: 222 47% 11%;
+    --brand-black: 0 0% 7%;
     --brand-white: 0 0% 100%;
-    --brand-gray: 210 40% 98%;
 
-    /* True Multi-Stop CMYK Gradients (Cyan -> Magenta -> Yellow) */
-    --gradient-primary: linear-gradient(135deg, #00AEEF 0%, #E6007E 60%, #FFCC00 100%);
-    --gradient-cmyk: linear-gradient(90deg, #00AEEF 0%, #E6007E 50%, #FFED00 100%);
-    --gradient-hero: linear-gradient(135deg, rgba(0, 174, 239, 0.06) 0%, rgba(255, 255, 255, 1) 45%, rgba(230, 0, 126, 0.05) 75%, rgba(255, 237, 0, 0.08) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 40% 98%));
+    /* Neutral Colors */
+    --brand-gray: #F5F7FA;
+    --brand-gray-dark: #64748B;
 
-    /* Multi-Tone CMYK Shadows */
-    --shadow-sm: 0 2px 6px rgba(15, 23, 42, 0.06);
-    --shadow-md: 0 20px 40px -12px rgba(0, 174, 239, 0.16);
-    --shadow-lg: 0 20px 40px -12px rgba(0, 174, 239, 0.18), 0 8px 20px -8px rgba(230, 0, 126, 0.12);
-    --shadow-hover: 0 22px 45px -12px rgba(0, 174, 239, 0.22), 0 10px 25px -10px rgba(230, 0, 126, 0.18);
-    --shadow-red: 0 10px 35px rgba(0, 174, 239, 0.22);
+    /* Gradients */
+    --gradient-primary: linear-gradient(
+      135deg,
+      #00AEEF 0%,
+      #E6007E 55%,
+      #FFED00 100%
+    );
+
+    --gradient-cmyk: linear-gradient(
+      90deg,
+      #00AEEF 0%,
+      #E6007E 33.33%,
+      #FFED00 66.66%,
+      #111111 100%
+    );
+
+    --gradient-hero: linear-gradient(
+      135deg,
+      rgba(0, 174, 239, 0.07) 0%,
+      #FFFFFF 45%,
+      rgba(230, 0, 126, 0.04) 75%,
+      rgba(255, 237, 0, 0.08) 100%
+    );
+
+    --gradient-card: linear-gradient(
+      180deg,
+      #FFFFFF 0%,
+      #F8FAFC 100%
+    );
+
+    /* Shadows */
+    --shadow-sm: 0 2px 8px rgba(15, 23, 42, 0.04);
+
+    --shadow-md: 0 8px 25px rgba(15, 23, 42, 0.07);
+
+    --shadow-lg: 0 18px 45px rgba(15, 23, 42, 0.09);
+
+    --shadow-hover: 0 22px 50px rgba(15, 23, 42, 0.13);
+
+    --shadow-cyan: 0 10px 30px rgba(0, 174, 239, 0.16);
+
+    --shadow-magenta: 0 10px 30px rgba(230, 0, 126, 0.14);
 
     /* Sidebar */
-    --sidebar-background: 210 40% 98%;
-    --sidebar-foreground: 222 47% 11%;
+    --sidebar-background: 0 0% 99%;
+    --sidebar-foreground: 0 0% 10%;
     --sidebar-primary: 197 100% 47%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 56 100% 50%;
-    --sidebar-accent-foreground: 222 47% 11%;
-    --sidebar-border: 214 32% 91%;
+    --sidebar-accent: 195 50% 96%;
+    --sidebar-accent-foreground: 0 0% 10%;
+    --sidebar-border: 210 16% 91%;
     --sidebar-ring: 197 100% 47%;
   }
-}
 
-@layer base {
+
+  /* =======================================================
+     2. GLOBAL RESET & TYPOGRAPHY
+     ======================================================= */
+
   * {
     @apply border-border;
+    box-sizing: border-box;
   }
 
-  html, body, #root {
+  html {
     width: 100%;
     max-width: 100%;
-    overflow-x: hidden;
-    background-color: #FFFFFF;
-    color: #0F172A;
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px;
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
-    font-family: 'Plus Jakarta Sans', sans-serif;
+    width: 100%;
+    max-width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+
+    background: #FFFFFF;
+    color: #111111;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.65;
+
+    @apply antialiased;
   }
 
-  /* Global 5px Official CMYK Top Bar (Cyan 25%, Magenta 25%, Yellow 25%, Black 25%) */
-  body::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 5px;
-    background: linear-gradient(90deg, #00AEEF 0% 25%, #E6007E 25% 50%, #FFED00 50% 75%, #0F172A 75% 100%);
-    z-index: 9999;
-    pointer-events: none;
+  #root {
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: clip;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  /* Modern Headings */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: 'Outfit', sans-serif;
-    @apply font-bold tracking-tight;
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 1.2;
+    color: #111111;
   }
 
-  button, [role="button"] {
-    font-family: 'Outfit', sans-serif;
+  h1 {
+    font-weight: 800;
   }
 
-  .site-header::before {
-    content: "";
-    position: absolute;
-    inset: 0 0 auto;
-    height: 5px;
-    background: linear-gradient(90deg, #00AEEF 0% 25%, #E6007E 25% 50%, #FFED00 50% 75%, #0F172A 75% 100%);
-    pointer-events: none;
+  h2 {
+    font-weight: 700;
+  }
+
+  p {
+    line-height: 1.75;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font-family: 'Inter', sans-serif;
+  }
+
+  button,
+  [role="button"] {
+    cursor: pointer;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  ::selection {
+    background: rgba(0, 174, 239, 0.2);
+    color: #111111;
+  }
+
+  :focus-visible {
+    outline: 2px solid #00AEEF;
+    outline-offset: 3px;
   }
 }
 
-/* ============================================================================
-   AUTOMATIC CMYK COLOR DISTRIBUTION ACROSS CARDS, BADGES, BUTTONS & SECTIONS
-   (Ensures Cyan, Magenta, Yellow, and Key Black all appear visibly like your logo)
-   ============================================================================ */
+
+/* =========================================================
+   3. GLOBAL COMPONENT STYLES
+   ========================================================= */
+
 @layer components {
-  /* Rotate top border & hover glow across product/category cards in grids */
-  .grid > div:nth-child(4n+1),
-  .grid > a:nth-child(4n+1),
-  .grid > article:nth-child(4n+1) {
-    border-top: 3px solid #00AEEF;
-  }
-  .grid > div:nth-child(4n+1):hover,
-  .grid > a:nth-child(4n+1):hover {
-    box-shadow: 0 18px 38px -12px rgba(0, 174, 239, 0.22);
+
+  /* Main Container */
+  .container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 
-  .grid > div:nth-child(4n+2),
-  .grid > a:nth-child(4n+2),
-  .grid > article:nth-child(4n+2) {
-    border-top: 3px solid #E6007E;
-  }
-  .grid > div:nth-child(4n+2):hover,
-  .grid > a:nth-child(4n+2):hover {
-    box-shadow: 0 18px 38px -12px rgba(230, 0, 126, 0.22);
-  }
-
-  .grid > div:nth-child(4n+3),
-  .grid > a:nth-child(4n+3),
-  .grid > article:nth-child(4n+3) {
-    border-top: 3px solid #FFDF00;
-  }
-  .grid > div:nth-child(4n+3):hover,
-  .grid > a:nth-child(4n+3):hover {
-    box-shadow: 0 18px 38px -12px rgba(234, 179, 8, 0.24);
+  /* Modern Cards */
+  .modern-card {
+    background: #FFFFFF;
+    border: 1px solid #EEF0F3;
+    border-radius: 1rem;
+    box-shadow: var(--shadow-sm);
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease,
+      border-color 0.3s ease;
   }
 
-  .grid > div:nth-child(4n+4),
-  .grid > a:nth-child(4n+4),
-  .grid > article:nth-child(4n+4) {
-    border-top: 3px solid #0F172A;
-  }
-  .grid > div:nth-child(4n+4):hover,
-  .grid > a:nth-child(4n+4):hover {
-    box-shadow: 0 18px 38px -12px rgba(15, 23, 42, 0.18);
+  .modern-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(0, 174, 239, 0.25);
+    box-shadow: var(--shadow-lg);
   }
 
-  /* Give section headings a multi-color CMYK underline accent */
-  section h2 {
-    position: relative;
+  /* Primary Button */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+
+    padding: 0.85rem 1.5rem;
+
+    background: var(--cmyk-cyan);
+    color: #FFFFFF;
+
+    font-size: 0.9rem;
+    font-weight: 700;
+
+    border: none;
+    border-radius: 0.75rem;
+
+    transition: all 0.25s ease;
+  }
+
+  .btn-primary:hover {
+    background: #0095CC;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-cyan);
+  }
+
+  /* Secondary Button */
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+
+    padding: 0.85rem 1.5rem;
+
+    background: #FFFFFF;
+    color: #111111;
+
+    font-size: 0.9rem;
+    font-weight: 700;
+
+    border: 1px solid #E5E7EB;
+    border-radius: 0.75rem;
+
+    transition: all 0.25s ease;
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--cmyk-cyan);
+    background: #F0FAFE;
+  }
+
+  /* Section Eyebrow */
+  .eyebrow {
+    color: #0095CC;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  /* Section Heading */
+  .display-title {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.15;
+    color: #111111;
+  }
+
+  /* Gradient Text */
+  .text-gradient {
+    background: var(--gradient-primary);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Subtle Hero Background */
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  /* Gradient Card */
+  .gradient-card {
+    background: var(--gradient-card);
   }
 }
+
+
+/* =========================================================
+   4. CMYK COLOR UTILITIES
+   ========================================================= */
 
 @layer utilities {
+
+  /* Fonts */
   .font-outfit {
     font-family: 'Outfit', sans-serif;
   }
 
+  .font-inter {
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* CMYK Backgrounds */
+  .bg-cmyk-cyan {
+    background-color: #00AEEF;
+    color: #FFFFFF;
+  }
+
+  .bg-cmyk-magenta {
+    background-color: #E6007E;
+    color: #FFFFFF;
+  }
+
+  .bg-cmyk-yellow {
+    background-color: #FFED00;
+    color: #111111;
+  }
+
+  .bg-cmyk-black {
+    background-color: #111111;
+    color: #FFFFFF;
+  }
+
+  /* CMYK Text */
+  .text-cmyk-cyan {
+    color: #00AEEF;
+  }
+
+  .text-cmyk-magenta {
+    color: #E6007E;
+  }
+
+  .text-cmyk-yellow {
+    color: #D4A900;
+  }
+
+  .text-cmyk-black {
+    color: #111111;
+  }
+
+  /* CMYK Borders — Only when explicitly applied */
+  .border-cmyk-cyan {
+    border-color: #00AEEF;
+  }
+
+  .border-cmyk-magenta {
+    border-color: #E6007E;
+  }
+
+  .border-cmyk-yellow {
+    border-color: #FFED00;
+  }
+
+  .border-cmyk-black {
+    border-color: #111111;
+  }
+
+  /* Gradients */
   .gradient-primary {
     background: var(--gradient-primary);
+  }
+
+  .gradient-cmyk {
+    background: var(--gradient-cmyk);
   }
 
   .gradient-hero {
@@ -196,31 +440,30 @@
     background: var(--gradient-card);
   }
 
+  /* Shadows */
   .shadow-brand {
     box-shadow: var(--shadow-lg);
   }
 
   .shadow-brand-red {
-    box-shadow: var(--shadow-red);
+    box-shadow: var(--shadow-cyan);
   }
 
-  /* 3-Color CMYK Gradient Text (Cyan -> Magenta -> Deep Gold/Yellow) */
-  .text-gradient {
-    @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(90deg, #00AEEF 0%, #E6007E 55%, #F59E0B 100%);
+  .shadow-cmyk {
+    box-shadow: 0 12px 35px rgba(0, 174, 239, 0.12);
   }
 
-  /* Direct CMYK Helper Utilities */
-  .bg-cmyk-cyan { background-color: #00AEEF; color: #FFFFFF; }
-  .bg-cmyk-magenta { background-color: #E6007E; color: #FFFFFF; }
-  .bg-cmyk-yellow { background-color: #FFED00; color: #0F172A; }
-  .bg-cmyk-black { background-color: #0F172A; color: #FFFFFF; }
+  /* Scrollbar Utility */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 
-  .text-cmyk-cyan { color: #00AEEF; }
-  .text-cmyk-magenta { color: #E6007E; }
-  .text-cmyk-yellow { color: #EAB308; }
-  .text-cmyk-black { color: #0F172A; }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 
+  /* Animation Utilities */
   .animate-fade-in {
     animation: fadeIn 0.6s ease-out forwards;
   }
@@ -237,7 +480,6 @@
     animation: float 3s ease-in-out infinite;
   }
 
-  /* Slow-motion hero animations */
   .animate-hero-float {
     animation: heroFloat 8s ease-in-out infinite;
   }
@@ -288,63 +530,18 @@
   .animate-hero-headline-float {
     animation: heroHeadlineFloat 8s ease-in-out infinite;
   }
-
-  /* Hide scrollbars on horizontal luxury rails */
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* Editorial eyebrow label with Cyan & Magenta CMYK feel */
-  .eyebrow {
-    @apply text-xs md:text-[13px] font-bold uppercase tracking-[0.08em];
-    color: #00AEEF;
-  }
-
-  /* Display heading used across premium sections — modern sans-serif */
-  .display-title {
-    font-family: 'Outfit', sans-serif;
-    @apply font-semibold tracking-tight text-foreground;
-  }
 }
 
-/* Smooth scroll-reveal system */
-.reveal {
-  opacity: 0;
-  transform: translateY(26px);
-  transition:
-    opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity, transform;
-}
 
-.reveal-in {
-  opacity: 1;
-  transform: none;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-  .reveal {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
-}
+/* =========================================================
+   5. ANIMATIONS
+   ========================================================= */
 
 @keyframes fadeIn {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -355,6 +552,7 @@ html {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -366,6 +564,7 @@ html {
     opacity: 0;
     transform: scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -376,41 +575,45 @@ html {
   0%, 100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-10px);
   }
 }
 
-/* Slow-motion hero animations */
 @keyframes heroFloat {
   0%, 100% {
-    transform: translateY(0) rotate(0deg);
+    transform: translateY(0);
   }
+
   33% {
-    transform: translateY(-12px) rotate(0.5deg);
+    transform: translateY(-12px);
   }
+
   66% {
-    transform: translateY(-6px) rotate(-0.3deg);
+    transform: translateY(-6px);
   }
 }
 
 @keyframes heroSlowFade {
-  0% {
+  from {
     opacity: 0;
     transform: translateY(24px);
   }
-  100% {
+
+  to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
 @keyframes heroSlowScale {
-  0% {
+  from {
     opacity: 0;
     transform: scale(0.92) translateY(20px);
   }
-  100% {
+
+  to {
     opacity: 1;
     transform: scale(1) translateY(0);
   }
@@ -421,6 +624,7 @@ html {
     opacity: 0.6;
     transform: scale(1);
   }
+
   50% {
     opacity: 1;
     transform: scale(1.08);
@@ -432,6 +636,7 @@ html {
     transform: scale(1);
     box-shadow: 0 10px 40px rgba(0, 174, 239, 0.14);
   }
+
   50% {
     transform: scale(1.03);
     box-shadow: 0 14px 50px rgba(230, 0, 126, 0.18);
@@ -439,25 +644,27 @@ html {
 }
 
 @keyframes sparkleSpin {
-  0% {
+  from {
     transform: rotate(0deg) scale(1);
   }
+
   50% {
     transform: rotate(180deg) scale(1.15);
   }
-  100% {
+
+  to {
     transform: rotate(360deg) scale(1);
   }
 }
 
-/* Hero text animations */
 @keyframes heroTextReveal {
-  0% {
+  from {
     opacity: 0;
     transform: translateY(40px);
     filter: blur(8px);
   }
-  100% {
+
+  to {
     opacity: 1;
     transform: translateY(0);
     filter: blur(0);
@@ -465,12 +672,13 @@ html {
 }
 
 @keyframes heroLineReveal {
-  0% {
+  from {
     opacity: 0;
     transform: translateY(30px) scale(0.96);
     filter: blur(4px);
   }
-  100% {
+
+  to {
     opacity: 1;
     transform: translateY(0) scale(1);
     filter: blur(0);
@@ -482,6 +690,7 @@ html {
     opacity: 0.85;
     transform: translateY(0);
   }
+
   50% {
     opacity: 1;
     transform: translateY(-4px);
@@ -492,6 +701,7 @@ html {
   0%, 100% {
     background-position: 0% center;
   }
+
   50% {
     background-position: 100% center;
   }
@@ -501,116 +711,204 @@ html {
   0%, 100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-6px);
   }
 }
 
-/* ============================================
-   VALENTINE THEME STYLES
-   ============================================ */
+@keyframes falling-heart {
+  0% {
+    transform: translateY(-5vh) rotate(0deg);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 0.6;
+  }
+
+  90% {
+    opacity: 0.6;
+  }
+
+  100% {
+    transform: translateY(105vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes ramadanGlow {
+  from {
+    opacity: 0.7;
+    filter: brightness(0.85);
+  }
+
+  to {
+    opacity: 1;
+    filter: brightness(1.3);
+  }
+}
+
+@keyframes heroZoom {
+  from {
+    transform: scale(1.12);
+  }
+
+  to {
+    transform: scale(1.02);
+  }
+}
+
+
+/* =========================================================
+   6. SCROLL REVEAL
+   ========================================================= */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+
+  transition:
+    opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+
+  will-change: opacity, transform;
+}
+
+.reveal-in {
+  opacity: 1;
+  transform: none;
+}
+
+
+/* =========================================================
+   7. FESTIVAL THEMES
+   ========================================================= */
+
+/* Valentine Theme */
 .valentine-theme {
   --primary: 197 100% 47%;
   --primary-foreground: 0 0% 100%;
+
   --accent: 56 100% 50%;
   --ring: 197 100% 47%;
-  
+
   --brand-red: 327 100% 45%;
   --brand-red-dark: 327 100% 38%;
   --brand-red-light: 197 100% 96%;
 
-  --gradient-primary: linear-gradient(135deg, #00AEEF 0%, #E6007E 60%, #FFCC00 100%);
+  --gradient-primary: linear-gradient(
+    135deg,
+    #00AEEF,
+    #E6007E,
+    #FFED00
+  );
+
   --shadow-brand-red: 0 10px 40px rgba(0, 174, 239, 0.22);
-  
-  --radius: 0.75rem;
+  --radius: 0.85rem;
 }
 
-.valentine-theme h1, .valentine-theme h2, .valentine-theme h3 {
-  font-family: 'Outfit', sans-serif !important;
+.valentine-theme h1,
+.valentine-theme h2,
+.valentine-theme h3 {
+  font-family: 'Outfit', sans-serif;
 }
 
-.valentine-theme body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 5px;
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 1;
-  background: linear-gradient(90deg, #00AEEF 0% 25%, #E6007E 25% 50%, #FFED00 50% 75%, #0F172A 75% 100%);
-}
-
-@keyframes falling-heart {
-  0% { transform: translateY(-5vh) rotate(0deg); opacity: 0; }
-  10% { opacity: 0.6; }
-  90% { opacity: 0.6; }
-  100% { transform: translateY(105vh) rotate(360deg); opacity: 0; }
-}
-
-/* ============================================
-   RAMADAN / FESTIVAL THEME STYLES
-   ============================================ */
-
-/* Islamic geometric pattern for background overlay */
-.ramadan-theme body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 5px;
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 1;
-  background: linear-gradient(90deg, #00AEEF 0% 25%, #E6007E 25% 50%, #FFED00 50% 75%, #0F172A 75% 100%);
-}
-
-/* Smooth transition for theme switch */
+/* Ramadan Theme */
 .ramadan-theme * {
-  transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
-/* Gold glow on CTA primary buttons when Ramadan active */
-.ramadan-theme button[class*="bg-primary"]:not([disabled]),
+/* Ramadan Primary Buttons */
+.ramadan-theme button[class*="bg-primary"]:not(:disabled),
 .ramadan-theme a[class*="bg-primary"] {
-  box-shadow: 0 4px 20px rgba(0, 174, 239, 0.25);
+  box-shadow: 0 4px 20px rgba(0, 174, 239, 0.20);
 }
 
-/* Hanging lights glow animation (keyframe defined in component too, backup here) */
-@keyframes ramadanGlow {
-  0% { opacity: 0.7; filter: brightness(0.85); }
-  100% { opacity: 1; filter: brightness(1.3); }
-}
-
-/* Ramadan mode padding for top navbar spacing (for hanging lights) */
-.ramadan-theme #root > div > div:first-child,
+/* Ramadan Layout Spacing */
 .ramadan-theme [data-ramadan-spacer] {
   padding-top: 85px;
 }
 
-/* Custom scrollbar with CMYK Gradient Thumb */
+
+/* =========================================================
+   8. SCROLLBAR
+   ========================================================= */
+
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-muted;
+  background: #F5F7FA;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #00AEEF, #E6007E, #FFED00);
-  border-radius: 9999px;
+  background: linear-gradient(
+    180deg,
+    #00AEEF,
+    #E6007E
+  );
+
+  border-radius: 100px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #E6007E, #00AEEF);
+  background: #00AEEF;
 }
 
-/* Slow hero image push-in for a premium first impression */
-@keyframes heroZoom {
-  from { transform: scale(1.12); }
-  to { transform: scale(1.02); }
+
+/* =========================================================
+   9. ACCESSIBILITY & RESPONSIVE SETTINGS
+   ========================================================= */
+
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .container {
+    max-width: 1400px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
