@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import {
   ArrowRight,
@@ -40,7 +39,6 @@ const BeforeAfterShowcase = lazy(() => import('@/components/BeforeAfterShowcase'
 const TestimonialsSection = lazy(() => import('@/components/TestimonialsSection'));
 const TrendingProducts = lazy(() => import('@/components/products/TrendingProducts'));
 
-// Static SEO & CMYK Service Highlights so Google always indexes every service immediately
 const CMYK_SERVICE_PILLARS = [
   {
     id: 'sublimation-gifts',
@@ -49,7 +47,7 @@ const CMYK_SERVICE_PILLARS = [
     description:
       'High-definition custom Photo Frames, Magic & White Mugs, Printed T-Shirts, Keychains, Cushions, Mouse Pads & PVC ID Cards.',
     items: ['Custom Photo Frames', 'Sublimation Mugs', 'Printed T-Shirts', 'Keychains & PVC Cards'],
-    accentColor: '#00AEEF', // CMYK Cyan
+    accentColor: '#00AEEF',
     badgeBg: 'bg-[#00AEEF]/10 text-[#00AEEF] border-[#00AEEF]/30',
     borderTop: 'border-t-4 border-t-[#00AEEF]',
     icon: Gift,
@@ -61,7 +59,7 @@ const CMYK_SERVICE_PILLARS = [
     description:
       'Complete business printing solutions including GST Billbooks, Cash Memos, Doctor/Company Letterpads, Promotional Handbills & Posters.',
     items: ['Billbook & Invoice Pads', 'Official Letterpads', 'Handbills & Pamphlets', 'Posters & Visiting Cards'],
-    accentColor: '#E6007E', // CMYK Magenta
+    accentColor: '#E6007E',
     badgeBg: 'bg-[#E6007E]/10 text-[#E6007E] border-[#E6007E]/30',
     borderTop: 'border-t-4 border-t-[#E6007E]',
     icon: Printer,
@@ -73,7 +71,7 @@ const CMYK_SERVICE_PILLARS = [
     description:
       'Designer Shadi Cards, traditional & modern Wedding Invitations, and interactive Digital Invites with live proof on WhatsApp before printing.',
     items: ['Hindu & Muslim Wedding Cards', 'Reception & Event Cards', 'Digital Web Invitations', 'WhatsApp Matter Proofing'],
-    accentColor: '#EAB308', // CMYK Yellow (Readable Gold-Yellow)
+    accentColor: '#EAB308',
     badgeBg: 'bg-[#FFED00]/30 text-[#0F172A] border-[#EAB308]/40',
     borderTop: 'border-t-4 border-t-[#FFED00]',
     icon: HeartHandshake,
@@ -141,7 +139,6 @@ const Index = () => {
     fetchData();
   }, []);
 
-  // Get a product image for each category as fallback
   const getCategoryImage = (categoryName: string, categoryImage: string | null) => {
     if (categoryImage) return categoryImage;
     const cat = categories.find(c => c.name === categoryName);
@@ -159,7 +156,6 @@ const Index = () => {
   )}`;
   const callUrl = `tel:+${cleanPhone}`;
 
-  // Structured Data for Google Sitelinks & #1 Brand Search Ranking
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'PrintShop',
@@ -221,30 +217,21 @@ const Index = () => {
         <script type="application/ld+json">{JSON.stringify(structuredData)}</script>
       </Helmet>
 
-      {/* Announcement Banner - Top of page */}
       <AnnouncementBanner />
 
       <Header />
 
       <main className="flex-1 bg-white">
-        {/* Hero Section */}
         <HeroSection />
 
-        {/* Trust strip — conversion proof above the fold */}
         <TrustStrip />
 
-        {/* Flash Sale Banner — shown only when active sales exist */}
         <FlashSaleBanner />
 
-        {/* Bestsellers */}
         <Bestsellers products={products} loading={loading} />
 
-        {/* Categories from Supabase */}
         <CategoryShowcase categories={categories} getImage={getCategoryImage} />
 
-        {/* =====================================================================
-            NEW CMYK 4-COLOR PRINTING & SUBLIMATION HUB (SEO + WHATSAPP/CALL)
-            ===================================================================== */}
         <section className="py-14 md:py-20 bg-slate-50/70 border-y border-slate-200/80" aria-labelledby="cmyk-services-heading">
           <div className="container">
             <div className="max-w-3xl mx-auto text-center mb-12">
@@ -327,55 +314,41 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Ad Slot */}
         <section className="py-4 bg-white">
           <div className="container">
             <AdBanner slotId="homepage_after_products" />
           </div>
         </section>
 
-        {/* 3-step custom order flow */}
         <HowItWorks />
 
-        {/* Why buy from us */}
         <WhyBuyFromUs />
 
-        {/* Stats Counter */}
         <StatsCounter />
 
-        {/* Trending — lazy, loads on scroll */}
         <LazySection minHeight={400}>
           <TrendingProducts />
         </LazySection>
 
-        {/* Testimonials — lazy, loads on scroll */}
         <LazySection minHeight={400}>
           <TestimonialsSection />
         </LazySection>
 
-        {/* Before/After Showcase — lazy, loads on scroll */}
         <LazySection minHeight={400}>
           <BeforeAfterShowcase />
         </LazySection>
 
-        {/* Customer Gallery / Wall of Fame — lazy, loads on scroll */}
         <LazySection minHeight={400}>
           <CustomerGallery />
         </LazySection>
 
-        {/* Delivery, payment & policy trust panel */}
         <TrustPanel />
 
-        {/* Recently Viewed Products */}
         {viewedIds.length > 0 && <RecentlyViewedProducts viewedIds={viewedIds} />}
 
-        {/* =====================================================================
-            CLEAN LIGHT CMYK CTA SECTION (WHATSAPP + CALL + BROWSE PRODUCTS)
-            ===================================================================== */}
         <section className="py-16 md:py-20 bg-white border-t border-slate-200" aria-labelledby="cta-heading">
           <div className="container">
             <div className="relative rounded-3xl bg-gradient-to-r from-[#00AEEF]/10 via-white to-[#E6007E]/10 border-2 border-slate-200 p-8 md:p-12 text-center shadow-sm overflow-hidden">
-              {/* Top 4-Color CMYK Accent Bar inside CTA */}
               <div
                 className="absolute top-0 left-0 right-0 h-1.5"
                 style={{
@@ -418,7 +391,7 @@ const Index = () => {
                   </Button>
                 </a>
 
-                <Link to="/products" aria-label="Browse all products">
+                <a href="/products" aria-label="Browse all products">
                   <Button
                     size="xl"
                     className="bg-[#00AEEF] hover:bg-[#0095CC] text-white font-bold shadow-md shadow-[#00AEEF]/20 border-0"
