@@ -1,19 +1,9 @@
 
 # Graphic Wala - Robots.txt
+# https://www.graphicwala.com
 
 User-agent: *
 
-# Allow public website pages
 Allow: /
 
-# Keep private and transactional pages out of crawling
-Disallow: /admin
-Disallow: /auth
-Disallow: /dashboard
-Disallow: /checkout
-Disallow: /cart
-Disallow: /order-confirmation
-Disallow: /share/
-
-# Sitemap
 Sitemap: https://www.graphicwala.com/sitemap.xml
