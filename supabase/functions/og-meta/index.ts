@@ -28,10 +28,6 @@ const CRAWLER_USER_AGENTS = [
   "outbrain",
   "redditbot",
   "vkshare",
-  "googlebot",
-  "bingbot",
-  "google-inspectiontool",
-  "storebot-google",
 ];
 
 function isCrawler(userAgent: string | null): boolean {
