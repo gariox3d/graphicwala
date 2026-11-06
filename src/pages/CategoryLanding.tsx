@@ -43,7 +43,8 @@ const CategoryLanding = () => {
       try {
         const { data: catData, error: catError } = await supabase
           .from('categories')
-          .select('id, name, description, image_url');
+          .select('id, name, description, image_url')
+          .eq('is_active', true);
 
         if (catError) throw catError;
         if (!active) return;
@@ -65,6 +66,7 @@ const CategoryLanding = () => {
           .from('products')
           .select(PRODUCT_CARD_FIELDS_WITH_CATEGORY)
           .eq('category_id', matched.id)
+          .eq('is_active', true)
           .order('display_order', { ascending: true })
           .limit(48);
 
