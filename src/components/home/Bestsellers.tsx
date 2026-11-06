@@ -25,8 +25,8 @@ const Bestsellers = ({ products, loading }: Props) => (
       {loading ? (
         <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 lg:gap-6 2xl:grid-cols-4">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="animate-pulse">
-              <div className="aspect-square bg-muted" />
+            <div key={i} className="animate-pulse overflow-hidden rounded-2xl">
+              <div className="aspect-square rounded-2xl bg-muted" />
               <div className="p-4 space-y-2">
                 <div className="h-4 bg-muted rounded w-3/4" />
                 <div className="h-3 bg-muted rounded w-1/2" />
@@ -35,7 +35,7 @@ const Bestsellers = ({ products, loading }: Props) => (
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6 md:gap-10 xl:gap-12">
+        <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 lg:gap-6 2xl:grid-cols-4">
           {products.slice(0, 8).map((p, i) => (
             <Reveal key={p.id} delay={(i % 4) * 90}>
               <ProductGridCard product={p} badge={i < 3 ? 'Best Seller' : undefined} showDelivery={false} />
