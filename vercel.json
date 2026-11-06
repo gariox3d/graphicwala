@@ -7,7 +7,7 @@
         {
           "type": "header",
           "key": "user-agent",
-          "value": "(?i).*(whatsapp|facebookexternalhit|facebookcatalog|twitterbot|telegrambot|linkedinbot|slackbot|discordbot|pinterest|embedly|quora|outbrain|redditbot|vkshare|googlebot|bingbot|google-inspectiontool|storebot-google).*"
+          "value": "(?i).*(whatsapp|facebookexternalhit|facebookcatalog|twitterbot|telegrambot|linkedinbot|slackbot|discordbot|pinterest|embedly|quora|outbrain|redditbot|vkshare).*"
         }
       ]
     },
@@ -22,7 +22,7 @@
         {
           "type": "header",
           "key": "user-agent",
-          "value": "(?i).*(whatsapp|facebookexternalhit|facebookcatalog|twitterbot|telegrambot|linkedinbot|slackbot|discordbot|pinterest|embedly|quora|outbrain|redditbot|vkshare|googlebot|bingbot|google-inspectiontool|storebot-google).*"
+          "value": "(?i).*(whatsapp|facebookexternalhit|facebookcatalog|twitterbot|telegrambot|linkedinbot|slackbot|discordbot|pinterest|embedly|quora|outbrain|redditbot|vkshare).*"
         }
       ]
     },
@@ -33,7 +33,7 @@
         {
           "type": "header",
           "key": "user-agent",
-          "value": "(?i).*(whatsapp|facebookexternalhit|facebookcatalog|twitterbot|telegrambot|linkedinbot|slackbot|discordbot|pinterest|embedly|quora|outbrain|redditbot|vkshare|googlebot|bingbot|google-inspectiontool|storebot-google).*"
+          "value": "(?i).*(whatsapp|facebookexternalhit|facebookcatalog|twitterbot|telegrambot|linkedinbot|slackbot|discordbot|pinterest|embedly|quora|outbrain|redditbot|vkshare).*"
         }
       ]
     },
