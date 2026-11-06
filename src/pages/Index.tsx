@@ -158,8 +158,7 @@ const Index = () => {
 
   const structuredData = {
     '@context': 'https://schema.org',
-    '@type': 'PrintShop',
-    '@id': 'https://www.graphicwala.com/#business',
+    '@type': 'PrintShop', '@id': 'https://www.graphicwala.com/#business',
     name: 'GraphicWala',
     alternateName: ['Graphic Wala', 'GraphicWala.com', 'Graphic Wala Printing & Gifts'],
     url: 'https://www.graphicwala.com/',
