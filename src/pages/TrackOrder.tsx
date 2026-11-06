@@ -79,6 +79,7 @@ const TrackOrder = () => {
         title="Track Your Order | Graphic Wala"
         description="Track your Graphic Wala order status online. Enter your Order ID and registered phone number to see live printing and delivery updates."
         path="/track-order"
+        noindex
       />
 
       <Header />
