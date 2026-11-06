@@ -1,229 +1,420 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const corsHeaders = {
+const SITE_URL = "https://www.graphicwala.com";
+const SITE_ORIGIN = new URL(SITE_URL).origin;
+const DEFAULT_OG_IMAGE = `${SITE_URL}/og-square.png`;
+const BUSINESS_NAME = "Graphic Wala";
+
+const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
 };
 
-const SITE_URL = "https://www.graphicwala.com";
-const DEFAULT_OG_IMAGE = `${SITE_URL}/og-square.png`;
-const BUSINESS_NAME = "Graphic Wala Store";
-
 const CRAWLER_USER_AGENTS = [
-  'whatsapp',
-  'facebookexternalhit',
-  'facebookcatalog',
-  'twitterbot',
-  'telegrambot',
-  'linkedinbot',
-  'slackbot',
-  'discordbot',
-  'pinterest',
-  'embedly',
-  'quora',
-  'outbrain',
-  'redditbot',
-  'vkshare',
+  "whatsapp",
+  "facebookexternalhit",
+  "facebookcatalog",
+  "twitterbot",
+  "telegrambot",
+  "linkedinbot",
+  "slackbot",
+  "discordbot",
+  "pinterest",
+  "embedly",
+  "quora",
+  "outbrain",
+  "redditbot",
+  "vkshare",
 ];
 
 function isCrawler(userAgent: string | null): boolean {
   if (!userAgent) return false;
+
   const lowerUA = userAgent.toLowerCase();
-  return CRAWLER_USER_AGENTS.some(bot => lowerUA.includes(bot));
+  return CRAWLER_USER_AGENTS.some((bot) => lowerUA.includes(bot));
 }
 
 serve(async (req) => {
-  // Handle CORS preflight
   if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: CORS_HEADERS });
+  }
+
+  if (req.method !== "GET" && req.method !== "HEAD") {
+    return new Response("Method Not Allowed", {
+      status: 405,
+      headers: {
+        ...CORS_HEADERS,
+        Allow: "GET, HEAD, OPTIONS",
+      },
+    });
   }
 
   try {
-    const url = new URL(req.url);
-    const productId = url.searchParams.get("id");
-    const path = url.searchParams.get("path") || "/";
+    const requestUrl = new URL(req.url);
+    const productId = requestUrl.searchParams.get("id");
+    const requestedPath = requestUrl.searchParams.get("path") || "/";
     const userAgent = req.headers.get("user-agent");
+    const crawler = isCrawler(userAgent);
 
-    console.log(`OG Meta request - productId: ${productId}, path: ${path}, userAgent: ${userAgent}`);
+    console.log("OG Meta request:", {
+      productId,
+      requestedPath,
+      crawler,
+      userAgent,
+    });
 
-    // If not a crawler, redirect immediately to the actual product page
-    if (!isCrawler(userAgent)) {
-      const redirectUrl = productId 
-        ? `${SITE_URL}/product/${productId}`
-        : `${SITE_URL}${path}`;
-      
-      console.log(`Redirecting non-crawler to: ${redirectUrl}`);
-      
+    // Validate the requested path to prevent external redirects.
+    const safePath = getSafePath(requestedPath);
+
+    // Normal visitors should reach the actual website.
+    if (!crawler) {
+      const redirectUrl = productId
+        ? `${SITE_URL}/product/${encodeURIComponent(productId)}`
+        : `${SITE_URL}${safePath}`;
+
       return new Response(null, {
         status: 302,
         headers: {
-          ...corsHeaders,
-          "Location": redirectUrl,
-          "Cache-Control": "no-cache, no-store, must-revalidate",
+          ...CORS_HEADERS,
+          Location: redirectUrl,
+          "Cache-Control": "no-store",
+          Vary: "User-Agent",
         },
       });
     }
 
-    console.log(`Serving OG meta HTML for crawler: ${userAgent}`);
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY");
 
-    // Initialize Supabase client
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error("Missing Supabase environment variables");
+    }
+
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    let title = `${BUSINESS_NAME} | Personalized Gifts in Bihar`;
-    let description = "Order customized photo frames, PVC cards, ID cards, visiting cards & keychains online. Premium quality with delivery across Bihar. Prepaid only.";
+    let title = `${BUSINESS_NAME} | Custom Printing & Personalised Gifts`;
+    let description =
+      "Shop personalised gifts, photo frames, ID cards, PVC cards, visiting cards and custom printing products. Prepaid orders with delivery across India.";
     let image = DEFAULT_OG_IMAGE;
-    let pageUrl = SITE_URL + path;
+    let pageUrl = `${SITE_URL}${safePath}`;
     let type = "website";
-    let imageType = getImageType(image);
 
-    // Admin-configured site-wide social preview (store_settings)
-    try {
-      const { data: settings } = await supabase
-        .from("store_settings")
-        .select("og_image_url, og_title, og_description")
-        .limit(1)
-        .maybeSingle();
-      if (settings?.og_image_url) {
-        image = settings.og_image_url;
-        imageType = getImageType(image);
-      }
-      if (settings?.og_title) title = settings.og_title;
-      if (settings?.og_description) description = settings.og_description;
-    } catch (e) {
-      console.error("store_settings fetch failed", e);
+    // Load admin-configured default social metadata.
+    const { data: settings, error: settingsError } = await supabase
+      .from("store_settings")
+      .select("og_image_url, og_title, og_description")
+      .limit(1)
+      .maybeSingle();
+
+    if (settingsError) {
+      console.error("Store settings error:", settingsError);
     }
 
-    // If product ID is provided, fetch product details
+    if (settings?.og_title?.trim()) {
+      title = settings.og_title.trim();
+    }
+
+    if (settings?.og_description?.trim()) {
+      description = settings.og_description.trim();
+    }
+
+    if (isValidHttpUrl(settings?.og_image_url)) {
+      image = settings.og_image_url;
+    }
+
+    // Fetch active product details.
     if (productId) {
-      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(productId);
-      const q = supabase.from("products").select("id, slug, name, description, image_url, image_urls, price, stock_quantity, categories(name)");
-      const { data: product, error } = isUuid
-        ? await q.eq("id", productId).maybeSingle()
-        : await q.eq("slug", productId).maybeSingle();
-
-      console.log(`Product fetch result:`, { product, error });
-
-      if (product && !error) {
-        title = `${product.name} | ${BUSINESS_NAME}`;
-        description = product.description 
-          ? `${product.description.slice(0, 140)}${product.description.length > 140 ? '...' : ''} Delivered across Bihar.`
-          : `Order ${product.name} from Graphic Wala. Premium quality with home delivery across Bihar.`;
-        
-        // Use first image from image_urls array, fallback to image_url, then default
-        const imageUrls = product.image_urls as string[] | null;
-        if (imageUrls && Array.isArray(imageUrls) && imageUrls.length > 0) {
-          image = imageUrls[0];
-        } else if (product.image_url) {
-          image = product.image_url;
-        }
-        
-        imageType = getImageType(image);
-        // WhatsApp/Facebook crawlers can't render WebP previews — proxy to JPEG
-        if (imageType === 'image/webp') {
-          image = toJpegProxy(image);
-          imageType = 'image/jpeg';
-        }
-        pageUrl = `${SITE_URL}/product/${product.slug || product.id}`;
-        type = "product";
-        
-        console.log(`Using image: ${image}`);
+      if (
+        productId.length > 200 ||
+        /[\/\\?#]/.test(productId)
+      ) {
+        return notFoundResponse(req.method);
       }
-    }
-    // Generate HTML with meta tags for social crawlers
-    const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <!-- Primary Meta Tags -->
-  <title>${escapeHtml(title)}</title>
-  <meta name="title" content="${escapeHtml(title)}">
-  <meta name="description" content="${escapeHtml(description)}">
-  
-  <!-- Open Graph / Facebook / WhatsApp -->
-  <meta property="og:type" content="${type}">
-  <meta property="og:url" content="${pageUrl}">
-  <meta property="og:title" content="${escapeHtml(title)}">
-  <meta property="og:description" content="${escapeHtml(description)}">
-  <meta property="og:image" content="${image}">
-  <meta property="og:image:secure_url" content="${image}">
-  <meta property="og:image:width" content="1080">
-  <meta property="og:image:height" content="1080">
-  <meta property="og:image:type" content="${imageType}">
-  <meta property="og:image:alt" content="${escapeHtml(title)}">
-  <meta property="og:site_name" content="${BUSINESS_NAME}">
-  <meta property="og:locale" content="en_IN">
-  
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:url" content="${pageUrl}">
-  <meta name="twitter:title" content="${escapeHtml(title)}">
-  <meta name="twitter:description" content="${escapeHtml(description)}">
-  <meta name="twitter:image" content="${image}">
-  <meta name="twitter:image:alt" content="${escapeHtml(title)}">
-  
-  <!-- Redirect to actual page -->
-  <meta http-equiv="refresh" content="0;url=${pageUrl}">
-  <link rel="canonical" href="${pageUrl}">
-</head>
-<body>
-  <p>Redirecting to <a href="${pageUrl}">${escapeHtml(title)}</a>...</p>
-</body>
-</html>`;
 
-    return new Response(html, {
+      const isUuid =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+          .test(productId);
+
+      let query = supabase
+        .from("products")
+        .select(
+          "id, slug, name, description, image_url, image_urls, is_active",
+        )
+        .eq("is_active", true);
+
+      query = isUuid
+        ? query.eq("id", productId)
+        : query.eq("slug", productId);
+
+      const { data: product, error } = await query.maybeSingle();
+
+      if (error) {
+        console.error("Product fetch error:", error);
+        throw error;
+      }
+
+      // Never generate a product preview for missing/inactive products.
+      if (!product) {
+        return notFoundResponse(req.method);
+      }
+
+      title = `${product.name} | ${BUSINESS_NAME}`;
+
+      const cleanDescription = stripHtml(product.description || "");
+
+      description = cleanDescription
+        ? `${truncate(cleanDescription, 150)} | Order online from Graphic Wala with delivery across India.`
+        : `Order ${product.name} online from Graphic Wala. Custom printing and delivery across India.`;
+
+      // Select the first valid product image.
+      const imageUrls: unknown[] = Array.isArray(product.image_urls)
+        ? product.image_urls
+        : [];
+
+      const validImages = imageUrls
+        .map((item) => safeImageUrl(item))
+        .filter((item): item is string => item !== null);
+
+      const primaryImage =
+        validImages[0] || safeImageUrl(product.image_url);
+
+      image = primaryImage || DEFAULT_OG_IMAGE;
+
+      // Convert WebP to JPEG for better social preview compatibility.
+      if (getImageType(image) === "image/webp") {
+        image = toJpegProxy(image);
+      }
+
+      const canonicalSlug = product.slug?.trim() || product.id;
+
+      pageUrl = `${SITE_URL}/product/${encodeURIComponent(canonicalSlug)}`;
+      type = "product";
+    }
+
+    const imageType = getImageType(image);
+
+    const html = generateHtml({
+      title,
+      description,
+      image,
+      imageType,
+      pageUrl,
+      type,
+    });
+
+    return new Response(req.method === "HEAD" ? null : html, {
+      status: 200,
       headers: {
-        ...corsHeaders,
+        ...CORS_HEADERS,
         "Content-Type": "text/html; charset=utf-8",
-        "Cache-Control": "public, max-age=3600",
+        "Cache-Control": "public, max-age=300, s-maxage=300",
+        "X-Content-Type-Options": "nosniff",
+        Vary: "User-Agent",
       },
     });
   } catch (error) {
     console.error("OG Meta Error:", error);
-    
-    // Return fallback HTML
-    const fallbackHtml = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>${BUSINESS_NAME}</title>
-  <meta property="og:title" content="${BUSINESS_NAME}">
-  <meta property="og:image" content="${DEFAULT_OG_IMAGE}">
-  <meta http-equiv="refresh" content="0;url=${SITE_URL}">
-</head>
-<body>Redirecting...</body>
-</html>`;
-    
-    return new Response(fallbackHtml, {
+
+    const html = generateHtml({
+      title: BUSINESS_NAME,
+      description:
+        "Custom printing, personalised gifts and online printing services from Graphic Wala. Delivery across India.",
+      image: DEFAULT_OG_IMAGE,
+      imageType: "image/png",
+      pageUrl: SITE_URL,
+      type: "website",
+    });
+
+    return new Response(req.method === "HEAD" ? null : html, {
+      status: 500,
       headers: {
-        ...corsHeaders,
+        ...CORS_HEADERS,
         "Content-Type": "text/html; charset=utf-8",
+        "Cache-Control": "no-store",
+        "X-Robots-Tag": "noindex, nofollow",
+        Vary: "User-Agent",
       },
     });
   }
 });
 
-function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/\"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+function generateHtml(data: {
+  title: string;
+  description: string;
+  image: string;
+  imageType: string;
+  pageUrl: string;
+  type: string;
+}): string {
+  const title = escapeHtml(data.title);
+  const description = escapeHtml(data.description);
+  const image = escapeHtml(data.image);
+  const pageUrl = escapeHtml(data.pageUrl);
+  const businessName = escapeHtml(BUSINESS_NAME);
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>${title}</title>
+  <meta name="title" content="${title}">
+  <meta name="description" content="${description}">
+  <meta name="robots" content="index, follow">
+
+  <link rel="canonical" href="${pageUrl}">
+
+  <meta property="og:type" content="${data.type}">
+  <meta property="og:url" content="${pageUrl}">
+  <meta property="og:title" content="${title}">
+  <meta property="og:description" content="${description}">
+  <meta property="og:image" content="${image}">
+  <meta property="og:image:secure_url" content="${image}">
+  <meta property="og:image:width" content="1080">
+  <meta property="og:image:height" content="1080">
+  <meta property="og:image:type" content="${data.imageType}">
+  <meta property="og:image:alt" content="${title}">
+  <meta property="og:site_name" content="${businessName}">
+  <meta property="og:locale" content="en_IN">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="${pageUrl}">
+  <meta name="twitter:title" content="${title}">
+  <meta name="twitter:description" content="${description}">
+  <meta name="twitter:image" content="${image}">
+  <meta name="twitter:image:alt" content="${title}">
+
+  <meta http-equiv="refresh" content="0;url=${pageUrl}">
+</head>
+<body>
+  <p>Redirecting to <a href="${pageUrl}">${title}</a>...</p>
+</body>
+</html>`;
 }
 
-function toJpegProxy(imageUrl: string): string {
-  const withoutProtocol = imageUrl.replace(/^https?:\/\//, '');
-  return `https://images.weserv.nl/?url=${encodeURIComponent(withoutProtocol)}&w=1080&h=1080&fit=inside&output=jpg&q=88`;
+function notFoundResponse(method: string): Response {
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Product Not Found | Graphic Wala</title>
+  <meta name="robots" content="noindex, follow">
+  <meta name="description" content="This product is unavailable.">
+</head>
+<body>
+  <h1>Product Not Found</h1>
+  <p>This product is unavailable or no longer active.</p>
+</body>
+</html>`;
+
+  return new Response(method === "HEAD" ? null : html, {
+    status: 404,
+    headers: {
+      ...CORS_HEADERS,
+      "Content-Type": "text/html; charset=utf-8",
+      "Cache-Control": "no-store",
+      "X-Robots-Tag": "noindex, follow",
+      Vary: "User-Agent",
+    },
+  });
+}
+
+function getSafePath(path: string): string {
+  try {
+    if (
+      !path.startsWith("/") ||
+      path.startsWith("//") ||
+      path.includes("\\") ||
+      /[\u0000-\u001F\u007F]/.test(path)
+    ) {
+      return "/";
+    }
+
+    const parsed = new URL(path, SITE_URL);
+
+    if (parsed.origin !== SITE_ORIGIN) {
+      return "/";
+    }
+
+    return `${parsed.pathname}${parsed.search}`;
+  } catch {
+    return "/";
+  }
+}
+
+function isValidHttpUrl(value: unknown): value is string {
+  if (typeof value !== "string" || !value.trim()) return false;
+
+  try {
+    const url = new URL(value);
+    return (
+      (url.protocol === "https:" || url.protocol === "http:") &&
+      !url.username &&
+      !url.password
+    );
+  } catch {
+    return false;
+  }
+}
+
+function safeImageUrl(value: unknown): string | null {
+  return isValidHttpUrl(value) ? value : null;
 }
 
 function getImageType(imageUrl: string): string {
-  const lower = imageUrl.toLowerCase();
-  if (lower.endsWith('.png')) return 'image/png';
-  if (lower.endsWith('.webp')) return 'image/webp';
-  return 'image/jpeg';
+  try {
+    const pathname = new URL(imageUrl).pathname.toLowerCase();
+
+    if (pathname.endsWith(".png")) return "image/png";
+    if (pathname.endsWith(".webp")) return "image/webp";
+    if (pathname.endsWith(".gif")) return "image/gif";
+
+    return "image/jpeg";
+  } catch {
+    return "image/jpeg";
+  }
+}
+
+function toJpegProxy(imageUrl: string): string {
+  const url = new URL(imageUrl);
+
+  const source = `${url.hostname}${url.pathname}${url.search}`;
+
+  const params = new URLSearchParams({
+    url: source,
+    w: "1080",
+    h: "1080",
+    fit: "inside",
+    output: "jpg",
+    q: "88",
+  });
+
+  return `https://images.weserv.nl/?${params.toString()}`;
+}
+
+function stripHtml(value: string): string {
+  return value
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function truncate(value: string, maxLength: number): string {
+  if (value.length <= maxLength) return value;
+
+  return `${value.slice(0, maxLength).trimEnd()}...`;
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
