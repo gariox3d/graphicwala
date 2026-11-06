@@ -55,7 +55,7 @@ const HeroSection = () => {
 
   return (
     <section
-      className="relative isolate w-full overflow-hidden bg-[linear-gradient(135deg,#f8fcff_0%,#ffffff_48%,#fff8fc_100%)]"
+      className="relative isolate w-full overflow-hidden bg-[linear-gradient(135deg,#f4fbff_0%,#ffffff_44%,#fff5fa_100%)]"
       aria-label="Graphic Wala - Custom Printing, Sublimation Gifts and Branding Studio"
     >
       {/* Background Effects */}
@@ -68,7 +68,7 @@ const HeroSection = () => {
         <div className="absolute bottom-0 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-yellow-300/[0.08] blur-[100px]" />
       </div>
 
-      <div className="container relative mx-auto px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20 xl:py-24">
+      <div className="container relative mx-auto px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-[4.5rem] xl:py-24">
 
         <div className="grid items-center gap-10 lg:grid-cols-[1.04fr_0.96fr] lg:gap-12 xl:gap-16">
 
@@ -94,7 +94,7 @@ const HeroSection = () => {
             </div>
 
             {/* Main Heading */}
-            <h1 className="mt-6 font-outfit text-[2.45rem] font-extrabold leading-[1.06] tracking-[-0.05em] text-[#111827] sm:text-5xl lg:text-[3.55rem] xl:text-[4rem]">
+            <h1 className="mt-6 font-outfit text-[2.55rem] font-extrabold leading-[1.03] tracking-[-0.055em] text-[#111827] sm:text-5xl lg:text-[3.8rem] xl:text-[4.25rem]">
 
               <span className="block">
                 Your Ideas,
@@ -238,7 +238,7 @@ const HeroSection = () => {
             <div className="absolute inset-5 rounded-[2.5rem] bg-gradient-to-br from-[#00AEEF]/10 via-white to-[#E6007E]/10 blur-2xl" />
 
             {/* Main Showcase Card */}
-            <div className="relative overflow-hidden rounded-[1.75rem] border border-white bg-white/90 p-3 shadow-[0_30px_90px_-34px_rgba(15,23,42,0.30)] ring-1 ring-slate-200/70 backdrop-blur-sm sm:rounded-[2rem] sm:p-5">
+            <div className="relative overflow-hidden rounded-[1.75rem] border border-white/90 bg-white/95 p-3 shadow-[0_34px_100px_-38px_rgba(15,23,42,0.38)] ring-1 ring-slate-200/80 backdrop-blur-sm sm:rounded-[2rem] sm:p-5">
 
               {/* Top Header */}
               <div className="flex items-center justify-between border-b border-slate-100 px-2 pb-4">
@@ -266,7 +266,7 @@ const HeroSection = () => {
               </div>
 
               {/* Product Image */}
-              <div className="relative flex min-h-[260px] items-center justify-center px-2 py-5 sm:min-h-[340px] sm:px-4">
+              <div className="relative flex min-h-[280px] items-center justify-center overflow-hidden rounded-2xl bg-[radial-gradient(circle_at_50%_45%,#f8fafc_0%,#ffffff_68%)] px-2 py-5 sm:min-h-[370px] sm:px-4">
 
                 <SmartImage
                   src={card.image_url}
