@@ -15,7 +15,7 @@ const Footer = () => {
               <img 
                 src="/graphic-wala-logo.svg" 
                 alt="Graphicwala logo" 
-                className="h-10 w-auto max-w-[220px] object-contain brightness-0 invert"
+                className="h-10 w-auto max-w-[220px] rounded-lg bg-white px-2 py-1 object-contain"
               />
               
             </Link>
