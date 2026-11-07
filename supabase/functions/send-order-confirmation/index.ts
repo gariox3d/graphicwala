@@ -166,9 +166,7 @@ function generateEmailHtml(data: OrderEmailData): string {
                   <td align="center">
                     <!-- Logo -->
                     <div style="background: ${BRAND_WHITE}; border-radius: 12px; padding: 12px 24px; display: inline-block;">
-                      <span style="font-size: 24px; font-weight: 700; color: ${BRAND_RED}; font-family: 'Segoe UI', Roboto, Arial, sans-serif; letter-spacing: -0.5px;">
-                        Graphic Wala
-                      </span>
+                      <img src="https://www.graphicwala.com/logo.png" alt="Graphic Wala" width="240" style="display: block; width: 240px; max-width: 100%; height: auto;" />
                     </div>
                   </td>
                 </tr>

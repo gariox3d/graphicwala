@@ -16,6 +16,7 @@ import html2canvas from 'html2canvas';
 import { Badge } from '@/components/ui/badge';
 import { normalizeIndianPhoneForWhatsApp } from '@/lib/phone';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import brandMark from '@/assets/brand/graphicwala-symbol.png.asset.json';
 
 interface BillItem {
   id: string;
@@ -923,9 +924,9 @@ const BillTemplate = ({
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', whiteSpace: 'nowrap', flexShrink: 0 }}>
           <img
-            src="/images/logo-circle.png"
+            src={brandMark.url}
             alt="Graphic Wala"
-            style={{ width: compact ? '32px' : '48px', height: compact ? '32px' : '48px', borderRadius: '50%', flexShrink: 0 }}
+            style={{ width: compact ? '42px' : '64px', height: compact ? '24px' : '32px', objectFit: 'contain', flexShrink: 0 }}
             onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
           />
           <div>

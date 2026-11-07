@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
 import UserAvatar from '@/components/profile/UserAvatar';
 import { WHATSAPP_NUMBER, PHONE_NUMBER, BUSINESS_NAME } from '@/lib/types';
-import logoImage from '@/assets/logo.png';
+import logoImage from '@/assets/brand/graphicwala-logo-wide.png.asset.json';
 import SearchBar from './SearchBar';
 
 const Header = () => {
@@ -32,15 +32,12 @@ const Header = () => {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2">
-          <img 
-            src={logoImage} 
-            alt="Graphic Wala Logo" 
-            className="h-10 w-10 rounded-lg object-cover"
+        <Link to="/" className="flex items-center">
+          <img
+            src={logoImage.url}
+            alt="Graphic Wala"
+            className="h-10 w-auto max-w-[220px] object-contain"
           />
-          <span className="text-xl font-bold text-foreground">
-            Graphic <span className="text-primary">Wala</span>
-          </span>
         </Link>
 
         {/* Desktop Navigation */}
