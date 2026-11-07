@@ -6,7 +6,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
 import UserAvatar from '@/components/profile/UserAvatar';
 import { WHATSAPP_NUMBER, PHONE_NUMBER, BUSINESS_NAME } from '@/lib/types';
-import logoImage from '@/assets/logo.png';
 import SearchBar from './SearchBar';
 
 const Header = () => {
@@ -34,13 +33,11 @@ const Header = () => {
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2">
           <img 
-            src={logoImage} 
+            src="/graphic-wala-logo.svg" 
             alt="Graphic Wala Logo" 
-            className="h-10 w-10 rounded-lg object-cover"
+            className="h-9 w-auto max-w-[164px] object-contain sm:h-10 sm:max-w-[190px]"
           />
-          <span className="text-xl font-bold text-foreground">
-            Graphic <span className="text-primary">Wala</span>
-          </span>
+          
         </Link>
 
         {/* Desktop Navigation */}
