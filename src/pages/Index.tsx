@@ -163,7 +163,7 @@ const Index = () => {
     alternateName: ['Graphic Wala', 'GraphicWala.com', 'Graphic Wala Printing & Gifts'],
     url: 'https://www.graphicwala.com/',
     logo: 'https://www.graphicwala.com/logo.png',
-    image: 'https://www.graphicwala.com/og-square.png',
+    image: 'https://www.graphicwala.com/og-image.jpg',
     description:
       'Official GraphicWala (Graphic Wala) Studio — Printing, Design, Branding, Custom Sublimation Photo Frames, Mugs, T-Shirts, Keychains, PVC Cards, Billbooks, Letterpads, Handbills, Posters & Wedding Cards.',
     telephone: `+${cleanPhone}`,
@@ -203,7 +203,7 @@ const Index = () => {
         />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.graphicwala.com/" />
-        <meta property="og:image" content="https://www.graphicwala.com/og-square.png" />
+        <meta property="og:image" content="https://www.graphicwala.com/og-image.jpg" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta
           name="twitter:title"
