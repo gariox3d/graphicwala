@@ -149,7 +149,7 @@ const ProductDetail = () => {
 
         const query = supabase
           .from('products')
-          .select('*, categories(*)');
+          .select('*, categories(*)').eq('is_active', true);
 
         const { data, error } = isUuid(slugOrId)
           ? await query.eq('id', slugOrId).maybeSingle()

@@ -343,6 +343,7 @@ const AIAssistant = () => {
         title={`Smart Assistant - ${BUSINESS_NAME}`}
         description="24×7 Printing & Gift Help Desk. Get instant help with orders, delivery, payments and more."
         path="/ai-assistant"
+        noindex
       />
 
       <div className="min-h-screen flex flex-col bg-background">

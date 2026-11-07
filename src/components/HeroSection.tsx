@@ -55,7 +55,7 @@ const HeroSection = () => {
 
   return (
     <section
-      className="relative isolate w-full overflow-hidden bg-white"
+      className="relative isolate w-full overflow-hidden bg-[linear-gradient(135deg,#f4fbff_0%,#ffffff_44%,#fff5fa_100%)]"
       aria-label="Graphic Wala - Custom Printing, Sublimation Gifts and Branding Studio"
     >
       {/* Background Effects */}
@@ -68,9 +68,9 @@ const HeroSection = () => {
         <div className="absolute bottom-0 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-yellow-300/[0.08] blur-[100px]" />
       </div>
 
-      <div className="container relative mx-auto px-4 py-14 sm:px-6 sm:py-20 lg:px-8 lg:py-24">
+      <div className="container relative mx-auto px-4 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-[4.5rem] xl:py-24">
 
-        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-10 xl:gap-16">
+        <div className="grid items-center gap-10 lg:grid-cols-[1.04fr_0.96fr] lg:gap-12 xl:gap-16">
 
           {/* LEFT CONTENT */}
           <header className="mx-auto w-full max-w-2xl text-center lg:mx-0 lg:text-left">
@@ -94,7 +94,7 @@ const HeroSection = () => {
             </div>
 
             {/* Main Heading */}
-            <h1 className="mt-7 font-outfit text-[2.6rem] font-extrabold leading-[1.08] tracking-[-0.045em] text-[#111827] sm:text-5xl lg:text-[3.65rem] xl:text-[4.15rem]">
+            <h1 className="mt-6 font-outfit text-[2.55rem] font-extrabold leading-[1.03] tracking-[-0.055em] text-[#111827] sm:text-5xl lg:text-[3.8rem] xl:text-[4.25rem]">
 
               <span className="block">
                 Your Ideas,
@@ -113,7 +113,7 @@ const HeroSection = () => {
             </h1>
 
             {/* Description */}
-            <p className="mx-auto mt-6 max-w-xl text-sm font-normal leading-7 text-slate-600 sm:text-base lg:mx-0 lg:text-lg">
+            <p className="mx-auto mt-5 max-w-xl text-sm font-normal leading-7 text-slate-600 sm:text-base sm:leading-8 lg:mx-0 lg:text-[1.05rem]">
 
               From personalized{' '}
               <strong className="font-semibold text-slate-900">
@@ -149,14 +149,14 @@ const HeroSection = () => {
             </div>
 
             {/* CTA Buttons */}
-            <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start">
+            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap lg:justify-start">
 
               {/* WhatsApp */}
               <a
                 href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group inline-flex w-full items-center justify-center gap-2.5 rounded-xl bg-[#16A34A] px-6 py-4 text-sm font-bold text-white shadow-lg shadow-green-600/15 transition-all duration-300 hover:-translate-y-1 hover:bg-[#15803D] hover:shadow-xl sm:w-auto"
+                className="group inline-flex min-h-12 w-full items-center justify-center gap-2.5 rounded-xl bg-[#128C4A] px-6 py-3.5 text-sm font-bold text-white shadow-[0_12px_28px_-12px_rgba(18,140,74,0.65)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#0F783F] hover:shadow-lg sm:w-auto"
               >
                 <MessageCircle className="h-5 w-5" />
 
@@ -168,7 +168,7 @@ const HeroSection = () => {
               {/* Call */}
               <a
                 href={callUrl}
-                className="inline-flex w-full items-center justify-center gap-2.5 rounded-xl border border-slate-300 bg-white px-6 py-4 text-sm font-bold text-slate-800 transition-all duration-300 hover:-translate-y-1 hover:border-slate-900 hover:bg-slate-50 sm:w-auto"
+                className="inline-flex min-h-12 w-full items-center justify-center gap-2.5 rounded-xl border border-slate-200 bg-white/90 px-6 py-3.5 text-sm font-bold text-slate-800 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-slate-400 hover:bg-white hover:shadow-md sm:w-auto"
               >
                 <Phone className="h-4 w-4 text-[#E6007E]" />
 
@@ -179,7 +179,7 @@ const HeroSection = () => {
               {/* Catalog */}
               <a
                 href="/products"
-                className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#111827] px-6 py-4 text-sm font-bold text-white shadow-lg shadow-slate-900/10 transition-all duration-300 hover:-translate-y-1 hover:bg-[#273449] sm:w-auto"
+                className="group inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#111827] px-6 py-3.5 text-sm font-bold text-white shadow-[0_12px_28px_-14px_rgba(15,23,42,0.7)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#273449] sm:w-auto"
               >
                 Explore Catalog
 
@@ -238,7 +238,7 @@ const HeroSection = () => {
             <div className="absolute inset-5 rounded-[2.5rem] bg-gradient-to-br from-[#00AEEF]/10 via-white to-[#E6007E]/10 blur-2xl" />
 
             {/* Main Showcase Card */}
-            <div className="relative overflow-hidden rounded-[2rem] border border-slate-200/80 bg-white/80 p-3 shadow-[0_25px_80px_-30px_rgba(15,23,42,0.22)] backdrop-blur-sm sm:p-5">
+            <div className="relative overflow-hidden rounded-[1.75rem] border border-white/90 bg-white/95 p-3 shadow-[0_34px_100px_-38px_rgba(15,23,42,0.38)] ring-1 ring-slate-200/80 backdrop-blur-sm sm:rounded-[2rem] sm:p-5">
 
               {/* Top Header */}
               <div className="flex items-center justify-between border-b border-slate-100 px-2 pb-4">
@@ -266,7 +266,7 @@ const HeroSection = () => {
               </div>
 
               {/* Product Image */}
-              <div className="relative flex min-h-[260px] items-center justify-center px-2 py-5 sm:min-h-[340px] sm:px-4">
+              <div className="relative flex min-h-[280px] items-center justify-center overflow-hidden rounded-2xl bg-[radial-gradient(circle_at_50%_45%,#f8fafc_0%,#ffffff_68%)] px-2 py-5 sm:min-h-[370px] sm:px-4">
 
                 <SmartImage
                   src={card.image_url}
@@ -285,7 +285,7 @@ const HeroSection = () => {
               </div>
 
               {/* Bottom Footer */}
-              <div className="flex items-center justify-between gap-3 rounded-2xl bg-slate-50 px-4 py-4 sm:px-5">
+              <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-100 bg-gradient-to-r from-slate-50 to-white px-4 py-4 sm:rounded-2xl sm:px-5">
 
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-wider text-slate-500">

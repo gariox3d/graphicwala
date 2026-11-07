@@ -17,14 +17,14 @@ const CategoryShowcase = ({ categories, getImage }: Props) => {
   if (!categories.length) return null;
 
   return (
-    <section className="bg-background" aria-labelledby="categories-heading">
+    <section className="bg-white" aria-labelledby="categories-heading">
       <div className="container pt-16 md:pt-24 pb-4 md:pb-8">
-        <Reveal as="header" className="text-center max-w-3xl mx-auto">
+        <Reveal as="header" className="mx-auto max-w-3xl text-center">
           <p className="eyebrow mb-3">Shop by Category</p>
-          <h2 id="categories-heading" className="display-title text-4xl md:text-5xl xl:text-6xl tracking-[-0.03em]">
+          <h2 id="categories-heading" className="display-title text-3xl tracking-[-0.04em] sm:text-4xl md:text-5xl xl:text-[3.4rem]">
             What would you like to personalise?
           </h2>
-          <p className="mt-5 text-base md:text-lg font-light text-muted-foreground">
+          <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-muted-foreground sm:text-base md:text-lg">
             Every product printed to order, checked by hand, delivered across India.
           </p>
         </Reveal>
@@ -38,20 +38,20 @@ const CategoryShowcase = ({ categories, getImage }: Props) => {
         return (
           <div
             key={category.id}
-            className={cn('w-full', i % 2 === 1 ? 'bg-secondary/40' : 'bg-background')}
+            className={cn('w-full border-t border-slate-100', i % 2 === 1 ? 'bg-slate-50/80' : 'bg-white')}
           >
-            <div className="container py-12 md:py-20 xl:py-24">
+            <div className="container py-10 md:py-[4.5rem] xl:py-24">
               <div className="mx-auto max-w-5xl grid items-center gap-8 md:gap-10 lg:grid-cols-2">
                 <Reveal className={cn('order-1', reversed ? 'lg:order-2' : 'lg:order-1')}>
                   <div className={cn(
-                    'relative w-full max-w-[16rem] sm:max-w-xs md:max-w-sm overflow-hidden rounded-[1.75rem] border border-border bg-white mx-auto',
+                    'relative mx-auto w-full max-w-[17rem] overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white p-2 shadow-[0_24px_65px_-36px_rgba(15,23,42,0.38)] sm:max-w-sm md:max-w-md',
                     reversed ? 'lg:ml-auto lg:mr-0' : 'lg:mr-auto lg:ml-0'
                   )}>
                     {img ? (
                       <SmartImage
                         src={img}
                         alt={`${category.name} by Graphic Wala`}
-                        className="h-auto w-full object-contain bg-white transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.03]"
+                        className="h-auto w-full rounded-2xl object-contain bg-white transition-transform duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.03]"
                         widths={[600, 900, 1200, 1600]}
                         fallbackWidth={1200}
                         quality={92}
@@ -73,7 +73,7 @@ const CategoryShowcase = ({ categories, getImage }: Props) => {
                     reversed ? 'lg:order-1' : 'lg:order-2'
                   )}
                 >
-                  <h3 className="display-title text-3xl md:text-5xl xl:text-6xl tracking-[-0.03em]">
+                  <h3 className="display-title text-3xl tracking-[-0.04em] sm:text-4xl md:text-5xl xl:text-[3.5rem]">
                     {category.name}
                   </h3>
                   <p className="mt-4 mx-auto lg:mx-0 max-w-lg text-base md:text-lg font-light leading-relaxed text-muted-foreground">

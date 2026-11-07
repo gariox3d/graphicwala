@@ -57,13 +57,13 @@ const Products = () => {
         const [productsRes, categoriesRes] = await Promise.allSettled([
           supabase
             .from('products')
-            .select(PRODUCT_CARD_FIELDS_WITH_CATEGORY)
+            .select(PRODUCT_CARD_FIELDS_WITH_CATEGORY).eq('is_active', true)
             .order('display_order', { ascending: true })
             .limit(60),
 
           supabase
             .from('categories')
-            .select('id, name, description, image_url'),
+            .select('id, name, description, image_url').eq('is_active', true),
         ]);
 
         if (!isMounted) return;

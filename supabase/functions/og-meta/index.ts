@@ -192,6 +192,43 @@ serve(async (req) => {
 
       pageUrl = `${SITE_URL}/product/${encodeURIComponent(canonicalSlug)}`;
       type = "product";
+    } else {
+      const categoryMatch = safePath.match(/^\/category\/([^/]+)\/?$/);
+
+      if (categoryMatch) {
+        let requestedSlug = categoryMatch[1];
+
+        try {
+          requestedSlug = decodeURIComponent(requestedSlug);
+        } catch {
+          return notFoundResponse(req.method);
+        }
+
+        const { data: categories, error: categoryError } = await supabase
+          .from("categories")
+          .select("name, description, image_url")
+          .eq("is_active", true);
+
+        if (categoryError) {
+          console.error("Category fetch error:", categoryError);
+          throw categoryError;
+        }
+
+        const category = (categories || []).find(
+          (item) => categorySlug(item.name) === requestedSlug,
+        );
+
+        if (!category) {
+          return notFoundResponse(req.method);
+        }
+
+        title = `${category.name} | Custom Printing & Gifts | ${BUSINESS_NAME}`;
+        description = category.description
+          ? `${truncate(stripHtml(category.description), 145)} | Shop online at Graphic Wala with delivery across India.`
+          : `Explore ${category.name} at Graphic Wala. Custom printing and personalised gifts with delivery across India.`;
+        image = safeImageUrl(category.image_url) || image;
+        pageUrl = `${SITE_URL}/category/${encodeURIComponent(categorySlug(category.name))}`;
+      }
     }
 
     const imageType = getImageType(image);
@@ -301,13 +338,13 @@ function notFoundResponse(method: string): Response {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Product Not Found | Graphic Wala</title>
+  <title>Page Not Found | Graphic Wala</title>
   <meta name="robots" content="noindex, follow">
   <meta name="description" content="This product is unavailable.">
 </head>
 <body>
-  <h1>Product Not Found</h1>
-  <p>This product is unavailable or no longer active.</p>
+  <h1>Page Not Found</h1>
+  <p>This page is unavailable or the requested item is no longer active.</p>
 </body>
 </html>`;
 
@@ -344,6 +381,15 @@ function getSafePath(path: string): string {
   } catch {
     return "/";
   }
+}
+
+function categorySlug(name: string): string {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
 function isValidHttpUrl(value: unknown): value is string {

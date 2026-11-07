@@ -158,7 +158,7 @@ const Index = () => {
 
   const structuredData = {
     '@context': 'https://schema.org',
-    '@type': 'PrintShop',
+    '@type': 'PrintShop', '@id': 'https://www.graphicwala.com/#business',
     name: 'GraphicWala',
     alternateName: ['Graphic Wala', 'GraphicWala.com', 'Graphic Wala Printing & Gifts'],
     url: 'https://www.graphicwala.com/',
@@ -232,9 +232,9 @@ const Index = () => {
 
         <CategoryShowcase categories={categories} getImage={getCategoryImage} />
 
-        <section className="py-14 md:py-20 bg-slate-50/70 border-y border-slate-200/80" aria-labelledby="cmyk-services-heading">
+        <section className="relative overflow-hidden border-y border-slate-200/80 bg-[linear-gradient(180deg,#f8fafc_0%,#ffffff_100%)] py-14 md:py-20" aria-labelledby="cmyk-services-heading">
           <div className="container">
-            <div className="max-w-3xl mx-auto text-center mb-12">
+            <div className="mx-auto mb-10 max-w-3xl text-center md:mb-12">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-slate-200 shadow-sm text-xs font-extrabold uppercase tracking-wider text-[#0F172A] mb-3">
                 <span className="w-2.5 h-2.5 rounded-full bg-[#00AEEF]" />
                 <span className="w-2.5 h-2.5 rounded-full bg-[#E6007E]" />
@@ -242,7 +242,7 @@ const Index = () => {
                 <span className="w-2.5 h-2.5 rounded-full bg-[#0F172A]" />
                 <span>Printing • Design • Branding</span>
               </div>
-              <h2 id="cmyk-services-heading" className="text-3xl md:text-4xl font-extrabold text-[#0F172A] tracking-tight">
+              <h2 id="cmyk-services-heading" className="text-3xl font-extrabold tracking-[-0.04em] text-[#0F172A] sm:text-4xl md:text-5xl">
                 Complete <span className="text-[#00AEEF]">Sublimation Gifts</span> &amp;{' '}
                 <span className="text-[#E6007E]">Commercial Printing</span>
               </h2>
@@ -251,7 +251,7 @@ const Index = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5 xl:grid-cols-3 xl:gap-6">
               {CMYK_SERVICE_PILLARS.map(pillar => {
                 const IconComponent = pillar.icon;
                 const itemWaUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(
@@ -260,7 +260,7 @@ const Index = () => {
                 return (
                   <div
                     key={pillar.id}
-                    className={`bg-white rounded-2xl p-6 md:p-7 border border-slate-200/90 ${pillar.borderTop} shadow-sm hover:shadow-xl transition duration-300 flex flex-col justify-between`}
+                    className={`group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-slate-200/90 bg-white p-6 shadow-[0_16px_45px_-32px_rgba(15,23,42,0.35)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_28px_60px_-34px_rgba(15,23,42,0.38)] md:p-7 ${pillar.borderTop}`}
                   >
                     <div>
                       <div className="flex items-center justify-between gap-2 mb-4">
@@ -268,17 +268,17 @@ const Index = () => {
                           {pillar.badge}
                         </span>
                         <div
-                          className="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-50 border border-slate-200/80"
+                          className="flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200/80 bg-slate-50 transition-transform duration-300 group-hover:scale-105"
                           style={{ color: pillar.accentColor }}
                         >
                           <IconComponent className="w-5 h-5" />
                         </div>
                       </div>
 
-                      <h3 className="text-xl font-extrabold text-[#0F172A] leading-snug">{pillar.title}</h3>
-                      <p className="text-xs md:text-sm text-slate-600 mt-2 leading-relaxed">{pillar.description}</p>
+                      <h3 className="text-xl font-extrabold leading-snug tracking-tight text-[#0F172A] md:text-2xl">{pillar.title}</h3>
+                      <p className="mt-3 text-sm leading-7 text-slate-600">{pillar.description}</p>
 
-                      <ul className="mt-4 space-y-2 border-t border-slate-100 pt-4">
+                      <ul className="mt-5 space-y-3 border-t border-slate-100 pt-5">
                         {pillar.items.map(subItem => (
                           <li key={subItem} className="flex items-center gap-2 text-xs md:text-sm font-semibold text-slate-800">
                             <CheckCircle2 className="w-4 h-4 shrink-0 text-[#00AEEF]" />
