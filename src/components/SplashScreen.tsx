@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import logoImage from "@/assets/brand/graphicwala-logo-square.png.asset.json";
 
 const SplashScreen = ({ onFinish }: { onFinish: () => void }) => {
   const [phase, setPhase] = useState<"enter" | "hold" | "exit">("enter");
@@ -38,9 +39,9 @@ const SplashScreen = ({ onFinish }: { onFinish: () => void }) => {
 
         {/* Logo */}
         <img
-          src="/images/logo-circle.png"
+          src={logoImage.url}
           alt="Graphic Wala"
-          className={`w-32 h-32 rounded-full object-cover shadow-2xl transition-all duration-700 ${
+          className={`w-40 h-40 object-contain transition-all duration-700 ${
             phase === "enter"
               ? "scale-0 rotate-[-180deg] opacity-0"
               : "scale-100 rotate-0 opacity-100"

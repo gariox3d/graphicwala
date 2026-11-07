@@ -29,7 +29,7 @@ export default defineConfig(({ mode }) => {
       mode === "development" && componentTagger(),
       VitePWA({
         registerType: "autoUpdate",
-        includeAssets: ["favicon.ico", "favicon-16x16.png", "favicon-32x32.png", "logo.png", "android-chrome-192x192.png", "android-chrome-512x512.png"],
+        includeAssets: ["favicon.png", "favicon-16x16.png", "favicon-32x32.png", "logo.png", "apple-touch-icon.png", "android-chrome-192x192.png", "android-chrome-512x512.png"],
         manifest: {
           name: "Graphic Wala Store",
           short_name: "Graphic Wala",

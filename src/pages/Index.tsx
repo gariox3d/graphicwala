@@ -162,7 +162,7 @@ const Index = () => {
     name: 'GraphicWala',
     alternateName: ['Graphic Wala', 'GraphicWala.com', 'Graphic Wala Printing & Gifts'],
     url: 'https://www.graphicwala.com/',
-    logo: 'https://www.graphicwala.com/og-square.png',
+    logo: 'https://www.graphicwala.com/logo.png',
     image: 'https://www.graphicwala.com/og-square.png',
     description:
       'Official GraphicWala (Graphic Wala) Studio — Printing, Design, Branding, Custom Sublimation Photo Frames, Mugs, T-Shirts, Keychains, PVC Cards, Billbooks, Letterpads, Handbills, Posters & Wedding Cards.',

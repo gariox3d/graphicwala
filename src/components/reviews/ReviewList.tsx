@@ -1,4 +1,5 @@
 import SmartImage from '@/components/SmartImage';
+import brandMark from '@/assets/brand/graphicwala-symbol.png.asset.json';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -280,9 +281,9 @@ const ReviewList = ({ reviews, loading, onReviewDeleted, profiles = {} }: Review
                   <div className="mt-3 ml-2 pl-3 border-l-2 border-primary/30 bg-primary/5 rounded-r-lg p-3">
                     <div className="flex items-center gap-2 mb-1.5">
                       <img 
-                        src="/images/logo-circle.png" 
+                        src={brandMark.url}
                         alt="Graphic Wala" 
-                        className="w-6 h-6 rounded-full object-cover"
+                        className="w-6 h-6 rounded-full object-contain bg-background"
                       />
                       <span className="font-semibold text-sm">Graphic Wala</span>
                       <span className="text-[10px] bg-primary/15 text-primary font-medium px-1.5 py-0.5 rounded-full">
