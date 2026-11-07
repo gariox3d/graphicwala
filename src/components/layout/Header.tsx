@@ -6,7 +6,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
 import UserAvatar from '@/components/profile/UserAvatar';
 import { WHATSAPP_NUMBER, PHONE_NUMBER, BUSINESS_NAME } from '@/lib/types';
-import logoImage from '@/assets/brand/graphicwala-logo-wide.png.asset.json';
 import SearchBar from './SearchBar';
 
 const Header = () => {
@@ -34,9 +33,9 @@ const Header = () => {
         {/* Logo */}
         <Link to="/" className="flex items-center">
           <img
-            src={logoImage.url}
+            src="/graphic-wala-logo.svg"
             alt="Graphic Wala"
-            className="h-10 w-auto max-w-[220px] object-contain"
+            className="h-auto w-[164px] sm:w-[190px] object-contain"
           />
         </Link>
 
