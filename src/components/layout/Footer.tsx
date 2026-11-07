@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter, Mail, MapPin, MessageCircle, Phone } from 'lucide-react';
 import { WHATSAPP_NUMBER, PHONE_NUMBER, BUSINESS_NAME } from '@/lib/types';
-import logoImage from '@/assets/logo.png';
 
 const Footer = () => {
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(`Hello ${BUSINESS_NAME}, I have a question.`)}`;
@@ -14,13 +13,11 @@ const Footer = () => {
           <div>
             <Link to="/" className="flex items-center gap-2 mb-4">
               <img 
-                src={logoImage} 
+                src="/graphic-wala-logo.svg" 
                 alt="Graphicwala logo" 
-                className="h-10 w-10 rounded-lg object-cover"
+                className="h-10 w-auto max-w-[220px] object-contain brightness-0 invert"
               />
-              <span className="text-xl font-bold">
-                Graphic<span className="text-primary">wala</span>
-              </span>
+              
             </Link>
             <p className="text-background/70 text-sm leading-relaxed">
                Graphicwala (also known as Graphic Wala, Graphics Wala, Graphicswala or Graphics Waale) — custom photo frames, PVC cards, keychains and personalized gifts with All India delivery.
